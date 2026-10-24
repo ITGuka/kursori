@@ -1,0 +1,16 @@
+# დამოკიდებულებები და ლოკალური პარამეტრები (ასლი: .env.example)
+/vendor/
+/.env
+
+# გენერირებული ფაილები
+/storage/cache/*
+/storage/logs/*
+!/storage/cache/.gitkeep
+!/storage/logs/.gitkeep
+
+# ადმინიდან ატვირთული მედია
+/public/uploads/*
+!/public/uploads/.htaccess
+
+# თემფლეითების საწყისი არქივები
+/resources/templates/*.zip

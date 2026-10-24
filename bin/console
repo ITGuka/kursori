@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+use Core\Console\Commands;
+use Core\Console\Console;
+
+require __DIR__ . '/../vendor/autoload.php';
+$app = require __DIR__ . '/../bootstrap/app.php';
+
+$console = new Console($app);
+$console->register(
+    Commands\MigrateCommand::class,
+    Commands\RollbackCommand::class,
+    Commands\StatusCommand::class,
+    Commands\MakeMigrationCommand::class,
+    Commands\SeedCommand::class,
+    Commands\CacheClearCommand::class,
+    Commands\ServeCommand::class,
+);
+
+exit($console->run($argv));
