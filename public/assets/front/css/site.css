@@ -12,19 +12,7 @@ h1, h2, h3, h4, h5, h6,
     font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
 }
 
-/* ქართული ვერსია: სათაურები, მენიუები და ღილაკები — მთავრულით (ასოებს js/mtavruli.js ცვლის,
-   რადგან text-transform: uppercase ბრაუზერებში ქართულზე არ მუშაობს). Noto Sans Georgian-ს მთავრულის
-   გლიფები აქვს. მხოლოდ lang="ka" — ინგლისური ვერსიის იერი არ იცვლება. */
-html[lang="ka"] :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
-html[lang="ka"] .navbar .navbar-nav .nav-link,
-html[lang="ka"] .navbar .dropdown-item,
-html[lang="ka"] .breadcrumb,
-html[lang="ka"] .footer-menu a,
-html[lang="ka"] .btn {
-    letter-spacing: .02em;
-}
-
-/* მთავრული მხედრულზე ფართოა — ნავიგაციაში შრიფტი მცირდება, რომ მენიუ ერთ ხაზზე დაეტიოს */
+/* ქართული ტექსტი upper-case-ში (მთავრული) ზედმეტად გრძელდება — სათაურებში ვტოვებთ, ნავიგაციაში ვამცირებთ */
 html[lang="ka"] .navbar .navbar-nav .nav-link {
     font-size: 15px;
 }
