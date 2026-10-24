@@ -33,7 +33,18 @@ $input = function (string $inputName, string $inputId, string $current, string $
 };
 ?>
 <div class="mb-4">
-    <?php if ($type === 'image'): ?>
+    <?php if ($type === 'password'): ?>
+        <?php $isSet = $value($key) !== ''; ?>
+        <label class="form-label" for="<?= e($id) ?>"><?= e($field['label'] ?? $key) ?></label>
+        <input type="password" class="form-control" id="<?= e($id) ?>" name="<?= e($name) ?>" autocomplete="new-password" maxlength="255"
+               placeholder="<?= $isSet ? '•••••••• (შენახულია)' : '' ?>" style="max-width: 360px">
+        <?php if ($isSet): ?>
+            <div class="form-check mt-1">
+                <input class="form-check-input" type="checkbox" id="<?= e($id) ?>-clear" name="settings[<?= e($key) ?>.clear]" value="1">
+                <label class="form-check-label small" for="<?= e($id) ?>-clear">პაროლის წაშლა</label>
+            </div>
+        <?php endif ?>
+    <?php elseif ($type === 'image'): ?>
         <label class="form-label" for="<?= e($id) ?>"><?= e($field['label'] ?? $key) ?></label>
         <?= $this->insert('admin/partials/media-input', ['name' => $name, 'value' => $value($key), 'inputId' => $id, 'invalid' => (bool)errors($key)]) ?>
         <?php if ($error = errors($key)): ?><div class="invalid-feedback d-block"><?= e($error) ?></div><?php endif ?>

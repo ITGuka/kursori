@@ -18,8 +18,10 @@ $console->register(
     Commands\SeedCommand::class,
     Commands\CacheClearCommand::class,
     Commands\ServeCommand::class,
+    Commands\KeyGenerateCommand::class,
     // პროექტის ბრძანებები
     AppCommands\CreateAdminCommand::class,
+    AppCommands\NewsletterSendCommand::class,
 );
 
 exit($console->run($argv));

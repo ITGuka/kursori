@@ -1,0 +1,66 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Controllers\Admin;
+
+use App\Models\ActivityLog;
+use App\Models\FormSubmission;
+use Core\Http\Request;
+use Core\Http\Response;
+
+final class InboxController
+{
+    private const PER_PAGE = 30;
+
+    public function __construct(private readonly FormSubmission $submissions, private readonly ActivityLog $log)
+    {
+    }
+
+    public function index(Request $request): Response
+    {
+        $forms = FormSubmission::forms();
+        $form = (string)$request->query('form', '');
+        $filters = ['form' => isset($forms[$form]) ? $form : '', 'unread' => $request->query('unread') === '1', 'q' => trim((string)$request->query('q', ''))];
+        $page = max(1, (int)$request->query('page', 1));
+        $result = $this->submissions->paginate($filters, $page, self::PER_PAGE);
+
+        return view('admin/inbox/index', [
+            'title'   => 'Inbox',
+            'forms'   => $forms,
+            'rows'    => $result['rows'],
+            'total'   => $result['total'],
+            'page'    => $page,
+            'pages'   => max(1, (int)ceil($result['total'] / self::PER_PAGE)),
+            'filters' => $filters,
+            'unread'  => $this->submissions->unreadCounts(),
+        ]);
+    }
+
+    public function show(int $id): Response
+    {
+        $submission = $this->submissions->find($id) ?? abort(404);
+        if (!$submission['is_read']) {
+            $this->submissions->setRead($id, true);
+        }
+        return view('admin/inbox/show', [
+            'title'      => 'შეტყობინება #' . $id,
+            'submission' => $submission,
+            'definition' => FormSubmission::forms()[$submission['form']] ?? ['label' => $submission['form'], 'fields' => []],
+        ]);
+    }
+
+    public function markUnread(int $id): Response
+    {
+        $this->submissions->find($id) ?? abort(404);
+        $this->submissions->setRead($id, false);
+        return redirect(route('admin.inbox.index'))->with('success', 'მონიშნულია წაუკითხავად.');
+    }
+
+    public function destroy(int $id): Response
+    {
+        $submission = $this->submissions->find($id) ?? abort(404);
+        $this->submissions->delete($id);
+        $this->log->log('inbox.deleted', 'form_submission', $id, ['email' => $submission['data']['email'] ?? '']);
+        return redirect(route('admin.inbox.index'))->with('success', 'შეტყობინება წაიშალა.');
+    }
+}

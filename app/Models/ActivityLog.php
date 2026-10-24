@@ -46,6 +46,12 @@ final class ActivityLog
         'category.created'    => 'დაამატა კატეგორია',
         'category.updated'    => 'შეცვალა კატეგორია',
         'category.deleted'    => 'წაშალა კატეგორია',
+        'inbox.deleted'       => 'წაშალა შეტყობინება',
+        'subscriber.deleted'  => 'წაშალა გამომწერი',
+        'campaign.created'    => 'შექმნა კამპანია',
+        'campaign.updated'    => 'შეცვალა კამპანია',
+        'campaign.deleted'    => 'წაშალა კამპანია',
+        'campaign.started'    => 'გაუშვა კამპანია',
     ];
 
     /** Dashboard-ის „დეტალები“ სვეტისთვის: data-დან ყველაზე აღწერითი მნიშვნელობა */

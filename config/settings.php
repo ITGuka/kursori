@@ -6,6 +6,7 @@ declare(strict_types=1);
  * მნიშვნელობები ინახება `settings` ცხრილში. წაკითხვა: setting('contact.phone').
  *
  * ველი: type     — text | textarea | email | url | tel | number | toggle | select | image (მედიის id) | code
+ *                   | password (ინახება დაშიფრულად — Core\Support\Crypt, ფორმაში არ ჩანს)
  *       label    — წარწერა ადმინში
  *       translatable — თითო ენაზე ცალკე მნიშვნელობა
  *       default  — სტრიქონი ან ['ka' => ..., 'en' => ...]
@@ -65,6 +66,19 @@ return [
             'og_image'         => ['label' => 'Open Graph სურათი (default)', 'type' => 'image'],
             'indexing'         => ['label' => 'საძიებო სისტემებისთვის ღია', 'type' => 'toggle', 'default' => true,
                                    'help' => 'გამორთვისას ყველა გვერდს ემატება noindex.'],
+        ],
+    ],
+
+    'mail' => [
+        'label'  => 'ელ-ფოსტა (SMTP)',
+        'fields' => [
+            'host'       => ['label' => 'SMTP სერვერი', 'default' => '127.0.0.1', 'max' => 190, 'help' => 'ლოკალურად — Mailpit: 127.0.0.1, პორტი 1025, დაშიფვრის გარეშე. წერილები: http://127.0.0.1:8025'],
+            'port'       => ['label' => 'პორტი', 'type' => 'number', 'default' => '1025'],
+            'encryption' => ['label' => 'დაშიფვრა', 'type' => 'select', 'default' => '', 'options' => ['' => 'არ არის', 'tls' => 'TLS (STARTTLS, 587)', 'ssl' => 'SSL (465)']],
+            'username'   => ['label' => 'მომხმარებელი', 'max' => 190],
+            'password'   => ['label' => 'პაროლი', 'type' => 'password', 'help' => 'ინახება დაშიფრულად. ცარიელი ველი — ძველი პაროლი რჩება.'],
+            'from_email' => ['label' => 'გამგზავნის ელ-ფოსტა', 'type' => 'email', 'default' => 'no-reply@webdev.test', 'max' => 190],
+            'from_name'  => ['label' => 'გამგზავნის სახელი', 'default' => 'WEBDEV', 'max' => 100],
         ],
     ],
 

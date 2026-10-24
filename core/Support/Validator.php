@@ -41,17 +41,19 @@ final class Validator
      * @param array<string, string|list<string>> $rules
      * @param array<string, string> $attributes
      */
+    /** @param array<string, string> $messages წესი => შაბლონი (უპირატესია config('validation.messages')-ზე) */
     public function __construct(
         private readonly array $data,
         private readonly array $rules,
         private readonly array $attributes = [],
         private readonly ?DB $db = null,
+        private readonly array $messages = [],
     ) {
     }
 
-    public static function make(array $data, array $rules, array $attributes = []): self
+    public static function make(array $data, array $rules, array $attributes = [], array $messages = []): self
     {
-        return new self($data, $rules, $attributes, app(DB::class));
+        return new self($data, $rules, $attributes, app(DB::class), $messages);
     }
 
     public function fails(): bool
@@ -148,7 +150,7 @@ final class Validator
 
     private function message(string $rule, string $field, string $param = ''): string
     {
-        $template = config("validation.messages.$rule") ?? self::DEFAULT_MESSAGES[$rule] ?? 'The :attribute is invalid.';
+        $template = $this->messages[$rule] ?? config("validation.messages.$rule") ?? self::DEFAULT_MESSAGES[$rule] ?? 'The :attribute is invalid.';
         $attribute = $this->attributes[$field] ?? config("validation.attributes.$field") ?? str_replace('_', ' ', $field);
         $other = $rule === 'same' ? ($this->attributes[$param] ?? config("validation.attributes.$param") ?? $param) : '';
 

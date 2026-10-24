@@ -1,11 +1,8 @@
 <?php
 /**
  * @var Core\View\Template $this @var array $data
- * კონტაქტები — პარამეტრებიდან. ფორმის დამუშავება — ფაზა 7 (route "contact.submit"); მანამდე ფორმა არ იგზავნება.
+ * კონტაქტები — პარამეტრებიდან. ფორმა → POST /{lang}/forms/contact → ადმინის Inbox.
  */
-use Core\Http\Router;
-
-$action = app(Router::class)->has('contact.submit') ? route('contact.submit', ['lang' => locale()]) : '';
 $rows = array_filter([
     t('contact.phone')   => setting('contact.phone') ? '<a href="tel:' . e(preg_replace('/[^0-9+]/', '', (string)setting('contact.phone'))) . '">' . e(setting('contact.phone')) . '</a>' : '',
     t('contact.email')   => setting('contact.email') ? '<a href="mailto:' . e(setting('contact.email')) . '">' . e(setting('contact.email')) . '</a>' : '',
@@ -44,33 +41,16 @@ $socialLinks = array_filter(array_map(fn ($network) => setting("social.$network"
             </div>
             <?php if ($data['show_form']): ?>
                 <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <form method="post" action="<?= e($action) ?>"<?= $action === '' ? ' onsubmit="return false"' : '' ?>>
+                    <form method="post" action="<?= e(route('form.submit', ['lang' => locale(), 'form' => 'contact'])) ?>" id="form-contact" novalidate>
                         <?= csrf_field() ?>
+                        <?= $this->insert('front/partials/form-status', ['form' => 'contact']) ?>
+                        <?php $field = fn (string $name, string $label, string $type, bool $required, int $max) => $this->insert('front/partials/form-field',
+                            ['form' => 'contact', 'name' => $name, 'label' => $label, 'type' => $type, 'required' => $required, 'max' => $max, 'uid' => $block['id']]); ?>
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control bg-secondary border-0" id="contact-name-<?= e($block['id']) ?>" name="name" placeholder="<?= e(t('form.name')) ?>" required maxlength="100">
-                                    <label for="contact-name-<?= e($block['id']) ?>"><?= e(t('form.name')) ?></label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control bg-secondary border-0" id="contact-email-<?= e($block['id']) ?>" name="email" placeholder="<?= e(t('form.email')) ?>" required maxlength="190">
-                                    <label for="contact-email-<?= e($block['id']) ?>"><?= e(t('form.email')) ?></label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control bg-secondary border-0" id="contact-subject-<?= e($block['id']) ?>" name="subject" placeholder="<?= e(t('form.subject')) ?>" maxlength="190">
-                                    <label for="contact-subject-<?= e($block['id']) ?>"><?= e(t('form.subject')) ?></label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <textarea class="form-control bg-secondary border-0" placeholder="<?= e(t('form.message_hint')) ?>" id="contact-message-<?= e($block['id']) ?>" name="message" style="height: 150px" required maxlength="5000"></textarea>
-                                    <label for="contact-message-<?= e($block['id']) ?>"><?= e(t('form.message')) ?></label>
-                                </div>
-                            </div>
+                            <div class="col-md-6"><?= $field('name', t('form.name'), 'text', true, 100) ?></div>
+                            <div class="col-md-6"><?= $field('email', t('form.email'), 'email', true, 190) ?></div>
+                            <div class="col-12"><?= $field('subject', t('form.subject'), 'text', false, 190) ?></div>
+                            <div class="col-12"><?= $field('message', t('form.message'), 'textarea', true, 5000) ?></div>
                             <div class="col-12">
                                 <button class="btn btn-outline-primary border-2 w-100 py-3" type="submit"><?= e(t('form.send')) ?></button>
                             </div>

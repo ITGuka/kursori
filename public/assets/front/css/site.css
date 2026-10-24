@@ -84,6 +84,19 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     margin-bottom: 0;
 }
 
+/* ფორმის honeypot ველი — ეკრანზე არ ჩანს (display:none-ს ზოგი ბოტი ცნობს) */
+.form-hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.form-floating .invalid-feedback {
+    text-align: left;
+}
+
 /* footer-ის მენიუ */
 .footer-menu {
     display: flex;

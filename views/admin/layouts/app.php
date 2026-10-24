@@ -35,6 +35,9 @@ $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
                     <?php $active = isset($item['collection']) ? ($collectionType ?? null) === $item['collection'] : is_route(...(array)$item['active']); ?>
                     <a href="<?= e(route($item['route'], $item['params'] ?? [])) ?>" class="nav-item nav-link<?= $active ? ' active' : '' ?>">
                         <i class="<?= e($item['icon']) ?> me-2"></i><?= e($item['label']) ?>
+                        <?php if (($item['badge'] ?? '') === 'inbox' && ($unreadTotal = array_sum(app(App\Models\FormSubmission::class)->unreadCounts())) > 0): ?>
+                            <span class="badge rounded-pill bg-danger ms-1"><?= e($unreadTotal) ?></span>
+                        <?php endif ?>
                     </a>
                 <?php endforeach ?>
             </div>

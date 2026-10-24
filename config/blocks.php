@@ -161,6 +161,17 @@ return [
         ],
     ],
 
+    'application_form' => [
+        'label'  => 'განაცხადის ფორმა',
+        'icon'   => 'fa fa-file-signature',
+        'view'   => 'front/blocks/application_form',
+        'fields' => $title + [
+            'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
+            'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „განაცხადის გაგზავნა“.'],
+            'background'   => ['default' => 'secondary'] + $background,
+        ],
+    ],
+
     'map' => [
         'label'  => 'რუკა',
         'icon'   => 'fa fa-map-marked-alt',

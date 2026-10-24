@@ -1,11 +1,12 @@
 <?php
 /**
  * @var Core\View\Template $this @var array $data
- * გამოწერის ფორმის დამუშავება — ფაზა 7 (route "newsletter.subscribe"); მანამდე ფორმა არ იგზავნება.
+ * გამოწერა → POST /{lang}/newsletter (double opt-in: დასტურის წერილი).
  */
-use Core\Http\Router;
+use Core\Support\Session;
 
-$action = app(Router::class)->has('newsletter.subscribe') ? route('newsletter.subscribe', ['lang' => locale()]) : '';
+$isThis = Session::get('_form') === 'newsletter';
+$error = $isThis ? errors('email') : null;
 ?>
 <div class="container-fluid py-5<?= $data['background'] === 'secondary' ? ' bg-secondary' : '' ?>">
     <div class="container py-5">
@@ -22,11 +23,16 @@ $action = app(Router::class)->has('newsletter.subscribe') ? route('newsletter.su
                 <?php if ($data['text'] !== ''): ?>
                     <p class="fs-5 mb-5 wow fadeInUp" data-wow-delay="0.2s"><?= nl2br(e($data['text'])) ?></p>
                 <?php endif ?>
-                <form class="position-relative wow fadeInUp" data-wow-delay="0.3s" method="post" action="<?= e($action) ?>"<?= $action === '' ? ' onsubmit="return false"' : '' ?>>
+                <form method="post" action="<?= e(route('newsletter.subscribe', ['lang' => locale()])) ?>" id="form-newsletter" novalidate class="wow fadeInUp" data-wow-delay="0.3s">
                     <?= csrf_field() ?>
-                    <input class="form-control border-0 bg-dark rounded-pill w-100 py-4 ps-4 pe-5" type="email" name="email" required
-                           placeholder="<?= e(t('newsletter.email')) ?>" aria-label="<?= e(t('newsletter.email')) ?>">
-                    <button type="submit" class="btn btn-primary py-3 px-4 position-absolute top-0 end-0 me-2" style="margin-top: 7px;"><?= e(t('newsletter.subscribe')) ?></button>
+                    <?= $this->insert('front/partials/form-status', ['form' => 'newsletter']) ?>
+                    <div class="position-relative">
+                        <input class="form-control border-0 bg-dark rounded-pill w-100 py-4 ps-4 pe-5<?= $error ? ' is-invalid' : '' ?>" type="email" name="email" required maxlength="190"
+                               value="<?= e($isThis ? (string)old('email', '') : '') ?>"
+                               placeholder="<?= e(t('newsletter.email')) ?>" aria-label="<?= e(t('newsletter.email')) ?>">
+                        <button type="submit" class="btn btn-primary py-3 px-4 position-absolute top-0 end-0 me-2" style="margin-top: 7px;"><?= e(t('newsletter.subscribe')) ?></button>
+                    </div>
+                    <?php if ($error): ?><div class="text-danger small mt-2"><?= e($error) ?></div><?php endif ?>
                 </form>
             </div>
         </div>

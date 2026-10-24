@@ -7,6 +7,24 @@ $this->layout('admin/layouts/app');
 
 <div class="row g-4 mb-4">
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= e(route('admin.inbox.index', ['unread' => 1])) ?>" class="bg-light rounded d-flex align-items-center justify-content-between p-4 text-reset">
+            <i class="fa fa-inbox fa-3x text-primary"></i>
+            <div class="ms-3 text-end">
+                <p class="mb-2">წაუკითხავი შეტყობინებები</p>
+                <h6 class="mb-0"><?= e($unread) ?></h6>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="<?= e(route('admin.newsletter.subscribers', ['status' => 'active'])) ?>" class="bg-light rounded d-flex align-items-center justify-content-between p-4 text-reset">
+            <i class="fa fa-paper-plane fa-3x text-primary"></i>
+            <div class="ms-3 text-end">
+                <p class="mb-2">გამომწერები</p>
+                <h6 class="mb-0"><?= e($subscribers) ?></h6>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
             <i class="fa fa-users fa-3x text-primary"></i>
             <div class="ms-3 text-end">

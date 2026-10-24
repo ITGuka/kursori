@@ -56,6 +56,15 @@ function url(string $path = ''): string
     return App::getInstance()->baseUrlPath() . '/' . ltrim($path, '/');
 }
 
+/**
+ * სრული URL ელ-ფოსტისთვის — მხოლოდ config('app.url')-დან (APP_URL), არასოდეს Host header-იდან:
+ * გაყალბებული Host-ით წერილში თავდამსხმელის დომენი (და token) არ უნდა მოხვდეს.
+ */
+function absolute_url(string $path = ''): string
+{
+    return rtrim((string)config('app.url', 'http://localhost'), '/') . '/' . ltrim($path, '/');
+}
+
 function route(string $name, array $params = []): string
 {
     return url(app(Router::class)->url($name, $params));

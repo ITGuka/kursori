@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 use App\Controllers\Front\CollectionController;
+use App\Controllers\Front\FormController;
+use App\Controllers\Front\NewsletterController;
 use App\Controllers\Front\PageController;
 use App\Models\Language;
 use Core\Http\Router;
@@ -18,6 +20,14 @@ $router->group([
     'middleware' => ['locale', 'maintenance'],
 ], function (Router $router): void {
     $router->get('/', [PageController::class, 'home'])->name('home');
+
+    // ფორმები და newsletter (კონკრეტული ბილიკები — /{slug}-ზე ადრე)
+    $router->post('/forms/{form}', [FormController::class, 'submit'])->where('form', '[a-z_]+')->name('form.submit');
+    $router->post('/newsletter', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+    $router->get('/newsletter/confirm/{token}', [NewsletterController::class, 'confirm'])->where('token', '[a-f0-9]{64}')->name('newsletter.confirm');
+    $router->get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribePage'])->where('token', '[a-f0-9]{64}')->name('newsletter.unsubscribe');
+    $router->post('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])->where('token', '[a-f0-9]{64}')->name('newsletter.unsubscribe.confirm');
+
     $router->get('/{slug}', [PageController::class, 'show'])->name('page');
     // კოლექციის ჩანაწერი: /ka/servisebi/web-dizaini (კოლექცია — config/collections.php → route)
     $router->get('/{collection}/{slug}', [CollectionController::class, 'show'])->where('collection', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('collection.item');

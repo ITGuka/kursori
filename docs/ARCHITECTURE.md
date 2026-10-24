@@ -1,7 +1,7 @@
 # WEBDEV — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **7 (ფორმები, Inbox, newsletter)** · ფაზები 0–6 დასრულდა
+> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **8 (SEO)** · ფაზები 0–7 დასრულდა
 
 ## 1. მიზანი
 
@@ -54,6 +54,8 @@
 | D37 | კოლექციები | ტიპები კოდში (`config/collections.php`): label, icon, categories, public, route (URL-ის ნაწილი ენებზე), fields (ბლოკების ფორმატი — იგივე BlockInput/BlockResolver და ადმინის ველები). ჩანაწერი: სათაური + slug (ენებზე), სურათი, კატეგორია, რიგი, აქტიურობა + fields JSON-ში. ახალი კოლექცია = ჩანაწერი კონფიგში (sidebar-ში ავტომატურად), მიგრაციის გარეშე |
 | D38 | კატეგორიები | კოლექციის ფარგლებში, 2 დონე (მშობელი — მხოლოდ იმავე კოლექციის ზედა დონე). ფილტრი კატეგორიით ქვეკატეგორიებსაც მოიცავს. წაშლისას ჩანაწერები კატეგორიის გარეშე რჩება (SET NULL) |
 | D39 | კოლექციის საჯარო გვერდი | `public` კოლექციები: `/{lang}/{route}/{slug}` (`route` აკლია ენაზე → ძირითადის → გასაღები). Slug უნიკალურია კოლექცია+ენაზე (შეცდომა). არასაჯარო კოლექციაში slug შიდაა — დამთხვევისას სუფიქსი (`-2`). ჩანაწერი ენაზე სათაურის გარეშე → იმ ენაზე არ ჩანს. Breadcrumb/„უკან“ — იმავე slug-ის გვერდზე (მაგ. `/ka/servisebi`), თუ არსებობს |
+| D41 | საიდუმლოებები | `APP_KEY` (.env, `php bin/console key:generate`) + libsodium secretbox (`Core\Support\Crypt`). პარამეტრის ტიპი `password` ბაზაში დაშიფრულად ინახება, ფორმაში არ ჩანს; ცარიელი ველი — ძველი რჩება. APP_KEY-ის შეცვლისას SMTP პაროლი თავიდან შესაყვანია |
+| D42 | ფორმები / newsletter | §8: ფორმები Inbox-ში (email-ის გარეშე), honeypot + rate limit, double opt-in, პარტიებად გაგზავნა, one-click unsubscribe, ბმულები მხოლოდ APP_URL-იდან |
 | D40 | ბლოკი კოლექციიდან | services / team_grid / testimonials: `source` = ხელით (repeater) ან კოლექციიდან (+ კატეგორია, რაოდენობა). `config/blocks.php` → `collection.map` ჩანაწერის ველებს repeater-ის ფორმატზე გადაიყვანს (`@url`, `@read_more`). `show_if` — დამოკიდებული ველები ფორმაში იმალება და არ მოწმდება (მონაცემები ინახება — წყაროს დაბრუნებისას რომ არ დაიკარგოს) |
 | D33 | ქართული შრიფტი | Poseify-ის შრიფტებში ქართული არ არის — `site.css`-ში Noto Sans Georgian სარეზერვოდ, მობილურზე სათაურების ზომა მცირდება. `style.css` უცვლელია |
 
@@ -79,44 +81,48 @@ WEBDEV/
 │   ├── View/                ✅ View, Template (layout, sections, insert)
 │   ├── Debug/               ✅ ErrorHandler (debug გვერდი / errors/*.php, ლოგი)
 │   ├── Support/             ✅ Env, Config, Session (flash), Csrf, Log, Validator, RateLimiter, Cache,
-│   │                          Str (slug, limit), HtmlSanitizer (HTMLPurifier), Url (isSafeHref, resolve) · ⏳ Arr
+│   │                          Str (slug, limit), HtmlSanitizer (HTMLPurifier), Url (isSafeHref, resolve), Crypt · ⏳ Arr
 │   ├── Console/             ✅ Console, Command, Output, Commands/*
 │   ├── Auth/                ✅ Auth
 │   ├── I18n/                ✅ Translator (loader-ით — წყარო პროექტი წყვეტს)
 │   ├── Settings/            ✅ Settings (განსაზღვრებები კონფიგიდან, მნიშვნელობები ბაზიდან)
 │   ├── Media/               ✅ Uploader, ImageResizer (GD), UploadException
-│   └── Mail/                ⏳ Mailer (PHPMailer wrapper)
+│   └── Mail/                ✅ Mailer (PHPMailer, SMTP keep-alive პარტიებისთვის)
 ├── app/                     ← პროექტის კოდი (namespace App\)
-│   ├── Controllers/Front/   ✅ Page, Collection · ⏳ Form, Newsletter, Sitemap
+│   ├── Controllers/Front/   ✅ Page, Collection, Form, Newsletter · ⏳ Sitemap
 │   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media, Page, Block, Menu,
-│   │                          Collection, Category · ⏳ Inbox, Newsletter
+│   │                          Collection, Category, Inbox, Newsletter
 │   ├── Middleware/          ✅ SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
 │   │                          RedirectIfAuthenticated (guest)
 │   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media, Page, PageBlock, Menu,
-│   │                          Collection, Category · ⏳ დანარჩენი
+│   │                          Collection, Category, FormSubmission, Subscriber, Campaign
+│   ├── Services/            ✅ Newsletter (დასტურის წერილი, ტესტი, პარტიის გაგზავნა)
 │   ├── helpers.php          ✅ media(), media_url(), media_alt(), link_attrs(), menu(), link_target()
-│   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create)
+│   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create), NewsletterSendCommand (newsletter:send)
 │   ├── Blocks/              ✅ BlockRegistry (config/blocks.php), BlockInput (ფორმა → ვალიდაცია → JSON),
 │   │                          BlockResolver (JSON → view-ის მონაცემები ენაზე)
 │   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
 │   ├── front/               ✅ layouts/main (Poseify), partials/ (navbar, footer, title), page, blocks/* (10 ტიპი),
-│   │                          collections/detail
+│   │                          collections/detail, message, partials/ (form-field, form-status), blocks/application_form
+│   ├── emails/              ✅ layout, newsletter-confirm, newsletter-campaign
 │   ├── admin/               ✅ layouts/*, partials/* (flash, pagination, upload-zone, media-input, media-picker),
 │   │                          auth/login, dashboard, users/*, languages/*, translations/index, settings/*, media/*,
 │   │                          pages/*, blocks/ (form, field — რეკურსიული, link), menus/ (index, item),
-│   │                          collections/ (index, form), categories/ (index, form) · ⏳ მოდულები
+│   │                          collections/ (index, form), categories/ (index, form), inbox/ (index, show),
+│   │                          newsletter/ (campaigns, form, subscribers, tabs)
 │   └── errors/              ✅ default.php, 404.php (Poseify), maintenance.php
 ├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar),
 │                              settings (პარამეტრების განსაზღვრებები), media (ტიპები, ლიმიტები, ვარიანტები),
 │                              blocks (ბლოკების ტიპები და ველები), menus (მენიუს ადგილები და სიღრმე),
-│                              collections (კოლექციების ტიპები და ველები)
+│                              collections (კოლექციების ტიპები და ველები), forms (საჯარო ფორმები, ანტი-სპამი)
 ├── database/
 │   ├── migrations/          ✅ languages, admin_users, rate_limits, activity_log, translation_keys/values, settings,
 │   │                          media + media_translations, pages + page_translations + page_blocks + page_block_translations,
 │   │                          menus + menu_items + menu_item_translations, categories + category_translations,
-│   │                          collection_items + collection_item_translations
+│   │                          collection_items + collection_item_translations, form_submissions, subscribers,
+│   │                          newsletter_campaigns + newsletter_sends
 │   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები),
 │                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (6 გვერდი ბლოკებით),
 │                              06_menus (header — გვერდების ხე, footer — ზედა დონე),
@@ -215,6 +221,8 @@ php bin/console db:seed [name]             # ყველა ან სახე
 php bin/console cache:clear
 php bin/console serve [--port=8000]        # Apache-ს გარეშე
 php bin/console admin:create --email=... [--name=...] [--password=...]   # ადმინის შექმნა / პაროლის აღდგენა
+php bin/console key:generate [--force]     # APP_KEY (საიდუმლოებების დაშიფვრა)
+php bin/console newsletter:send [id] [--batch=50]   # „იგზავნება“ კამპანიების გაგრძელება (cron)
 ```
 
 PHP PATH-ში არ არის — Laragon Terminal-იდან ან სრული გზით: `C:\laragon\bin\php\php-8.3.36-Win32-vs16-x64\php.exe bin\console ...`.
@@ -276,8 +284,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | კატეგორიები | ✅ `categories` (collection, parent_id → SET NULL, sort, is_active) + `category_translations` (category_id → CASCADE, lang, name, slug) |
 | კოლექციები | ✅ `collection_items` (collection, category_id → SET NULL, image_id → media SET NULL, sort, is_active, settings JSON, media_ids JSON) + `collection_item_translations` (item_id → CASCADE, lang, title, slug, content JSON) |
 | მედია | ✅ `media` (path, original_name, mime, extension, size, width, height, variants JSON, folder, uploaded_by) + `media_translations` (media_id → CASCADE, lang, alt, caption) |
-| ფორმები | `form_submissions` (form: contact/application, data JSON, ip, is_read, created_at) |
-| Newsletter | `subscribers` (email, lang, status, token, confirmed_at, unsubscribed_at) · `newsletter_campaigns` (subject, body, lang, status, sent_at) · `newsletter_sends` (campaign_id, subscriber_id, status, error, sent_at) |
+| ფორმები | ✅ `form_submissions` (form, lang, data JSON, page_url, ip, user_agent, is_read, created_at) |
+| Newsletter | ✅ `subscribers` (email unique, lang, status pending/active/unsubscribed, token unique, ip, confirmed_at, unsubscribed_at) · `newsletter_campaigns` (subject, body, lang '' = ყველა, status draft/sending/sent, created_by, started_at, sent_at) · `newsletter_sends` (campaign_id + subscriber_id → CASCADE, status pending/sent/failed, error, sent_at) |
 | სისტემა | ✅ `admin_users` (name, email, password_hash, is_active, last_login_at, last_login_ip) · ✅ `rate_limits` (limiter_key sha256, hits, reset_at) · ✅ `activity_log` (user_id → SET NULL, action, entity, entity_id, data JSON, ip) · `redirects` (from, to, code) · ✅ `migrations` |
 
 კოლექციები ერთ ზოგად ცხრილშია: ახალი კოლექციის ტიპი (მაგ. `portfolio`) ემატება `app/` კონფიგში, მიგრაციის გარეშე. `attributes` ინახავს ტიპის სპეციფიკურ ველებს (მაგ. team-ისთვის პოზიცია, სოციალური ბმულები).
@@ -298,15 +306,20 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 - სორტირება drag-drop-ით (SortableJS), სურათის არჩევა მედია ბიბლიოთეკიდან (modal).
 - Dashboard: წაუკითხავი შეტყობინებები, გამომწერები, ბოლო ცვლილებები.
 
-## 8. Newsletter
+## 8. ფორმები და Newsletter ✅
 
-1. გამოწერა `banner_signup`-იდან → `subscribers` (status `pending`), დასტურის წერილი (double opt-in) → `active`.
-2. ადმინში კამპანია (subject + WYSIWYG body, ენა) → ტესტ-გაგზავნა → გაგზავნა.
-3. გაგზავნა პარტიებად (მაგ. 50 წერილი): ადმინის გვერდი AJAX-ით უშვებს პარტიებს, ან `bin/console newsletter:send`.
-4. ყოველ წერილში unsubscribe ბმული (`token`).
-5. ლოკალურად SMTP → Mailpit (წერილები რეალურად არ იგზავნება). SMTP პარამეტრები `settings`-შია.
+**ფორმები** (`config/forms.php`: contact, application) → `POST /{lang}/forms/{form}` → `form_submissions` → ადმინის Inbox (წაუკითხავის მრიცხველი sidebar-ში და Dashboard-ზე). Email არ იგზავნება (D7).
+- ვალიდაცია სერვერზე, შეტყობინებები ენაზე (UI თარგმანები `validation.*`); შეცდომისას — იმავე გვერდზე, `#form-{form}` ღუზით, მხოლოდ იმ ფორმაში (flash `_form`), წინა მნიშვნელობებით.
+- ანტი-სპამი: honeypot ველი (`website`, შევსებისას — ჩუმი „წარმატება“), 5 გაგზავნა / 10 წთ ერთ IP-ზე (`rate_limits`).
+- დაბრუნება მხოლოდ იმავე host-ის Referer-ზე (open redirect-ის გარეშე).
 
-> შენიშვნა: D7-ის მიხედვით ფორმების შეტყობინებები email-ით არ იგზავნება, მაგრამ newsletter-ისა და double opt-in-ისთვის mailer მაინც საჭიროა.
+**Newsletter:**
+1. გამოწერა `banner_signup`-იდან → `subscribers` (`pending`) → დასტურის წერილი გამომწერის ენაზე → ბმული → `active` (double opt-in). უკვე აქტიურს იგივე პასუხი უჩანს (სტატუსი სხვისთვის არ ვლინდება).
+2. ადმინში კამპანია (თემა, WYSIWYG ტექსტი — HTMLPurifier, ადრესატები: ყველა ან ერთი ენა) → ტესტური წერილი → გაგზავნა.
+3. გაშვებისას ადრესატები ფიქსირდება `newsletter_sends`-ში; გაგზავნა პარტიებად (20) AJAX-ით ან `php bin/console newsletter:send` (cron). გაშვების შემდეგ გაუქმებულს არ ეგზავნება.
+4. ყოველ წერილში პერსონალური გაუქმების ბმული + `List-Unsubscribe` / `List-Unsubscribe-Post` (one-click, RFC 8058). GET მხოლოდ ღილაკს აჩვენებს (ფოსტის სკანერები რომ არ აუქმებდნენ), POST აუქმებს — CSRF-ის გარეშე (`app.csrf_except`), დაცვა — 64-სიმბოლოიანი token.
+5. წერილების ბმულები — მხოლოდ `APP_URL`-იდან (`absolute_url()`), არა Host header-იდან (link poisoning).
+6. SMTP — პარამეტრები → ელ-ფოსტა; ლოკალურად Mailpit (127.0.0.1:1025, ნახვა: http://127.0.0.1:8025). პაროლი ინახება დაშიფრულად (D41).
 
 ## 9. უსაფრთხოება
 
@@ -338,13 +351,14 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | ✅ 2026-10-25 |
 | 5 | მენიუები | ✅ 2026-10-25 |
 | 6 | კატეგორიები და კოლექციები | ✅ 2026-10-25 |
-| 7 | ფორმები + Inbox, newsletter | ⏳ შემდეგი |
-| 8 | SEO: sitemap, robots, hreflang, redirects, 404 | — |
+| 7 | ფორმები + Inbox, newsletter | ✅ 2026-10-25 |
+| 8 | SEO: sitemap, robots, hreflang, redirects, 404 | ⏳ შემდეგი |
 | 9 | ქეში, ოპტიმიზაცია, ატრიბუციის მოხსნა, ვებ დიზაინ სტუდიის კონტენტი | — |
 | — | Deploy (მოგვიანებით, D9) | — |
 
 ## 12. ცვლილებების ისტორია
 
+- **2026-10-25** — ფაზა 7: საკონტაქტო და განაცხადის ფორმები (ახალი ბლოკი `application_form`) → Inbox (წაუკითხავი/წაკითხული, ფილტრი, ძებნა, პასუხი mailto-თი); newsletter — double opt-in, დასტური/გაუქმება (one-click), კამპანიები ტესტით და პარტიებად გაგზავნით, გამომწერების სია და CSV; SMTP პარამეტრები ადმინში დაშიფრული პაროლით; `core/`: Mailer (PHPMailer), Crypt, Validator-ის შეტყობინებები, CSRF-ის გამონაკლისები, `absolute_url()`; `key:generate`, `newsletter:send`. დაემატა D41–D42.
 - **2026-10-25** — ფაზა 6: კოლექციები (სერვისები, გუნდი, შეფასებები, პორტფოლიო) კონფიგიდან, საკუთარი ველებით; კატეგორიები (2 დონე); ადმინში სია (ძებნა, ფილტრი, გადათრევით რიგი, დამალვა) და ფორმა (ბლოკების ველების ძრავით); საჯარო გვერდები (სერვისი, პროექტი) hreflang-ით; ბლოკები „წყარო: კოლექცია“ (კატეგორია, რაოდენობა); `show_if`; მედიის გამოყენება კოლექციებშიც. დემო გვერდების ბლოკები გადავიდა კოლექციებზე. დაემატა D37–D40.
 - **2026-10-25** — ფაზა 5: მართვადი მენიუები (header — 2 დონე, footer — 1 დონე): გვერდის/ბმულის პუნქტები, წარწერები და ბმულები ენებზე, ჩადგმული drag & drop, დამალვა, ახალ ფანჯარაში გახსნა; ფრონტის navbar და footer მენიუდან, ქეშით. `Core\Support\Url` — ბმულების ერთიანი შემოწმება (ახლა `//host` ბმულიც უარყოფილია). გასწორდა: ენის წაშლისას რჩებოდა მისი გვერდების, ბლოკებისა და მედიის თარგმანები. დაემატა D34–D36.
 - **2026-10-25** — ფაზა 4: გვერდები (ხე, თარგმანები, slug ქართულიდან, SEO, OG სურათი, მონახაზი/წინასწარი ხედი, მთავარი გვერდი) და ბლოკების რედაქტორი (10 ტიპი სქემიდან, repeater, Jodit, link ველი, გადათრევით დალაგება, დამალვა, კოპირება). ფრონტი Poseify-ის layout-ზე: navbar (დროებით გვერდებიდან), ენების გადამრთველი, footer პარამეტრებიდან, hreflang/canonical/OG, Poseify-ის 404. Poseify-ის 6 გვერდი seed-ით. `core/`: Str, HtmlSanitizer; composer: HTMLPurifier. დაემატა D27–D33.

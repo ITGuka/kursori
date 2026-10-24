@@ -9,6 +9,7 @@ use App\Models\Media;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Settings\Settings;
+use Core\Support\Crypt;
 
 final class SettingsController
 {
@@ -45,6 +46,16 @@ final class SettingsController
 
                 if ($field['type'] === 'toggle') {
                     $values[$key] = ($input[$key] ?? '0') === '1' ? '1' : '0';
+                    continue;
+                }
+                if ($field['type'] === 'password') {
+                    // ცარიელი — ძველი რჩება; „წაშლა“ ჩამრთველით — იშლება; სხვაგვარად — დაშიფრული
+                    $value = is_string($input[$key] ?? null) ? $input[$key] : '';
+                    if (($input["$key.clear"] ?? '') === '1') {
+                        $values[$key] = '';
+                    } elseif ($value !== '') {
+                        $values[$key] = mb_strlen($value) > 255 ? '' : Crypt::encrypt($value);
+                    }
                     continue;
                 }
 

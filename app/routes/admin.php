@@ -7,6 +7,8 @@ use App\Controllers\Admin\CategoryController;
 use App\Controllers\Admin\CollectionController;
 use App\Controllers\Admin\PageController;
 use App\Controllers\Admin\DashboardController;
+use App\Controllers\Admin\InboxController;
+use App\Controllers\Admin\NewsletterController;
 use App\Controllers\Admin\LanguageController;
 use App\Controllers\Admin\MediaController;
 use App\Controllers\Admin\MenuController;
@@ -78,6 +80,24 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
         $router->put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
         $router->delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+        $router->get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
+        $router->get('/inbox/{id}', [InboxController::class, 'show'])->name('inbox.show');
+        $router->post('/inbox/{id}/unread', [InboxController::class, 'markUnread'])->name('inbox.unread');
+        $router->delete('/inbox/{id}', [InboxController::class, 'destroy'])->name('inbox.destroy');
+
+        $router->get('/newsletter/subscribers', [NewsletterController::class, 'subscribers'])->name('newsletter.subscribers');
+        $router->get('/newsletter/subscribers/export', [NewsletterController::class, 'export'])->name('newsletter.export');
+        $router->delete('/newsletter/subscribers/{id}', [NewsletterController::class, 'destroySubscriber'])->name('newsletter.subscribers.destroy');
+        $router->get('/newsletter', [NewsletterController::class, 'campaigns'])->name('newsletter.campaigns');
+        $router->get('/newsletter/create', [NewsletterController::class, 'create'])->name('newsletter.create');
+        $router->post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter.store');
+        $router->get('/newsletter/{id}', [NewsletterController::class, 'edit'])->name('newsletter.edit');
+        $router->put('/newsletter/{id}', [NewsletterController::class, 'update'])->name('newsletter.update');
+        $router->delete('/newsletter/{id}', [NewsletterController::class, 'destroy'])->name('newsletter.destroy');
+        $router->post('/newsletter/{id}/test', [NewsletterController::class, 'test'])->name('newsletter.test');
+        $router->post('/newsletter/{id}/start', [NewsletterController::class, 'start'])->name('newsletter.start');
+        $router->post('/newsletter/{id}/batch', [NewsletterController::class, 'batch'])->name('newsletter.batch');
 
         $router->get('/menus', [MenuController::class, 'index'])->name('menus.index');
         $router->get('/menus/{id}/items/create', [MenuController::class, 'create'])->name('menus.items.create');

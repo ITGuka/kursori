@@ -12,6 +12,7 @@ use Core\Database\DB;
 use Core\Http\Middleware\VerifyCsrf;
 use Core\Http\Router;
 use Core\I18n\Translator;
+use Core\Mail\Mailer;
 use Core\Media\ImageResizer;
 use Core\Media\Uploader;
 use Core\Settings\Settings;
@@ -43,6 +44,20 @@ $app->singleton(Uploader::class, fn (App $app) => new Uploader(
     (array)config('media.messages', []),
 ));
 $app->singleton(ImageResizer::class, fn () => new ImageResizer((array)config('media.variants'), (int)config('media.quality', 85)));
+
+// ელ-ფოსტა: SMTP პარამეტრები ადმინიდან (პარამეტრები → ელ-ფოსტა)
+$app->singleton(Mailer::class, function (App $app): Mailer {
+    $settings = $app->make(Settings::class);
+    return new Mailer([
+        'host'       => (string)$settings->get('mail.host'),
+        'port'       => (int)$settings->get('mail.port'),
+        'encryption' => (string)$settings->get('mail.encryption'),
+        'username'   => (string)$settings->get('mail.username'),
+        'password'   => (string)$settings->get('mail.password'),
+        'from_email' => (string)$settings->get('mail.from_email'),
+        'from_name'  => (string)($settings->get('mail.from_name') ?: $settings->get('general.site_name')),
+    ]);
+});
 
 $app->addMiddleware(VerifyCsrf::class);
 

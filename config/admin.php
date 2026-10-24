@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 // ადმინის sidebar. route — route-ის სახელი (+ params), active — რომელ route-ებზე მოინიშნოს (is_route pattern),
-// collection — კოლექციის პუნქტი აქტიურია, როცა view-ს $collectionType ემთხვევა.
+// collection — კოლექციის პუნქტი აქტიურია, როცა view-ს $collectionType ემთხვევა; badge — მრიცხველი (inbox — წაუკითხავი).
 // კოლექციები (config/collections.php) ავტომატურად ემატება გვერდების შემდეგ.
 $collections = [];
 foreach (require __DIR__ . '/collections.php' as $type => $definition) {
@@ -20,6 +20,8 @@ return [
         ['label' => 'Dashboard', 'icon' => 'fa fa-tachometer-alt', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
         ['label' => 'გვერდები', 'icon' => 'fa fa-file-alt', 'route' => 'admin.pages.index', 'active' => ['admin.pages.*', 'admin.blocks.*']],
         ...$collections,
+        ['label' => 'Inbox', 'icon' => 'fa fa-inbox', 'route' => 'admin.inbox.index', 'active' => 'admin.inbox.*', 'badge' => 'inbox'],
+        ['label' => 'Newsletter', 'icon' => 'fa fa-paper-plane', 'route' => 'admin.newsletter.campaigns', 'active' => 'admin.newsletter.*'],
         ['label' => 'მენიუები', 'icon' => 'fa fa-bars', 'route' => 'admin.menus.index', 'active' => 'admin.menus.*'],
         ['label' => 'მედია', 'icon' => 'fa fa-images', 'route' => 'admin.media.index', 'active' => 'admin.media.*'],
         ['label' => 'თარგმანები', 'icon' => 'fa fa-language', 'route' => 'admin.translations.index', 'active' => 'admin.translations.*'],

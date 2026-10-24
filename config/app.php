@@ -14,6 +14,9 @@ return [
     // (მაგ. შეცდომის გვერდზე /admin-ში) და სანამ ბაზაში ენა არ არის
     'default_locale' => 'ka',
 
+    // CSRF-ის გარეშე: ფოსტის კლიენტის „ერთი დაწკაპებით გაუქმება“ (RFC 8058) — დაცვა URL-ის საიდუმლო token-ით
+    'csrf_except' => ['newsletter.unsubscribe.confirm'],
+
     'session' => [
         'name' => 'webdev_session',
     ],

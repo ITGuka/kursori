@@ -5,6 +5,7 @@ namespace Core\Settings;
 
 use Core\Database\DB;
 use Core\Support\Cache;
+use Core\Support\Crypt;
 
 /**
  * საიტის პარამეტრები: განსაზღვრებები კოდშია (config/settings.php — ჯგუფები, ველის ტიპები, default),
@@ -64,7 +65,11 @@ final class Settings
             $default = $field['default'] ?? null;
             return is_array($default) ? ($default[$locale ?? $this->fallback] ?? $default[$this->fallback] ?? null) : $default;
         }
-        return ($field['type'] ?? '') === 'toggle' ? $value === '1' : $value;
+        return match ($field['type'] ?? '') {
+            'toggle'   => $value === '1',
+            'password' => Crypt::decrypt($value),
+            default    => $value,
+        };
     }
 
     /** შენახული მნიშვნელობა default-ისა და fallback-ის გარეშე (ადმინის ფორმისთვის) */
