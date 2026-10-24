@@ -94,6 +94,10 @@ final class Language
         $this->db->transaction(function (DB $db) use ($id, $code): void {
             $db->delete('translation_values', 'lang = ?', [$code]);
             $db->delete('settings', 'lang = ?', [$code]);
+            $db->delete('menu_item_translations', 'lang = ?', [$code]);
+            $db->delete('page_translations', 'lang = ?', [$code]);
+            $db->delete('page_block_translations', 'lang = ?', [$code]);
+            $db->delete('media_translations', 'lang = ?', [$code]);
             $db->delete('languages', 'id = ?', [$id]);
         });
         $this->forgetCache();
@@ -103,6 +107,7 @@ final class Language
     {
         $this->active = null;
         $this->cache->forget(self::CACHE_KEY);
+        $this->cache->flush(Menu::CACHE_PREFIX);
     }
 
     /** ძირითადი ენა ყოველთვის ერთია და აქტიური */

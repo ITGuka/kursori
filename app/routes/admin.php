@@ -7,6 +7,7 @@ use App\Controllers\Admin\PageController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\LanguageController;
 use App\Controllers\Admin\MediaController;
+use App\Controllers\Admin\MenuController;
 use App\Controllers\Admin\SettingsController;
 use App\Controllers\Admin\TranslationController;
 use App\Controllers\Admin\UserController;
@@ -58,6 +59,15 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->post('/blocks/{id}/toggle', [BlockController::class, 'toggle'])->name('blocks.toggle');
         $router->post('/blocks/{id}/duplicate', [BlockController::class, 'duplicate'])->name('blocks.duplicate');
         $router->delete('/blocks/{id}', [BlockController::class, 'destroy'])->name('blocks.destroy');
+
+        $router->get('/menus', [MenuController::class, 'index'])->name('menus.index');
+        $router->get('/menus/{id}/items/create', [MenuController::class, 'create'])->name('menus.items.create');
+        $router->post('/menus/{id}/items', [MenuController::class, 'store'])->name('menus.items.store');
+        $router->post('/menus/{id}/reorder', [MenuController::class, 'reorder'])->name('menus.reorder');
+        $router->get('/menu-items/{id}/edit', [MenuController::class, 'edit'])->name('menus.items.edit');
+        $router->put('/menu-items/{id}', [MenuController::class, 'update'])->name('menus.items.update');
+        $router->post('/menu-items/{id}/toggle', [MenuController::class, 'toggle'])->name('menus.items.toggle');
+        $router->delete('/menu-items/{id}', [MenuController::class, 'destroy'])->name('menus.items.destroy');
 
         $router->get('/media', [MediaController::class, 'index'])->name('media.index');
         $router->post('/media', [MediaController::class, 'store'])->name('media.store');

@@ -16,6 +16,13 @@ $siteName = (string)setting('general.site_name');
             <h1 class="display-4 mb-3 text-white text-uppercase"><i class="fa-regular fa-face-smile me-1"></i><?= e($siteName) ?></h1>
         </a>
         <?php if ($tagline = setting('general.tagline')): ?><p class="mb-4"><?= e($tagline) ?></p><?php endif ?>
+        <?php if ($footerMenu = menu('footer')): ?>
+            <nav class="footer-menu mb-4" aria-label="<?= e(t('nav.menu')) ?>">
+                <?php foreach ($footerMenu as $item): ?>
+                    <a href="<?= e($item['href']) ?>"<?= link_target($item) ?>><?= e($item['label']) ?></a>
+                <?php endforeach ?>
+            </nav>
+        <?php endif ?>
         <div class="d-flex justify-content-center flex-wrap mb-4">
             <?php foreach ($social as $network => $icon): ?>
                 <?php if ($href = setting("social.$network")): ?>

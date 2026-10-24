@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Blocks;
 
 use App\Models\Page;
+use Core\Support\Url;
 
 /**
  * შენახული ბლოკი → view-ის მონაცემები მიმდინარე ენაზე.
@@ -72,9 +73,8 @@ final class BlockResolver
             'url'   => (string)($link['url'] ?? ''),
             default => '',
         };
-        // შიდა ბილიკს ("/ka/about") base path ემატება (ქვესაქაღალდეში გაშვებისთვის)
-        if (($link['type'] ?? '') === 'url' && str_starts_with($href, '/') && !str_starts_with($href, '//')) {
-            $href = url(ltrim($href, '/'));
+        if (($link['type'] ?? '') === 'url') {
+            $href = Url::isSafeHref($href) ? Url::resolve($href) : '';
         }
         return $href === '' ? null : ['href' => $href, 'new_tab' => !empty($link['new_tab'])];
     }

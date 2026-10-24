@@ -6,6 +6,7 @@ namespace App\Blocks;
 use App\Models\Media;
 use App\Models\Page;
 use Core\Support\HtmlSanitizer;
+use Core\Support\Url;
 
 /**
  * ადმინის ბლოკის ფორმის დამუშავება ველების სქემით: გაწმენდა, ვალიდაცია, შენახვის ფორმატში გადაყვანა.
@@ -172,8 +173,7 @@ final class BlockInput
             $link['page_id'] = $id ?: null;
         } elseif ($type === 'url') {
             $url = trim(is_string($raw['url'] ?? null) ? $raw['url'] : '');
-            // დასაშვები: http(s), mailto:, tel:, საიტის შიდა ბილიკი (/...) და ღუზა (#...)
-            if (!preg_match('~^(https?://[^\s]+|mailto:[^\s]+|tel:[0-9+()\s-]+|/[^\s]*|#[\w-]*)$~i', $url)) {
+            if (!Url::isSafeHref($url)) {
                 $this->errors[$path] = 'ბმული: https://..., /გვერდი, #ღუზა, mailto: ან tel:';
             }
             $link['url'] = mb_substr($url, 0, 2000);

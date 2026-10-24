@@ -36,13 +36,17 @@ final class ActivityLog
         'block.created'       => 'დაამატა ბლოკი',
         'block.updated'       => 'შეცვალა ბლოკი',
         'block.deleted'       => 'წაშალა ბლოკი',
+        'menu.item_created'   => 'დაამატა მენიუს პუნქტი',
+        'menu.item_updated'   => 'შეცვალა მენიუს პუნქტი',
+        'menu.item_deleted'   => 'წაშალა მენიუს პუნქტი',
+        'menu.reordered'      => 'შეცვალა მენიუს რიგი',
     ];
 
     /** Dashboard-ის „დეტალები“ სვეტისთვის: data-დან ყველაზე აღწერითი მნიშვნელობა */
     public static function summary(?string $json): string
     {
         $data = $json ? (array)json_decode($json, true) : [];
-        return (string)($data['email'] ?? $data['code'] ?? $data['key'] ?? $data['name'] ?? $data['title'] ?? $data['block'] ?? (isset($data['count']) ? $data['count'] . ' ჩანაწერი' : ''));
+        return (string)($data['email'] ?? $data['code'] ?? $data['key'] ?? $data['name'] ?? $data['title'] ?? $data['block'] ?? $data['label'] ?? (isset($data['count']) ? $data['count'] . ' ჩანაწერი' : ''));
     }
 
     public function __construct(

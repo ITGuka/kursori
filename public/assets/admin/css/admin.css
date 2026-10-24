@@ -233,6 +233,18 @@ body {
     border-radius: 4px;
 }
 
+/* ---- მენიუები ---- */
+
+.menu-children {
+    margin-left: 32px;
+    min-height: 8px;
+    padding-left: 0;
+}
+
+.menu-children:empty {
+    min-height: 4px;
+}
+
 /* გასვლის ღილაკი dropdown-ში ბმულივით */
 .dropdown-menu form .dropdown-item {
     cursor: pointer;

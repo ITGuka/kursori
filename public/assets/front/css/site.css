@@ -84,6 +84,24 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     margin-bottom: 0;
 }
 
+/* footer-ის მენიუ */
+.footer-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 28px;
+    text-transform: uppercase;
+    font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
+}
+
+.footer-menu a {
+    color: var(--bs-light);
+}
+
+.footer-menu a:hover {
+    color: var(--bs-primary);
+}
+
 /* გუნდის ბარათზე ბმული მთლიან სახელზე */
 .team-item .team-name {
     color: var(--bs-white);

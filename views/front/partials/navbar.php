@@ -1,14 +1,12 @@
 <?php
 /**
  * @var array<string, string> $languageLinks lang => URL (იმავე გვერდის თარგმანი ან მთავარი)
- * ნავიგაცია ფაზა 5-მდე — გამოქვეყნებული გვერდებიდან (App\Models\Page::navigation).
+ * ნავიგაცია — ადმინის „მენიუები → მთავარი მენიუ“ (menu('header')).
  */
-use App\Models\Page;
-
 $lang = locale();
-$nav = app(Page::class)->navigation($lang);
-$current = rtrim((string)app()->request()?->path(), '/');
-$isActive = fn (string $href) => $href !== '' && rtrim((string)parse_url($href, PHP_URL_PATH), '/') === rtrim(app()->baseUrlPath() . $current, '/');
+$nav = menu('header');
+$currentPath = rtrim(app()->baseUrlPath() . (string)app()->request()?->path(), '/');
+$isActive = fn (string $href) => $href !== '' && !preg_match('~^[a-z]+:~i', $href) && rtrim((string)parse_url($href, PHP_URL_PATH), '/') === $currentPath;
 $logo = setting('general.logo');
 $siteName = (string)setting('general.site_name');
 ?>
@@ -27,15 +25,17 @@ $siteName = (string)setting('general.site_name');
         <div class="navbar-nav mx-auto p-4 p-lg-0">
             <?php foreach ($nav as $item): ?>
                 <?php if ($item['children'] === []): ?>
-                    <a href="<?= e($item['href']) ?>" class="nav-item nav-link<?= $isActive($item['href']) ? ' active' : '' ?>"><?= e($item['title']) ?></a>
+                    <a href="<?= e($item['href']) ?>"<?= link_target($item) ?> class="nav-item nav-link<?= $isActive($item['href']) ? ' active' : '' ?>"
+                        <?= $isActive($item['href']) ? ' aria-current="page"' : '' ?>><?= e($item['label']) ?></a>
                 <?php else: ?>
                     <?php $childActive = array_filter($item['children'], fn ($child) => $isActive($child['href'])); ?>
                     <div class="nav-item dropdown">
-                        <a href="<?= e($item['href']) ?>" class="nav-link dropdown-toggle<?= $isActive($item['href']) || $childActive ? ' active' : '' ?>" data-bs-toggle="dropdown"><?= e($item['title']) ?></a>
+                        <a href="<?= e($item['href']) ?>" class="nav-link dropdown-toggle<?= $isActive($item['href']) || $childActive ? ' active' : '' ?>" data-bs-toggle="dropdown"><?= e($item['label']) ?></a>
                         <div class="dropdown-menu m-0">
-                            <a href="<?= e($item['href']) ?>" class="dropdown-item d-lg-none"><?= e($item['title']) ?></a>
+                            <?php // dropdown-toggle ბმულს არ ხსნის — მშობელი გვერდი ჩამონათვალშიც ჩანს ?>
+                            <a href="<?= e($item['href']) ?>"<?= link_target($item) ?> class="dropdown-item<?= $isActive($item['href']) ? ' active' : '' ?>"><?= e($item['label']) ?></a>
                             <?php foreach ($item['children'] as $child): ?>
-                                <a href="<?= e($child['href']) ?>" class="dropdown-item<?= $isActive($child['href']) ? ' active' : '' ?>"><?= e($child['title']) ?></a>
+                                <a href="<?= e($child['href']) ?>"<?= link_target($child) ?> class="dropdown-item<?= $isActive($child['href']) ? ' active' : '' ?>"><?= e($child['label']) ?></a>
                             <?php endforeach ?>
                         </div>
                     </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Core\Database\DB;
+use Core\Support\Cache;
 
 /**
  * გვერდები: pages (სტრუქტურა, სტატუსი) + page_translations (სათაური, slug, SEO თითო ენაზე).
@@ -14,7 +15,7 @@ final class Page
     /** @var array<int, array{is_home: bool, status: string, parent_id: ?int, sort: int, slugs: array<string, string>, titles: array<string, string>}>|null */
     private ?array $map = null;
 
-    public function __construct(private readonly DB $db)
+    public function __construct(private readonly DB $db, private readonly Cache $cache)
     {
     }
 
@@ -185,15 +186,22 @@ final class Page
             }
             return $id;
         });
-        $this->map = null;
+        $this->changed();
         return $id;
     }
 
     public function delete(int $id): void
     {
-        // შვილები ზედა დონეზე გადადის (FK: ON DELETE SET NULL), ბლოკები და თარგმანები იშლება (CASCADE)
+        // შვილები ზედა დონეზე გადადის (FK: ON DELETE SET NULL), ბლოკები, თარგმანები და მენიუს პუნქტები იშლება (CASCADE)
         $this->db->delete('pages', 'id = ?', [$id]);
+        $this->changed();
+    }
+
+    /** სათაური/slug/სტატუსი მენიუშიც ჩანს — მისი ქეში იშლება */
+    private function changed(): void
+    {
         $this->map = null;
+        $this->cache->flush(Menu::CACHE_PREFIX);
     }
 
     /** @return array<int, array> */
