@@ -1,7 +1,7 @@
 # WEBDEV — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-24 · მიმდინარე ფაზა: **2 (ენები, თარგმანები, პარამეტრები)** · ფაზები 0–1 დასრულდა
+> ბოლო განახლება: 2026-10-24 · მიმდინარე ფაზა: **3 (მედია ბიბლიოთეკა)** · ფაზები 0–2 დასრულდა
 
 ## 1. მიზანი
 
@@ -33,6 +33,11 @@
 | D15 | ადმინის ავტორიზაცია | სესია + `password_hash`; მომხმარებელი ყოველ მოთხოვნაზე ბაზიდან იკითხება; პაროლის შეცვლა ან გათიშვა ხურავს მის ყველა სესიას; 2 სთ უმოქმედობის შემდეგ — გამოსვლა. „Remember me“ და პაროლის აღდგენა email-ით — არ არის (აღდგენა: `admin:create`) |
 | D16 | Login-ის ლიმიტი | 5 მცდელობა email+IP-ზე და 20 — IP-ზე, 15 წუთში; ზოგადი `rate_limits` ცხრილი (`login_attempts`-ის ნაცვლად), საჯარო ფორმებიც მას გამოიყენებს |
 | D17 | ადმინის ენა | ადმინის ინტერფეისი ქართულადაა (ტექსტები view-ებში); თარგმანების სისტემა (ფაზა 2) ფრონტისთვისაა |
+| D18 | ენების წყარო | `languages` ცხრილი (ადმინიდან); route-ში `{lang}` = `[a-z]{2}`, აქტიურობას `SetLocale` ამოწმებს. კოდი შექმნის შემდეგ არ იცვლება. ძირითადი ენა ყოველთვის ერთია და აქტიური; მისი წაშლა/გათიშვა აკრძალულია. ენის წაშლა შლის მის UI თარგმანებსა და პარამეტრებს |
+| D19 | UI თარგმანები | `translation_keys` (group, key) + `translation_values` (key_id, lang) — ცალკე გასაღებები, რომ ნაკლული თარგმანები ჩანდეს. `t('group.key')`; აკლია → ძირითადი ენა → გასაღები. Seed (`03_translations`) ადმინში შეცვლილ ტექსტებს არ ეხება |
+| D20 | პარამეტრები | განსაზღვრებები კოდში (`config/settings.php`: ჯგუფი → ველები, ტიპი, თარგმნადობა, default), მნიშვნელობები ბაზაში (`settings`: setting_key, lang — '' არათარგმნადისთვის). ადმინის ფორმა განსაზღვრებებიდან გენერირდება. ახალი პარამეტრი = ერთი ხაზი კონფიგში, მიგრაციის გარეშე |
+| D21 | ქეში | `Core\Support\Cache` — ფაილური (`storage/cache/data`, PHP ფაილები opcache-ისთვის). ენები, თარგმანები (ენაზე), პარამეტრები ქეშირდება ვადის გარეშე და იშლება ადმინში შენახვისას |
+| D22 | ტექნიკური რეჟიმი | `general.maintenance_mode` — სტუმრებს 503 (`errors/maintenance`), შესულ ადმინს — საიტი |
 
 ## 3. დირექტორიების სტრუქტურა
 
@@ -49,36 +54,40 @@ WEBDEV/
 ├── core/                    ← მრავალჯერადი ფრეიმვორკი (namespace Core\)
 │   ├── App.php              ✅ კონტეინერი (autowiring), boot, HTTP დამუშავება, locale
 │   ├── helpers.php          ✅ app, config, env, e, url, route, asset, view, redirect, back, abort,
-│   │                          csrf_token, csrf_field, old, errors, is_route, auth, locale
+│   │                          csrf_token, csrf_field, old, errors, is_route, auth, locale, t, setting
 │   ├── Http/                ✅ Request, Response (with/withErrors/withInput), Router, Route, Middleware,
 │   │                          HttpException, Middleware/VerifyCsrf
 │   ├── Database/            ✅ DB (PDO), Migration, Migrator, Seeder · ⏳ QueryBuilder (საჭიროებისამებრ)
 │   ├── View/                ✅ View, Template (layout, sections, insert)
 │   ├── Debug/               ✅ ErrorHandler (debug გვერდი / errors/*.php, ლოგი)
-│   ├── Support/             ✅ Env, Config, Session (flash), Csrf, Log, Validator, RateLimiter · ⏳ Cache, Str, Arr
+│   ├── Support/             ✅ Env, Config, Session (flash), Csrf, Log, Validator, RateLimiter, Cache · ⏳ Str, Arr
 │   ├── Console/             ✅ Console, Command, Output, Commands/*
 │   ├── Auth/                ✅ Auth
-│   ├── I18n/                ⏳ Translator (t())
+│   ├── I18n/                ✅ Translator (loader-ით — წყარო პროექტი წყვეტს)
+│   ├── Settings/            ✅ Settings (განსაზღვრებები კონფიგიდან, მნიშვნელობები ბაზიდან)
 │   ├── Media/               ⏳ Uploader, ImageResizer (GD)
 │   └── Mail/                ⏳ Mailer (PHPMailer wrapper)
 ├── app/                     ← პროექტის კოდი (namespace App\)
 │   ├── Controllers/Front/   ✅ Home (დროებითი) · ⏳ Page, Collection, Form, Newsletter, Sitemap
-│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User · ⏳ Pages, Blocks, Menus, Categories,
-│   │                          Collections, Media, Languages, Translations, Settings, Inbox, Newsletter
-│   ├── Middleware/          ✅ SetLocale, Authenticate (alias auth), RedirectIfAuthenticated (alias guest)
-│   ├── Models/              ✅ AdminUser, ActivityLog · ⏳ დანარჩენი ცხრილები
+│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings · ⏳ Pages, Blocks,
+│   │                          Menus, Categories, Collections, Media, Inbox, Newsletter
+│   ├── Middleware/          ✅ SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
+│   │                          RedirectIfAuthenticated (guest)
+│   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation · ⏳ დანარჩენი ცხრილები
 │   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create)
 │   ├── Blocks/              ⏳ ბლოკების რეესტრი და სქემები
 │   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
 │   ├── front/               ✅ layouts/base, home (დროებითი) · ⏳ Poseify partials, blocks/*
-│   ├── admin/               ✅ layouts/app, layouts/auth, partials/*, auth/login, dashboard, users/* · ⏳ მოდულები
-│   └── errors/default.php   ✅
-├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar)
+│   ├── admin/               ✅ layouts/*, partials/* (flash, pagination), auth/login, dashboard, users/*,
+│   │                          languages/*, translations/index, settings/index + field · ⏳ მოდულები
+│   └── errors/              ✅ default.php, maintenance.php
+├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar),
+│                              settings (პარამეტრების განსაზღვრებები)
 ├── database/
-│   ├── migrations/          ✅ languages, admin_users, rate_limits, activity_log
-│   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*)
+│   ├── migrations/          ✅ languages, admin_users, rate_limits, activity_log, translation_keys/values, settings
+│   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები)
 ├── resources/templates/     ✅ poseify/, dashmin/ — საწყისი HTML (reference) + zip (git-ის გარეშე)
 ├── storage/                 ✅ cache/, logs/ (git-ის გარეშე)
 ├── bin/console              ✅ CLI
@@ -140,6 +149,12 @@ return redirect(route('admin.users.index'))->with('success', 'შენახუ
 // ავტორიზაცია და ლიმიტი
 auth()->check(); auth()->user(); auth()->id();
 $limiter->tooManyAttempts($key, 5); $limiter->hit($key, 900); $limiter->clear($key);
+
+// თარგმანები და პარამეტრები (მიმდინარე ენაზე, fallback — ძირითადი ენა)
+t('nav.contact');  t('form.sent');  t('greeting', ['name' => 'ანა']);   // ტექსტში :name
+setting('contact.phone');  setting('general.site_name');  setting('general.maintenance_mode'); // toggle → bool
+// ახალი პარამეტრი: config/settings.php-ში ერთი ხაზი → ადმინში ველი ავტომატურად ჩნდება
+// ქეში: app(Cache::class)->remember('key', $ttl, fn () => ...); ->forget('key'); ->flush('prefix.')
 
 // ადმინის მოდული: route-ები app/routes/admin.php-ში ('auth' middleware-ით),
 // sidebar-ის პუნქტი config/admin.php-ში, ქმედების ჟურნალი — ActivityLog::log('page.updated', 'page', $id)
@@ -204,9 +219,9 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 | ჯგუფი | ცხრილები და მთავარი ველები |
 |---|---|
-| ენები | `languages` (code, name, native_name, is_default, is_active, sort) |
-| პარამეტრები | `settings` (key, value, type, group, is_translatable) + `setting_translations` (setting_id, lang, value) |
-| UI თარგმანები | `translations` (group, key, lang, value) → `t('nav.contact')` |
+| ენები | ✅ `languages` (code, name, native_name, is_default, is_active, sort) |
+| პარამეტრები | ✅ `settings` (setting_key, lang — '' არათარგმნადისთვის, value) — განსაზღვრებები `config/settings.php`-ში (D20) |
+| UI თარგმანები | ✅ `translation_keys` (group, key, description) + `translation_values` (key_id → CASCADE, lang, value) → `t('nav.contact')` |
 | გვერდები | `pages` (parent_id, status draft/published, is_home, sort, published_at) + `page_translations` (title, slug, meta_title, meta_description, og_image_id) |
 | ბლოკები | `page_blocks` (page_id, type, sort, is_active, settings JSON) + `page_block_translations` (content JSON) |
 | მენიუ | `menus` (location: header/footer) + `menu_items` (menu_id, parent_id, type page/category/item/url, target_id, url, target, icon, sort, is_active) + `menu_item_translations` (label, url) |
@@ -222,7 +237,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 ## 6. მრავალენოვნება
 
 - URL: `/{lang}/{slug}`, `/{lang}/{collection}/{slug}`. Slug ყოველ ენაზე ცალკეა.
-- `LocaleMiddleware` ამოიცნობს ენას პრეფიქსიდან; უცნობი/არააქტიური ენა → 404.
+- `SetLocale` ამოიცნობს ენას პრეფიქსიდან; უცნობი/არააქტიური ენა → 404. View-ებს უზიარებს `$lang` და `$languages` (გადამრთველისთვის).
+- `/` → 302 ძირითად ენაზე (ბაზიდან).
 - ენების გადამრთველი გადადის **იმავე გვერდის** შესაბამის თარგმანზე.
 - `<link rel="alternate" hreflang>` ყველა გვერდზე, `x-default` → `ka`.
 - თარგმანი აკლია → ჩანს ძირითადი ენის (`ka`) ვერსია; ადმინში ასეთი ჩანაწერები მონიშნულია.
@@ -268,8 +284,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 |---|---|---|
 | 0 | საფუძველი: სტრუქტურა, `core/` (Router, DB, View, Migrator, Session, Csrf), composer, console, Laragon vhost | ✅ 2026-10-24 |
 | 1 | ადმინის გარსი: DASHMIN layout, login/logout, ადმინ-მომხმარებლები | ✅ 2026-10-24 |
-| 2 | ენები, UI თარგმანები, საიტის პარამეტრები | ⏳ შემდეგი |
-| 3 | მედია ბიბლიოთეკა | — |
+| 2 | ენები, UI თარგმანები, საიტის პარამეტრები | ✅ 2026-10-24 |
+| 3 | მედია ბიბლიოთეკა (+ ლოგო/favicon/OG ველების გადაყვანა მედიის არჩევაზე) | ⏳ შემდეგი |
 | 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | — |
 | 5 | მენიუები | — |
 | 6 | კატეგორიები და კოლექციები | — |
@@ -280,6 +296,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 ## 12. ცვლილებების ისტორია
 
+- **2026-10-24** — ფაზა 2: ენების CRUD (ძირითადი ენის წესები), UI თარგმანების რედაქტორი (ფილტრი ჯგუფით, ძებნა, „მხოლოდ ნაკლული“, ერთად შენახვა, გასაღების დამატება/წაშლა), პარამეტრები ჩანართებით (ზოგადი, კონტაქტი, სოც. ქსელები, SEO, კოდი), ტექნიკური რეჟიმი. `core/`: Cache, Translator, Settings, Validator `regex`/`url`. გასწორდა: ნამდვილი PUT/PATCH/DELETE-ის form body არ იკითხებოდა. დაემატა D18–D22; `settings`/`translations` სქემა შეიცვალა D19–D20-ის მიხედვით.
 - **2026-10-24** — ფაზა 1: DASHMIN layout (sidebar `config/admin.php`-იდან), login/logout, ადმინ-მომხმარებლების CRUD, Dashboard ბოლო აქტივობით, `Core\Auth\Auth`, `RateLimiter`, `Validator`, flash/old/errors helper-ები, `admin:create`. მიგრაციები: admin_users, rate_limits, activity_log. გასწორდა: Apache-ზე 419 → 500 (ახლა სრული status line იგზავნება); flash მონაცემი იშლებოდა, თუ ზედიზედ ორ მოთხოვნაზე flash-დებოდა. DASHMIN-ის `main.js` ჩანაცვლდა `admin.js`-ით (დემო დიაგრამების გარეშე). დაემატა D15–D17.
 - **2026-10-24** — ფაზა 0: `core/` ფრეიმვორკი (App/კონტეინერი, Router, Request/Response, DB, Migrator, View/Template, Session, Csrf, ErrorHandler, Console), composer autoload, `.env`, languages მიგრაცია + seed, vhost `webdev.test`, თემფლეითები → `resources/templates/`, assets → `public/assets/`. დაემატა D12–D14.
 - **2026-10-24** — პირველი ვერსია: თემფლეითების ანალიზი, გადაწყვეტილებები D1–D11, სქემა, ფაზები.

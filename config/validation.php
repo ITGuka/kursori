@@ -16,6 +16,8 @@ return [
         'same'      => '„:attribute“ და „:other“ არ ემთხვევა.',
         'in'        => 'ველის „:attribute“ მნიშვნელობა არასწორია.',
         'unique'    => '„:attribute“ უკვე გამოყენებულია.',
+        'regex'     => 'ველის „:attribute“ ფორმატი არასწორია.',
+        'url'       => 'ველი „:attribute“ უნდა იყოს სწორი ბმული (http:// ან https://).',
     ],
 
     'attributes' => [

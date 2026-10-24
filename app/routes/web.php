@@ -2,17 +2,19 @@
 declare(strict_types=1);
 
 use App\Controllers\Front\HomeController;
+use App\Models\Language;
 use Core\Http\Router;
 
 /** @var Router $router */
 
-// "/" → ძირითადი ენა
-$router->get('/', fn () => redirect(url(config('app.default_locale'))))->name('root');
+// "/" → ძირითადი ენა (ბაზიდან)
+$router->get('/', fn (Language $languages) => redirect(url($languages->defaultCode())))->name('root');
 
+// ენის კოდი URL-ში; აქტიურობას SetLocale ამოწმებს languages ცხრილით
 $router->group([
     'prefix'     => '/{lang}',
-    'where'      => ['lang' => implode('|', config('app.locales'))],
-    'middleware' => ['locale'],
+    'where'      => ['lang' => '[a-z]{2}'],
+    'middleware' => ['locale', 'maintenance'],
 ], function (Router $router): void {
     $router->get('/', [HomeController::class, 'index'])->name('home');
 });

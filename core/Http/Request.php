@@ -27,9 +27,13 @@ final class Request
         $method = strtoupper($server['REQUEST_METHOD'] ?? 'GET');
         $body = $_POST;
 
-        if (str_contains($server['CONTENT_TYPE'] ?? '', 'application/json')) {
+        $contentType = (string)($server['CONTENT_TYPE'] ?? '');
+        if (str_contains($contentType, 'application/json')) {
             $json = json_decode((string)file_get_contents('php://input'), true);
             $body = is_array($json) ? $json : [];
+        } elseif ($method !== 'POST' && str_contains($contentType, 'application/x-www-form-urlencoded')) {
+            // PHP $_POST-ს მხოლოდ POST-ზე ავსებს; ნამდვილი PUT/PATCH/DELETE-ის body ხელით
+            parse_str((string)file_get_contents('php://input'), $body);
         }
 
         // HTML ფორმები მხოლოდ GET/POST-ს აგზავნიან: <input name="_method" value="DELETE">

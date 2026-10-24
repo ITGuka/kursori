@@ -20,7 +20,21 @@ final class ActivityLog
         'user.created'  => 'შექმნა მომხმარებელი',
         'user.updated'  => 'შეცვალა მომხმარებელი',
         'user.deleted'  => 'წაშალა მომხმარებელი',
+        'language.created'    => 'დაამატა ენა',
+        'language.updated'    => 'შეცვალა ენა',
+        'language.deleted'    => 'წაშალა ენა',
+        'translation.created' => 'დაამატა თარგმანის გასაღები',
+        'translation.updated' => 'შეცვალა თარგმანები',
+        'translation.deleted' => 'წაშალა თარგმანის გასაღები',
+        'settings.updated'    => 'შეცვალა პარამეტრები',
     ];
+
+    /** Dashboard-ის „დეტალები“ სვეტისთვის: data-დან ყველაზე აღწერითი მნიშვნელობა */
+    public static function summary(?string $json): string
+    {
+        $data = $json ? (array)json_decode($json, true) : [];
+        return (string)($data['email'] ?? $data['code'] ?? $data['key'] ?? (isset($data['count']) ? $data['count'] . ' ჩანაწერი' : ''));
+    }
 
     public function __construct(
         private readonly DB $db,

@@ -5,7 +5,6 @@ namespace App\Controllers\Front;
 
 use Core\Database\DB;
 use Core\Http\Response;
-use Throwable;
 
 final class HomeController
 {
@@ -13,21 +12,12 @@ final class HomeController
     {
     }
 
-    /** დროებითი გვერდი ფაზა 0-ისთვის: ამოწმებს, რომ ბირთვი და ბაზა მუშაობს */
-    public function index(string $lang): Response
+    /** დროებითი გვერდი: ამოწმებს, რომ ბირთვი, ბაზა, თარგმანები და პარამეტრები მუშაობს */
+    public function index(): Response
     {
-        try {
-            $languages = $this->db->select('SELECT code, native_name FROM languages WHERE is_active = 1 ORDER BY sort');
-            $dbStatus = 'MySQL ' . $this->db->value('SELECT VERSION()');
-        } catch (Throwable $e) {
-            $languages = [];
-            $dbStatus = 'DB error: ' . $e->getMessage();
-        }
-
         return view('front/home', [
-            'title'     => config('app.name'),
-            'languages' => $languages,
-            'dbStatus'  => $dbStatus,
+            'title'    => setting('seo.meta_title') ?: setting('general.site_name'),
+            'dbStatus' => 'MySQL ' . $this->db->value('SELECT VERSION()'),
         ]);
     }
 }

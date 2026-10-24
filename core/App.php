@@ -10,6 +10,7 @@ use Core\Debug\ErrorHandler;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Http\Router;
+use Core\Support\Cache;
 use Core\Support\Config;
 use Core\Support\Env;
 use Core\Support\RateLimiter;
@@ -66,6 +67,7 @@ final class App
         $this->singleton(View::class, fn (App $app) => new View($app->basePath('views')));
         $this->singleton(Auth::class, fn (App $app) => new Auth($app->make(DB::class), $config->get('auth', [])));
         $this->singleton(RateLimiter::class, fn (App $app) => new RateLimiter($app->make(DB::class)));
+        $this->singleton(Cache::class, fn (App $app) => new Cache($app->basePath('storage/cache/data')));
     }
 
     // ---- კონტეინერი ----

@@ -44,12 +44,11 @@ $this->layout('admin/layouts/app');
                 </thead>
                 <tbody>
                 <?php foreach ($activity as $row): ?>
-                    <?php $data = $row['data'] ? json_decode($row['data'], true) : []; ?>
                     <tr>
                         <td class="text-nowrap"><?= e(date('d.m.Y H:i', strtotime($row['created_at']))) ?></td>
                         <td><?= e($row['user_name'] ?? '—') ?></td>
                         <td><?= e(ActivityLog::LABELS[$row['action']] ?? $row['action']) ?></td>
-                        <td><?= e($data['email'] ?? '') ?></td>
+                        <td><?= e(ActivityLog::summary($row['data'])) ?></td>
                         <td><?= e($row['ip']) ?></td>
                     </tr>
                 <?php endforeach ?>

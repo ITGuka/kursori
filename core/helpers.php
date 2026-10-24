@@ -6,6 +6,8 @@ use Core\Auth\Auth;
 use Core\Http\HttpException;
 use Core\Http\Response;
 use Core\Http\Router;
+use Core\I18n\Translator;
+use Core\Settings\Settings;
 use Core\Support\Csrf;
 use Core\Support\Env;
 use Core\Support\Session;
@@ -95,6 +97,18 @@ function csrf_field(): string
 function locale(): string
 {
     return App::getInstance()->locale();
+}
+
+/** UI ტექსტი მიმდინარე ენაზე: t('nav.contact'), t('footer.copyright', ['year' => date('Y')]) */
+function t(string $key, array $replace = [], ?string $locale = null): string
+{
+    return app(Translator::class)->get($key, $replace, $locale ?? locale());
+}
+
+/** საიტის პარამეტრი მიმდინარე ენაზე: setting('contact.phone') */
+function setting(string $key, ?string $locale = null): mixed
+{
+    return app(Settings::class)->get($key, $locale ?? locale());
 }
 
 function auth(): Auth

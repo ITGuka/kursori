@@ -10,7 +10,8 @@ use InvalidArgumentException;
  * Validator::make($data, ['email' => 'required|email|max:190|unique:admin_users,email,5'])
  *
  * წესები: required, nullable, string, email, numeric, integer, boolean, min:n, max:n,
- * confirmed (field_confirmation), same:other, in:a,b, unique:table,column[,ignoreId].
+ * confirmed (field_confirmation), same:other, in:a,b, unique:table,column[,ignoreId], url (http/https),
+ * regex:/pattern/ (pattern-ში "|"-ის გამო წესები მასივად გადაეცით).
  * არასავალდებულო ცარიელ ველზე დანარჩენი წესები არ მოწმდება.
  * შეტყობინებები: config('validation.messages'), ველების სახელები: $attributes ან config('validation.attributes').
  */
@@ -29,6 +30,8 @@ final class Validator
         'same'      => 'The :attribute must match :other.',
         'in'        => 'The selected :attribute is invalid.',
         'unique'    => 'The :attribute has already been taken.',
+        'regex'     => 'The :attribute format is invalid.',
+        'url'       => 'The :attribute must be a valid URL (http/https).',
     ];
 
     /** @var array<string, string>|null */
@@ -108,6 +111,9 @@ final class Validator
             'confirmed' => ($this->data[$field . '_confirmation'] ?? null) === $value,
             'same'      => ($this->data[$param] ?? null) === $value,
             'in'        => in_array((string)$value, explode(',', $param), true),
+            'regex'     => is_string($value) && preg_match($param, $value) === 1,
+            'url'       => is_string($value) && filter_var($value, FILTER_VALIDATE_URL) !== false
+                           && in_array(strtolower((string)parse_url($value, PHP_URL_SCHEME)), ['http', 'https'], true),
             'unique'    => $this->unique($param, $value),
             default     => throw new InvalidArgumentException("Unknown validation rule [$rule]."),
         };
