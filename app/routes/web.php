@@ -5,10 +5,14 @@ use App\Controllers\Front\CollectionController;
 use App\Controllers\Front\FormController;
 use App\Controllers\Front\NewsletterController;
 use App\Controllers\Front\PageController;
+use App\Controllers\Front\SeoController;
 use App\Models\Language;
 use Core\Http\Router;
 
 /** @var Router $router */
+
+$router->get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+$router->get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
 // "/" → ძირითადი ენა (ბაზიდან)
 $router->get('/', fn (Language $languages) => redirect(url($languages->defaultCode())))->name('root');

@@ -9,6 +9,7 @@ use App\Models\Language;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Models\Redirect;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Support\Str;
@@ -24,6 +25,7 @@ final class PageController
         private readonly Language $languages,
         private readonly Media $media,
         private readonly ActivityLog $log,
+        private readonly Redirect $redirects,
     ) {
     }
 
@@ -67,7 +69,17 @@ final class PageController
             return $this->form($page, $data, $translations, $errors);
         }
 
+        $old = $this->pages->translations($id);
         $this->pages->save($id, $data, $translations);
+        // გამოქვეყნებული გვერდის slug შეიცვალა → ძველი მისამართიდან 301 (ბმულები და საძიებო სისტემები არ იკარგება)
+        if ($page['status'] === 'published' && !$page['is_home'] && !$data['is_home']) {
+            foreach ($translations as $lang => $t) {
+                $oldSlug = $old[$lang]['slug'] ?? null;
+                if ($oldSlug !== null && $t['title'] !== '' && $oldSlug !== $t['slug']) {
+                    $this->redirects->addAuto("/$lang/$oldSlug", "/$lang/{$t['slug']}");
+                }
+            }
+        }
         $this->log->log('page.updated', 'page', $id, ['title' => $this->title($translations)]);
         return redirect(route('admin.pages.edit', ['id' => $id]))->with('success', 'გვერდი შენახულია.');
     }

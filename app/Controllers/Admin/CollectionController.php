@@ -10,6 +10,7 @@ use App\Models\Collection;
 use App\Models\Language;
 use App\Models\Media;
 use App\Models\Page;
+use App\Models\Redirect;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Support\Str;
@@ -30,6 +31,7 @@ final class CollectionController
         private readonly Media $media,
         private readonly Page $pages,
         private readonly ActivityLog $log,
+        private readonly Redirect $redirects,
     ) {
     }
 
@@ -96,6 +98,17 @@ final class CollectionController
             return $this->form($type, $item, $core, $settings, $translations, $content, $errors);
         }
         $this->items->save($id, $type, $core, $settings, $translations, $content, $media);
+        // საჯარო ჩანაწერის slug შეიცვალა → ძველი მისამართიდან 301
+        if ($definition['public'] && $item['is_active']) {
+            $default = $this->languages->defaultCode();
+            foreach ($translations as $lang => $t) {
+                $oldSlug = $item['translations'][$lang]['slug'] ?? null;
+                if ($oldSlug !== null && $t['title'] !== '' && $oldSlug !== $t['slug']) {
+                    $base = Collection::routeSlug($type, $lang, $default);
+                    $this->redirects->addAuto("/$lang/$base/$oldSlug", "/$lang/$base/{$t['slug']}");
+                }
+            }
+        }
         $this->log->log('collection.updated', $type, $id, ['title' => $this->title($translations)]);
         if ($request->input('stay') === '1') {
             return redirect(route('admin.collections.edit', ['id' => $id]))->with('success', 'შენახულია.');

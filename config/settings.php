@@ -65,7 +65,9 @@ return [
             'meta_description' => ['label' => 'Meta description (default)', 'type' => 'textarea', 'translatable' => true, 'max' => 300],
             'og_image'         => ['label' => 'Open Graph სურათი (default)', 'type' => 'image'],
             'indexing'         => ['label' => 'საძიებო სისტემებისთვის ღია', 'type' => 'toggle', 'default' => true,
-                                   'help' => 'გამორთვისას ყველა გვერდს ემატება noindex.'],
+                                   'help' => 'გამორთვისას ყველა გვერდს ემატება noindex, robots.txt — Disallow: /, sitemap ცარიელია.'],
+            'robots_extra'     => ['label' => 'robots.txt — დამატებითი წესები', 'type' => 'code', 'max' => 5000,
+                                   'help' => 'მაგ. „Disallow: /ka/drafts“. Disallow: /admin და Sitemap ავტომატურად ემატება.'],
         ],
     ],
 

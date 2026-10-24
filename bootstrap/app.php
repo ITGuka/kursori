@@ -6,10 +6,13 @@ use App\Middleware\CheckMaintenance;
 use App\Middleware\RedirectIfAuthenticated;
 use App\Middleware\SetLocale;
 use App\Models\Language;
+use App\Models\Redirect;
 use App\Models\Translation;
 use Core\App;
 use Core\Database\DB;
 use Core\Http\Middleware\VerifyCsrf;
+use Core\Http\Request;
+use Core\Http\Response;
 use Core\Http\Router;
 use Core\I18n\Translator;
 use Core\Mail\Mailer;
@@ -57,6 +60,21 @@ $app->singleton(Mailer::class, function (App $app): Mailer {
         'from_email' => (string)$settings->get('mail.from_email'),
         'from_name'  => (string)($settings->get('mail.from_name') ?: $settings->get('general.site_name')),
     ]);
+});
+
+// 404 → ჯერ გადამისამართება (ადმინი → გადამისამართებები), არ არის → ჟურნალში ჩაწერა და 404 გვერდი
+$app->onNotFound(function (Request $request) use ($app): ?Response {
+    if (!in_array($request->method(), ['GET', 'HEAD'], true) || str_starts_with($request->path(), '/admin')) {
+        return null;
+    }
+    $redirects = $app->make(Redirect::class);
+    $target = $redirects->resolve($request->path());
+    if ($target !== null) {
+        $query = (string)$request->server('QUERY_STRING', '');
+        return redirect($target['url'] . ($query !== '' && !str_contains($target['url'], '?') ? "?$query" : ''), $target['code']);
+    }
+    $redirects->logNotFound($request->path(), (string)$request->header('Referer', ''));
+    return null;
 });
 
 $app->addMiddleware(VerifyCsrf::class);

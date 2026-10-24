@@ -7,6 +7,7 @@ use Closure;
 use Core\Auth\Auth;
 use Core\Database\DB;
 use Core\Debug\ErrorHandler;
+use Core\Http\HttpException;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Http\Router;
@@ -35,6 +36,9 @@ final class App
     private array $instances = [];
     /** @var list<class-string> ყველა route-ზე მომუშავე middleware */
     private array $middleware = [];
+
+    /** @var list<Closure> */
+    private array $notFound = [];
 
     private ?Request $request = null;
     private string $locale = '';
@@ -148,8 +152,30 @@ final class App
         try {
             return $this->make(Router::class)->dispatch($request, $this->middleware);
         } catch (Throwable $e) {
+            // 404 (route არ არის ან რესურსი ვერ მოიძებნა) → ჯერ notFound handler-ები (მაგ. გადამისამართებები)
+            if ($e instanceof HttpException && $e->status() === 404) {
+                foreach ($this->notFound as $handler) {
+                    try {
+                        $response = $handler($request);
+                    } catch (Throwable $handlerError) {
+                        return $this->make(ErrorHandler::class)->render($handlerError, $request);
+                    }
+                    if ($response instanceof Response) {
+                        return $response;
+                    }
+                }
+            }
             return $this->make(ErrorHandler::class)->render($e, $request);
         }
+    }
+
+    /**
+     * 404-ის დამმუშავებელი: Response — მის ნაცვლად, null — შემდეგი/სტანდარტული 404 გვერდი.
+     * @param Closure(Request): ?Response $handler
+     */
+    public function onNotFound(Closure $handler): void
+    {
+        $this->notFound[] = $handler;
     }
 
     public function request(): ?Request

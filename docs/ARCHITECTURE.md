@@ -1,7 +1,7 @@
 # WEBDEV — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **8 (SEO)** · ფაზები 0–7 დასრულდა
+> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **9 (ქეში, ოპტიმიზაცია, ფინალური კონტენტი)** · ფაზები 0–8 დასრულდა
 
 ## 1. მიზანი
 
@@ -56,6 +56,10 @@
 | D39 | კოლექციის საჯარო გვერდი | `public` კოლექციები: `/{lang}/{route}/{slug}` (`route` აკლია ენაზე → ძირითადის → გასაღები). Slug უნიკალურია კოლექცია+ენაზე (შეცდომა). არასაჯარო კოლექციაში slug შიდაა — დამთხვევისას სუფიქსი (`-2`). ჩანაწერი ენაზე სათაურის გარეშე → იმ ენაზე არ ჩანს. Breadcrumb/„უკან“ — იმავე slug-ის გვერდზე (მაგ. `/ka/servisebi`), თუ არსებობს |
 | D41 | საიდუმლოებები | `APP_KEY` (.env, `php bin/console key:generate`) + libsodium secretbox (`Core\Support\Crypt`). პარამეტრის ტიპი `password` ბაზაში დაშიფრულად ინახება, ფორმაში არ ჩანს; ცარიელი ველი — ძველი რჩება. APP_KEY-ის შეცვლისას SMTP პაროლი თავიდან შესაყვანია |
 | D42 | ფორმები / newsletter | §8: ფორმები Inbox-ში (email-ის გარეშე), honeypot + rate limit, double opt-in, პარტიებად გაგზავნა, one-click unsubscribe, ბმულები მხოლოდ APP_URL-იდან |
+| D43 | sitemap / robots | `/sitemap.xml` — გამოქვეყნებული გვერდები და საჯარო კოლექციების აქტიური ჩანაწერები, ყოველი აქტიური ენის ვერსია ცალკე `<url>`-ით და `xhtml:link` hreflang/x-default-ით; `/robots.txt` — `Disallow: /admin` + დამატებითი წესები (პარამეტრები → SEO) + Sitemap. „საძიებოსთვის ღია“ გამორთულია → `Disallow: /`, ცარიელი sitemap, noindex. ყველა სრული URL — APP_URL-იდან |
+| D44 | გადამისამართებები | `redirects` (from_path → to_url, 301/302) მუშაობს **მხოლოდ 404-ზე** (ცოცხალი გვერდი ყოველთვის იგებს): core `App::onNotFound()` hook. Query string გადაეცემა. გამოქვეყნებული გვერდის / საჯარო ჩანაწერის slug-ის შეცვლისას 301 ავტომატურად იქმნება, ჯაჭვების გარეშე (ძველი ყველა → უახლესი; ახალ მისამართზე არსებული გადამისამართება იშლება) |
+| D45 | 404 ჟურნალი | `not_found_log` (GET, /admin-ის გარეშე): ბილიკი, რაოდენობა, Referer; მაქს. 2000 ჩანაწერი (ძველი იშლება). ადმინში — „გადამისამართების შექმნა“ ერთი დაწკაპებით |
+| D46 | სტრუქტურირებული მონაცემები | ყოველ გვერდზე JSON-LD `Organization` (სახელი, URL, ლოგო, ელ-ფოსტა, ტელეფონი, სოც. ქსელები — პარამეტრებიდან), `og:url`, `og:locale`, `twitter:card` |
 | D40 | ბლოკი კოლექციიდან | services / team_grid / testimonials: `source` = ხელით (repeater) ან კოლექციიდან (+ კატეგორია, რაოდენობა). `config/blocks.php` → `collection.map` ჩანაწერის ველებს repeater-ის ფორმატზე გადაიყვანს (`@url`, `@read_more`). `show_if` — დამოკიდებული ველები ფორმაში იმალება და არ მოწმდება (მონაცემები ინახება — წყაროს დაბრუნებისას რომ არ დაიკარგოს) |
 | D33 | ქართული შრიფტი | Poseify-ის შრიფტებში ქართული არ არის — `site.css`-ში Noto Sans Georgian სარეზერვოდ, მობილურზე სათაურების ზომა მცირდება. `style.css` უცვლელია |
 
@@ -89,13 +93,13 @@ WEBDEV/
 │   ├── Media/               ✅ Uploader, ImageResizer (GD), UploadException
 │   └── Mail/                ✅ Mailer (PHPMailer, SMTP keep-alive პარტიებისთვის)
 ├── app/                     ← პროექტის კოდი (namespace App\)
-│   ├── Controllers/Front/   ✅ Page, Collection, Form, Newsletter · ⏳ Sitemap
+│   ├── Controllers/Front/   ✅ Page, Collection, Form, Newsletter, Seo (sitemap.xml, robots.txt)
 │   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media, Page, Block, Menu,
-│   │                          Collection, Category, Inbox, Newsletter
+│   │                          Collection, Category, Inbox, Newsletter, Redirect
 │   ├── Middleware/          ✅ SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
 │   │                          RedirectIfAuthenticated (guest)
 │   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media, Page, PageBlock, Menu,
-│   │                          Collection, Category, FormSubmission, Subscriber, Campaign
+│   │                          Collection, Category, FormSubmission, Subscriber, Campaign, Redirect
 │   ├── Services/            ✅ Newsletter (დასტურის წერილი, ტესტი, პარტიის გაგზავნა)
 │   ├── helpers.php          ✅ media(), media_url(), media_alt(), link_attrs(), menu(), link_target()
 │   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create), NewsletterSendCommand (newsletter:send)
@@ -111,7 +115,7 @@ WEBDEV/
 │   │                          auth/login, dashboard, users/*, languages/*, translations/index, settings/*, media/*,
 │   │                          pages/*, blocks/ (form, field — რეკურსიული, link), menus/ (index, item),
 │   │                          collections/ (index, form), categories/ (index, form), inbox/ (index, show),
-│   │                          newsletter/ (campaigns, form, subscribers, tabs)
+│   │                          newsletter/ (campaigns, form, subscribers, tabs), redirects/ (index — + 404 ჩანართი, form)
 │   └── errors/              ✅ default.php, 404.php (Poseify), maintenance.php
 ├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar),
 │                              settings (პარამეტრების განსაზღვრებები), media (ტიპები, ლიმიტები, ვარიანტები),
@@ -122,7 +126,7 @@ WEBDEV/
 │   │                          media + media_translations, pages + page_translations + page_blocks + page_block_translations,
 │   │                          menus + menu_items + menu_item_translations, categories + category_translations,
 │   │                          collection_items + collection_item_translations, form_submissions, subscribers,
-│   │                          newsletter_campaigns + newsletter_sends
+│   │                          newsletter_campaigns + newsletter_sends, redirects, not_found_log
 │   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები),
 │                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (6 გვერდი ბლოკებით),
 │                              06_menus (header — გვერდების ხე, footer — ზედა დონე),
@@ -286,7 +290,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | მედია | ✅ `media` (path, original_name, mime, extension, size, width, height, variants JSON, folder, uploaded_by) + `media_translations` (media_id → CASCADE, lang, alt, caption) |
 | ფორმები | ✅ `form_submissions` (form, lang, data JSON, page_url, ip, user_agent, is_read, created_at) |
 | Newsletter | ✅ `subscribers` (email unique, lang, status pending/active/unsubscribed, token unique, ip, confirmed_at, unsubscribed_at) · `newsletter_campaigns` (subject, body, lang '' = ყველა, status draft/sending/sent, created_by, started_at, sent_at) · `newsletter_sends` (campaign_id + subscriber_id → CASCADE, status pending/sent/failed, error, sent_at) |
-| სისტემა | ✅ `admin_users` (name, email, password_hash, is_active, last_login_at, last_login_ip) · ✅ `rate_limits` (limiter_key sha256, hits, reset_at) · ✅ `activity_log` (user_id → SET NULL, action, entity, entity_id, data JSON, ip) · `redirects` (from, to, code) · ✅ `migrations` |
+| სისტემა | ✅ `admin_users` (name, email, password_hash, is_active, last_login_at, last_login_ip) · ✅ `rate_limits` (limiter_key sha256, hits, reset_at) · ✅ `activity_log` (user_id → SET NULL, action, entity, entity_id, data JSON, ip) · ✅ `redirects` (from_path unique, to_url, code 301/302, is_active, is_auto, hits, last_hit_at) · ✅ `not_found_log` (path unique, hits, referer, first/last_seen_at) · ✅ `migrations` |
 
 კოლექციები ერთ ზოგად ცხრილშია: ახალი კოლექციის ტიპი (მაგ. `portfolio`) ემატება `app/` კონფიგში, მიგრაციის გარეშე. `attributes` ინახავს ტიპის სპეციფიკურ ველებს (მაგ. team-ისთვის პოზიცია, სოციალური ბმულები).
 
@@ -296,7 +300,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 - `SetLocale` ამოიცნობს ენას პრეფიქსიდან; უცნობი/არააქტიური ენა → 404. View-ებს უზიარებს `$lang` და `$languages` (გადამრთველისთვის).
 - `/` → 302 ძირითად ენაზე (ბაზიდან).
 - ენების გადამრთველი გადადის **იმავე გვერდის** შესაბამის თარგმანზე.
-- `<link rel="alternate" hreflang>` ყველა გვერდზე, `x-default` → `ka`.
+- `<link rel="alternate" hreflang>` ყველა გვერდზე (მხოლოდ ენებზე, სადაც თარგმანი არსებობს), `x-default` → ძირითადი ენა; იგივე — sitemap-ში (D43). Canonical, hreflang, og:url — APP_URL-ით.
 - თარგმანი აკლია → ჩანს ძირითადი ენის (`ka`) ვერსია; ადმინში ასეთი ჩანაწერები მონიშნულია.
 
 ## 7. ადმინი
@@ -352,12 +356,13 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | 5 | მენიუები | ✅ 2026-10-25 |
 | 6 | კატეგორიები და კოლექციები | ✅ 2026-10-25 |
 | 7 | ფორმები + Inbox, newsletter | ✅ 2026-10-25 |
-| 8 | SEO: sitemap, robots, hreflang, redirects, 404 | ⏳ შემდეგი |
-| 9 | ქეში, ოპტიმიზაცია, ატრიბუციის მოხსნა, ვებ დიზაინ სტუდიის კონტენტი | — |
+| 8 | SEO: sitemap, robots, hreflang, redirects, 404 | ✅ 2026-10-25 |
+| 9 | ქეში, ოპტიმიზაცია, ატრიბუციის მოხსნა, ვებ დიზაინ სტუდიის კონტენტი | ⏳ შემდეგი |
 | — | Deploy (მოგვიანებით, D9) | — |
 
 ## 12. ცვლილებების ისტორია
 
+- **2026-10-25** — ფაზა 8: `/sitemap.xml` (hreflang alternates), `/robots.txt` (პარამეტრებიდან), გადამისამართებები ადმინიდან (301/302, მხოლოდ 404-ზე, query-ის გადაცემით), ავტომატური 301 slug-ის შეცვლისას (ჯაჭვების გარეშე), 404 ჟურნალი, JSON-LD Organization, og:url/og:locale/twitter:card. `core/`: `App::onNotFound()`. გასწორდა: canonical/OG URL-ში `localhost/WEBDEV`-ზე base path რჩებოდა. დაემატა D43–D46.
 - **2026-10-25** — ფაზა 7: საკონტაქტო და განაცხადის ფორმები (ახალი ბლოკი `application_form`) → Inbox (წაუკითხავი/წაკითხული, ფილტრი, ძებნა, პასუხი mailto-თი); newsletter — double opt-in, დასტური/გაუქმება (one-click), კამპანიები ტესტით და პარტიებად გაგზავნით, გამომწერების სია და CSV; SMTP პარამეტრები ადმინში დაშიფრული პაროლით; `core/`: Mailer (PHPMailer), Crypt, Validator-ის შეტყობინებები, CSRF-ის გამონაკლისები, `absolute_url()`; `key:generate`, `newsletter:send`. დაემატა D41–D42.
 - **2026-10-25** — ფაზა 6: კოლექციები (სერვისები, გუნდი, შეფასებები, პორტფოლიო) კონფიგიდან, საკუთარი ველებით; კატეგორიები (2 დონე); ადმინში სია (ძებნა, ფილტრი, გადათრევით რიგი, დამალვა) და ფორმა (ბლოკების ველების ძრავით); საჯარო გვერდები (სერვისი, პროექტი) hreflang-ით; ბლოკები „წყარო: კოლექცია“ (კატეგორია, რაოდენობა); `show_if`; მედიის გამოყენება კოლექციებშიც. დემო გვერდების ბლოკები გადავიდა კოლექციებზე. დაემატა D37–D40.
 - **2026-10-25** — ფაზა 5: მართვადი მენიუები (header — 2 დონე, footer — 1 დონე): გვერდის/ბმულის პუნქტები, წარწერები და ბმულები ენებზე, ჩადგმული drag & drop, დამალვა, ახალ ფანჯარაში გახსნა; ფრონტის navbar და footer მენიუდან, ქეშით. `Core\Support\Url` — ბმულების ერთიანი შემოწმება (ახლა `//host` ბმულიც უარყოფილია). გასწორდა: ენის წაშლისას რჩებოდა მისი გვერდების, ბლოკებისა და მედიის თარგმანები. დაემატა D34–D36.

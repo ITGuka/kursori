@@ -52,6 +52,9 @@ final class ActivityLog
         'campaign.updated'    => 'შეცვალა კამპანია',
         'campaign.deleted'    => 'წაშალა კამპანია',
         'campaign.started'    => 'გაუშვა კამპანია',
+        'redirect.created'    => 'დაამატა გადამისამართება',
+        'redirect.updated'    => 'შეცვალა გადამისამართება',
+        'redirect.deleted'    => 'წაშალა გადამისამართება',
     ];
 
     /** Dashboard-ის „დეტალები“ სვეტისთვის: data-დან ყველაზე აღწერითი მნიშვნელობა */

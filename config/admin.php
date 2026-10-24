@@ -26,6 +26,7 @@ return [
         ['label' => 'მედია', 'icon' => 'fa fa-images', 'route' => 'admin.media.index', 'active' => 'admin.media.*'],
         ['label' => 'თარგმანები', 'icon' => 'fa fa-language', 'route' => 'admin.translations.index', 'active' => 'admin.translations.*'],
         ['label' => 'ენები', 'icon' => 'fa fa-globe', 'route' => 'admin.languages.index', 'active' => 'admin.languages.*'],
+        ['label' => 'გადამისამართებები', 'icon' => 'fa fa-random', 'route' => 'admin.redirects.index', 'active' => 'admin.redirects.*'],
         ['label' => 'პარამეტრები', 'icon' => 'fa fa-cog', 'route' => 'admin.settings.index', 'active' => 'admin.settings.*'],
         ['label' => 'მომხმარებლები', 'icon' => 'fa fa-users', 'route' => 'admin.users.index', 'active' => 'admin.users.*'],
     ],

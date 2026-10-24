@@ -6,6 +6,7 @@ use App\Controllers\Admin\BlockController;
 use App\Controllers\Admin\CategoryController;
 use App\Controllers\Admin\CollectionController;
 use App\Controllers\Admin\PageController;
+use App\Controllers\Admin\RedirectController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\InboxController;
 use App\Controllers\Admin\NewsletterController;
@@ -98,6 +99,14 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->post('/newsletter/{id}/test', [NewsletterController::class, 'test'])->name('newsletter.test');
         $router->post('/newsletter/{id}/start', [NewsletterController::class, 'start'])->name('newsletter.start');
         $router->post('/newsletter/{id}/batch', [NewsletterController::class, 'batch'])->name('newsletter.batch');
+
+        $router->get('/redirects', [RedirectController::class, 'index'])->name('redirects.index');
+        $router->get('/redirects/create', [RedirectController::class, 'create'])->name('redirects.create');
+        $router->post('/redirects', [RedirectController::class, 'store'])->name('redirects.store');
+        $router->delete('/redirects/not-found', [RedirectController::class, 'destroyNotFound'])->name('redirects.not_found.destroy');
+        $router->get('/redirects/{id}/edit', [RedirectController::class, 'edit'])->name('redirects.edit');
+        $router->put('/redirects/{id}', [RedirectController::class, 'update'])->name('redirects.update');
+        $router->delete('/redirects/{id}', [RedirectController::class, 'destroy'])->name('redirects.destroy');
 
         $router->get('/menus', [MenuController::class, 'index'])->name('menus.index');
         $router->get('/menus/{id}/items/create', [MenuController::class, 'create'])->name('menus.items.create');

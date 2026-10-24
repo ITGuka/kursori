@@ -10,7 +10,11 @@ $pageTitle = $meta['title'] ?? $siteName;
 $description = $meta['description'] ?? (string)setting('seo.meta_description');
 $ogImage = $meta['image'] ?? media_url(setting('seo.og_image'), 'large');
 $indexing = setting('seo.indexing') === true && empty($meta['noindex']);
-$absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $path) ? $path : rtrim((string)config('app.url'), '/') . $path;
+// url()-ის შედეგი (base path-ით, მაგ. /WEBDEV/ka) → სრული URL APP_URL-ით (canonical, hreflang, OG)
+$basePath = app()->baseUrlPath();
+$absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $path)
+    ? $path
+    : absolute_url($basePath !== '' && str_starts_with($path, $basePath . '/') ? substr($path, strlen($basePath)) : $path);
 ?>
 <!doctype html>
 <html lang="<?= e(locale()) ?>">
@@ -27,8 +31,27 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="<?= e($siteName) ?>">
     <meta property="og:title" content="<?= e($pageTitle) ?>">
+    <meta property="og:locale" content="<?= e(locale()) ?>">
+    <?php if (!empty($meta['canonical'])): ?><meta property="og:url" content="<?= e($absolute($meta['canonical'])) ?>"><?php endif ?>
     <?php if ($description !== ''): ?><meta property="og:description" content="<?= e($description) ?>"><?php endif ?>
-    <?php if ($ogImage !== ''): ?><meta property="og:image" content="<?= e($absolute($ogImage)) ?>"><?php endif ?>
+    <?php if ($ogImage !== ''): ?>
+        <meta property="og:image" content="<?= e($absolute($ogImage)) ?>">
+        <meta name="twitter:card" content="summary_large_image">
+    <?php endif ?>
+    <?php
+    // ორგანიზაციის სტრუქტურირებული მონაცემები (Google: სახელი, ლოგო, სოც. ქსელები, კონტაქტი)
+    $organization = array_filter([
+        '@context' => 'https://schema.org',
+        '@type'    => 'Organization',
+        'name'     => $siteName,
+        'url'      => absolute_url(locale()),
+        'logo'     => ($logo = media_url(setting('general.logo'))) !== '' ? $absolute($logo) : null,
+        'email'    => setting('contact.email') ?: null,
+        'telephone'=> setting('contact.phone') ?: null,
+        'sameAs'   => array_values(array_filter(array_map(fn ($n) => setting("social.$n"), ['facebook', 'instagram', 'x', 'linkedin', 'youtube', 'behance', 'dribbble']))) ?: null,
+    ]);
+    ?>
+    <script type="application/ld+json"><?= json_encode($organization, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
     <?php if ($favicon = media_url(setting('general.favicon'))): ?><link rel="icon" href="<?= e($favicon) ?>"><?php endif ?>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
