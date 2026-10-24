@@ -12,6 +12,7 @@ $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
     <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
     <title><?= e(($title ?? 'Admin') . ' · ' . config('app.name')) ?></title>
     <?= $this->insert('admin/partials/head') ?>
+    <?= $this->section('styles') ?>
 </head>
 <body>
 <div class="container-fluid position-relative bg-white d-flex p-0">
@@ -31,7 +32,7 @@ $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
             </div>
             <div class="navbar-nav w-100">
                 <?php foreach (config('admin.menu', []) as $item): ?>
-                    <a href="<?= e(route($item['route'])) ?>" class="nav-item nav-link<?= is_route($item['active']) ? ' active' : '' ?>">
+                    <a href="<?= e(route($item['route'])) ?>" class="nav-item nav-link<?= is_route(...(array)$item['active']) ? ' active' : '' ?>">
                         <i class="<?= e($item['icon']) ?> me-2"></i><?= e($item['label']) ?>
                     </a>
                 <?php endforeach ?>

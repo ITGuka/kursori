@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 use App\Controllers\Admin\AuthController;
+use App\Controllers\Admin\BlockController;
+use App\Controllers\Admin\PageController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\LanguageController;
 use App\Controllers\Admin\MediaController;
@@ -40,6 +42,22 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->put('/translations', [TranslationController::class, 'update'])->name('translations.update');
         $router->post('/translations', [TranslationController::class, 'store'])->name('translations.store');
         $router->delete('/translations/{id}', [TranslationController::class, 'destroy'])->name('translations.destroy');
+
+        $router->get('/pages', [PageController::class, 'index'])->name('pages.index');
+        $router->get('/pages/create', [PageController::class, 'create'])->name('pages.create');
+        $router->post('/pages', [PageController::class, 'store'])->name('pages.store');
+        $router->get('/pages/{id}/edit', [PageController::class, 'edit'])->name('pages.edit');
+        $router->put('/pages/{id}', [PageController::class, 'update'])->name('pages.update');
+        $router->delete('/pages/{id}', [PageController::class, 'destroy'])->name('pages.destroy');
+
+        $router->get('/pages/{id}/blocks/create', [BlockController::class, 'create'])->name('blocks.create');
+        $router->post('/pages/{id}/blocks', [BlockController::class, 'store'])->name('blocks.store');
+        $router->post('/pages/{id}/blocks/reorder', [BlockController::class, 'reorder'])->name('blocks.reorder');
+        $router->get('/blocks/{id}/edit', [BlockController::class, 'edit'])->name('blocks.edit');
+        $router->put('/blocks/{id}', [BlockController::class, 'update'])->name('blocks.update');
+        $router->post('/blocks/{id}/toggle', [BlockController::class, 'toggle'])->name('blocks.toggle');
+        $router->post('/blocks/{id}/duplicate', [BlockController::class, 'duplicate'])->name('blocks.duplicate');
+        $router->delete('/blocks/{id}', [BlockController::class, 'destroy'])->name('blocks.destroy');
 
         $router->get('/media', [MediaController::class, 'index'])->name('media.index');
         $router->post('/media', [MediaController::class, 'store'])->name('media.store');

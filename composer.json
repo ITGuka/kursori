@@ -9,7 +9,8 @@
         "ext-gd": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "ext-pdo_mysql": "*"
+        "ext-pdo_mysql": "*",
+        "ezyang/htmlpurifier": "^4.17"
     },
     "autoload": {
         "psr-4": {

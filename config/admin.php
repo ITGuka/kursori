@@ -6,6 +6,7 @@ declare(strict_types=1);
 return [
     'menu' => [
         ['label' => 'Dashboard', 'icon' => 'fa fa-tachometer-alt', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
+        ['label' => 'გვერდები', 'icon' => 'fa fa-file-alt', 'route' => 'admin.pages.index', 'active' => ['admin.pages.*', 'admin.blocks.*']],
         ['label' => 'მედია', 'icon' => 'fa fa-images', 'route' => 'admin.media.index', 'active' => 'admin.media.*'],
         ['label' => 'თარგმანები', 'icon' => 'fa fa-language', 'route' => 'admin.translations.index', 'active' => 'admin.translations.*'],
         ['label' => 'ენები', 'icon' => 'fa fa-globe', 'route' => 'admin.languages.index', 'active' => 'admin.languages.*'],

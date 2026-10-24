@@ -1,0 +1,105 @@
+/* Poseify-ის დამატებები (style.css უცვლელია) */
+
+/* ქართული ასოები Josefin Sans/Work Sans-ში არ არის — Noto Sans Georgian სარეზერვოდ */
+body {
+    font-family: "Work Sans", "Noto Sans Georgian", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+.navbar .navbar-nav .nav-link,
+.btn {
+    font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
+}
+
+/* ქართული ტექსტი upper-case-ში (მთავრული) ზედმეტად გრძელდება — სათაურებში ვტოვებთ, ნავიგაციაში ვამცირებთ */
+html[lang="ka"] .navbar .navbar-nav .nav-link {
+    font-size: 15px;
+}
+
+/* style.css-ის #header-carousel წესები — ბლოკის სლაიდერს უნიკალური id აქვს, ამიტომ კლასით */
+@media (max-width: 768px) {
+    .header-carousel .carousel-item {
+        position: relative;
+        min-height: 550px;
+    }
+
+    .header-carousel .carousel-item img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+/* მობილურზე სლაიდერის/გვერდის სათაური ეკრანზე ეტევა (განსაკუთრებით ქართული მთავრული) */
+@media (max-width: 991.98px) {
+    .header-carousel .display-1 {
+        font-size: calc(1.6rem + 3vw);
+    }
+
+    .header-carousel .title {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .page-header .display-4 {
+        font-size: calc(1.5rem + 2vw);
+    }
+}
+
+.title h1,
+.carousel-caption .display-1 {
+    overflow-wrap: anywhere;
+}
+
+.site-logo {
+    max-height: 56px;
+    width: auto;
+}
+
+/* page_header ბლოკის საკუთარი ფონი (style.css-ში ფიქსირებული carousel-1.jpg-ის ნაცვლად) */
+.page-header[data-custom-bg] {
+    background-size: cover;
+    background-position: top center;
+}
+
+/* ტექსტური (WYSIWYG) შიგთავსი */
+.rich-text a {
+    color: var(--bs-primary);
+}
+
+.rich-text ul,
+.rich-text ol {
+    padding-left: 1.25rem;
+}
+
+.rich-text blockquote {
+    border-left: 3px solid var(--bs-primary);
+    padding-left: 1rem;
+    font-style: italic;
+}
+
+.rich-text > :last-child {
+    margin-bottom: 0;
+}
+
+/* გუნდის ბარათზე ბმული მთლიან სახელზე */
+.team-item .team-name {
+    color: var(--bs-white);
+}
+
+/* ადმინისთვის მონახაზის წინასწარი ხედი */
+.preview-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 100;
+    padding: 8px 16px;
+    border-radius: 50px;
+    background: var(--bs-primary);
+    color: var(--bs-white);
+    font-size: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+}

@@ -147,6 +147,21 @@ final class Media
                 }
             }
         }
+
+        $title = "(SELECT title FROM page_translations t WHERE t.page_id = p.id ORDER BY t.lang = ? DESC LIMIT 1)";
+        $lang = (string)config('app.default_locale');
+        foreach ($this->db->column("SELECT $title FROM pages p WHERE p.og_image_id = ?", [$lang, $id]) as $page) {
+            $usages[] = "გვერდი „{$page}“ → OG სურათი";
+        }
+        $rows = $this->db->select(
+            "SELECT b.type, $title AS page FROM page_blocks b JOIN pages p ON p.id = b.page_id
+             WHERE JSON_CONTAINS(b.media_ids, CAST(? AS JSON))",
+            [$lang, (string)$id],
+        );
+        $blocks = (array)config('blocks', []);
+        foreach ($rows as $row) {
+            $usages[] = "გვერდი „{$row['page']}“ → ბლოკი „" . ($blocks[$row['type']]['label'] ?? $row['type']) . '“';
+        }
         return $usages;
     }
 

@@ -30,13 +30,19 @@ final class ActivityLog
         'media.uploaded'      => 'ატვირთა ფაილი',
         'media.updated'       => 'შეცვალა ფაილის მონაცემები',
         'media.deleted'       => 'წაშალა ფაილი',
+        'page.created'        => 'შექმნა გვერდი',
+        'page.updated'        => 'შეცვალა გვერდი',
+        'page.deleted'        => 'წაშალა გვერდი',
+        'block.created'       => 'დაამატა ბლოკი',
+        'block.updated'       => 'შეცვალა ბლოკი',
+        'block.deleted'       => 'წაშალა ბლოკი',
     ];
 
     /** Dashboard-ის „დეტალები“ სვეტისთვის: data-დან ყველაზე აღწერითი მნიშვნელობა */
     public static function summary(?string $json): string
     {
         $data = $json ? (array)json_decode($json, true) : [];
-        return (string)($data['email'] ?? $data['code'] ?? $data['key'] ?? $data['name'] ??(isset($data['count']) ? $data['count'] . ' ჩანაწერი' : ''));
+        return (string)($data['email'] ?? $data['code'] ?? $data['key'] ?? $data['name'] ?? $data['title'] ?? $data['block'] ?? (isset($data['count']) ? $data['count'] . ' ჩანაწერი' : ''));
     }
 
     public function __construct(

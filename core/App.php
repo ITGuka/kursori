@@ -13,6 +13,7 @@ use Core\Http\Router;
 use Core\Support\Cache;
 use Core\Support\Config;
 use Core\Support\Env;
+use Core\Support\HtmlSanitizer;
 use Core\Support\RateLimiter;
 use Core\Support\Session;
 use Core\View\View;
@@ -68,6 +69,7 @@ final class App
         $this->singleton(Auth::class, fn (App $app) => new Auth($app->make(DB::class), $config->get('auth', [])));
         $this->singleton(RateLimiter::class, fn (App $app) => new RateLimiter($app->make(DB::class)));
         $this->singleton(Cache::class, fn (App $app) => new Cache($app->basePath('storage/cache/data')));
+        $this->singleton(HtmlSanitizer::class, fn (App $app) => new HtmlSanitizer($app->basePath('storage/cache/htmlpurifier')));
     }
 
     // ---- კონტეინერი ----

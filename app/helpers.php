@@ -20,6 +20,15 @@ function media_url(mixed $id, string $variant = 'original'): string
     return $media === null ? '' : app(Media::class)->url($media, $variant);
 }
 
+/** ბლოკის link ველის ატრიბუტები: <a<?= link_attrs($data['button_link']) ?>> → href (+ target/rel) */
+function link_attrs(?array $link): string
+{
+    if ($link === null) {
+        return ' href="#"';
+    }
+    return ' href="' . e($link['href']) . '"' . (!empty($link['new_tab']) ? ' target="_blank" rel="noopener"' : '');
+}
+
 /** alt ტექსტი მიმდინარე ენაზე (აკლია → ძირითადი ენა) */
 function media_alt(mixed $id): string
 {

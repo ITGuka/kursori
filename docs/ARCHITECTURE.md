@@ -1,7 +1,7 @@
 # WEBDEV — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **4 (გვერდები + ბლოკები)** · ფაზები 0–3 დასრულდა
+> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **5 (მენიუები)** · ფაზები 0–4 დასრულდა
 
 ## 1. მიზანი
 
@@ -42,6 +42,13 @@
 | D24 | სურათის ვარიანტები | ატვირთვისას: `thumb` 400×400 (crop), `medium` 1024 და `large` 1920 (fit), `-{variant}` სუფიქსით. პატარა სურათი არ დიდდება; ორიგინალის ტოლი ვარიანტი არ ინახება; GIF (ანიმაცია) და PDF — ვარიანტების გარეშე. ხელახალი კოდირება EXIF/GPS-ს შლის, JPEG-ის ორიენტაცია სწორდება |
 | D25 | მედიაზე მითითება | ყველგან ინახება მედიის **id** (არა ბილიკი): `media_url($id, 'medium')`, `media_alt($id)`. Alt/წარწერა — თითო ენაზე (`media_translations`). გამოყენებული ფაილი არ იშლება (`Media::usages()` — ყოველი ახალი მოდული აქ ემატება) |
 | D26 | ატვირთვა ადმინში | ერთი ფაილი თითო AJAX მოთხოვნაზე (რიგრიგობით, პროგრესით, CSRF header-ით), drag & drop; ერთი საერთო picker-ფანჯარა ყველა ადმინ-გვერდზე (`partials/media-input` + `media.js`) |
+| D27 | გვერდის URL | ბრტყელი: `/{lang}/{slug}` (slug უნიკალურია ენის ფარგლებში; `[a-z0-9-]`, ქართულიდან ავტომატური ტრანსლიტერაციით — `Str::slug`), მთავარი — `/{lang}`. მშობელი გვერდი URL-ზე არ მოქმედებს — მხოლოდ breadcrumb-სა და მენიუზე. თარგმანი ენაზე არ არის → გვერდი იმ ენაზე 404, ენების გადამრთველი → იმ ენის მთავარი |
+| D28 | ბლოკის შენახვა | `page_blocks.settings` — არათარგმნადი ველები და repeater-ის სტრუქტურა (`_id`-ით), `page_block_translations.content` — თარგმნადი ველები ენაზე (repeater: `content[field][_id][sub]`), `media_ids` — გამოყენებული მედია (`JSON_CONTAINS` — წაშლისგან დაცვა). ცარიელი თარგმნადი ველი → ძირითადი ენა → default |
+| D29 | Header ბლოკი | Poseify-ის navbar absolute-ია, ამიტომ პირველი ბლოკი თუ `header` ტიპი არ არის (სლაიდერი / გვერდის სათაური), ავტომატურად ემატება გვერდის სათაური |
+| D30 | Link ველი | `page` (id → URL მიმდინარე ენაზე ავტომატურად) ან `url` (მხოლოდ http(s), `/...`, `#...`, `mailto:`, `tel:`); ახალ ფანჯარაში → `rel="noopener"` |
+| D31 | მონახაზი | `draft` გვერდი სტუმრისთვის 404, შესული ადმინისთვის — წინასწარი ხედი ზოლით და `noindex`-ით. დამალული ბლოკი არ იხატება |
+| D32 | ნავიგაცია ფაზა 5-მდე | ზედა დონის გამოქვეყნებული გვერდები `sort`-ით, შვილები — ჩამოსაშლელად (`Page::navigation`); ფაზა 5-ში ჩანაცვლდება მართვადი მენიუთი |
+| D33 | ქართული შრიფტი | Poseify-ის შრიფტებში ქართული არ არის — `site.css`-ში Noto Sans Georgian სარეზერვოდ, მობილურზე სათაურების ზომა მცირდება. `style.css` უცვლელია |
 
 ## 3. დირექტორიების სტრუქტურა
 
@@ -64,7 +71,8 @@ WEBDEV/
 │   ├── Database/            ✅ DB (PDO), Migration, Migrator, Seeder · ⏳ QueryBuilder (საჭიროებისამებრ)
 │   ├── View/                ✅ View, Template (layout, sections, insert)
 │   ├── Debug/               ✅ ErrorHandler (debug გვერდი / errors/*.php, ლოგი)
-│   ├── Support/             ✅ Env, Config, Session (flash), Csrf, Log, Validator, RateLimiter, Cache · ⏳ Str, Arr
+│   ├── Support/             ✅ Env, Config, Session (flash), Csrf, Log, Validator, RateLimiter, Cache,
+│   │                          Str (slug, limit), HtmlSanitizer (HTMLPurifier) · ⏳ Arr
 │   ├── Console/             ✅ Console, Command, Output, Commands/*
 │   ├── Auth/                ✅ Auth
 │   ├── I18n/                ✅ Translator (loader-ით — წყარო პროექტი წყვეტს)
@@ -72,36 +80,41 @@ WEBDEV/
 │   ├── Media/               ✅ Uploader, ImageResizer (GD), UploadException
 │   └── Mail/                ⏳ Mailer (PHPMailer wrapper)
 ├── app/                     ← პროექტის კოდი (namespace App\)
-│   ├── Controllers/Front/   ✅ Home (დროებითი) · ⏳ Page, Collection, Form, Newsletter, Sitemap
-│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media · ⏳ Pages, Blocks,
-│   │                          Menus, Categories, Collections, Inbox, Newsletter
+│   ├── Controllers/Front/   ✅ Page · ⏳ Collection, Form, Newsletter, Sitemap
+│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media, Page, Block ·
+│   │                          ⏳ Menus, Categories, Collections, Inbox, Newsletter
 │   ├── Middleware/          ✅ SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
 │   │                          RedirectIfAuthenticated (guest)
-│   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media · ⏳ დანარჩენი ცხრილები
-│   ├── helpers.php          ✅ media(), media_url(), media_alt()
+│   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media, Page, PageBlock · ⏳ დანარჩენი
+│   ├── helpers.php          ✅ media(), media_url(), media_alt(), link_attrs()
 │   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create)
-│   ├── Blocks/              ⏳ ბლოკების რეესტრი და სქემები
+│   ├── Blocks/              ✅ BlockRegistry (config/blocks.php), BlockInput (ფორმა → ვალიდაცია → JSON),
+│   │                          BlockResolver (JSON → view-ის მონაცემები ენაზე)
 │   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
-│   ├── front/               ✅ layouts/base, home (დროებითი) · ⏳ Poseify partials, blocks/*
+│   ├── front/               ✅ layouts/main (Poseify), partials/ (navbar, footer, title), page, blocks/* (10 ტიპი)
 │   ├── admin/               ✅ layouts/*, partials/* (flash, pagination, upload-zone, media-input, media-picker),
-│   │                          auth/login, dashboard, users/*, languages/*, translations/index, settings/*, media/* · ⏳ მოდულები
-│   └── errors/              ✅ default.php, maintenance.php
+│   │                          auth/login, dashboard, users/*, languages/*, translations/index, settings/*, media/*,
+│   │                          pages/*, blocks/ (form, field — რეკურსიული, link) · ⏳ მოდულები
+│   └── errors/              ✅ default.php, 404.php (Poseify), maintenance.php
 ├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar),
-│                              settings (პარამეტრების განსაზღვრებები), media (ტიპები, ლიმიტები, ვარიანტები)
+│                              settings (პარამეტრების განსაზღვრებები), media (ტიპები, ლიმიტები, ვარიანტები),
+│                              blocks (ბლოკების ტიპები და ველები)
 ├── database/
 │   ├── migrations/          ✅ languages, admin_users, rate_limits, activity_log, translation_keys/values, settings,
-│   │                          media + media_translations
+│   │                          media + media_translations, pages + page_translations + page_blocks + page_block_translations
 │   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები),
-│                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo")
+│                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (6 გვერდი ბლოკებით)
 ├── resources/templates/     ✅ poseify/, dashmin/ — საწყისი HTML (reference) + zip (git-ის გარეშე)
 ├── storage/                 ✅ cache/, logs/ (git-ის გარეშე)
 ├── bin/console              ✅ CLI
 ├── .env / .env.example      ✅
 ├── docs/ARCHITECTURE.md
-└── composer.json            ✅ PSR-4: Core\ → core/, App\ → app/
+└── composer.json            ✅ PSR-4: Core\ → core/, App\ → app/; ezyang/htmlpurifier
 ```
+
+Laragon-ის PHP CLI-ში `zip` გაფართოება გამორთულია, ამიტომ Composer-ის ინსტალაცია: `php -d extension=zip C:\laragon\bin\composer\composer.phar install`.
 
 ### ფენები და მოთხოვნის გზა
 
@@ -193,38 +206,45 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 ## 4. ბლოკების სისტემა (Page Builder)
 
-გვერდი = ბლოკების დალაგებული სია. ბლოკის ყოველ ტიპს `app/Blocks/`-ში აქვს სქემა:
+გვერდი = ბლოკების დალაგებული სია. ბლოკის ყოველ ტიპს `config/blocks.php`-ში აქვს სქემა (ფორმა, ვალიდაცია და ფრონტის მონაცემები აქედან):
 
 ```php
 'services' => [
-    'view'   => 'blocks/services',
+    'label'  => 'სერვისები',
+    'icon'   => 'fa fa-concierge-bell',
+    'view'   => 'front/blocks/services',   // ხატავს $data-ს (უკვე მიმდინარე ენაზე)
+    'header' => false,                     // true — გვერდის თავში, navbar-ის ქვეშ (D29)
     'fields' => [
-        'subtitle' => ['type' => 'text',  'translatable' => true],
-        'title'    => ['type' => 'text',  'translatable' => true],
-        'source'   => ['type' => 'select', 'options' => ['collection', 'manual']],
-        'category' => ['type' => 'category', 'collection' => 'services'],
-        'limit'    => ['type' => 'number', 'default' => 4],
+        'subtitle' => ['type' => 'text', 'label' => 'ქვესათაური', 'translatable' => true, 'max' => 100],
+        'items'    => ['type' => 'repeater', 'label' => 'სერვისები', 'max_items' => 20, 'fields' => [
+            'image'       => ['type' => 'image', 'label' => 'სურათი'],
+            'title'       => ['type' => 'text', 'label' => 'სახელი', 'translatable' => true],
+            'button_link' => ['type' => 'link', 'label' => 'ბმული'],
+        ]],
     ],
 ],
 ```
 
-ადმინი სქემიდან ფორმას ავტომატურად აგენერირებს. ველის ტიპები: `text`, `textarea`, `wysiwyg`, `image`, `gallery`, `link` (url + ტექსტი + target), `select`, `number`, `toggle`, `repeater` (ჩამონათვალი, მაგ. სლაიდები/bullet-ები), `category`, `collection_items`.
+ველის ტიპები: `text`, `textarea`, `wysiwyg` (Jodit → HTMLPurifier), `image` (მედიის id), `link` (D30), `select`, `number`, `toggle`, `repeater` (ერთი დონე; გადათრევით დალაგება). ვარიანტები: `translatable`, `required` (მხოლოდ ძირითად ენაზე), `default`, `max`, `min`/`max` (number), `min_items`/`max_items`, `help`.
+⏳ ფაზა 6: `category` / `collection_items` — services/team/testimonials ბლოკები კოლექციიდანაც.
 
 | ბლოკი | Poseify-ის წყარო | შინაარსი |
 |---|---|---|
-| `hero_carousel` | index Header carousel | სლაიდები: სურათი, ქვესათაური, სათაური, ტექსტი, ღილაკი |
-| `page_header` | შიდა გვერდების header | სათაური + breadcrumb (ავტომატური) |
-| `about` | About | სათაურები, ტექსტი, bullet-ები, 2 ღილაკი, სურათი |
-| `services` | Service | კოლექციიდან `services` (ზიგზაგ layout) |
-| `banner_signup` | Banner | სათაური, ტექსტი, newsletter ფორმა |
-| `team_grid` | Team | კოლექციიდან `team` + ატრიბუტები (hover-ზე) |
-| `testimonials` | Testimonial | კოლექციიდან `testimonials` (owl carousel) |
-| `contact` | Contact | კონტაქტები settings-იდან + contact ფორმა |
-| `map` | Google Map | embed URL |
-| `application_form` | — (Banner-ის სტილით) | განაცხადის ფორმა (ყოფილი Casting) |
-| `rich_text` | — | თავისუფალი WYSIWYG კონტენტი |
+| ✅ `hero_carousel` | index Header carousel | სლაიდები: სურათი, ქვესათაური, სათაური, ტექსტი, ღილაკი (header) |
+| ✅ `page_header` | შიდა გვერდების header | სათაური (ცარიელი → გვერდის სახელი), ფონის სურათი, breadcrumb (header) |
+| ✅ `about` | About | სათაურები, WYSIWYG ტექსტი, ჩამონათვალი, 2 ღილაკი, სურათი, ფონი |
+| ✅ `services` | Service | სერვისები (ზიგზაგ layout): სურათი, სახელი, აღწერა, ღილაკი |
+| ✅ `banner_signup` | Banner | სათაური, ტექსტი, newsletter ფორმა (დამუშავება — ფაზა 7) |
+| ✅ `team_grid` | Team | წევრები: ფოტო, სახელი, „დასახელება: მნიშვნელობა“ ხაზები (hover-ზე), ბმული |
+| ✅ `testimonials` | Testimonial | შეფასებები (owl carousel, ფოტო — dot-ში) |
+| ✅ `contact` | Contact | სათაური, ტექსტი, კონტაქტები და სოც. ქსელები პარამეტრებიდან, ფორმა (დამუშავება — ფაზა 7) |
+| ✅ `map` | Google Map | embed URL (მხოლოდ google.com/maps/embed) ან პარამეტრებიდან, სიმაღლე |
+| ✅ `rich_text` | — | სათაური + თავისუფალი WYSIWYG ტექსტი |
+| ⏳ `application_form` | — (Banner-ის სტილით) | განაცხადის ფორმა — ფაზა 7 |
 
-ბლოკის მონაცემები: არათარგმნადი ველები `page_blocks.settings` (JSON), თარგმნადი — `page_block_translations.content` (JSON, თითო ენაზე).
+ახალი ბლოკის დამატება: ჩანაწერი `config/blocks.php`-ში + view `views/front/blocks/{type}.php` — ადმინის ფორმა ავტომატურად ჩნდება.
+
+ბლოკის მონაცემები: D28. ერთი ბლოკის view-ის შეცდომა production-ში მთელ გვერდს არ აგდებს (ლოგში იწერება, ბლოკი გამოტოვდება).
 
 ## 5. ბაზის სქემა
 
@@ -235,8 +255,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | ენები | ✅ `languages` (code, name, native_name, is_default, is_active, sort) |
 | პარამეტრები | ✅ `settings` (setting_key, lang — '' არათარგმნადისთვის, value) — განსაზღვრებები `config/settings.php`-ში (D20) |
 | UI თარგმანები | ✅ `translation_keys` (group, key, description) + `translation_values` (key_id → CASCADE, lang, value) → `t('nav.contact')` |
-| გვერდები | `pages` (parent_id, status draft/published, is_home, sort, published_at) + `page_translations` (title, slug, meta_title, meta_description, og_image_id) |
-| ბლოკები | `page_blocks` (page_id, type, sort, is_active, settings JSON) + `page_block_translations` (content JSON) |
+| გვერდები | ✅ `pages` (parent_id → SET NULL, status draft/published, is_home, sort, og_image_id → media) + `page_translations` (page_id → CASCADE, lang, title, slug — unique(lang, slug), meta_title, meta_description) |
+| ბლოკები | ✅ `page_blocks` (page_id → CASCADE, type, sort, is_active, settings JSON, media_ids JSON) + `page_block_translations` (block_id → CASCADE, lang, content JSON) |
 | მენიუ | `menus` (location: header/footer) + `menu_items` (menu_id, parent_id, type page/category/item/url, target_id, url, target, icon, sort, is_active) + `menu_item_translations` (label, url) |
 | კატეგორიები | `categories` (collection, parent_id, sort, is_active) + `category_translations` (name, slug, description) |
 | კოლექციები | `collection_items` (collection: services/team/testimonials/…, category_id, image_id, attributes JSON, sort, is_active) + `collection_item_translations` (title, slug, subtitle, excerpt, body, attributes JSON) |
@@ -300,8 +320,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | 1 | ადმინის გარსი: DASHMIN layout, login/logout, ადმინ-მომხმარებლები | ✅ 2026-10-24 |
 | 2 | ენები, UI თარგმანები, საიტის პარამეტრები | ✅ 2026-10-24 |
 | 3 | მედია ბიბლიოთეკა (+ ლოგო/favicon/OG ველების გადაყვანა მედიის არჩევაზე) | ✅ 2026-10-25 |
-| 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | ⏳ შემდეგი |
-| 5 | მენიუები | — |
+| 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | ✅ 2026-10-25 |
+| 5 | მენიუები | ⏳ შემდეგი |
 | 6 | კატეგორიები და კოლექციები | — |
 | 7 | ფორმები + Inbox, newsletter | — |
 | 8 | SEO: sitemap, robots, hreflang, redirects, 404 | — |
@@ -310,6 +330,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 ## 12. ცვლილებების ისტორია
 
+- **2026-10-25** — ფაზა 4: გვერდები (ხე, თარგმანები, slug ქართულიდან, SEO, OG სურათი, მონახაზი/წინასწარი ხედი, მთავარი გვერდი) და ბლოკების რედაქტორი (10 ტიპი სქემიდან, repeater, Jodit, link ველი, გადათრევით დალაგება, დამალვა, კოპირება). ფრონტი Poseify-ის layout-ზე: navbar (დროებით გვერდებიდან), ენების გადამრთველი, footer პარამეტრებიდან, hreflang/canonical/OG, Poseify-ის 404. Poseify-ის 6 გვერდი seed-ით. `core/`: Str, HtmlSanitizer; composer: HTMLPurifier. დაემატა D27–D33.
 - **2026-10-25** — ფაზა 3: მედია ბიბლიოთეკა (ბადე, ფილტრები, drag & drop ატვირთვა პროგრესით, საქაღალდეები, alt/წარწერა ენებზე, URL-ის კოპირება, გამოყენების შემოწმება წაშლამდე), საერთო picker-ფანჯარა, პარამეტრების `image` ველები → მედიის id. `core/Media`: Uploader, ImageResizer. Poseify-ის დემო სურათები seed-ით. Uploader სურათს GD-ით სრულად ხსნის (დაზიანებული ფაილი არ მიიღება). გასწორდა: მშობელი პროექტის CSP `localhost/WEBDEV/`-ზე jQuery-ს ბლოკავდა. დაემატა D23–D26.
 - **2026-10-24** — ფაზა 2: ენების CRUD (ძირითადი ენის წესები), UI თარგმანების რედაქტორი (ფილტრი ჯგუფით, ძებნა, „მხოლოდ ნაკლული“, ერთად შენახვა, გასაღების დამატება/წაშლა), პარამეტრები ჩანართებით (ზოგადი, კონტაქტი, სოც. ქსელები, SEO, კოდი), ტექნიკური რეჟიმი. `core/`: Cache, Translator, Settings, Validator `regex`/`url`. გასწორდა: ნამდვილი PUT/PATCH/DELETE-ის form body არ იკითხებოდა. დაემატა D18–D22; `settings`/`translations` სქემა შეიცვალა D19–D20-ის მიხედვით.
 - **2026-10-24** — ფაზა 1: DASHMIN layout (sidebar `config/admin.php`-იდან), login/logout, ადმინ-მომხმარებლების CRUD, Dashboard ბოლო აქტივობით, `Core\Auth\Auth`, `RateLimiter`, `Validator`, flash/old/errors helper-ები, `admin:create`. მიგრაციები: admin_users, rate_limits, activity_log. გასწორდა: Apache-ზე 419 → 500 (ახლა სრული status line იგზავნება); flash მონაცემი იშლებოდა, თუ ზედიზედ ორ მოთხოვნაზე flash-დებოდა. DASHMIN-ის `main.js` ჩანაცვლდა `admin.js`-ით (დემო დიაგრამების გარეშე). დაემატა D15–D17.
