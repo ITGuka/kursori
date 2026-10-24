@@ -161,12 +161,29 @@ return [
         ],
     ],
 
+    'portfolio_grid' => [
+        'label'  => 'პორტფოლიო',
+        'icon'   => 'fa fa-briefcase',
+        'view'   => 'front/blocks/portfolio_grid',
+        // ყოველთვის კოლექციიდან (always) — ხელით შევსება ამ ბლოკს არ აქვს
+        'collection' => ['type' => 'portfolio', 'target' => 'items', 'always' => true, 'map' => [
+            'image' => 'image', 'title' => 'title', 'category' => 'category', 'category_id' => 'category_id', 'excerpt' => 'excerpt', 'link' => '@url',
+        ]],
+        'fields' => $title + [
+            'category'    => ['type' => 'category', 'label' => 'კატეგორია', 'collection' => 'portfolio', 'help' => 'ცარიელი — ყველა პროექტი.'],
+            'limit'       => ['type' => 'number', 'label' => 'რაოდენობა', 'min' => 0, 'max' => 100, 'default' => 0, 'help' => '0 — ყველა.'],
+            'show_filter' => ['type' => 'toggle', 'label' => 'კატეგორიების ფილტრის ჩვენება', 'default' => true],
+            'background'  => $background,
+        ],
+    ],
+
     'application_form' => [
         'label'  => 'განაცხადის ფორმა',
         'icon'   => 'fa fa-file-signature',
         'view'   => 'front/blocks/application_form',
         'fields' => $title + [
             'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
+            'message_label' => ['type' => 'text', 'label' => 'ტექსტის ველის წარწერა', 'translatable' => true, 'max' => 100, 'help' => 'ცარიელი — „მოგვიყევით თქვენ შესახებ“. მაგ. „მოგვიყევით პროექტზე“.'],
             'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „განაცხადის გაგზავნა“.'],
             'background'   => ['default' => 'secondary'] + $background,
         ],

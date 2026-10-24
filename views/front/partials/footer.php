@@ -30,8 +30,7 @@ $siteName = (string)setting('general.site_name');
                 <?php endif ?>
             <?php endforeach ?>
         </div>
-        <p><?= e(str_replace(':year', date('Y'), (string)setting('general.copyright'))) ?></p>
-        <?php // HTML Codex ატრიბუცია — იშლება Credit Removal ლიცენზიის შეძენის შემდეგ (ფაზა 9, D11) ?>
-        <p class="mb-0">Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a></p>
+        <?php // HTML Codex ატრიბუცია მოხსნილია — Credit Removal ლიცენზიით (D11) ?>
+        <p class="mb-0"><?= e(str_replace(':year', date('Y'), (string)setting('general.copyright'))) ?></p>
     </div>
 </div>

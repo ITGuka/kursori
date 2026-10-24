@@ -17,6 +17,12 @@ return [
     // CSRF-ის გარეშე: ფოსტის კლიენტის „ერთი დაწკაპებით გაუქმება“ (RFC 8058) — დაცვა URL-ის საიდუმლო token-ით
     'csrf_except' => ['newsletter.unsubscribe.confirm'],
 
+    // ფრონტის გვერდების HTML ქეში სტუმრებისთვის (App\Middleware\PageCache); ttl — წამები
+    'page_cache' => [
+        'enabled' => (bool)env('PAGE_CACHE', true),
+        'ttl'     => 86400,
+    ],
+
     'session' => [
         'name' => 'webdev_session',
     ],

@@ -202,7 +202,31 @@ final class Collection
              WHERE $where ORDER BY i.sort, i.id" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
             $bindings,
         );
-        return array_map(fn ($id) => $this->resolve($this->find((int)$id), $lang, $defaultLang), $ids);
+        return array_map(fn (array $item) => $this->resolve($item, $lang, $defaultLang), $this->findMany(array_map('intval', $ids)));
+    }
+
+    /**
+     * რამდენიმე ჩანაწერი თარგმანებით ორ query-ში (find()-ის ფორმატით), $ids-ის რიგით.
+     * @param list<int> $ids
+     * @return list<array>
+     */
+    public function findMany(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+        $placeholders = implode(', ', array_fill(0, count($ids), '?'));
+        $items = [];
+        foreach ($this->db->select("SELECT * FROM collection_items WHERE id IN ($placeholders)", $ids) as $row) {
+            $row['settings'] = self::decode($row['settings']);
+            $row['translations'] = [];
+            $items[(int)$row['id']] = $row;
+        }
+        foreach ($this->db->select("SELECT * FROM collection_item_translations WHERE item_id IN ($placeholders)", $ids) as $row) {
+            $row['content'] = self::decode($row['content']);
+            $items[(int)$row['item_id']]['translations'][$row['lang']] = $row;
+        }
+        return array_values(array_filter(array_map(fn (int $id) => $items[$id] ?? null, $ids)));
     }
 
     /** საჯარო URL ენაზე ('' — კოლექცია საჯარო არ არის ან თარგმანი არ აქვს) */

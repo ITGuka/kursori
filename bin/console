@@ -22,6 +22,7 @@ $console->register(
     // პროექტის ბრძანებები
     AppCommands\CreateAdminCommand::class,
     AppCommands\NewsletterSendCommand::class,
+    AppCommands\ContentResetCommand::class,
 );
 
 exit($console->run($argv));

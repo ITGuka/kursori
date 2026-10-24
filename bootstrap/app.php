@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 use App\Middleware\Authenticate;
 use App\Middleware\CheckMaintenance;
+use App\Middleware\FlushPageCache;
+use App\Middleware\PageCache;
 use App\Middleware\RedirectIfAuthenticated;
 use App\Middleware\SetLocale;
 use App\Models\Language;
@@ -84,6 +86,8 @@ $router->aliasMiddleware('locale', SetLocale::class);
 $router->aliasMiddleware('maintenance', CheckMaintenance::class);
 $router->aliasMiddleware('auth', Authenticate::class);
 $router->aliasMiddleware('guest', RedirectIfAuthenticated::class);
+$router->aliasMiddleware('page_cache', PageCache::class);
+$router->aliasMiddleware('flush_page_cache', FlushPageCache::class);
 
 require $app->basePath('app/routes/admin.php');
 require $app->basePath('app/routes/web.php');

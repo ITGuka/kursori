@@ -25,7 +25,7 @@ final class BlockResolver
         $data = $this->resolve($definition['fields'], $settings, $content, $fallback, $lang);
 
         $collection = $definition['collection'] ?? null;
-        if ($collection !== null && ($data['source'] ?? 'manual') === 'collection') {
+        if ($collection !== null && (!empty($collection['always']) || ($data['source'] ?? 'manual') === 'collection')) {
             $items = app(Collection::class)->list($collection['type'], ($data['category'] ?? null) ?: null, (int)($data['limit'] ?? 0), $lang, $defaultLang);
             $data[$collection['target']] = array_map(fn (array $item) => $this->mapItem($item, $collection['map']), $items);
         }

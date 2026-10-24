@@ -23,7 +23,8 @@ $router->group([
     'where'      => ['lang' => '[a-z]{2}', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'],
     'middleware' => ['locale', 'maintenance'],
 ], function (Router $router): void {
-    $router->get('/', [PageController::class, 'home'])->name('home');
+    // page_cache — მხოლოდ კონტენტის გვერდებზე (newsletter-ის token-იანი გვერდები არ იქეშება)
+    $router->get('/', [PageController::class, 'home'])->middleware('page_cache')->name('home');
 
     // ფორმები და newsletter (კონკრეტული ბილიკები — /{slug}-ზე ადრე)
     $router->post('/forms/{form}', [FormController::class, 'submit'])->where('form', '[a-z_]+')->name('form.submit');
@@ -32,7 +33,8 @@ $router->group([
     $router->get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribePage'])->where('token', '[a-f0-9]{64}')->name('newsletter.unsubscribe');
     $router->post('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])->where('token', '[a-f0-9]{64}')->name('newsletter.unsubscribe.confirm');
 
-    $router->get('/{slug}', [PageController::class, 'show'])->name('page');
+    $router->get('/{slug}', [PageController::class, 'show'])->middleware('page_cache')->name('page');
     // კოლექციის ჩანაწერი: /ka/servisebi/web-dizaini (კოლექცია — config/collections.php → route)
-    $router->get('/{collection}/{slug}', [CollectionController::class, 'show'])->where('collection', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('collection.item');
+    $router->get('/{collection}/{slug}', [CollectionController::class, 'show'])->where('collection', '[a-z0-9]+(?:-[a-z0-9]+)*')
+        ->middleware('page_cache')->name('collection.item');
 });

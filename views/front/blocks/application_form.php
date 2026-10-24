@@ -21,7 +21,7 @@ $field = fn (string $name, string $label, string $type, int $max) => $this->inse
                         <div class="col-md-6"><?= $field('name', t('form.name'), 'text', 100) ?></div>
                         <div class="col-md-6"><?= $field('email', t('form.email'), 'email', 190) ?></div>
                         <div class="col-12"><?= $field('phone', t('form.phone'), 'tel', 50) ?></div>
-                        <div class="col-12"><?= $field('message', t('form.about_you'), 'textarea', 5000) ?></div>
+                        <div class="col-12"><?= $field('message', $data['message_label'] !== '' ? $data['message_label'] : t('form.about_you'), 'textarea', 5000) ?></div>
                         <div class="col-12">
                             <button class="btn btn-primary w-100 py-3" type="submit"><?= e($data['button_label'] !== '' ? $data['button_label'] : t('form.apply')) ?></button>
                         </div>

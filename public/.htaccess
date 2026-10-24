@@ -10,10 +10,21 @@ DirectoryIndex index.php
 </IfModule>
 
 <IfModule mod_headers.c>
-    # localhost/WEBDEV/-ზე მშობელი C:\laragon\www\.htaccess (სხვა პროექტი) თავის CSP-ს აყენებს,
-    # რომელიც jQuery-ს CDN-ს ბლოკავს. WEBDEV-ის საკუთარი CSP — ფაზა 9-ში.
-    Header always unset Content-Security-Policy
+    # CSP: სკრიპტებს/სტილებს არ ზღუდავს (CDN-ები, ანალიტიკის კოდი პარამეტრებიდან), მაგრამ კრძალავს
+    # საიტის სხვის iframe-ში ჩასმას, <object>/<embed>-ს, <base>-ის შეცვლას და ფორმების სხვა დომენზე გაგზავნას.
+    # ასევე ჩაანაცვლებს მშობელი C:\laragon\www\.htaccess-ის (სხვა პროექტის) CSP-ს localhost/WEBDEV/-ზე.
+    Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+    # სტატიკური ფაილები: ვერსია URL-შია (?v=ცვლილების დრო), ამიტომ ბრაუზერში დიდხანს ინახება
+    <FilesMatch "\.(css|js|woff2?|ttf|svg|ico|png|jpe?g|gif|webp)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/xml application/javascript application/json image/svg+xml
 </IfModule>

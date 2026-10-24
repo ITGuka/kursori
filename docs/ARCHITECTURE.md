@@ -1,7 +1,7 @@
 # WEBDEV — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **9 (ქეში, ოპტიმიზაცია, ფინალური კონტენტი)** · ფაზები 0–8 დასრულდა
+> ბოლო განახლება: 2026-10-25 · **ფაზები 0–9 დასრულდა** · შემდეგი: deploy (როცა საჭირო გახდება) — იხ. §11 „Production-ის ჩამონათვალი“
 
 ## 1. მიზანი
 
@@ -9,7 +9,7 @@
 
 - **ფრონტი:** Poseify (HTML Codex) — სტილები და markup უცვლელად რჩება, იცვლება მხოლოდ კონტენტი.
 - **ადმინი:** DASHMIN — Bootstrap Admin Template Free (HTML Codex).
-- **საბოლოო კონტენტი:** ვებ დიზაინ სტუდია. დემო-კონტენტი (მოდელინგის სააგენტო) ბოლო ეტაპზე ჩანაცვლდება — ამიტომ კოლექციები და ფორმები **ზოგადია**, არა მოდელინგზე მიბმული.
+- **კონტენტი:** ვებ დიზაინ სტუდია (ფაზა 9, D49). კოლექციები და ფორმები **ზოგადია** — სხვა საიტისთვისაც გამოდგება.
 - **ფრეიმვორკი:** საკუთარი, მსუბუქი, მრავალჯერადი — სამომავლოდ სხვა პროექტებზეც გამოიყენება.
 
 ## 2. გადაწყვეტილებები
@@ -26,7 +26,7 @@
 | D8 | Newsletter | გამოწერების შეგროვება + კამპანიის შექმნა და გაგზავნა ადმინიდან (PHPMailer/SMTP, პარტიებად) |
 | D9 | გარემო | ამ ეტაპზე მხოლოდ ლოკალურად (Laragon). Deploy მოგვიანებით |
 | D10 | დიზაინის პარამეტრები | ადმინიდან იმართება მხოლოდ კონტენტი; ფერები/ფონტები — CSS-ში |
-| D11 | HTML Codex ატრიბუცია | იშლება — მფლობელი ყიდულობს Credit Removal ლიცენზიას (ორივე თემფლეითზე) |
+| D11 | HTML Codex ატრიბუცია | ✅ მოხსნილია (ფაზა 9) ფრონტის და ადმინის footer-იდან — **მოქმედებს მხოლოდ შეძენილი Credit Removal ლიცენზიით** ორივე თემფლეითზე (Poseify, DASHMIN). საიტის გაშვებამდე ლიცენზიები უნდა იყოს ნაყიდი |
 | D12 | Front controller | ერთი `public/index.php` ფრონტისა და ადმინისთვის; ადმინი — `/admin` route-ების ჯგუფი |
 | D13 | გარემოს პარამეტრები | `.env` (git-ის გარეშე, ასლი `.env.example`) → `config/*.php` → `config('app.name')` |
 | D14 | ლოკალური მისამართი | `http://webdev.test` (vhost → `public/`); სარეზერვო `http://localhost/WEBDEV/` root `.htaccess`-ით |
@@ -59,6 +59,9 @@
 | D43 | sitemap / robots | `/sitemap.xml` — გამოქვეყნებული გვერდები და საჯარო კოლექციების აქტიური ჩანაწერები, ყოველი აქტიური ენის ვერსია ცალკე `<url>`-ით და `xhtml:link` hreflang/x-default-ით; `/robots.txt` — `Disallow: /admin` + დამატებითი წესები (პარამეტრები → SEO) + Sitemap. „საძიებოსთვის ღია“ გამორთულია → `Disallow: /`, ცარიელი sitemap, noindex. ყველა სრული URL — APP_URL-იდან |
 | D44 | გადამისამართებები | `redirects` (from_path → to_url, 301/302) მუშაობს **მხოლოდ 404-ზე** (ცოცხალი გვერდი ყოველთვის იგებს): core `App::onNotFound()` hook. Query string გადაეცემა. გამოქვეყნებული გვერდის / საჯარო ჩანაწერის slug-ის შეცვლისას 301 ავტომატურად იქმნება, ჯაჭვების გარეშე (ძველი ყველა → უახლესი; ახალ მისამართზე არსებული გადამისამართება იშლება) |
 | D45 | 404 ჟურნალი | `not_found_log` (GET, /admin-ის გარეშე): ბილიკი, რაოდენობა, Referer; მაქს. 2000 ჩანაწერი (ძველი იშლება). ადმინში — „გადამისამართების შექმნა“ ერთი დაწკაპებით |
+| D47 | გვერდის ქეში | სრული HTML სტუმრებისთვის, CSRF-ის ჩანაცვლებით; ადმინის ნებისმიერი ცვლილება მთელ ქეშს შლის (ზუსტ ინვალიდაციას სიმარტივე სჯობს — გვერდი, მენიუ, პარამეტრი, თარგმანი ერთმანეთზეა დამოკიდებული). §10 |
+| D48 | უსაფრთხოების header-ები | მსუბუქი CSP (iframe-ში ჩასმა, object, base, ფორმების სხვა დომენზე გაგზავნა) — სკრიპტების CSP-ს ანალიტიკის/CDN კოდი დაარღვევდა. §9 |
+| D49 | საწყისი კონტენტი | ვებ დიზაინ სტუდია (ka/en): 7 გვერდი, 4 სერვისი, 4 წევრი, 3 შეფასება, 6 პროექტი (3 კატეგორია), სტუდიის პარამეტრები — seed-ები 05–08. სურათები ჯერ Poseify-ის დემოა (`demo` საქაღალდე) — ჩასანაცვლებელია. `php bin/console content:reset --force` — გვერდები/მენიუ/კოლექციები საწყის მდგომარეობაში (მედია, ენები, თარგმანები, პარამეტრები, მომხმარებლები, Inbox, newsletter არ იშლება) |
 | D46 | სტრუქტურირებული მონაცემები | ყოველ გვერდზე JSON-LD `Organization` (სახელი, URL, ლოგო, ელ-ფოსტა, ტელეფონი, სოც. ქსელები — პარამეტრებიდან), `og:url`, `og:locale`, `twitter:card` |
 | D40 | ბლოკი კოლექციიდან | services / team_grid / testimonials: `source` = ხელით (repeater) ან კოლექციიდან (+ კატეგორია, რაოდენობა). `config/blocks.php` → `collection.map` ჩანაწერის ველებს repeater-ის ფორმატზე გადაიყვანს (`@url`, `@read_more`). `show_if` — დამოკიდებული ველები ფორმაში იმალება და არ მოწმდება (მონაცემები ინახება — წყაროს დაბრუნებისას რომ არ დაიკარგოს) |
 | D33 | ქართული შრიფტი | Poseify-ის შრიფტებში ქართული არ არის — `site.css`-ში Noto Sans Georgian სარეზერვოდ, მობილურზე სათაურების ზომა მცირდება. `style.css` უცვლელია |
@@ -96,19 +99,21 @@ WEBDEV/
 │   ├── Controllers/Front/   ✅ Page, Collection, Form, Newsletter, Seo (sitemap.xml, robots.txt)
 │   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media, Page, Block, Menu,
 │   │                          Collection, Category, Inbox, Newsletter, Redirect
-│   ├── Middleware/          ✅ SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
+│   ├── Middleware/          ✅ PageCache (page_cache), FlushPageCache (flush_page_cache),
+│   │                          SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
 │   │                          RedirectIfAuthenticated (guest)
 │   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media, Page, PageBlock, Menu,
 │   │                          Collection, Category, FormSubmission, Subscriber, Campaign, Redirect
 │   ├── Services/            ✅ Newsletter (დასტურის წერილი, ტესტი, პარტიის გაგზავნა)
 │   ├── helpers.php          ✅ media(), media_url(), media_alt(), link_attrs(), menu(), link_target()
-│   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create), NewsletterSendCommand (newsletter:send)
+│   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create), NewsletterSendCommand (newsletter:send),
+│   │                          ContentResetCommand (content:reset)
 │   ├── Blocks/              ✅ BlockRegistry (config/blocks.php), BlockInput (ფორმა → ვალიდაცია → JSON),
 │   │                          BlockResolver (JSON → view-ის მონაცემები ენაზე)
 │   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
-│   ├── front/               ✅ layouts/main (Poseify), partials/ (navbar, footer, title), page, blocks/* (10 ტიპი),
+│   ├── front/               ✅ layouts/main (Poseify), partials/ (navbar, footer, title), page, blocks/* (12 ტიპი),
 │   │                          collections/detail, message, partials/ (form-field, form-status), blocks/application_form
 │   ├── emails/              ✅ layout, newsletter-confirm, newsletter-campaign
 │   ├── admin/               ✅ layouts/*, partials/* (flash, pagination, upload-zone, media-input, media-picker),
@@ -128,9 +133,10 @@ WEBDEV/
 │   │                          collection_items + collection_item_translations, form_submissions, subscribers,
 │   │                          newsletter_campaigns + newsletter_sends, redirects, not_found_log
 │   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები),
-│                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (6 გვერდი ბლოკებით),
+│                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (სტუდიის 7 გვერდი),
 │                              06_menus (header — გვერდების ხე, footer — ზედა დონე),
-│                              07_demo_collections (სერვისები, გუნდი, შეფასებები, პორტფოლიო; ბლოკები → კოლექციიდან)
+│                              07_demo_collections (სტუდიის სერვისები, გუნდი, შეფასებები, პორტფოლიო),
+│                              08_site_settings (სტუდიის კონტაქტები, SEO — მხოლოდ ცარიელ პარამეტრებში)
 ├── resources/templates/     ✅ poseify/, dashmin/ — საწყისი HTML (reference) + zip (git-ის გარეშე)
 ├── storage/                 ✅ cache/, logs/ (git-ის გარეშე)
 ├── bin/console              ✅ CLI
@@ -227,6 +233,7 @@ php bin/console serve [--port=8000]        # Apache-ს გარეშე
 php bin/console admin:create --email=... [--name=...] [--password=...]   # ადმინის შექმნა / პაროლის აღდგენა
 php bin/console key:generate [--force]     # APP_KEY (საიდუმლოებების დაშიფვრა)
 php bin/console newsletter:send [id] [--batch=50]   # „იგზავნება“ კამპანიების გაგრძელება (cron)
+php bin/console content:reset --force      # გვერდები/მენიუ/კოლექციები → საწყისი კონტენტი (D49)
 ```
 
 PHP PATH-ში არ არის — Laragon Terminal-იდან ან სრული გზით: `C:\laragon\bin\php\php-8.3.36-Win32-vs16-x64\php.exe bin\console ...`.
@@ -267,7 +274,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | ✅ `contact` | Contact | სათაური, ტექსტი, კონტაქტები და სოც. ქსელები პარამეტრებიდან, ფორმა (დამუშავება — ფაზა 7) |
 | ✅ `map` | Google Map | embed URL (მხოლოდ google.com/maps/embed) ან პარამეტრებიდან, სიმაღლე |
 | ✅ `rich_text` | — | სათაური + თავისუფალი WYSIWYG ტექსტი |
-| ⏳ `application_form` | — (Banner-ის სტილით) | განაცხადის ფორმა — ფაზა 7 |
+| ✅ `application_form` | — (Contact-ის სტილით) | განაცხადის ფორმა → Inbox (ტექსტის ველის და ღილაკის წარწერა — ბლოკიდან; სტუდიაში: „პროექტის მოთხოვნა“) |
+| ✅ `portfolio_grid` | Team-ის ბარათები | პორტფოლიოს კოლექცია (`collection.always`), კატეგორია, რაოდენობა, კატეგორიების ფილტრი გვერდის გადატვირთვის გარეშე |
 
 ახალი ბლოკის დამატება: ჩანაწერი `config/blocks.php`-ში + view `views/front/blocks/{type}.php` — ადმინის ფორმა ავტომატურად ჩნდება.
 
@@ -334,15 +342,22 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 - ადმინის პასუხებს: `Cache-Control: no-store`, `X-Robots-Tag: noindex`; logout — მხოლოდ POST + CSRF; login/logout-ისას იცვლება სესიის ID და CSRF token.
 - ადმინს არ შეუძლია საკუთარი ანგარიშის წაშლა/გათიშვა და ბოლო აქტიური ადმინის წაშლა/გათიშვა; საკუთარი პაროლის შეცვლას სჭირდება მიმდინარე პაროლი.
 - ატვირთვა: D23; `uploads/.htaccess` — სკრიპტები 403, `php_flag engine off`, `nosniff`.
-- `public/.htaccess` შლის მშობელი `C:\laragon\www\.htaccess`-ის (სხვა პროექტის) CSP-ს, რომელიც `localhost/WEBDEV/`-ზე jQuery-ს CDN-ს ბლოკავდა. საკუთარი CSP — ფაზა 9.
+- `public/.htaccess` (D48): CSP `frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'` (სკრიპტებს არ ზღუდავს — CDN-ები და ანალიტიკის კოდი პარამეტრებიდან), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`. ჩაანაცვლებს მშობელი `C:\laragon\www\.htaccess`-ის CSP-ს `localhost/WEBDEV/`-ზე.
 - საჯარო ფორმებზე honeypot + rate limit.
 - `core/`, `app/`, `config/`, `storage/` web root-ის გარეთაა.
 
-## 10. ქეში და წარმადობა
+## 10. ქეში და წარმადობა ✅
 
-- გვერდის სრული HTML იქეშება `storage/cache/pages/{lang}/{slug}.html`-ში; ადმინში ნებისმიერი შენახვა შესაბამის ქეშს შლის (ზოგად პარამეტრებზე — მთელს).
-- settings და translations იტვირთება ერთი query-ით და ინახება მოთხოვნის განმავლობაში.
-- სურათებს ატვირთვისას ეწყობა thumbnail-ები; ფრონტში `loading="lazy"`.
+- **გვერდის HTML ქეში** (D47): სტუმრის GET-ზე `home` / `page` / `collection.item` route-ების პასუხი ინახება `Cache`-ში (`pages.*`, 24 სთ); `X-Page-Cache: HIT | MISS | BYPASS`.
+  - არ იქეშება: შესული ადმინი, query string, ფორმის შედეგის გვერდი (flash), 200-ის გარდა ნებისმიერი პასუხი, newsletter-ის გვერდები.
+  - CSRF token ქეშში ჩანაცვლებულია ნიშნულით და ყოველ მოთხოვნაზე ვიზიტორის token ჩაისმება — ფორმები ქეშირებული გვერდიდანაც მუშაობს.
+  - ტექნიკური რეჟიმი ქეშამდე მოწმდება.
+  - **ინვალიდაცია:** ადმინში ნებისმიერი წარმატებული POST/PUT/PATCH/DELETE → ყველა `pages.*` (`FlushPageCache`). **კოდის / CSS-ის / შაბლონის შეცვლის შემდეგ:** `php bin/console cache:clear` (ქეშირებულ HTML-ში ძველი `?v=` ვერსიებია).
+  - გამორთვა: `.env` → `PAGE_CACHE=false` (მაგ. ტესტებისას, როცა ბაზა პირდაპირ იცვლება).
+- ენები, თარგმანები, პარამეტრები, მენიუები — ფაილურ ქეშში (D21, D35); კატეგორიების სახელები — მოთხოვნის განმავლობაში.
+- კოლექციის სიები — 2 query (ჩანაწერები + თარგმანები), N+1-ის გარეშე (`Collection::findMany`).
+- სურათები: ვარიანტები ატვირთვისას (D24), ფრონტში `loading="lazy"` (პირველი სლაიდის გარდა).
+- სტატიკური ფაილები (`public/.htaccess`): `Cache-Control: max-age=30 დღე` (ვერსია URL-შია — `asset()` → `?v=filemtime`), gzip (`mod_deflate`).
 
 ## 11. ფაზები
 
@@ -357,11 +372,24 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | 6 | კატეგორიები და კოლექციები | ✅ 2026-10-25 |
 | 7 | ფორმები + Inbox, newsletter | ✅ 2026-10-25 |
 | 8 | SEO: sitemap, robots, hreflang, redirects, 404 | ✅ 2026-10-25 |
-| 9 | ქეში, ოპტიმიზაცია, ატრიბუციის მოხსნა, ვებ დიზაინ სტუდიის კონტენტი | ⏳ შემდეგი |
-| — | Deploy (მოგვიანებით, D9) | — |
+| 9 | ქეში, ოპტიმიზაცია, ატრიბუციის მოხსნა, ვებ დიზაინ სტუდიის კონტენტი | ✅ 2026-10-25 |
+| — | Deploy (მოგვიანებით, D9) — იხ. „Production-ის ჩამონათვალი“ ქვემოთ | ⏳ |
+
+### Production-ის ჩამონათვალი (deploy-ის დროს)
+
+1. Credit Removal ლიცენზიები (Poseify + DASHMIN) ნაყიდია (D11).
+2. Web root → `public/`; `core/`, `app/`, `config/`, `storage/`, `.env` — მის გარეთ.
+3. `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://დომენი`, ბაზის მონაცემები, `php bin/console key:generate` (ან ლოკალური APP_KEY-ის გადატანა — სხვაგვარად SMTP პაროლი თავიდან შესაყვანია).
+4. `composer install --no-dev --optimize-autoloader`; `php bin/console migrate`; საჭიროების მიხედვით `db:seed`.
+5. `storage/` და `public/uploads/` ჩაწერადი; `php bin/console cache:clear` ყოველი განახლების შემდეგ.
+6. პარამეტრები → ელ-ფოსტა: რეალური SMTP (TLS/SSL), გამგზავნი დომენის SPF/DKIM.
+7. ადმინის პაროლი ძლიერი (`admin:create` ან პროფილი); `.env`-იდან `ADMIN_PASSWORD` წაშლა.
+8. HTTPS (სესიის cookie `secure` ავტომატურად ირთვება), cron: `php bin/console newsletter:send` (სურვილისამებრ).
+9. დემო სურათები (`demo` საქაღალდე) ჩანაცვლებული; „საძიებოსთვის ღია“ ჩართული; Google Search Console-ში `sitemap.xml`.
 
 ## 12. ცვლილებების ისტორია
 
+- **2026-10-25** — ფაზა 9: გვერდის HTML ქეში სტუმრებისთვის (CSRF-ის ჩანაცვლებით, ადმინის ცვლილებაზე გასუფთავებით), კოლექციის სიების N+1-ის მოხსნა, სტატიკური ფაილების ქეში და gzip, CSP და უსაფრთხოების header-ები, HTML Codex ატრიბუციის მოხსნა (ლიცენზიით), ახალი ბლოკი `portfolio_grid`, განაცხადის ფორმის წარწერები ბლოკიდან, ვებ სტუდიის საწყისი კონტენტი (seed-ები 05–08) და `content:reset`. ქართული სლაიდერის სათაური დიდ ეკრანზეც მცირდება. Production-ის ჩამონათვალი. დაემატა D47–D49.
 - **2026-10-25** — ფაზა 8: `/sitemap.xml` (hreflang alternates), `/robots.txt` (პარამეტრებიდან), გადამისამართებები ადმინიდან (301/302, მხოლოდ 404-ზე, query-ის გადაცემით), ავტომატური 301 slug-ის შეცვლისას (ჯაჭვების გარეშე), 404 ჟურნალი, JSON-LD Organization, og:url/og:locale/twitter:card. `core/`: `App::onNotFound()`. გასწორდა: canonical/OG URL-ში `localhost/WEBDEV`-ზე base path რჩებოდა. დაემატა D43–D46.
 - **2026-10-25** — ფაზა 7: საკონტაქტო და განაცხადის ფორმები (ახალი ბლოკი `application_form`) → Inbox (წაუკითხავი/წაკითხული, ფილტრი, ძებნა, პასუხი mailto-თი); newsletter — double opt-in, დასტური/გაუქმება (one-click), კამპანიები ტესტით და პარტიებად გაგზავნით, გამომწერების სია და CSV; SMTP პარამეტრები ადმინში დაშიფრული პაროლით; `core/`: Mailer (PHPMailer), Crypt, Validator-ის შეტყობინებები, CSRF-ის გამონაკლისები, `absolute_url()`; `key:generate`, `newsletter:send`. დაემატა D41–D42.
 - **2026-10-25** — ფაზა 6: კოლექციები (სერვისები, გუნდი, შეფასებები, პორტფოლიო) კონფიგიდან, საკუთარი ველებით; კატეგორიები (2 დონე); ადმინში სია (ძებნა, ფილტრი, გადათრევით რიგი, დამალვა) და ფორმა (ბლოკების ველების ძრავით); საჯარო გვერდები (სერვისი, პროექტი) hreflang-ით; ბლოკები „წყარო: კოლექცია“ (კატეგორია, რაოდენობა); `show_if`; მედიის გამოყენება კოლექციებშიც. დემო გვერდების ბლოკები გადავიდა კოლექციებზე. დაემატა D37–D40.

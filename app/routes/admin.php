@@ -26,7 +26,7 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->post('/login', [AuthController::class, 'login'])->name('login.attempt');
     });
 
-    $router->group(['middleware' => ['auth'], 'where' => ['id' => '\d+']], function (Router $router): void {
+    $router->group(['middleware' => ['auth', 'flush_page_cache'], 'where' => ['id' => '\d+']], function (Router $router): void {
         $router->post('/logout', [AuthController::class, 'logout'])->name('logout');
         $router->get('/', [DashboardController::class, 'index'])->name('dashboard');
 

@@ -10,6 +10,9 @@ use Core\Database\DB;
  */
 final class Category
 {
+    /** @var array<string, string> */
+    private array $names = [];
+
     public function __construct(private readonly DB $db)
     {
     }
@@ -79,7 +82,8 @@ final class Category
 
     public function name(int $id, string $lang, string $fallbackLang): string
     {
-        return (string)($this->db->value(
+        // ერთი მოთხოვნის განმავლობაში ერთი და იგივე კატეგორია ბევრ ჩანაწერს აქვს
+        return $this->names["$id|$lang|$fallbackLang"] ??= (string)($this->db->value(
             'SELECT name FROM category_translations WHERE category_id = ? AND lang IN (?, ?) ORDER BY lang = ? DESC LIMIT 1',
             [$id, $lang, $fallbackLang, $lang],
         ) ?? '');

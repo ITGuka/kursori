@@ -6,8 +6,9 @@ use App\Models\PageBlock;
 use Core\Database\DB;
 use Core\Database\Seeder;
 
-// Poseify-ის 6 გვერდი ბლოკებად (ka + en) დემო სურათებით (04_demo_media).
-// გაეშვება მხოლოდ მაშინ, როცა გვერდები ჯერ არ არის. საბოლოო კონტენტი (ვებ სტუდია) — ფაზა 9.
+// ვებ სტუდიის საწყისი გვერდები ბლოკებით (ka + en). სურათები — Poseify-ის დემო (04_demo_media), ჩაანაცვლეთ რეალურით.
+// სერვისები, გუნდი, შეფასებები, პორტფოლიო — კოლექციებიდან (07_demo_collections).
+// გაეშვება მხოლოდ მაშინ, როცა გვერდები ჯერ არ არის. თავიდან: php bin/console content:reset --force
 return new class extends Seeder {
     private const MAP = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
 
@@ -27,41 +28,62 @@ return new class extends Seeder {
             $this->media[$row['original_name']] = (int)$row['id'];
         }
 
-        $home = $this->page(['მთავარი', 'Home'], ['', ''], 1, true);
+        $home = $this->page(['მთავარი', 'Home'], ['mtavari', 'home'], 1, true);
         $about = $this->page(['ჩვენ შესახებ', 'About'], ['chven-shesakheb', 'about'], 2);
         $services = $this->page(['სერვისები', 'Services'], ['servisebi', 'services'], 3);
+        $portfolio = $this->page(['პორტფოლიო', 'Portfolio'], ['portpolio', 'portfolio'], 4);
         $team = $this->page(['გუნდი', 'Our Team'], ['gundi', 'team'], 1, false, $about);
         $reviews = $this->page(['შეფასებები', 'Testimonials'], ['shepasebebi', 'testimonials'], 2, false, $about);
-        $contact = $this->page(['კონტაქტი', 'Contact'], ['kontakti', 'contact'], 4);
+        $contact = $this->page(['კონტაქტი', 'Contact'], ['kontakti', 'contact'], 5);
 
         // მთავარი
-        $this->hero($home, $about);
-        $this->about($home, $team, $contact);
-        $this->services($home, $services);
+        $this->hero($home, $portfolio, $contact);
+        $this->about($home, $portfolio, $contact, 'secondary');
+        $this->collectionBlock($home, 'services', ['ჩვენი სერვისები', 'Our Services'], ['რას ვაკეთებთ', 'What We Do'], ['limit' => 4]);
+        $this->portfolio($home, 6, 'secondary');
+        $this->collectionBlock($home, 'testimonials', ['შეფასებები', 'Testimonials'], ['რას ამბობენ კლიენტები', 'What Clients Say'], ['background' => 'dark']);
         $this->banner($home);
-        $this->team($home, 8);
-        $this->testimonials($home);
 
         // ჩვენ შესახებ
         $this->header($about);
-        $this->about($about, $team, $contact, 'dark');
+        $this->block($about, 'rich_text', ['align' => 'left', 'background' => 'dark'], [
+            'subtitle' => ['ჩვენი ისტორია', 'Our Story'],
+            'title'    => ['ციფრული სტუდია თბილისიდან', 'A Digital Studio from Tbilisi'],
+            'body'     => [
+                '<p>WEBDEV პატარა, მაგრამ გამოცდილი გუნდია: დიზაინერები, დეველოპერები და მარკეტოლოგები, რომლებიც ერთად ვქმნით საიტებს, ონლაინ მაღაზიებს და ბრენდებს.</p>'
+                . '<p>ყოველი პროექტი იწყება თქვენი ბიზნესის გაგებით და მთავრდება შედეგით, რომელიც იზომება — მეტი ზარი, მეტი შეკვეთა, ძლიერი ბრენდი.</p>',
+                '<p>WEBDEV is a small but experienced team of designers, developers and marketers creating websites, online stores and brands together.</p>'
+                . '<p>Every project starts with understanding your business and ends with measurable results — more calls, more orders, a stronger brand.</p>',
+            ],
+        ]);
+        $this->collectionBlock($about, 'team_grid', ['გუნდი', 'Team'], ['ვინ ვართ', 'Who We Are'], ['limit' => 4]);
         $this->banner($about);
-        $this->team($about, 4);
 
+        // სერვისები
         $this->header($services);
-        $this->services($services, $contact);
-        $this->testimonials($services);
+        $this->collectionBlock($services, 'services', ['სერვისები', 'Services'], ['როგორ დაგეხმარებით', 'How We Help You'], []);
+        $this->block($services, 'application_form', ['background' => 'secondary'], [
+            'subtitle'      => ['ახალი პროექტი', 'New Project'],
+            'title'         => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
+            'text'          => ['<p>მოგვიყევით იდეაზე — 1 სამუშაო დღეში დაგიკავშირდებით შეთავაზებით.</p>', '<p>Tell us about your idea — we will get back to you with a proposal within 1 business day.</p>'],
+            'message_label' => ['მოგვიყევით პროექტზე', 'Tell us about the project'],
+            'button_label'  => ['მოთხოვნის გაგზავნა', 'Send Request'],
+        ]);
+
+        // პორტფოლიო (slug = კოლექციის მისამართი — პროექტის გვერდზე „უკან“ აქ მოდის)
+        $this->header($portfolio);
+        $this->portfolio($portfolio, 0, 'dark');
 
         $this->header($team);
-        $this->team($team, 8);
+        $this->collectionBlock($team, 'team_grid', ['გუნდი', 'Team'], ['ჩვენი გუნდი', 'Meet the Team'], []);
 
         $this->header($reviews);
-        $this->testimonials($reviews, 'dark');
+        $this->collectionBlock($reviews, 'testimonials', ['შეფასებები', 'Testimonials'], ['რას ამბობენ კლიენტები', 'What Clients Say'], ['background' => 'dark']);
 
         $this->header($contact);
         $this->block($contact, 'contact', ['show_form' => true], [
             'subtitle' => ['კონტაქტი', 'Contact'],
-            'title'    => ['დაგვიკავშირდით', 'Please Contact Us'],
+            'title'    => ['დაგვიკავშირდით', 'Get in Touch'],
             'text'     => ['<p>გაქვთ კითხვა ან იდეა? მოგვწერეთ ან დაგვირეკეთ — სიამოვნებით გიპასუხებთ.</p>', '<p>Have a question or an idea? Write or call us — we are happy to help.</p>'],
         ]);
         $this->block($contact, 'map', ['embed_url' => self::MAP, 'height' => 450], []);
@@ -70,8 +92,8 @@ return new class extends Seeder {
     private function page(array $titles, array $slugs, int $sort, bool $home = false, ?int $parent = null): int
     {
         return $this->pages->save(null, ['parent_id' => $parent, 'status' => 'published', 'is_home' => $home, 'sort' => $sort, 'og_image_id' => null], [
-            'ka' => ['title' => $titles[0], 'slug' => $slugs[0] ?: 'mtavari', 'meta_title' => '', 'meta_description' => ''],
-            'en' => ['title' => $titles[1], 'slug' => $slugs[1] ?: 'home', 'meta_title' => '', 'meta_description' => ''],
+            'ka' => ['title' => $titles[0], 'slug' => $slugs[0], 'meta_title' => '', 'meta_description' => ''],
+            'en' => ['title' => $titles[1], 'slug' => $slugs[1], 'meta_title' => '', 'meta_description' => ''],
         ]);
     }
 
@@ -85,17 +107,14 @@ return new class extends Seeder {
         }
         $media = [];
         array_walk_recursive($settings, function ($value, $key) use (&$media): void {
-            if (in_array($key, ['image'], true) && is_int($value)) {
+            if ($key === 'image' && is_int($value)) {
                 $media[] = $value;
             }
         });
         $this->blocks->save(null, $pageId, $type, $settings, $content, array_values(array_unique($media)));
     }
 
-    /**
-     * repeater: $items — [[settings], [field => [ka, en]]]; აბრუნებს [settings სია, ka map, en map]
-     * @return array{0: list<array>, 1: array, 2: array}
-     */
+    /** @return array{0: list<array>, 1: array, 2: array} repeater: settings, ka, en */
     private function items(array $items): array
     {
         $settings = $ka = $en = [];
@@ -125,96 +144,66 @@ return new class extends Seeder {
         $this->block($pageId, 'page_header', ['image' => null, 'breadcrumb' => true], ['title' => ['', '']]);
     }
 
-    private function hero(int $pageId, int $linkPage): void
+    /** services / team_grid / testimonials — კოლექციიდან */
+    private function collectionBlock(int $pageId, string $type, array $subtitle, array $title, array $settings): void
     {
-        $slide = fn (string $image) => [['image' => $this->img($image), 'button_link' => $this->link($linkPage)], [
-            'subtitle'     => ['მოგესალმებით', 'Welcome'],
-            'title'        => ['მოდელების სააგენტო', 'Modeling Agency'],
-            'text'         => ['ვქმნით სახეებს, რომლებიც გამოირჩევა — მოდა, რეკლამა, ღონისძიებები.', 'We create faces that stand out — fashion, advertising and events.'],
-            'button_label' => ['გაიგე მეტი', 'Explore More'],
-        ]];
-        [$settings, $ka, $en] = $this->items([$slide('carousel-1.jpg'), $slide('carousel-2.jpg')]);
-        $this->block($pageId, 'hero_carousel', ['slides' => $settings], ['slides' => [$ka, $en]]);
+        $this->block($pageId, $type, $settings + ['source' => 'collection', 'category' => null, 'limit' => 0], ['subtitle' => $subtitle, 'title' => $title]);
     }
 
-    private function about(int $pageId, int $team, int $contact, string $background = 'secondary'): void
+    private function portfolio(int $pageId, int $limit, string $background): void
+    {
+        $this->block($pageId, 'portfolio_grid', ['category' => null, 'limit' => $limit, 'show_filter' => true, 'background' => $background], [
+            'subtitle' => ['პორტფოლიო', 'Portfolio'],
+            'title'    => ['ბოლო პროექტები', 'Recent Work'],
+        ]);
+    }
+
+    private function hero(int $pageId, int $portfolio, int $contact): void
+    {
+        [$slides, $ka, $en] = $this->items([
+            [['image' => $this->img('carousel-1.jpg'), 'button_link' => $this->link($portfolio)], [
+                'subtitle'     => ['ვებ დიზაინ სტუდია', 'Web Design Studio'],
+                'title'        => ['საიტები, რომლებიც მუშაობს', 'Websites That Work'],
+                'text'         => ['ვქმნით ლამაზ, სწრაფ და მოსახერხებელ საიტებს, რომლებიც ვიზიტორს კლიენტად აქცევს.', 'We build beautiful, fast and easy-to-use websites that turn visitors into customers.'],
+                'button_label' => ['ნამუშევრები', 'Our Work'],
+            ]],
+            [['image' => $this->img('carousel-2.jpg'), 'button_link' => $this->link($contact)], [
+                'subtitle'     => ['ბრენდინგი', 'Branding'],
+                'title'        => ['ბრენდი, რომელიც გამოირჩევა', 'A Brand That Stands Out'],
+                'text'         => ['ლოგოდან სრულ ვიზუალურ იდენტობამდე — ერთი გუნდით.', 'From logo to a complete visual identity — with one team.'],
+                'button_label' => ['დაგვიკავშირდით', 'Contact Us'],
+            ]],
+        ]);
+        $this->block($pageId, 'hero_carousel', ['slides' => $slides], ['slides' => [$ka, $en]]);
+    }
+
+    private function about(int $pageId, int $portfolio, int $contact, string $background): void
     {
         [$items, $ka, $en] = $this->items([
-            [[], ['text' => ['პროფესიონალი მოდელები და გამოცდილი გუნდი.', 'Professional models and an experienced team.']]],
-            [[], ['text' => ['სრული მომსახურება კასტინგიდან გადაღებამდე.', 'Full service from casting to the final shoot.']]],
-            [[], ['text' => ['საერთაშორისო პროექტები და ბრენდები.', 'International projects and brands.']]],
+            [[], ['text' => ['უნიკალური დიზაინი — შაბლონების გარეშე', 'Unique design — no generic templates']]],
+            [[], ['text' => ['სწრაფი, მობილურზე მორგებული და SEO-მზა საიტები', 'Fast, mobile-friendly, SEO-ready websites']]],
+            [[], ['text' => ['მართვის პანელი — კონტენტს თავად ცვლით', 'An admin panel — you edit the content yourself']]],
         ]);
         $this->block($pageId, 'about', [
             'items' => $items, 'image' => $this->img('about.png'), 'background' => $background,
-            'button1_link' => $this->link($team), 'button2_link' => $this->link($contact),
+            'button1_link' => $this->link($portfolio), 'button2_link' => $this->link($contact),
         ], [
-            'subtitle'      => ['ისტორია', 'History'],
-            'title'         => ['ჩვენი სააგენტოს შესახებ', 'About Our Agency'],
-            'text'          => ['<p>ათ წელზე მეტია ვეხმარებით ბრენდებს და დიზაინერებს, იპოვონ სწორი სახე თავიანთი იდეისთვის. ვმუშაობთ მოდის ჩვენებებზე, სარეკლამო კამპანიებსა და კორპორატიულ ღონისძიებებზე.</p>',
-                                '<p>For more than ten years we have helped brands and designers find the right face for their idea. We work on fashion shows, advertising campaigns and corporate events.</p>'],
+            'subtitle'      => ['ჩვენ შესახებ', 'About Us'],
+            'title'         => ['ციფრული სტუდია', 'Digital Studio'],
+            'text'          => ['<p>10 წელზე მეტია ვეხმარებით ბიზნესებს ონლაინ ზრდაში: ვაპროექტებთ, ვქმნით და ვავითარებთ საიტებს, ონლაინ მაღაზიებს და ბრენდებს.</p>',
+                                '<p>For over 10 years we have helped businesses grow online: we plan, design and develop websites, online stores and brands.</p>'],
             'items'         => [$ka, $en],
-            'button1_label' => ['გაიცანი გუნდი', 'Meet the Team'],
-            'button2_label' => ['დაგვიკავშირდი', 'Contact Us'],
-        ]);
-    }
-
-    private function services(int $pageId, int $linkPage): void
-    {
-        $service = fn (string $image, array $title, array $text) => [['image' => $this->img($image), 'button_link' => $this->link($linkPage)],
-            ['title' => $title, 'text' => $text, 'button_label' => ['ვრცლად', 'Read More']]];
-        [$items, $ka, $en] = $this->items([
-            $service('service-1.jpg', ['მოდის ჩვენებები', 'Fashion Shows'], ['მოდელები ჩვენებებისთვის — კასტინგი, რეპეტიციები და ჩვენების დღის მხარდაჭერა.', 'Models for runway shows — casting, rehearsals and show-day support.']),
-            $service('service-2.jpg', ['კორპორატიული ღონისძიებები', 'Corporate Events'], ['პრეზენტაციები, გამოფენები და ბრენდის ღონისძიებები — პროფესიონალი წარმომადგენლებით.', 'Launches, exhibitions and brand events with professional hosts.']),
-            $service('service-3.jpg', ['კომერციული ფოტოგადაღება', 'Commercial Photo Shoots'], ['სარეკლამო და კატალოგის გადაღებები სტუდიაში ან ლოკაციაზე.', 'Advertising and catalogue shoots in the studio or on location.']),
-            $service('service-4.jpg', ['პროფესიული მოდელინგი', 'Professional Modeling'], ['მოდელების მომზადება და პორტფოლიოს შექმნა.', 'Model training and portfolio development.']),
-        ]);
-        $this->block($pageId, 'services', ['items' => $items], [
-            'subtitle' => ['სერვისები', 'Services'],
-            'title'    => ['როგორ დაგეხმარებით', 'How We Help You'],
-            'items'    => [$ka, $en],
+            'button1_label' => ['პორტფოლიო', 'Portfolio'],
+            'button2_label' => ['დაგვიკავშირდით', 'Contact Us'],
         ]);
     }
 
     private function banner(int $pageId): void
     {
         $this->block($pageId, 'banner_signup', ['background' => 'secondary'], [
-            'subtitle' => ['კასტინგი', 'Casting'],
-            'title'    => ['გსურს გახდე მოდელი?', 'Want to be a Model?'],
-            'text'     => ['გამოიწერე სიახლეები და პირველმა შეიტყვე ახალი კასტინგების შესახებ.', 'Subscribe and be the first to hear about new castings.'],
-        ]);
-    }
-
-    private function team(int $pageId, int $count): void
-    {
-        $names = [['ნაომი ოლსენი', 'Naomy Olsen'], ['პამელა ტორნი', 'Pamela Torney'], ['ჯოან ირვინი', 'Joanne Irwin'], ['ჯილიან როუ', 'Gillian Rowe']];
-        $members = [];
-        for ($i = 1; $i <= $count; $i++) {
-            $members[] = [['image' => $this->img("team-$i.jpg"), 'link' => $this->link(null)], [
-                'name'       => $names[($i - 1) % 4],
-                'attributes' => ["ასაკი: 22\nსიმაღლე: 185\nწონა: 55\nმკერდი: 79\nწელი: 59\nთეძო: 89", "Age: 22\nHeight: 185\nWeight: 55\nBust: 79\nWaist: 59\nHips: 89"],
-            ]];
-        }
-        [$items, $ka, $en] = $this->items($members);
-        $this->block($pageId, 'team_grid', ['members' => $items], [
-            'subtitle' => ['მოდელები', 'Models'],
-            'title'    => ['გაიცანი ჩვენი მოდელები', 'Meet Our Models'],
-            'members'  => [$ka, $en],
-        ]);
-    }
-
-    private function testimonials(int $pageId, string $background = 'secondary'): void
-    {
-        $quote = ['გუნდთან მუშაობა სიამოვნება იყო: ყველაფერი დროულად, პროფესიონალურად და ზუსტად ჩვენი იდეის მიხედვით გაკეთდა.',
-                  'Working with the team was a pleasure: everything was on time, professional and exactly as we imagined.'];
-        [$items, $ka, $en] = $this->items([
-            [['image' => $this->img('testimonial-1.jpg')], ['quote' => $quote, 'name' => ['ჯოან ირვინი', 'Joanne Irwin'], 'profession' => ['დიზაინერი', 'Designer']]],
-            [['image' => $this->img('testimonial-2.jpg')], ['quote' => $quote, 'name' => ['ლანა ანდერსონი', 'Lana Anderson'], 'profession' => ['ბრენდ-მენეჯერი', 'Brand Manager']]],
-            [['image' => $this->img('testimonial-3.jpg')], ['quote' => $quote, 'name' => ['პამელა ტორნი', 'Pamela Torney'], 'profession' => ['ფოტოგრაფი', 'Photographer']]],
-        ]);
-        $this->block($pageId, 'testimonials', ['items' => $items, 'background' => $background], [
-            'subtitle' => ['შეფასებები', 'Testimonial'],
-            'title'    => ['რას ამბობენ კლიენტები', 'Our Clients Say'],
-            'items'    => [$ka, $en],
+            'subtitle' => ['სიახლეები', 'Newsletter'],
+            'title'    => ['იყავით საქმის კურსში', 'Stay in the Loop'],
+            'text'     => ['თვეში ერთხელ — რჩევები ვებ დიზაინზე, ახალი პროექტები და სტუდიის სიახლეები.', 'Once a month — web design tips, new projects and studio news.'],
         ]);
     }
 };

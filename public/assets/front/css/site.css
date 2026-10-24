@@ -53,6 +53,13 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     overflow-wrap: anywhere;
 }
 
+/* ქართული მთავრული ლათინურზე ფართოა — სლაიდერის სათაური დიდ ეკრანზეც მცირდება, რომ navbar-ს არ შეეხოს */
+@media (min-width: 992px) {
+    html[lang="ka"] .header-carousel .display-1 {
+        font-size: calc(1.5rem + 2.6vw);
+    }
+}
+
 .site-logo {
     max-height: 56px;
     width: auto;
@@ -113,6 +120,17 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
 
 .footer-menu a:hover {
     color: var(--bs-primary);
+}
+
+/* პორტფოლიოს ბარათი — team-item-ის სტილით, სურათი თანაბარი პროპორციით */
+.portfolio-card .team-body img {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform .5s;
+}
+
+.portfolio-card:hover .team-body img {
+    transform: scale(1.05);
 }
 
 /* გუნდის ბარათზე ბმული მთლიან სახელზე */

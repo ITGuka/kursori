@@ -6,8 +6,8 @@ use App\Models\Collection;
 use Core\Database\DB;
 use Core\Database\Seeder;
 
-// დემო კოლექციები (Poseify-ის კონტენტი) და დემო გვერდების სერვისების/გუნდის/შეფასებების ბლოკები → „კოლექციიდან“.
-// გაეშვება მხოლოდ მაშინ, როცა კოლექციებში ჯერ არაფერია.
+// ვებ სტუდიის კოლექციები: სერვისები, გუნდი, შეფასებები, პორტფოლიო (კატეგორიებით).
+// სურათები — დემო (04_demo_media), ჩაანაცვლეთ რეალურით. გაეშვება მხოლოდ მაშინ, როცა კოლექციებში ჯერ არაფერია.
 return new class extends Seeder {
     private Collection $items;
     private Category $categories;
@@ -25,69 +25,82 @@ return new class extends Seeder {
             $this->media[$row['original_name']] = (int)$row['id'];
         }
 
-        // სერვისები
+        // ---- სერვისები ----
         $services = [
-            ['service-1.jpg', ['მოდის ჩვენებები', 'Fashion Shows'], ['moda', 'fashion-shows'],
-                ['მოდელები ჩვენებებისთვის — კასტინგი, რეპეტიციები და ჩვენების დღის მხარდაჭერა.', 'Models for runway shows — casting, rehearsals and show-day support.']],
-            ['service-2.jpg', ['კორპორატიული ღონისძიებები', 'Corporate Events'], ['korporatiuli', 'corporate-events'],
-                ['პრეზენტაციები, გამოფენები და ბრენდის ღონისძიებები — პროფესიონალი წარმომადგენლებით.', 'Launches, exhibitions and brand events with professional hosts.']],
-            ['service-3.jpg', ['კომერციული ფოტოგადაღება', 'Commercial Photo Shoots'], ['potogadagheba', 'photo-shoots'],
-                ['სარეკლამო და კატალოგის გადაღებები სტუდიაში ან ლოკაციაზე.', 'Advertising and catalogue shoots in the studio or on location.']],
-            ['service-4.jpg', ['პროფესიული მოდელინგი', 'Professional Modeling'], ['modelingi', 'modeling'],
-                ['მოდელების მომზადება და პორტფოლიოს შექმნა.', 'Model training and portfolio development.']],
+            ['service-1.jpg', ['ვებ დიზაინი', 'Web Design'], ['veb-dizaini', 'web-design'],
+                ['უნიკალური, თანამედროვე დიზაინი, რომელიც თქვენს ბრენდს ასახავს და ვიზიტორს მარტივად მიიყვანს მიზნამდე.',
+                 'Unique, modern design that reflects your brand and guides visitors straight to their goal.'],
+                ['<p>ვიწყებთ კვლევით: ვინ არის თქვენი მომხმარებელი და რა სურს. შემდეგ — სტრუქტურა, პროტოტიპი და დიზაინი ყველა ეკრანისთვის.</p><ul><li>UX კვლევა და სტრუქტურა</li><li>პროტოტიპი</li><li>დიზაინი კომპიუტერისა და მობილურისთვის</li></ul>',
+                 '<p>We start with research: who your customer is and what they need. Then structure, prototype and design for every screen.</p><ul><li>UX research and structure</li><li>Prototype</li><li>Design for desktop and mobile</li></ul>']],
+            ['service-2.jpg', ['ვებ დეველოპმენტი', 'Web Development'], ['veb-developmenti', 'web-development'],
+                ['სწრაფი, უსაფრთხო და მართვადი საიტები და ონლაინ მაღაზიები — მართვის პანელით.',
+                 'Fast, secure and manageable websites and online stores — with an admin panel.'],
+                ['<p>ვაწყობთ საიტს, რომელსაც თავად მართავთ: გვერდები, მენიუ, თარგმანები, სიახლეები და ფორმები — ერთ პანელში.</p><ul><li>მრავალენოვანი საიტები</li><li>ონლაინ მაღაზია</li><li>ინტეგრაციები</li></ul>',
+                 '<p>We build a site you manage yourself: pages, menus, translations, news and forms — in one panel.</p><ul><li>Multilingual websites</li><li>Online stores</li><li>Integrations</li></ul>']],
+            ['service-3.jpg', ['ბრენდინგი', 'Branding'], ['brendingi', 'branding'],
+                ['ლოგო, ფერები, შრიფტები და ბრენდბუქი — იდენტობა, რომელიც ახსოვთ.',
+                 'Logo, colours, typography and a brand book — an identity people remember.'],
+                ['<p>ვქმნით ვიზუალურ ენას, რომელიც ერთნაირად კარგად მუშაობს საიტზე, სოციალურ ქსელებსა და ბეჭდურ მასალაზე.</p>',
+                 '<p>We create a visual language that works equally well on the website, social media and print.</p>']],
+            ['service-4.jpg', ['SEO და მარკეტინგი', 'SEO & Marketing'], ['seo-marketingi', 'seo-marketing'],
+                ['საიტი, რომელსაც პოულობენ: ტექნიკური SEO, კონტენტი და ანალიტიკა.',
+                 'A website people find: technical SEO, content and analytics.'],
+                ['<p>ვაწყობთ ანალიტიკას, ვასწორებთ ტექნიკურ SEO-ს და ვგეგმავთ კონტენტს, რომ საიტმა ახალი კლიენტები მოიყვანოს.</p>',
+                 '<p>We set up analytics, fix technical SEO and plan content so the site brings new customers.</p>']],
         ];
-        foreach ($services as [$image, $title, $slug, $excerpt]) {
-            $this->item('services', null, $image, $title, $slug, [], [
-                'excerpt' => $excerpt,
-                'body'    => ['<p>' . $excerpt[0] . '</p><p>დაგვიკავშირდით დეტალებისთვის — მოვამზადებთ შეთავაზებას თქვენს პროექტზე.</p>',
-                              '<p>' . $excerpt[1] . '</p><p>Contact us for details — we will prepare an offer for your project.</p>'],
-            ]);
+        foreach ($services as [$image, $title, $slug, $excerpt, $body]) {
+            $this->item('services', null, $image, $title, $slug, [], ['excerpt' => $excerpt, 'body' => $body]);
         }
 
-        // გუნდი
-        $models = $this->category('team', ['მოდელები', 'Models'], ['modelebi', 'models']);
-        $names = [['ნაომი ოლსენი', 'Naomy Olsen'], ['პამელა ტორნი', 'Pamela Torney'], ['ჯოან ირვინი', 'Joanne Irwin'], ['ჯილიან როუ', 'Gillian Rowe']];
-        for ($i = 1; $i <= 8; $i++) {
-            $this->item('team', $models, "team-$i.jpg", $names[($i - 1) % 4], ['', ''], ['link' => ['type' => '', 'page_id' => null, 'url' => '', 'new_tab' => false]], [
-                'position'   => ['მოდელი', 'Model'],
-                'attributes' => ["ასაკი: 22\nსიმაღლე: 185\nწონა: 55", "Age: 22\nHeight: 185\nWeight: 55"],
-            ]);
+        // ---- გუნდი ----
+        $studio = $this->category('team', ['სტუდია', 'Studio'], ['studia', 'studio']);
+        $team = [
+            ['team-1.jpg', ['ნინო ბერიძე', 'Nino Beridze'], ['არტ-დირექტორი', 'Art Director'], ["გამოცდილება: 12 წელი\nპროექტები: 150+", "Experience: 12 years\nProjects: 150+"]],
+            ['team-2.jpg', ['ანა მელაძე', 'Ana Meladze'], ['UI/UX დიზაინერი', 'UI/UX Designer'], ["გამოცდილება: 7 წელი\nპროექტები: 90+", "Experience: 7 years\nProjects: 90+"]],
+            ['team-3.jpg', ['მარიამ კაპანაძე', 'Mariam Kapanadze'], ['ფრონტენდ დეველოპერი', 'Frontend Developer'], ["გამოცდილება: 6 წელი\nპროექტები: 70+", "Experience: 6 years\nProjects: 70+"]],
+            ['team-4.jpg', ['თამარ ჯაფარიძე', 'Tamar Japaridze'], ['პროექტის მენეჯერი', 'Project Manager'], ["გამოცდილება: 9 წელი\nპროექტები: 120+", "Experience: 9 years\nProjects: 120+"]],
+        ];
+        foreach ($team as $i => [$image, $name, $position, $attributes]) {
+            $this->item('team', $studio, $image, $name, ['member-' . ($i + 1), 'member-' . ($i + 1)],
+                ['link' => ['type' => '', 'page_id' => null, 'url' => '', 'new_tab' => false]], ['position' => $position, 'attributes' => $attributes]);
         }
 
-        // შეფასებები
-        $quote = ['გუნდთან მუშაობა სიამოვნება იყო: ყველაფერი დროულად, პროფესიონალურად და ზუსტად ჩვენი იდეის მიხედვით გაკეთდა.',
-                  'Working with the team was a pleasure: everything was on time, professional and exactly as we imagined.'];
-        foreach ([['testimonial-1.jpg', ['ჯოან ირვინი', 'Joanne Irwin'], ['დიზაინერი', 'Designer']],
-                  ['testimonial-2.jpg', ['ლანა ანდერსონი', 'Lana Anderson'], ['ბრენდ-მენეჯერი', 'Brand Manager']],
-                  ['testimonial-3.jpg', ['პამელა ტორნი', 'Pamela Torney'], ['ფოტოგრაფი', 'Photographer']]] as [$image, $name, $profession]) {
-            $this->item('testimonials', null, $image, $name, ['', ''], [], ['quote' => $quote, 'profession' => $profession]);
+        // ---- შეფასებები ----
+        $testimonials = [
+            ['testimonial-1.jpg', ['გიორგი ლომიძე', 'Giorgi Lomidze'], ['დამფუძნებელი, „ფერმა“', 'Founder, Ferma'],
+                ['ახალი საიტის გაშვებიდან სამ თვეში ონლაინ შეკვეთები გაორმაგდა. გუნდი ყოველთვის პასუხობს და ესმის, რა გვჭირდება.',
+                 'Online orders doubled within three months of launching the new site. The team always responds and understands what we need.']],
+            ['testimonial-2.jpg', ['ლანა ანდერსონი', 'Lana Anderson'], ['მარკეტინგის მენეჯერი, Northwind', 'Marketing Manager, Northwind'],
+                ['ბრენდინგი და საიტი ერთ გუნდთან — ეს დაზოგილი დროა და ერთიანი შედეგი. გირჩევთ!',
+                 'Branding and website with one team — that means saved time and a consistent result. Highly recommended!']],
+            ['testimonial-3.jpg', ['ეკა გელაშვილი', 'Eka Gelashvili'], ['დირექტორი, „არქი ჰაუსი“', 'Director, Arqi House'],
+                ['მართვის პანელი იმდენად მარტივია, რომ კონტენტს თავად ვცვლით — დეველოპერის გარეშე.',
+                 'The admin panel is so simple that we update the content ourselves — no developer needed.']],
+        ];
+        foreach ($testimonials as $i => [$image, $name, $profession, $quote]) {
+            $this->item('testimonials', null, $image, $name, ['review-' . ($i + 1), 'review-' . ($i + 1)], [], ['quote' => $quote, 'profession' => $profession]);
         }
 
-        // პორტფოლიო (საბოლოო კონტენტისთვის — ვებ სტუდია)
+        // ---- პორტფოლიო ----
         $web = $this->category('portfolio', ['ვებ დიზაინი', 'Web Design'], ['veb-dizaini', 'web-design']);
         $brand = $this->category('portfolio', ['ბრენდინგი', 'Branding'], ['brendingi', 'branding']);
-        foreach ([[$web, 'carousel-1.jpg', ['მოდის სახლის საიტი', 'Fashion House Website'], ['modis-sakhlis-saiti', 'fashion-house-website'], 2025],
-                  [$brand, 'carousel-2.jpg', ['კოლექციის ბრენდინგი', 'Collection Branding'], ['kolektsiis-brendingi', 'collection-branding'], 2026]] as [$category, $image, $title, $slug, $year]) {
+        $shop = $this->category('portfolio', ['ონლაინ მაღაზია', 'E-commerce'], ['onlain-maghazia', 'e-commerce']);
+        $projects = [
+            [$web, 'carousel-1.jpg', ['მოდის სახლის საიტი', 'Fashion House Website'], ['modis-sakhlis-saiti', 'fashion-house-website'], 2026, ['მოდის სახლი', 'Fashion House']],
+            [$shop, 'carousel-2.jpg', ['ტანსაცმლის ონლაინ მაღაზია', 'Apparel Online Store'], ['tansatsmlis-maghazia', 'apparel-store'], 2025, ['Style Market', 'Style Market']],
+            [$brand, 'about.png', ['სტუდიის ბრენდინგი', 'Studio Branding'], ['studiis-brendingi', 'studio-branding'], 2025, ['Photo Lab', 'Photo Lab']],
+            [$web, 'service-1.jpg', ['ღონისძიებების სააგენტო', 'Event Agency'], ['ghonisdziebebis-saagento', 'event-agency'], 2024, ['Event Pro', 'Event Pro']],
+            [$brand, 'service-3.jpg', ['კოსმეტიკის ბრენდი', 'Cosmetics Brand'], ['kosmetikis-brendi', 'cosmetics-brand'], 2024, ['Glow', 'Glow']],
+            [$shop, 'service-4.jpg', ['აქსესუარების მაღაზია', 'Accessories Store'], ['aksesuarebis-maghazia', 'accessories-store'], 2023, ['Accent', 'Accent']],
+        ];
+        foreach ($projects as [$category, $image, $title, $slug, $year, $client]) {
             $this->item('portfolio', $category, $image, $title, $slug,
-                ['year' => $year, 'website' => ['type' => 'url', 'page_id' => null, 'url' => 'https://example.com', 'new_tab' => true]], [
-                'client'  => ['დემო კლიენტი', 'Demo Client'],
-                'excerpt' => ['დემო პროექტი — ჩანაცვლდება სტუდიის რეალური ნამუშევრით.', 'Demo project — will be replaced with the studio’s real work.'],
-                'body'    => ['<p>პროექტის აღწერა: ამოცანა, გადაწყვეტა და შედეგი.</p>', '<p>Project description: the task, the solution and the result.</p>'],
-            ]);
-        }
-
-        // დემო გვერდების ბლოკები — კოლექციიდან (ხელით შეყვანილი ელემენტები ინახება, წყაროს დაბრუნებისთვის)
-        $types = ['services' => ['source' => 'collection', 'category' => null, 'limit' => 0],
-                  'team_grid' => ['source' => 'collection', 'category' => $models, 'limit' => 0],
-                  'testimonials' => ['source' => 'collection', 'limit' => 0]];
-        foreach ($db->select("SELECT id, type, settings FROM page_blocks WHERE type IN ('services', 'team_grid', 'testimonials')") as $block) {
-            $settings = (array)json_decode((string)$block['settings'], true);
-            $extra = $types[$block['type']];
-            if ($block['type'] === 'team_grid') {
-                // მთავარ/შესახებ გვერდზე ძველი ბლოკი 4 ან 8 წევრს აჩვენებდა
-                $extra['limit'] = count($settings['members'] ?? []) <= 4 ? 4 : 0;
-            }
-            $db->update('page_blocks', ['settings' => json_encode($extra + $settings, JSON_UNESCAPED_UNICODE)], 'id = ?', [$block['id']]);
+                ['year' => $year, 'website' => ['type' => '', 'page_id' => null, 'url' => '', 'new_tab' => true]], [
+                    'client'  => $client,
+                    'excerpt' => ['დემო პროექტი — ჩაანაცვლეთ სტუდიის რეალური ნამუშევრით.', 'Demo project — replace it with the studio’s real work.'],
+                    'body'    => ['<h3>ამოცანა</h3><p>რა პრობლემა ჰქონდა კლიენტს.</p><h3>გადაწყვეტა</h3><p>რა გავაკეთეთ.</p><h3>შედეგი</h3><p>რა შეიცვალა — ციფრებით.</p>',
+                                  '<h3>Challenge</h3><p>What problem the client had.</p><h3>Solution</h3><p>What we did.</p><h3>Result</h3><p>What changed — in numbers.</p>'],
+                ]);
         }
     }
 
@@ -103,16 +116,14 @@ return new class extends Seeder {
     /** @param array<string, array{0: mixed, 1: mixed}> $translated */
     private function item(string $type, ?int $category, string $image, array $title, array $slug, array $settings, array $translated): void
     {
-        static $counter = 0;
-        $counter++;
         $content = ['ka' => [], 'en' => []];
         foreach ($translated as $field => [$ka, $en]) {
             $content['ka'][$field] = $ka;
             $content['en'][$field] = $en;
         }
         $this->items->save(null, $type, ['category_id' => $category, 'image_id' => $this->media[$image] ?? null, 'is_active' => true], $settings, [
-            'ka' => ['title' => $title[0], 'slug' => $slug[0] ?: "item-$counter"],
-            'en' => ['title' => $title[1], 'slug' => $slug[1] ?: "item-$counter"],
+            'ka' => ['title' => $title[0], 'slug' => $slug[0]],
+            'en' => ['title' => $title[1], 'slug' => $slug[1]],
         ], $content, []);
     }
 };

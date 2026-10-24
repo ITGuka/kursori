@@ -45,6 +45,9 @@ return new class extends Seeder {
             'apply'         => ['განაცხადის გაგზავნა', 'Submit Application'],
             'too_many'      => ['ძალიან ბევრი მცდელობა. გთხოვთ, სცადოთ რამდენიმე წუთში.', 'Too many attempts. Please try again in a few minutes.'],
         ],
+        'portfolio' => [
+            'all' => ['ყველა', 'All'],
+        ],
         'validation' => [
             'required' => ['ველი „:attribute“ სავალდებულოა.', 'The :attribute field is required.'],
             'email'    => ['გთხოვთ, მიუთითოთ სწორი ელ-ფოსტა.', 'Please enter a valid email address.'],
