@@ -7,6 +7,7 @@ final class Request
 {
     /** @var array<string, string> */
     private array $routeParams = [];
+    private ?string $routeName = null;
 
     public function __construct(
         private readonly string $method,
@@ -149,9 +150,16 @@ final class Request
         return $this->isAjax() || str_contains((string)$this->header('Accept', ''), 'application/json');
     }
 
-    public function setRouteParams(array $params): void
+    public function setRoute(?string $name, array $params): void
     {
+        $this->routeName = $name;
         $this->routeParams = $params;
+    }
+
+    /** მიმდინარე route-ის სახელი, მაგ. "admin.users.edit" */
+    public function routeName(): ?string
+    {
+        return $this->routeName;
     }
 
     public function param(string $key, mixed $default = null): mixed

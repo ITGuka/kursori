@@ -2,11 +2,13 @@
 declare(strict_types=1);
 
 use Core\App;
+use Core\Auth\Auth;
 use Core\Http\HttpException;
 use Core\Http\Response;
 use Core\Http\Router;
 use Core\Support\Csrf;
 use Core\Support\Env;
+use Core\Support\Session;
 use Core\View\View;
 
 function app(?string $id = null): mixed
@@ -93,4 +95,52 @@ function csrf_field(): string
 function locale(): string
 {
     return App::getInstance()->locale();
+}
+
+function auth(): Auth
+{
+    return app(Auth::class);
+}
+
+/** წინა გვერდზე დაბრუნება (მხოლოდ იმავე host-ზე), სხვაგვარად $fallback */
+function back(string $fallback = ''): Response
+{
+    $referer = (string)(app()->request()?->header('Referer') ?? '');
+    $host = (string)(app()->request()?->header('Host') ?? '');
+    $sameHost = $referer !== '' && parse_url($referer, PHP_URL_HOST) . (($p = parse_url($referer, PHP_URL_PORT)) ? ":$p" : '') === $host;
+
+    return Response::redirect($sameHost ? $referer : ($fallback !== '' ? $fallback : url()));
+}
+
+/** წინა მოთხოვნის ფორმის მნიშვნელობა (Response::withInput) */
+function old(string $key, mixed $default = ''): mixed
+{
+    $old = Session::get('_old', []);
+    return is_array($old) && array_key_exists($key, $old) ? $old[$key] : $default;
+}
+
+/**
+ * ვალიდაციის შეცდომები (Response::withErrors)
+ * @return ($key is null ? array<string, string> : string|null)
+ */
+function errors(?string $key = null): array|string|null
+{
+    $errors = Session::get('_errors', []);
+    $errors = is_array($errors) ? $errors : [];
+    return $key === null ? $errors : ($errors[$key] ?? null);
+}
+
+/** მიმდინარე route-ის სახელის შემოწმება: is_route('admin.users.*') */
+function is_route(string ...$patterns): bool
+{
+    $name = app()->request()?->routeName();
+    if ($name === null) {
+        return false;
+    }
+    foreach ($patterns as $pattern) {
+        if (fnmatch($pattern, $name)) {
+            return true;
+        }
+    }
+    return false;
 }

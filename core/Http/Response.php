@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Core\Http;
 
+use Core\Support\Session;
+
 class Response
 {
     /** @param array<string, string> $headers */
@@ -29,6 +31,25 @@ class Response
         return new static('', $status, ['Location' => $url]);
     }
 
+    /** flash მონაცემი შემდეგი მოთხოვნისთვის (redirect-ის შემდეგ) */
+    public function with(string $key, mixed $value): static
+    {
+        Session::flash($key, $value);
+        return $this;
+    }
+
+    /** @param array<string, string> $errors ველი => შეცდომა; იკითხება errors() helper-ით */
+    public function withErrors(array $errors): static
+    {
+        return $this->with('_errors', $errors);
+    }
+
+    /** ფორმის ველები old() helper-ისთვის; პაროლები აქ არ უნდა გადაეცეს */
+    public function withInput(array $input): static
+    {
+        return $this->with('_old', $input);
+    }
+
     public function header(string $name, string $value): static
     {
         $this->headers[$name] = $value;
@@ -53,7 +74,9 @@ class Response
     public function send(): void
     {
         if (!headers_sent()) {
-            http_response_code($this->status);
+            // სრული status line: Apache არასტანდარტულ კოდებს (მაგ. 419) სხვაგვარად 500-ად აქცევს
+            $protocol = $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1';
+            header(sprintf('%s %d %s', $protocol, $this->status, HttpException::reason($this->status, $this->status < 400 ? 'OK' : 'Error')), true, $this->status);
             foreach ($this->headers as $name => $value) {
                 header($name . ': ' . $value);
             }

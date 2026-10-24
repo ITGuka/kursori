@@ -25,9 +25,18 @@ final class HttpException extends RuntimeException
         return $this->headers;
     }
 
-    public static function reason(int $status): string
+    public static function reason(int $status, string $default = 'Server Error'): string
     {
         return match ($status) {
+            200 => 'OK',
+            201 => 'Created',
+            204 => 'No Content',
+            301 => 'Moved Permanently',
+            302 => 'Found',
+            303 => 'See Other',
+            304 => 'Not Modified',
+            307 => 'Temporary Redirect',
+            308 => 'Permanent Redirect',
             400 => 'Bad Request',
             401 => 'Unauthorized',
             403 => 'Forbidden',
@@ -36,8 +45,9 @@ final class HttpException extends RuntimeException
             419 => 'Page Expired',
             422 => 'Unprocessable Content',
             429 => 'Too Many Requests',
+            500 => 'Server Error',
             503 => 'Service Unavailable',
-            default => 'Server Error',
+            default => $default,
         };
     }
 }

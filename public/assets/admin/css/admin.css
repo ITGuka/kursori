@@ -1,0 +1,39 @@
+/* DASHMIN-ის დამატებები */
+
+body {
+    font-family: "Heebo", "Noto Sans Georgian", sans-serif;
+}
+
+/* მომხმარებლის ინიციალი ფოტოს ნაცვლად */
+.admin-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--bs-primary, #009CFF);
+    color: #fff;
+    font-weight: 600;
+}
+
+.admin-avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+}
+
+/* .btn-lg-square-ის display:flex თემფლეითში display:none-ს ფარავს; ჩნდება admin.js-ით (.show) */
+.btn.back-to-top {
+    display: none;
+}
+
+.btn.back-to-top.show {
+    display: flex;
+}
+
+/* გასვლის ღილაკი dropdown-ში ბმულივით */
+.dropdown-menu form .dropdown-item {
+    cursor: pointer;
+}

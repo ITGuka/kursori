@@ -60,6 +60,8 @@ final class Session
     {
         $_SESSION[$key] = $value;
         $_SESSION['_flash']['new'][] = $key;
+        // ხელახლა flash-ი: წინა მოთხოვნის "old" სიიდან ამოღება, თორემ შემდეგ მოთხოვნაზე წაიშლება
+        $_SESSION['_flash']['old'] = array_values(array_diff($_SESSION['_flash']['old'] ?? [], [$key]));
     }
 
     /** login/logout-ისას — session fixation-ისგან დაცვა */

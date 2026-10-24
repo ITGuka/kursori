@@ -1,7 +1,7 @@
 # WEBDEV — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-24 · მიმდინარე ფაზა: **1 (ადმინის გარსი)** · ფაზა 0 დასრულდა
+> ბოლო განახლება: 2026-10-24 · მიმდინარე ფაზა: **2 (ენები, თარგმანები, პარამეტრები)** · ფაზები 0–1 დასრულდა
 
 ## 1. მიზანი
 
@@ -30,6 +30,9 @@
 | D12 | Front controller | ერთი `public/index.php` ფრონტისა და ადმინისთვის; ადმინი — `/admin` route-ების ჯგუფი |
 | D13 | გარემოს პარამეტრები | `.env` (git-ის გარეშე, ასლი `.env.example`) → `config/*.php` → `config('app.name')` |
 | D14 | ლოკალური მისამართი | `http://webdev.test` (vhost → `public/`); სარეზერვო `http://localhost/WEBDEV/` root `.htaccess`-ით |
+| D15 | ადმინის ავტორიზაცია | სესია + `password_hash`; მომხმარებელი ყოველ მოთხოვნაზე ბაზიდან იკითხება; პაროლის შეცვლა ან გათიშვა ხურავს მის ყველა სესიას; 2 სთ უმოქმედობის შემდეგ — გამოსვლა. „Remember me“ და პაროლის აღდგენა email-ით — არ არის (აღდგენა: `admin:create`) |
+| D16 | Login-ის ლიმიტი | 5 მცდელობა email+IP-ზე და 20 — IP-ზე, 15 წუთში; ზოგადი `rate_limits` ცხრილი (`login_attempts`-ის ნაცვლად), საჯარო ფორმებიც მას გამოიყენებს |
+| D17 | ადმინის ენა | ადმინის ინტერფეისი ქართულადაა (ტექსტები view-ებში); თარგმანების სისტემა (ფაზა 2) ფრონტისთვისაა |
 
 ## 3. დირექტორიების სტრუქტურა
 
@@ -45,35 +48,37 @@ WEBDEV/
 │   └── uploads/             ✅ მედია (git-ის გარეშე; სკრიპტები აკრძალულია)
 ├── core/                    ← მრავალჯერადი ფრეიმვორკი (namespace Core\)
 │   ├── App.php              ✅ კონტეინერი (autowiring), boot, HTTP დამუშავება, locale
-│   ├── helpers.php          ✅ app, config, env, e, url, route, asset, view, redirect, abort, csrf_field, locale
-│   ├── Http/                ✅ Request, Response, Router, Route, Middleware, HttpException, Middleware/VerifyCsrf
+│   ├── helpers.php          ✅ app, config, env, e, url, route, asset, view, redirect, back, abort,
+│   │                          csrf_token, csrf_field, old, errors, is_route, auth, locale
+│   ├── Http/                ✅ Request, Response (with/withErrors/withInput), Router, Route, Middleware,
+│   │                          HttpException, Middleware/VerifyCsrf
 │   ├── Database/            ✅ DB (PDO), Migration, Migrator, Seeder · ⏳ QueryBuilder (საჭიროებისამებრ)
 │   ├── View/                ✅ View, Template (layout, sections, insert)
 │   ├── Debug/               ✅ ErrorHandler (debug გვერდი / errors/*.php, ლოგი)
-│   ├── Support/             ✅ Env, Config, Session (flash), Csrf, Log · ⏳ Validator, Cache, Str, Arr
+│   ├── Support/             ✅ Env, Config, Session (flash), Csrf, Log, Validator, RateLimiter · ⏳ Cache, Str, Arr
 │   ├── Console/             ✅ Console, Command, Output, Commands/*
-│   ├── Auth/                ⏳ Auth, RateLimiter
+│   ├── Auth/                ✅ Auth
 │   ├── I18n/                ⏳ Translator (t())
 │   ├── Media/               ⏳ Uploader, ImageResizer (GD)
 │   └── Mail/                ⏳ Mailer (PHPMailer wrapper)
 ├── app/                     ← პროექტის კოდი (namespace App\)
 │   ├── Controllers/Front/   ✅ Home (დროებითი) · ⏳ Page, Collection, Form, Newsletter, Sitemap
-│   ├── Controllers/Admin/   ⏳ Dashboard, Auth, Pages, Blocks, Menus, Categories,
-│   │                          Collections, Media, Languages, Translations,
-│   │                          Settings, Inbox, Newsletter, Users
-│   ├── Middleware/          ✅ SetLocale · ⏳ Authenticate
-│   ├── Models/              ⏳ repository კლასები ცხრილებზე
+│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User · ⏳ Pages, Blocks, Menus, Categories,
+│   │                          Collections, Media, Languages, Translations, Settings, Inbox, Newsletter
+│   ├── Middleware/          ✅ SetLocale, Authenticate (alias auth), RedirectIfAuthenticated (alias guest)
+│   ├── Models/              ✅ AdminUser, ActivityLog · ⏳ დანარჩენი ცხრილები
+│   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create)
 │   ├── Blocks/              ⏳ ბლოკების რეესტრი და სქემები
-│   └── routes/web.php       ✅ (ადმინის route-ები — ⏳ routes/admin.php)
+│   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
 │   ├── front/               ✅ layouts/base, home (დროებითი) · ⏳ Poseify partials, blocks/*
-│   ├── admin/               ⏳ DASHMIN layout, მოდულების ხედები
+│   ├── admin/               ✅ layouts/app, layouts/auth, partials/*, auth/login, dashboard, users/* · ⏳ მოდულები
 │   └── errors/default.php   ✅
-├── config/                  ✅ app.php, database.php (მნიშვნელობები .env-იდან)
+├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar)
 ├── database/
-│   ├── migrations/          ✅ 2026_10_24_000001_create_languages_table
-│   └── seeds/               ✅ 01_languages (ka, en)
+│   ├── migrations/          ✅ languages, admin_users, rate_limits, activity_log
+│   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*)
 ├── resources/templates/     ✅ poseify/, dashmin/ — საწყისი HTML (reference) + zip (git-ის გარეშე)
 ├── storage/                 ✅ cache/, logs/ (git-ის გარეშე)
 ├── bin/console              ✅ CLI
@@ -85,7 +90,7 @@ WEBDEV/
 ### ფენები და მოთხოვნის გზა
 
 ```
-public/index.php → Core\App → Router → Middleware (Locale, Csrf, Auth)
+public/index.php → Core\App → Router → Middleware (VerifyCsrf, locale | auth/guest)
                 → Controller → Model (PDO) → View (layout + blocks) → Response
                                   ↑
                               Cache (გვერდის HTML, ინვალიდაცია შენახვისას)
@@ -123,6 +128,21 @@ $db->transaction(fn (DB $db) => ...);
 $this->layout('front/layouts/base', ['title' => '...']);
 $this->start('scripts'); ?> <script>...</script> <?php $this->stop();
 <?= $this->section('content') ?>  <?= $this->insert('front/partials/nav', [...]) ?>  <?= e($value) ?>
+
+// ვალიდაცია და ფორმაში დაბრუნება (Post/Redirect/Get)
+$v = Validator::make($data, ['email' => "required|email|max:190|unique:admin_users,email,$id"]);
+if ($v->fails()) {
+    return back(route('admin.users.edit', ['id' => $id]))->withErrors($v->errors())->withInput(['email' => $data['email']]);
+}
+return redirect(route('admin.users.index'))->with('success', 'შენახულია.');
+// view-ში: old('email', $user['email']), errors('email'), Session::get('success')
+
+// ავტორიზაცია და ლიმიტი
+auth()->check(); auth()->user(); auth()->id();
+$limiter->tooManyAttempts($key, 5); $limiter->hit($key, 900); $limiter->clear($key);
+
+// ადმინის მოდული: route-ები app/routes/admin.php-ში ('auth' middleware-ით),
+// sidebar-ის პუნქტი config/admin.php-ში, ქმედების ჟურნალი — ActivityLog::log('page.updated', 'page', $id)
 ```
 
 ყველა POST/PUT/PATCH/DELETE მოთხოვნას სჭირდება `<?= csrf_field() ?>` ან `X-CSRF-TOKEN` header (სხვაგვარად 419). PUT/PATCH/DELETE HTML ფორმიდან: `<input type="hidden" name="_method" value="DELETE">`.
@@ -138,6 +158,7 @@ php bin/console make:migration create_pages_table
 php bin/console db:seed [name]             # ყველა ან სახელით ფილტრი
 php bin/console cache:clear
 php bin/console serve [--port=8000]        # Apache-ს გარეშე
+php bin/console admin:create --email=... [--name=...] [--password=...]   # ადმინის შექმნა / პაროლის აღდგენა
 ```
 
 PHP PATH-ში არ არის — Laragon Terminal-იდან ან სრული გზით: `C:\laragon\bin\php\php-8.3.36-Win32-vs16-x64\php.exe bin\console ...`.
@@ -194,7 +215,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | მედია | `media` (path, mime, size, width, height, folder) + `media_translations` (alt, caption) |
 | ფორმები | `form_submissions` (form: contact/application, data JSON, ip, is_read, created_at) |
 | Newsletter | `subscribers` (email, lang, status, token, confirmed_at, unsubscribed_at) · `newsletter_campaigns` (subject, body, lang, status, sent_at) · `newsletter_sends` (campaign_id, subscriber_id, status, error, sent_at) |
-| სისტემა | `admin_users` (name, email, password_hash, last_login_at) · `login_attempts` · `activity_log` (user_id, action, entity, entity_id, data JSON) · `redirects` (from, to, code) · `migrations` |
+| სისტემა | ✅ `admin_users` (name, email, password_hash, is_active, last_login_at, last_login_ip) · ✅ `rate_limits` (limiter_key sha256, hits, reset_at) · ✅ `activity_log` (user_id → SET NULL, action, entity, entity_id, data JSON, ip) · `redirects` (from, to, code) · ✅ `migrations` |
 
 კოლექციები ერთ ზოგად ცხრილშია: ახალი კოლექციის ტიპი (მაგ. `portfolio`) ემატება `app/` კონფიგში, მიგრაციის გარეშე. `attributes` ინახავს ტიპის სპეციფიკურ ველებს (მაგ. team-ისთვის პოზიცია, სოციალური ბმულები).
 
@@ -228,7 +249,9 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 - PDO prepared statements, `ATTR_EMULATE_PREPARES = false`.
 - ყველა გამოტანა `e()`-ით; WYSIWYG HTML — HTMLPurifier-ით შენახვისას.
 - CSRF token ყველა POST-ზე; `SameSite=Lax`, `HttpOnly` სესიის cookie; სესიის ID-ის განახლება login-ისას.
-- `password_hash` / `password_verify`; login-ის ლიმიტი (`login_attempts`, IP + email).
+- `password_hash` / `password_verify`; login-ის ლიმიტი (`rate_limits`, D16); უცნობ email-ზეც სრულდება hash-ის შემოწმება (timing).
+- ადმინის პასუხებს: `Cache-Control: no-store`, `X-Robots-Tag: noindex`; logout — მხოლოდ POST + CSRF; login/logout-ისას იცვლება სესიის ID და CSRF token.
+- ადმინს არ შეუძლია საკუთარი ანგარიშის წაშლა/გათიშვა და ბოლო აქტიური ადმინის წაშლა/გათიშვა; საკუთარი პაროლის შეცვლას სჭირდება მიმდინარე პაროლი.
 - ატვირთვა: MIME + გაფართოების whitelist, ახალი ფაილის სახელი, `uploads/`-ში PHP-ის შესრულება აკრძალულია.
 - საჯარო ფორმებზე honeypot + rate limit.
 - `core/`, `app/`, `config/`, `storage/` web root-ის გარეთაა.
@@ -244,8 +267,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | ფაზა | შინაარსი | სტატუსი |
 |---|---|---|
 | 0 | საფუძველი: სტრუქტურა, `core/` (Router, DB, View, Migrator, Session, Csrf), composer, console, Laragon vhost | ✅ 2026-10-24 |
-| 1 | ადმინის გარსი: DASHMIN layout, login/logout, ადმინ-მომხმარებლები | ⏳ შემდეგი |
-| 2 | ენები, UI თარგმანები, საიტის პარამეტრები | — |
+| 1 | ადმინის გარსი: DASHMIN layout, login/logout, ადმინ-მომხმარებლები | ✅ 2026-10-24 |
+| 2 | ენები, UI თარგმანები, საიტის პარამეტრები | ⏳ შემდეგი |
 | 3 | მედია ბიბლიოთეკა | — |
 | 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | — |
 | 5 | მენიუები | — |
@@ -257,5 +280,6 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 ## 12. ცვლილებების ისტორია
 
+- **2026-10-24** — ფაზა 1: DASHMIN layout (sidebar `config/admin.php`-იდან), login/logout, ადმინ-მომხმარებლების CRUD, Dashboard ბოლო აქტივობით, `Core\Auth\Auth`, `RateLimiter`, `Validator`, flash/old/errors helper-ები, `admin:create`. მიგრაციები: admin_users, rate_limits, activity_log. გასწორდა: Apache-ზე 419 → 500 (ახლა სრული status line იგზავნება); flash მონაცემი იშლებოდა, თუ ზედიზედ ორ მოთხოვნაზე flash-დებოდა. DASHMIN-ის `main.js` ჩანაცვლდა `admin.js`-ით (დემო დიაგრამების გარეშე). დაემატა D15–D17.
 - **2026-10-24** — ფაზა 0: `core/` ფრეიმვორკი (App/კონტეინერი, Router, Request/Response, DB, Migrator, View/Template, Session, Csrf, ErrorHandler, Console), composer autoload, `.env`, languages მიგრაცია + seed, vhost `webdev.test`, თემფლეითები → `resources/templates/`, assets → `public/assets/`. დაემატა D12–D14.
 - **2026-10-24** — პირველი ვერსია: თემფლეითების ანალიზი, გადაწყვეტილებები D1–D11, სქემა, ფაზები.

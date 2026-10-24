@@ -134,7 +134,7 @@ final class Router
                 continue;
             }
 
-            $request->setRouteParams($params);
+            $request->setRoute($route->getName(), $params);
             $middleware = array_merge($globalMiddleware, $route->getMiddleware());
 
             return $this->pipeline($middleware, $request, fn (Request $r) => $this->toResponse($this->call($route->action, $r)));

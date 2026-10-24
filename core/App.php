@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Core;
 
 use Closure;
+use Core\Auth\Auth;
 use Core\Database\DB;
 use Core\Debug\ErrorHandler;
 use Core\Http\Request;
@@ -11,6 +12,7 @@ use Core\Http\Response;
 use Core\Http\Router;
 use Core\Support\Config;
 use Core\Support\Env;
+use Core\Support\RateLimiter;
 use Core\Support\Session;
 use Core\View\View;
 use ReflectionClass;
@@ -62,6 +64,8 @@ final class App
         $this->singleton(DB::class, fn () => new DB($config->get('database', [])));
         $this->singleton(Router::class, fn (App $app) => new Router($app));
         $this->singleton(View::class, fn (App $app) => new View($app->basePath('views')));
+        $this->singleton(Auth::class, fn (App $app) => new Auth($app->make(DB::class), $config->get('auth', [])));
+        $this->singleton(RateLimiter::class, fn (App $app) => new RateLimiter($app->make(DB::class)));
     }
 
     // ---- კონტეინერი ----
