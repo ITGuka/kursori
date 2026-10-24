@@ -3,6 +3,9 @@
 
 <?php // დროებითი გვერდი: ამოწმებს ენებს, თარგმანებს და პარამეტრებს. ფაზა 4-ში ჩანაცვლდება ბლოკებით. ?>
 <div class="container py-5">
+    <?php if ($logo = media_url(setting('general.logo'), 'medium')): ?>
+        <img src="<?= e($logo) ?>" alt="<?= e(media_alt(setting('general.logo')) ?: setting('general.site_name')) ?>" class="mb-4" style="max-height: 80px">
+    <?php endif ?>
     <div class="title">
         <div class="title-left">
             <h5><?= e(setting('general.tagline') ?: 'Phase 2') ?></h5>

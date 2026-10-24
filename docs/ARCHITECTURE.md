@@ -1,7 +1,7 @@
 # WEBDEV — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-24 · მიმდინარე ფაზა: **3 (მედია ბიბლიოთეკა)** · ფაზები 0–2 დასრულდა
+> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **4 (გვერდები + ბლოკები)** · ფაზები 0–3 დასრულდა
 
 ## 1. მიზანი
 
@@ -38,6 +38,10 @@
 | D20 | პარამეტრები | განსაზღვრებები კოდში (`config/settings.php`: ჯგუფი → ველები, ტიპი, თარგმნადობა, default), მნიშვნელობები ბაზაში (`settings`: setting_key, lang — '' არათარგმნადისთვის). ადმინის ფორმა განსაზღვრებებიდან გენერირდება. ახალი პარამეტრი = ერთი ხაზი კონფიგში, მიგრაციის გარეშე |
 | D21 | ქეში | `Core\Support\Cache` — ფაილური (`storage/cache/data`, PHP ფაილები opcache-ისთვის). ენები, თარგმანები (ენაზე), პარამეტრები ქეშირდება ვადის გარეშე და იშლება ადმინში შენახვისას |
 | D22 | ტექნიკური რეჟიმი | `general.maintenance_mode` — სტუმრებს 503 (`errors/maintenance`), შესულ ადმინს — საიტი |
+| D23 | მედიის შენახვა | `public/uploads/YYYY/MM/{20 hex}.{ext}`; ტიპი — შიგთავსით (finfo), გაფართოება — დაშვებული MIME-ის რუკიდან; სურათი მოწმდება getimagesize-ით, პიქსელების ლიმიტით (40 MP) და GD-ით სრული გახსნით. დაშვებულია JPG, PNG, WebP, GIF, PDF, მაქს. 10 MB. SVG აკრძალულია (JavaScript-ის რისკი) |
+| D24 | სურათის ვარიანტები | ატვირთვისას: `thumb` 400×400 (crop), `medium` 1024 და `large` 1920 (fit), `-{variant}` სუფიქსით. პატარა სურათი არ დიდდება; ორიგინალის ტოლი ვარიანტი არ ინახება; GIF (ანიმაცია) და PDF — ვარიანტების გარეშე. ხელახალი კოდირება EXIF/GPS-ს შლის, JPEG-ის ორიენტაცია სწორდება |
+| D25 | მედიაზე მითითება | ყველგან ინახება მედიის **id** (არა ბილიკი): `media_url($id, 'medium')`, `media_alt($id)`. Alt/წარწერა — თითო ენაზე (`media_translations`). გამოყენებული ფაილი არ იშლება (`Media::usages()` — ყოველი ახალი მოდული აქ ემატება) |
+| D26 | ატვირთვა ადმინში | ერთი ფაილი თითო AJAX მოთხოვნაზე (რიგრიგობით, პროგრესით, CSRF header-ით), drag & drop; ერთი საერთო picker-ფანჯარა ყველა ადმინ-გვერდზე (`partials/media-input` + `media.js`) |
 
 ## 3. დირექტორიების სტრუქტურა
 
@@ -65,29 +69,32 @@ WEBDEV/
 │   ├── Auth/                ✅ Auth
 │   ├── I18n/                ✅ Translator (loader-ით — წყარო პროექტი წყვეტს)
 │   ├── Settings/            ✅ Settings (განსაზღვრებები კონფიგიდან, მნიშვნელობები ბაზიდან)
-│   ├── Media/               ⏳ Uploader, ImageResizer (GD)
+│   ├── Media/               ✅ Uploader, ImageResizer (GD), UploadException
 │   └── Mail/                ⏳ Mailer (PHPMailer wrapper)
 ├── app/                     ← პროექტის კოდი (namespace App\)
 │   ├── Controllers/Front/   ✅ Home (დროებითი) · ⏳ Page, Collection, Form, Newsletter, Sitemap
-│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings · ⏳ Pages, Blocks,
-│   │                          Menus, Categories, Collections, Media, Inbox, Newsletter
+│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media · ⏳ Pages, Blocks,
+│   │                          Menus, Categories, Collections, Inbox, Newsletter
 │   ├── Middleware/          ✅ SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
 │   │                          RedirectIfAuthenticated (guest)
-│   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation · ⏳ დანარჩენი ცხრილები
+│   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media · ⏳ დანარჩენი ცხრილები
+│   ├── helpers.php          ✅ media(), media_url(), media_alt()
 │   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create)
 │   ├── Blocks/              ⏳ ბლოკების რეესტრი და სქემები
 │   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
 │   ├── front/               ✅ layouts/base, home (დროებითი) · ⏳ Poseify partials, blocks/*
-│   ├── admin/               ✅ layouts/*, partials/* (flash, pagination), auth/login, dashboard, users/*,
-│   │                          languages/*, translations/index, settings/index + field · ⏳ მოდულები
+│   ├── admin/               ✅ layouts/*, partials/* (flash, pagination, upload-zone, media-input, media-picker),
+│   │                          auth/login, dashboard, users/*, languages/*, translations/index, settings/*, media/* · ⏳ მოდულები
 │   └── errors/              ✅ default.php, maintenance.php
 ├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar),
-│                              settings (პარამეტრების განსაზღვრებები)
+│                              settings (პარამეტრების განსაზღვრებები), media (ტიპები, ლიმიტები, ვარიანტები)
 ├── database/
-│   ├── migrations/          ✅ languages, admin_users, rate_limits, activity_log, translation_keys/values, settings
-│   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები)
+│   ├── migrations/          ✅ languages, admin_users, rate_limits, activity_log, translation_keys/values, settings,
+│   │                          media + media_translations
+│   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები),
+│                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo")
 ├── resources/templates/     ✅ poseify/, dashmin/ — საწყისი HTML (reference) + zip (git-ის გარეშე)
 ├── storage/                 ✅ cache/, logs/ (git-ის გარეშე)
 ├── bin/console              ✅ CLI
@@ -155,6 +162,12 @@ t('nav.contact');  t('form.sent');  t('greeting', ['name' => 'ანა']);   //
 setting('contact.phone');  setting('general.site_name');  setting('general.maintenance_mode'); // toggle → bool
 // ახალი პარამეტრი: config/settings.php-ში ერთი ხაზი → ადმინში ველი ავტომატურად ჩნდება
 // ქეში: app(Cache::class)->remember('key', $ttl, fn () => ...); ->forget('key'); ->flush('prefix.')
+
+// მედია: ბაზაში ინახება id; ვარიანტები: original | thumb | medium | large (აკლია → original)
+<img src="<?= e(media_url($id, 'medium')) ?>" alt="<?= e(media_alt($id)) ?>" loading="lazy">
+// ადმინის ფორმაში მედიის ველი (picker):
+<?= $this->insert('admin/partials/media-input', ['name' => 'image_id', 'value' => $id, 'inputId' => 'image']) ?>
+// ახალი მოდული, რომელიც მედიას იყენებს → Media::usages()-ში დაამატეთ შემოწმება (წაშლისგან დაცვა)
 
 // ადმინის მოდული: route-ები app/routes/admin.php-ში ('auth' middleware-ით),
 // sidebar-ის პუნქტი config/admin.php-ში, ქმედების ჟურნალი — ActivityLog::log('page.updated', 'page', $id)
@@ -227,7 +240,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | მენიუ | `menus` (location: header/footer) + `menu_items` (menu_id, parent_id, type page/category/item/url, target_id, url, target, icon, sort, is_active) + `menu_item_translations` (label, url) |
 | კატეგორიები | `categories` (collection, parent_id, sort, is_active) + `category_translations` (name, slug, description) |
 | კოლექციები | `collection_items` (collection: services/team/testimonials/…, category_id, image_id, attributes JSON, sort, is_active) + `collection_item_translations` (title, slug, subtitle, excerpt, body, attributes JSON) |
-| მედია | `media` (path, mime, size, width, height, folder) + `media_translations` (alt, caption) |
+| მედია | ✅ `media` (path, original_name, mime, extension, size, width, height, variants JSON, folder, uploaded_by) + `media_translations` (media_id → CASCADE, lang, alt, caption) |
 | ფორმები | `form_submissions` (form: contact/application, data JSON, ip, is_read, created_at) |
 | Newsletter | `subscribers` (email, lang, status, token, confirmed_at, unsubscribed_at) · `newsletter_campaigns` (subject, body, lang, status, sent_at) · `newsletter_sends` (campaign_id, subscriber_id, status, error, sent_at) |
 | სისტემა | ✅ `admin_users` (name, email, password_hash, is_active, last_login_at, last_login_ip) · ✅ `rate_limits` (limiter_key sha256, hits, reset_at) · ✅ `activity_log` (user_id → SET NULL, action, entity, entity_id, data JSON, ip) · `redirects` (from, to, code) · ✅ `migrations` |
@@ -268,7 +281,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 - `password_hash` / `password_verify`; login-ის ლიმიტი (`rate_limits`, D16); უცნობ email-ზეც სრულდება hash-ის შემოწმება (timing).
 - ადმინის პასუხებს: `Cache-Control: no-store`, `X-Robots-Tag: noindex`; logout — მხოლოდ POST + CSRF; login/logout-ისას იცვლება სესიის ID და CSRF token.
 - ადმინს არ შეუძლია საკუთარი ანგარიშის წაშლა/გათიშვა და ბოლო აქტიური ადმინის წაშლა/გათიშვა; საკუთარი პაროლის შეცვლას სჭირდება მიმდინარე პაროლი.
-- ატვირთვა: MIME + გაფართოების whitelist, ახალი ფაილის სახელი, `uploads/`-ში PHP-ის შესრულება აკრძალულია.
+- ატვირთვა: D23; `uploads/.htaccess` — სკრიპტები 403, `php_flag engine off`, `nosniff`.
+- `public/.htaccess` შლის მშობელი `C:\laragon\www\.htaccess`-ის (სხვა პროექტის) CSP-ს, რომელიც `localhost/WEBDEV/`-ზე jQuery-ს CDN-ს ბლოკავდა. საკუთარი CSP — ფაზა 9.
 - საჯარო ფორმებზე honeypot + rate limit.
 - `core/`, `app/`, `config/`, `storage/` web root-ის გარეთაა.
 
@@ -285,8 +299,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | 0 | საფუძველი: სტრუქტურა, `core/` (Router, DB, View, Migrator, Session, Csrf), composer, console, Laragon vhost | ✅ 2026-10-24 |
 | 1 | ადმინის გარსი: DASHMIN layout, login/logout, ადმინ-მომხმარებლები | ✅ 2026-10-24 |
 | 2 | ენები, UI თარგმანები, საიტის პარამეტრები | ✅ 2026-10-24 |
-| 3 | მედია ბიბლიოთეკა (+ ლოგო/favicon/OG ველების გადაყვანა მედიის არჩევაზე) | ⏳ შემდეგი |
-| 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | — |
+| 3 | მედია ბიბლიოთეკა (+ ლოგო/favicon/OG ველების გადაყვანა მედიის არჩევაზე) | ✅ 2026-10-25 |
+| 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | ⏳ შემდეგი |
 | 5 | მენიუები | — |
 | 6 | კატეგორიები და კოლექციები | — |
 | 7 | ფორმები + Inbox, newsletter | — |
@@ -296,6 +310,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 ## 12. ცვლილებების ისტორია
 
+- **2026-10-25** — ფაზა 3: მედია ბიბლიოთეკა (ბადე, ფილტრები, drag & drop ატვირთვა პროგრესით, საქაღალდეები, alt/წარწერა ენებზე, URL-ის კოპირება, გამოყენების შემოწმება წაშლამდე), საერთო picker-ფანჯარა, პარამეტრების `image` ველები → მედიის id. `core/Media`: Uploader, ImageResizer. Poseify-ის დემო სურათები seed-ით. Uploader სურათს GD-ით სრულად ხსნის (დაზიანებული ფაილი არ მიიღება). გასწორდა: მშობელი პროექტის CSP `localhost/WEBDEV/`-ზე jQuery-ს ბლოკავდა. დაემატა D23–D26.
 - **2026-10-24** — ფაზა 2: ენების CRUD (ძირითადი ენის წესები), UI თარგმანების რედაქტორი (ფილტრი ჯგუფით, ძებნა, „მხოლოდ ნაკლული“, ერთად შენახვა, გასაღების დამატება/წაშლა), პარამეტრები ჩანართებით (ზოგადი, კონტაქტი, სოც. ქსელები, SEO, კოდი), ტექნიკური რეჟიმი. `core/`: Cache, Translator, Settings, Validator `regex`/`url`. გასწორდა: ნამდვილი PUT/PATCH/DELETE-ის form body არ იკითხებოდა. დაემატა D18–D22; `settings`/`translations` სქემა შეიცვალა D19–D20-ის მიხედვით.
 - **2026-10-24** — ფაზა 1: DASHMIN layout (sidebar `config/admin.php`-იდან), login/logout, ადმინ-მომხმარებლების CRUD, Dashboard ბოლო აქტივობით, `Core\Auth\Auth`, `RateLimiter`, `Validator`, flash/old/errors helper-ები, `admin:create`. მიგრაციები: admin_users, rate_limits, activity_log. გასწორდა: Apache-ზე 419 → 500 (ახლა სრული status line იგზავნება); flash მონაცემი იშლებოდა, თუ ზედიზედ ორ მოთხოვნაზე flash-დებოდა. DASHMIN-ის `main.js` ჩანაცვლდა `admin.js`-ით (დემო დიაგრამების გარეშე). დაემატა D15–D17.
 - **2026-10-24** — ფაზა 0: `core/` ფრეიმვორკი (App/კონტეინერი, Router, Request/Response, DB, Migrator, View/Template, Session, Csrf, ErrorHandler, Console), composer autoload, `.env`, languages მიგრაცია + seed, vhost `webdev.test`, თემფლეითები → `resources/templates/`, assets → `public/assets/`. დაემატა D12–D14.

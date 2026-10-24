@@ -33,7 +33,11 @@ $input = function (string $inputName, string $inputId, string $current, string $
 };
 ?>
 <div class="mb-4">
-    <?php if ($type === 'toggle'): ?>
+    <?php if ($type === 'image'): ?>
+        <label class="form-label" for="<?= e($id) ?>"><?= e($field['label'] ?? $key) ?></label>
+        <?= $this->insert('admin/partials/media-input', ['name' => $name, 'value' => $value($key), 'inputId' => $id, 'invalid' => (bool)errors($key)]) ?>
+        <?php if ($error = errors($key)): ?><div class="invalid-feedback d-block"><?= e($error) ?></div><?php endif ?>
+    <?php elseif ($type === 'toggle'): ?>
         <?php $checked = $value($key) === '' ? (bool)($field['default'] ?? false) : $value($key) === '1'; ?>
         <div class="form-check form-switch">
             <input type="hidden" name="<?= e($name) ?>" value="0">

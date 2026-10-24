@@ -5,7 +5,7 @@ declare(strict_types=1);
  * საიტის პარამეტრების განსაზღვრებები. ადმინის ფორმა (ჩანართები ჯგუფებად) აქედან გენერირდება,
  * მნიშვნელობები ინახება `settings` ცხრილში. წაკითხვა: setting('contact.phone').
  *
- * ველი: type     — text | textarea | email | url | tel | number | toggle | select | image | code
+ * ველი: type     — text | textarea | email | url | tel | number | toggle | select | image (მედიის id) | code
  *       label    — წარწერა ადმინში
  *       translatable — თითო ენაზე ცალკე მნიშვნელობა
  *       default  — სტრიქონი ან ['ka' => ..., 'en' => ...]
@@ -19,8 +19,8 @@ return [
         'fields' => [
             'site_name'        => ['label' => 'საიტის სახელი', 'translatable' => true, 'default' => 'WEBDEV', 'max' => 100],
             'tagline'          => ['label' => 'სლოგანი', 'translatable' => true, 'max' => 150],
-            'logo'             => ['label' => 'ლოგო', 'type' => 'image', 'help' => 'სურათის მისამართი. ფაზა 3-ში — არჩევა მედია ბიბლიოთეკიდან.'],
-            'favicon'          => ['label' => 'Favicon', 'type' => 'image'],
+            'logo'             => ['label' => 'ლოგო', 'type' => 'image', 'help' => 'ცარიელის შემთხვევაში ჩანს საიტის სახელი.'],
+            'favicon'          => ['label' => 'Favicon', 'type' => 'image', 'help' => 'კვადრატული PNG, მინიმუმ 48×48.'],
             'copyright'        => ['label' => 'Copyright ტექსტი', 'translatable' => true, 'help' => ':year ჩანაცვლდება მიმდინარე წლით.',
                                    'default' => ['ka' => '© :year WEBDEV. ყველა უფლება დაცულია.', 'en' => '© :year WEBDEV. All rights reserved.']],
             'maintenance_mode' => ['label' => 'ტექნიკური სამუშაოების რეჟიმი', 'type' => 'toggle', 'default' => false,

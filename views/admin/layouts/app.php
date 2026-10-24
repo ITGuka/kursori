@@ -91,7 +91,16 @@ $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>
 </div>
 
+<?= $this->insert('admin/partials/media-picker') ?>
+
+<script>
+    window.AdminConfig = <?= json_encode([
+        'mediaUpload' => route('admin.media.store'),
+        'mediaPicker' => route('admin.media.picker'),
+    ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?>;
+</script>
 <?= $this->insert('admin/partials/scripts') ?>
+<script src="<?= asset('admin/js/media.js') ?>"></script>
 <?= $this->section('scripts') ?>
 </body>
 </html>

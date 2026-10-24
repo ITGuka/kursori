@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\LanguageController;
+use App\Controllers\Admin\MediaController;
 use App\Controllers\Admin\SettingsController;
 use App\Controllers\Admin\TranslationController;
 use App\Controllers\Admin\UserController;
@@ -39,6 +40,13 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->put('/translations', [TranslationController::class, 'update'])->name('translations.update');
         $router->post('/translations', [TranslationController::class, 'store'])->name('translations.store');
         $router->delete('/translations/{id}', [TranslationController::class, 'destroy'])->name('translations.destroy');
+
+        $router->get('/media', [MediaController::class, 'index'])->name('media.index');
+        $router->post('/media', [MediaController::class, 'store'])->name('media.store');
+        $router->get('/media/picker', [MediaController::class, 'picker'])->name('media.picker');
+        $router->get('/media/{id}/edit', [MediaController::class, 'edit'])->name('media.edit');
+        $router->put('/media/{id}', [MediaController::class, 'update'])->name('media.update');
+        $router->delete('/media/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
 
         $router->get('/settings', [SettingsController::class, 'index'])->name('settings.index');
         $router->put('/settings', [SettingsController::class, 'update'])->name('settings.update');

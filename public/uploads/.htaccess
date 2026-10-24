@@ -1,5 +1,15 @@
 # ატვირთულ ფაილებში სკრიპტების შესრულება აკრძალულია
-<FilesMatch "\.(php\d?|phtml|phar|pl|py|cgi|sh)$">
+<FilesMatch "\.(php\d?|phtml|phar|pl|py|cgi|sh|htaccess)$">
     Require all denied
 </FilesMatch>
 Options -Indexes -ExecCGI
+
+# mod_php: PHP ძრავა ამ საქაღალდეში გამორთულია
+<IfModule php_module>
+    php_flag engine off
+</IfModule>
+
+<IfModule mod_headers.c>
+    # ბრაუზერმა ტიპი არ უნდა „გამოიცნოს“ (მაგ. სურათი HTML-ად)
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>

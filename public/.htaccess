@@ -10,6 +10,9 @@ DirectoryIndex index.php
 </IfModule>
 
 <IfModule mod_headers.c>
+    # localhost/WEBDEV/-ზე მშობელი C:\laragon\www\.htaccess (სხვა პროექტი) თავის CSP-ს აყენებს,
+    # რომელიც jQuery-ს CDN-ს ბლოკავს. WEBDEV-ის საკუთარი CSP — ფაზა 9-ში.
+    Header always unset Content-Security-Policy
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"

@@ -17,7 +17,8 @@
             "App\\": "app/"
         },
         "files": [
-            "core/helpers.php"
+            "core/helpers.php",
+            "app/helpers.php"
         ]
     },
     "config": {

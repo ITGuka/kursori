@@ -27,13 +27,16 @@ final class ActivityLog
         'translation.updated' => 'შეცვალა თარგმანები',
         'translation.deleted' => 'წაშალა თარგმანის გასაღები',
         'settings.updated'    => 'შეცვალა პარამეტრები',
+        'media.uploaded'      => 'ატვირთა ფაილი',
+        'media.updated'       => 'შეცვალა ფაილის მონაცემები',
+        'media.deleted'       => 'წაშალა ფაილი',
     ];
 
     /** Dashboard-ის „დეტალები“ სვეტისთვის: data-დან ყველაზე აღწერითი მნიშვნელობა */
     public static function summary(?string $json): string
     {
         $data = $json ? (array)json_decode($json, true) : [];
-        return (string)($data['email'] ?? $data['code'] ?? $data['key'] ?? (isset($data['count']) ? $data['count'] . ' ჩანაწერი' : ''));
+        return (string)($data['email'] ?? $data['code'] ?? $data['key'] ?? $data['name'] ??(isset($data['count']) ? $data['count'] . ' ჩანაწერი' : ''));
     }
 
     public function __construct(

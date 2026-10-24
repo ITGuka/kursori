@@ -12,6 +12,8 @@ use Core\Database\DB;
 use Core\Http\Middleware\VerifyCsrf;
 use Core\Http\Router;
 use Core\I18n\Translator;
+use Core\Media\ImageResizer;
+use Core\Media\Uploader;
 use Core\Settings\Settings;
 use Core\Support\Cache;
 
@@ -31,6 +33,16 @@ $app->singleton(Settings::class, fn (App $app) => new Settings(
     (array)config('settings'),
     $app->make(Language::class)->defaultCode(),
 ));
+
+// მედია: ფაილის შემოწმება/შენახვა და ზომის ვარიანტები (config/media.php)
+$app->singleton(Uploader::class, fn (App $app) => new Uploader(
+    public_path((string)config('media.directory')),
+    (array)config('media.allowed'),
+    (int)config('media.max_size'),
+    (int)config('media.max_pixels'),
+    (array)config('media.messages', []),
+));
+$app->singleton(ImageResizer::class, fn () => new ImageResizer((array)config('media.variants'), (int)config('media.quality', 85)));
 
 $app->addMiddleware(VerifyCsrf::class);
 

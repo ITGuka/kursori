@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\ActivityLog;
 use App\Models\Language;
+use App\Models\Media;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Settings\Settings;
@@ -15,6 +16,7 @@ final class SettingsController
         private readonly Settings $settings,
         private readonly Language $languages,
         private readonly ActivityLog $log,
+        private readonly Media $media,
     ) {
     }
 
@@ -101,6 +103,8 @@ final class SettingsController
                         ? 'ბმული უნდა იწყებოდეს http:// ან https://-ით.' : null,
             'number' => !is_numeric($value) ? 'უნდა იყოს რიცხვი.' : null,
             'select' => !array_key_exists($value, $field['options'] ?? []) ? 'არასწორი მნიშვნელობა.' : null,
+            'image'  => !ctype_digit($value) || ($media = $this->media->find((int)$value)) === null || !Media::isImage($media)
+                        ? 'აირჩიეთ სურათი მედია ბიბლიოთეკიდან.' : null,
             default  => null,
         };
     }
