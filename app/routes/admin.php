@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\BlockController;
+use App\Controllers\Admin\CategoryController;
+use App\Controllers\Admin\CollectionController;
 use App\Controllers\Admin\PageController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\LanguageController;
@@ -59,6 +61,23 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->post('/blocks/{id}/toggle', [BlockController::class, 'toggle'])->name('blocks.toggle');
         $router->post('/blocks/{id}/duplicate', [BlockController::class, 'duplicate'])->name('blocks.duplicate');
         $router->delete('/blocks/{id}', [BlockController::class, 'destroy'])->name('blocks.destroy');
+
+        $router->group(['where' => ['type' => '[a-z_]+']], function (Router $router): void {
+            $router->get('/collections/{type}', [CollectionController::class, 'index'])->name('collections.index');
+            $router->get('/collections/{type}/create', [CollectionController::class, 'create'])->name('collections.create');
+            $router->post('/collections/{type}', [CollectionController::class, 'store'])->name('collections.store');
+            $router->post('/collections/{type}/reorder', [CollectionController::class, 'reorder'])->name('collections.reorder');
+            $router->get('/collections/{type}/categories', [CategoryController::class, 'index'])->name('categories.index');
+            $router->get('/collections/{type}/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+            $router->post('/collections/{type}/categories', [CategoryController::class, 'store'])->name('categories.store');
+        });
+        $router->get('/collection-items/{id}/edit', [CollectionController::class, 'edit'])->name('collections.edit');
+        $router->put('/collection-items/{id}', [CollectionController::class, 'update'])->name('collections.update');
+        $router->post('/collection-items/{id}/toggle', [CollectionController::class, 'toggle'])->name('collections.toggle');
+        $router->delete('/collection-items/{id}', [CollectionController::class, 'destroy'])->name('collections.destroy');
+        $router->get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        $router->put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+        $router->delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
         $router->get('/menus', [MenuController::class, 'index'])->name('menus.index');
         $router->get('/menus/{id}/items/create', [MenuController::class, 'create'])->name('menus.items.create');

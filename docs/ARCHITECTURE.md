@@ -1,7 +1,7 @@
 # WEBDEV — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **6 (კატეგორიები და კოლექციები)** · ფაზები 0–5 დასრულდა
+> ბოლო განახლება: 2026-10-25 · მიმდინარე ფაზა: **7 (ფორმები, Inbox, newsletter)** · ფაზები 0–6 დასრულდა
 
 ## 1. მიზანი
 
@@ -51,6 +51,10 @@
 | D34 | მენიუები | ადგილები კოდში (`config/menus.php`: `header` — 2 დონე, `footer` — 1 დონე), პუნქტები ბაზაში. პუნქტი = გვერდი (წარწერა და URL ყველა ენაზე გვერდიდან, წარწერის შეცვლა შეიძლება) ან ბმული (წარწერა ენაზე, აკლია → ძირითადი; ბმული ენაზე — არასავალდებულო). ახალი გვერდი მენიუში ავტომატურად **არ** ემატება. გვერდი ენაზე თარგმნილი/გამოქვეყნებული არ არის ან პუნქტი დამალულია → პუნქტი შვილებით არ ჩანს. გვერდის წაშლა მის პუნქტებს შლის (CASCADE) |
 | D35 | მენიუს ქეში | `menus.{location}.{lang}.{base path hash}` — ქეში იშლება პუნქტის, გვერდის (სათაური/slug/სტატუსი) და ენის ცვლილებისას |
 | D36 | ბმულების უსაფრთხოება | ერთი წესი ყველგან (`Core\Support\Url::isSafeHref`): http(s), `/ბილიკი` (არა `//host`), `#ღუზა`, `mailto:`, `tel:` |
+| D37 | კოლექციები | ტიპები კოდში (`config/collections.php`): label, icon, categories, public, route (URL-ის ნაწილი ენებზე), fields (ბლოკების ფორმატი — იგივე BlockInput/BlockResolver და ადმინის ველები). ჩანაწერი: სათაური + slug (ენებზე), სურათი, კატეგორია, რიგი, აქტიურობა + fields JSON-ში. ახალი კოლექცია = ჩანაწერი კონფიგში (sidebar-ში ავტომატურად), მიგრაციის გარეშე |
+| D38 | კატეგორიები | კოლექციის ფარგლებში, 2 დონე (მშობელი — მხოლოდ იმავე კოლექციის ზედა დონე). ფილტრი კატეგორიით ქვეკატეგორიებსაც მოიცავს. წაშლისას ჩანაწერები კატეგორიის გარეშე რჩება (SET NULL) |
+| D39 | კოლექციის საჯარო გვერდი | `public` კოლექციები: `/{lang}/{route}/{slug}` (`route` აკლია ენაზე → ძირითადის → გასაღები). Slug უნიკალურია კოლექცია+ენაზე (შეცდომა). არასაჯარო კოლექციაში slug შიდაა — დამთხვევისას სუფიქსი (`-2`). ჩანაწერი ენაზე სათაურის გარეშე → იმ ენაზე არ ჩანს. Breadcrumb/„უკან“ — იმავე slug-ის გვერდზე (მაგ. `/ka/servisebi`), თუ არსებობს |
+| D40 | ბლოკი კოლექციიდან | services / team_grid / testimonials: `source` = ხელით (repeater) ან კოლექციიდან (+ კატეგორია, რაოდენობა). `config/blocks.php` → `collection.map` ჩანაწერის ველებს repeater-ის ფორმატზე გადაიყვანს (`@url`, `@read_more`). `show_if` — დამოკიდებული ველები ფორმაში იმალება და არ მოწმდება (მონაცემები ინახება — წყაროს დაბრუნებისას რომ არ დაიკარგოს) |
 | D33 | ქართული შრიფტი | Poseify-ის შრიფტებში ქართული არ არის — `site.css`-ში Noto Sans Georgian სარეზერვოდ, მობილურზე სათაურების ზომა მცირდება. `style.css` უცვლელია |
 
 ## 3. დირექტორიების სტრუქტურა
@@ -83,12 +87,13 @@ WEBDEV/
 │   ├── Media/               ✅ Uploader, ImageResizer (GD), UploadException
 │   └── Mail/                ⏳ Mailer (PHPMailer wrapper)
 ├── app/                     ← პროექტის კოდი (namespace App\)
-│   ├── Controllers/Front/   ✅ Page · ⏳ Collection, Form, Newsletter, Sitemap
-│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media, Page, Block, Menu ·
-│   │                          ⏳ Categories, Collections, Inbox, Newsletter
+│   ├── Controllers/Front/   ✅ Page, Collection · ⏳ Form, Newsletter, Sitemap
+│   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media, Page, Block, Menu,
+│   │                          Collection, Category · ⏳ Inbox, Newsletter
 │   ├── Middleware/          ✅ SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
 │   │                          RedirectIfAuthenticated (guest)
-│   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media, Page, PageBlock, Menu · ⏳ დანარჩენი
+│   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media, Page, PageBlock, Menu,
+│   │                          Collection, Category · ⏳ დანარჩენი
 │   ├── helpers.php          ✅ media(), media_url(), media_alt(), link_attrs(), menu(), link_target()
 │   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create)
 │   ├── Blocks/              ✅ BlockRegistry (config/blocks.php), BlockInput (ფორმა → ვალიდაცია → JSON),
@@ -96,21 +101,26 @@ WEBDEV/
 │   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
-│   ├── front/               ✅ layouts/main (Poseify), partials/ (navbar, footer, title), page, blocks/* (10 ტიპი)
+│   ├── front/               ✅ layouts/main (Poseify), partials/ (navbar, footer, title), page, blocks/* (10 ტიპი),
+│   │                          collections/detail
 │   ├── admin/               ✅ layouts/*, partials/* (flash, pagination, upload-zone, media-input, media-picker),
 │   │                          auth/login, dashboard, users/*, languages/*, translations/index, settings/*, media/*,
-│   │                          pages/*, blocks/ (form, field — რეკურსიული, link), menus/ (index, item) · ⏳ მოდულები
+│   │                          pages/*, blocks/ (form, field — რეკურსიული, link), menus/ (index, item),
+│   │                          collections/ (index, form), categories/ (index, form) · ⏳ მოდულები
 │   └── errors/              ✅ default.php, 404.php (Poseify), maintenance.php
 ├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar),
 │                              settings (პარამეტრების განსაზღვრებები), media (ტიპები, ლიმიტები, ვარიანტები),
-│                              blocks (ბლოკების ტიპები და ველები), menus (მენიუს ადგილები და სიღრმე)
+│                              blocks (ბლოკების ტიპები და ველები), menus (მენიუს ადგილები და სიღრმე),
+│                              collections (კოლექციების ტიპები და ველები)
 ├── database/
 │   ├── migrations/          ✅ languages, admin_users, rate_limits, activity_log, translation_keys/values, settings,
 │   │                          media + media_translations, pages + page_translations + page_blocks + page_block_translations,
-│   │                          menus + menu_items + menu_item_translations
+│   │                          menus + menu_items + menu_item_translations, categories + category_translations,
+│   │                          collection_items + collection_item_translations
 │   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები),
 │                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (6 გვერდი ბლოკებით),
-│                              06_menus (header — გვერდების ხე, footer — ზედა დონე)
+│                              06_menus (header — გვერდების ხე, footer — ზედა დონე),
+│                              07_demo_collections (სერვისები, გუნდი, შეფასებები, პორტფოლიო; ბლოკები → კოლექციიდან)
 ├── resources/templates/     ✅ poseify/, dashmin/ — საწყისი HTML (reference) + zip (git-ის გარეშე)
 ├── storage/                 ✅ cache/, logs/ (git-ის გარეშე)
 ├── bin/console              ✅ CLI
@@ -231,7 +241,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 ```
 
 ველის ტიპები: `text`, `textarea`, `wysiwyg` (Jodit → HTMLPurifier), `image` (მედიის id), `link` (D30), `select`, `number`, `toggle`, `repeater` (ერთი დონე; გადათრევით დალაგება). ვარიანტები: `translatable`, `required` (მხოლოდ ძირითად ენაზე), `default`, `max`, `min`/`max` (number), `min_items`/`max_items`, `help`.
-⏳ ფაზა 6: `category` / `collection_items` — services/team/testimonials ბლოკები კოლექციიდანაც.
+✅ `category` ველი და `show_if`; services/team/testimonials ბლოკები კოლექციიდანაც (D40).
 
 | ბლოკი | Poseify-ის წყარო | შინაარსი |
 |---|---|---|
@@ -262,9 +272,9 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | UI თარგმანები | ✅ `translation_keys` (group, key, description) + `translation_values` (key_id → CASCADE, lang, value) → `t('nav.contact')` |
 | გვერდები | ✅ `pages` (parent_id → SET NULL, status draft/published, is_home, sort, og_image_id → media) + `page_translations` (page_id → CASCADE, lang, title, slug — unique(lang, slug), meta_title, meta_description) |
 | ბლოკები | ✅ `page_blocks` (page_id → CASCADE, type, sort, is_active, settings JSON, media_ids JSON) + `page_block_translations` (block_id → CASCADE, lang, content JSON) |
-| მენიუ | ✅ `menus` (location unique) + `menu_items` (menu_id → CASCADE, parent_id → CASCADE, type page/url, page_id → CASCADE, url, new_tab, is_active, sort) + `menu_item_translations` (item_id → CASCADE, lang, label, url). ⏳ ფაზა 6: type `category` / `item` |
-| კატეგორიები | `categories` (collection, parent_id, sort, is_active) + `category_translations` (name, slug, description) |
-| კოლექციები | `collection_items` (collection: services/team/testimonials/…, category_id, image_id, attributes JSON, sort, is_active) + `collection_item_translations` (title, slug, subtitle, excerpt, body, attributes JSON) |
+| მენიუ | ✅ `menus` (location unique) + `menu_items` (menu_id → CASCADE, parent_id → CASCADE, type page/url, page_id → CASCADE, url, new_tab, is_active, sort) + `menu_item_translations` (item_id → CASCADE, lang, label, url). ⏳ შემდგომ: პუნქტი-ტიპი კოლექციის ჩანაწერი (ახლა — ბმულით) |
+| კატეგორიები | ✅ `categories` (collection, parent_id → SET NULL, sort, is_active) + `category_translations` (category_id → CASCADE, lang, name, slug) |
+| კოლექციები | ✅ `collection_items` (collection, category_id → SET NULL, image_id → media SET NULL, sort, is_active, settings JSON, media_ids JSON) + `collection_item_translations` (item_id → CASCADE, lang, title, slug, content JSON) |
 | მედია | ✅ `media` (path, original_name, mime, extension, size, width, height, variants JSON, folder, uploaded_by) + `media_translations` (media_id → CASCADE, lang, alt, caption) |
 | ფორმები | `form_submissions` (form: contact/application, data JSON, ip, is_read, created_at) |
 | Newsletter | `subscribers` (email, lang, status, token, confirmed_at, unsubscribed_at) · `newsletter_campaigns` (subject, body, lang, status, sent_at) · `newsletter_sends` (campaign_id, subscriber_id, status, error, sent_at) |
@@ -327,14 +337,15 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | 3 | მედია ბიბლიოთეკა (+ ლოგო/favicon/OG ველების გადაყვანა მედიის არჩევაზე) | ✅ 2026-10-25 |
 | 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | ✅ 2026-10-25 |
 | 5 | მენიუები | ✅ 2026-10-25 |
-| 6 | კატეგორიები და კოლექციები | ⏳ შემდეგი |
-| 7 | ფორმები + Inbox, newsletter | — |
+| 6 | კატეგორიები და კოლექციები | ✅ 2026-10-25 |
+| 7 | ფორმები + Inbox, newsletter | ⏳ შემდეგი |
 | 8 | SEO: sitemap, robots, hreflang, redirects, 404 | — |
 | 9 | ქეში, ოპტიმიზაცია, ატრიბუციის მოხსნა, ვებ დიზაინ სტუდიის კონტენტი | — |
 | — | Deploy (მოგვიანებით, D9) | — |
 
 ## 12. ცვლილებების ისტორია
 
+- **2026-10-25** — ფაზა 6: კოლექციები (სერვისები, გუნდი, შეფასებები, პორტფოლიო) კონფიგიდან, საკუთარი ველებით; კატეგორიები (2 დონე); ადმინში სია (ძებნა, ფილტრი, გადათრევით რიგი, დამალვა) და ფორმა (ბლოკების ველების ძრავით); საჯარო გვერდები (სერვისი, პროექტი) hreflang-ით; ბლოკები „წყარო: კოლექცია“ (კატეგორია, რაოდენობა); `show_if`; მედიის გამოყენება კოლექციებშიც. დემო გვერდების ბლოკები გადავიდა კოლექციებზე. დაემატა D37–D40.
 - **2026-10-25** — ფაზა 5: მართვადი მენიუები (header — 2 დონე, footer — 1 დონე): გვერდის/ბმულის პუნქტები, წარწერები და ბმულები ენებზე, ჩადგმული drag & drop, დამალვა, ახალ ფანჯარაში გახსნა; ფრონტის navbar და footer მენიუდან, ქეშით. `Core\Support\Url` — ბმულების ერთიანი შემოწმება (ახლა `//host` ბმულიც უარყოფილია). გასწორდა: ენის წაშლისას რჩებოდა მისი გვერდების, ბლოკებისა და მედიის თარგმანები. დაემატა D34–D36.
 - **2026-10-25** — ფაზა 4: გვერდები (ხე, თარგმანები, slug ქართულიდან, SEO, OG სურათი, მონახაზი/წინასწარი ხედი, მთავარი გვერდი) და ბლოკების რედაქტორი (10 ტიპი სქემიდან, repeater, Jodit, link ველი, გადათრევით დალაგება, დამალვა, კოპირება). ფრონტი Poseify-ის layout-ზე: navbar (დროებით გვერდებიდან), ენების გადამრთველი, footer პარამეტრებიდან, hreflang/canonical/OG, Poseify-ის 404. Poseify-ის 6 გვერდი seed-ით. `core/`: Str, HtmlSanitizer; composer: HTMLPurifier. დაემატა D27–D33.
 - **2026-10-25** — ფაზა 3: მედია ბიბლიოთეკა (ბადე, ფილტრები, drag & drop ატვირთვა პროგრესით, საქაღალდეები, alt/წარწერა ენებზე, URL-ის კოპირება, გამოყენების შემოწმება წაშლამდე), საერთო picker-ფანჯარა, პარამეტრების `image` ველები → მედიის id. `core/Media`: Uploader, ImageResizer. Poseify-ის დემო სურათები seed-ით. Uploader სურათს GD-ით სრულად ხსნის (დაზიანებული ფაილი არ მიიღება). გასწორდა: მშობელი პროექტის CSP `localhost/WEBDEV/`-ზე jQuery-ს ბლოკავდა. დაემატა D23–D26.

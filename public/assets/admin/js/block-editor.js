@@ -77,6 +77,19 @@
         renumber($repeater);
     });
 
+    // data-show-if='{"source":"manual"}' — ველი ჩანს მხოლოდ მაშინ, როცა settings[source] = manual
+    function updateConditions() {
+        $('[data-show-if]').each(function () {
+            var rules = $(this).data('show-if');
+            var visible = Object.keys(rules).every(function (field) {
+                return $('[name="settings[' + field + ']"]').val() === String(rules[field]);
+            });
+            $(this).toggleClass('d-none', !visible);
+        });
+    }
+    $(document).on('change', '.block-form select[name^="settings["]', updateConditions);
+    updateConditions();
+
     initEditors(document);
     initLinks(document);
 

@@ -31,8 +31,9 @@ $members = array_values(array_filter($data['members'], fn ($member) => $member['
                                 <div class="team-after"><?php foreach ($attributes as [, $value]): ?><span><?= e($value) ?></span><?php endforeach ?></div>
                             <?php endif ?>
                         </div>
-                        <a class="team-name"<?= link_attrs($member['link']) ?>>
+                        <a class="team-name<?= ($member['position'] ?? '') !== '' ? ' flex-column' : '' ?>"<?= link_attrs($member['link']) ?>>
                             <h5 class="text-uppercase mb-0"><?= e($member['name']) ?></h5>
+                            <?php if (($member['position'] ?? '') !== ''): ?><small class="text-primary"><?= e($member['position']) ?></small><?php endif ?>
                         </a>
                     </div>
                 </div>

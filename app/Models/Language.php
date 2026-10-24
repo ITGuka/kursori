@@ -98,6 +98,8 @@ final class Language
             $db->delete('page_translations', 'lang = ?', [$code]);
             $db->delete('page_block_translations', 'lang = ?', [$code]);
             $db->delete('media_translations', 'lang = ?', [$code]);
+            $db->delete('category_translations', 'lang = ?', [$code]);
+            $db->delete('collection_item_translations', 'lang = ?', [$code]);
             $db->delete('languages', 'id = ?', [$id]);
         });
         $this->forgetCache();

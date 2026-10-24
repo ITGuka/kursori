@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Blocks;
 
+use App\Models\Collection;
 use App\Models\Page;
 use Core\Support\Url;
 
@@ -14,6 +15,37 @@ final class BlockResolver
 {
     public function __construct(private readonly Page $pages)
     {
+    }
+
+    /**
+     * ბლოკის სრული მონაცემები: ველები + (source = collection) კოლექციის ჩანაწერები repeater-ის ფორმატში.
+     */
+    public function resolveBlock(array $definition, array $settings, array $content, array $fallback, string $lang, string $defaultLang): array
+    {
+        $data = $this->resolve($definition['fields'], $settings, $content, $fallback, $lang);
+
+        $collection = $definition['collection'] ?? null;
+        if ($collection !== null && ($data['source'] ?? 'manual') === 'collection') {
+            $items = app(Collection::class)->list($collection['type'], ($data['category'] ?? null) ?: null, (int)($data['limit'] ?? 0), $lang, $defaultLang);
+            $data[$collection['target']] = array_map(fn (array $item) => $this->mapItem($item, $collection['map']), $items);
+        }
+        return $data;
+    }
+
+    /** კოლექციის ჩანაწერი → repeater-ის ელემენტი (config/blocks.php → collection.map) */
+    private function mapItem(array $item, array $map): array
+    {
+        $link = $item['url'] !== '' ? ['href' => $item['url'], 'new_tab' => false] : null;
+        $mapped = [];
+        foreach ($map as $target => $source) {
+            $mapped[$target] = match ($source) {
+                '@url'       => $link,
+                '@read_more' => $link !== null ? t('common.read_more') : '',
+                // array_key_exists: null (მაგ. ცარიელი ბმული) უნდა დარჩეს null და არა ''
+                default      => array_key_exists($source, $item) ? $item[$source] : '',
+            };
+        }
+        return $mapped;
     }
 
     /**

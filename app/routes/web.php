@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Controllers\Front\CollectionController;
 use App\Controllers\Front\PageController;
 use App\Models\Language;
 use Core\Http\Router;
@@ -18,4 +19,6 @@ $router->group([
 ], function (Router $router): void {
     $router->get('/', [PageController::class, 'home'])->name('home');
     $router->get('/{slug}', [PageController::class, 'show'])->name('page');
+    // კოლექციის ჩანაწერი: /ka/servisebi/web-dizaini (კოლექცია — config/collections.php → route)
+    $router->get('/{collection}/{slug}', [CollectionController::class, 'show'])->where('collection', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('collection.item');
 });

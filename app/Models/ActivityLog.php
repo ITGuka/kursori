@@ -40,6 +40,12 @@ final class ActivityLog
         'menu.item_updated'   => 'შეცვალა მენიუს პუნქტი',
         'menu.item_deleted'   => 'წაშალა მენიუს პუნქტი',
         'menu.reordered'      => 'შეცვალა მენიუს რიგი',
+        'collection.created'  => 'დაამატა კოლექციის ჩანაწერი',
+        'collection.updated'  => 'შეცვალა კოლექციის ჩანაწერი',
+        'collection.deleted'  => 'წაშალა კოლექციის ჩანაწერი',
+        'category.created'    => 'დაამატა კატეგორია',
+        'category.updated'    => 'შეცვალა კატეგორია',
+        'category.deleted'    => 'წაშალა კატეგორია',
     ];
 
     /** Dashboard-ის „დეტალები“ სვეტისთვის: data-დან ყველაზე აღწერითი მნიშვნელობა */

@@ -32,7 +32,8 @@ $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
             </div>
             <div class="navbar-nav w-100">
                 <?php foreach (config('admin.menu', []) as $item): ?>
-                    <a href="<?= e(route($item['route'])) ?>" class="nav-item nav-link<?= is_route(...(array)$item['active']) ? ' active' : '' ?>">
+                    <?php $active = isset($item['collection']) ? ($collectionType ?? null) === $item['collection'] : is_route(...(array)$item['active']); ?>
+                    <a href="<?= e(route($item['route'], $item['params'] ?? [])) ?>" class="nav-item nav-link<?= $active ? ' active' : '' ?>">
                         <i class="<?= e($item['icon']) ?> me-2"></i><?= e($item['label']) ?>
                     </a>
                 <?php endforeach ?>

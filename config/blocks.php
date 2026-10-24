@@ -7,10 +7,15 @@ declare(strict_types=1);
  *
  * ბლოკი: label, icon, view, header (true — გვერდის თავში, navbar-ის ქვეშ; Poseify-ის navbar absolute-ია),
  *        fields
- * ველი:  type         — text | textarea | wysiwyg | image | link | select | number | toggle | repeater
+ * ველი:  type         — text | textarea | wysiwyg | image | link | select | number | toggle | repeater | category
  *        label, help, translatable, required, default, options (select), max (სიგრძე), min/max (number),
- *        fields (repeater-ის ქვე-ველები), min_items/max_items (repeater)
+ *        fields (repeater-ის ქვე-ველები), min_items/max_items (repeater), collection (category),
+ *        show_if (['ველი' => 'მნიშვნელობა'] — ველი ჩანს/მოწმდება მხოლოდ მაშინ)
  * link-ის მნიშვნელობა: ['type' => 'page'|'url'|'', 'page_id' => .., 'url' => .., 'new_tab' => bool] → $data-ში href
+ *
+ * collection — ბლოკი კოლექციიდანაც ივსება (source = collection): type — კოლექცია (config/collections.php),
+ *        target — repeater, რომელსაც ჩანაწერები ცვლის, map — repeater-ის ქვე-ველი => ჩანაწერის ველი
+ *        (title, image, category, url ან config-ის ველი; '@url' — ჩანაწერის გვერდის ბმული, '@read_more' — „ვრცლად“).
  */
 
 $title = [
@@ -19,6 +24,18 @@ $title = [
 ];
 $background = ['type' => 'select', 'label' => 'ფონი', 'default' => 'dark',
                'options' => ['dark' => 'მუქი', 'secondary' => 'ღია მუქი (secondary)']];
+
+// წყარო: ხელით (repeater) ან კოლექციიდან
+$collectionLabels = array_map(fn (array $c) => $c['label'], require __DIR__ . '/collections.php');
+$source = fn (string $collection, bool $categories = true) => [
+    'source' => ['type' => 'select', 'label' => 'წყარო', 'default' => 'manual',
+                 'options' => ['manual' => 'ხელით (ქვემოთ)', 'collection' => 'კოლექციიდან (ადმინი → ' . ($collectionLabels[$collection] ?? $collection) . ')']],
+] + ($categories ? [
+    'category' => ['type' => 'category', 'label' => 'კატეგორია', 'collection' => $collection, 'show_if' => ['source' => 'collection'], 'help' => 'ცარიელი — ყველა.'],
+] : []) + [
+    'limit'  => ['type' => 'number', 'label' => 'რაოდენობა', 'min' => 0, 'max' => 100, 'default' => 0, 'show_if' => ['source' => 'collection'], 'help' => '0 — ყველა.'],
+];
+$manual = ['show_if' => ['source' => 'manual']];
 
 return [
     'hero_carousel' => [
@@ -72,8 +89,11 @@ return [
         'label'  => 'სერვისები',
         'icon'   => 'fa fa-concierge-bell',
         'view'   => 'front/blocks/services',
-        'fields' => $title + [
-            'items' => ['type' => 'repeater', 'label' => 'სერვისები', 'max_items' => 20, 'fields' => [
+        'collection' => ['type' => 'services', 'target' => 'items', 'map' => [
+            'image' => 'image', 'title' => 'title', 'text' => 'excerpt', 'button_label' => '@read_more', 'button_link' => '@url',
+        ]],
+        'fields' => $title + $source('services') + [
+            'items' => $manual + ['type' => 'repeater', 'label' => 'სერვისები', 'max_items' => 20, 'fields' => [
                 'image'        => ['type' => 'image', 'label' => 'სურათი', 'help' => 'კვადრატული, მინ. 500×500'],
                 'title'        => ['type' => 'text', 'label' => 'სახელი', 'translatable' => true, 'max' => 190],
                 'text'         => ['type' => 'textarea', 'label' => 'აღწერა', 'translatable' => true, 'max' => 1000],
@@ -97,10 +117,14 @@ return [
         'label'  => 'გუნდი',
         'icon'   => 'fa fa-users',
         'view'   => 'front/blocks/team_grid',
-        'fields' => $title + [
-            'members' => ['type' => 'repeater', 'label' => 'წევრები', 'max_items' => 40, 'fields' => [
+        'collection' => ['type' => 'team', 'target' => 'members', 'map' => [
+            'image' => 'image', 'name' => 'title', 'position' => 'position', 'attributes' => 'attributes', 'link' => 'link',
+        ]],
+        'fields' => $title + $source('team') + [
+            'members' => $manual + ['type' => 'repeater', 'label' => 'წევრები', 'max_items' => 40, 'fields' => [
                 'image'      => ['type' => 'image', 'label' => 'ფოტო', 'help' => 'ვერტიკალური, მაგ. 600×800'],
                 'name'       => ['type' => 'text', 'label' => 'სახელი', 'translatable' => true, 'max' => 100],
+                'position'   => ['type' => 'text', 'label' => 'პოზიცია', 'translatable' => true, 'max' => 100],
                 'attributes' => ['type' => 'textarea', 'label' => 'მახასიათებლები', 'translatable' => true, 'max' => 500,
                                  'help' => 'თითო ხაზზე „დასახელება: მნიშვნელობა“ — ჩანს ფოტოზე მიტანისას. მაგ. „პოზიცია: დიზაინერი“.'],
                 'link'       => ['type' => 'link', 'label' => 'ბმული'],
@@ -112,8 +136,11 @@ return [
         'label'  => 'შეფასებები',
         'icon'   => 'fa fa-quote-right',
         'view'   => 'front/blocks/testimonials',
-        'fields' => $title + [
-            'items'      => ['type' => 'repeater', 'label' => 'შეფასებები', 'min_items' => 1, 'max_items' => 20, 'fields' => [
+        'collection' => ['type' => 'testimonials', 'target' => 'items', 'map' => [
+            'image' => 'image', 'quote' => 'quote', 'name' => 'title', 'profession' => 'profession',
+        ]],
+        'fields' => $title + $source('testimonials', false) + [
+            'items'      => $manual + ['type' => 'repeater', 'label' => 'შეფასებები', 'min_items' => 1, 'max_items' => 20, 'fields' => [
                 'image'      => ['type' => 'image', 'label' => 'ფოტო', 'help' => 'კვადრატული'],
                 'quote'      => ['type' => 'textarea', 'label' => 'ტექსტი', 'translatable' => true, 'max' => 1000],
                 'name'       => ['type' => 'text', 'label' => 'სახელი', 'translatable' => true, 'max' => 100],

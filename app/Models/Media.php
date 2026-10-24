@@ -162,6 +162,16 @@ final class Media
         foreach ($rows as $row) {
             $usages[] = "გვერდი „{$row['page']}“ → ბლოკი „" . ($blocks[$row['type']]['label'] ?? $row['type']) . '“';
         }
+
+        $rows = $this->db->select(
+            "SELECT i.collection, (SELECT title FROM collection_item_translations t WHERE t.item_id = i.id ORDER BY t.lang = ? DESC LIMIT 1) AS title
+             FROM collection_items i WHERE JSON_CONTAINS(i.media_ids, CAST(? AS JSON))",
+            [$lang, (string)$id],
+        );
+        $collections = (array)config('collections', []);
+        foreach ($rows as $row) {
+            $usages[] = ($collections[$row['collection']]['label'] ?? $row['collection']) . " → „{$row['title']}“";
+        }
         return $usages;
     }
 

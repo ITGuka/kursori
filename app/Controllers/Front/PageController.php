@@ -61,7 +61,7 @@ final class PageController
             if ($definition === null) {
                 continue;
             }
-            $data = $this->resolver->resolve($definition['fields'], $block['settings'], $block['content'][$lang] ?? [], $block['content'][$default] ?? [], $lang);
+            $data = $this->resolver->resolveBlock($definition, $block['settings'], $block['content'][$lang] ?? [], $block['content'][$default] ?? [], $lang, $default);
             $html = $this->renderBlock($definition['view'], ['data' => $data, 'block' => $block, 'page' => $translation, 'breadcrumbs' => $breadcrumbs]);
 
             // header ბლოკი (სლაიდერი / გვერდის სათაური) navbar-თან ერთ კონტეინერში, მხოლოდ პირველი

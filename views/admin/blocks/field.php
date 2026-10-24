@@ -33,6 +33,10 @@ $control = function (string $inputName, mixed $value, string $id, string $errorK
         'toggle'   => '<div class="form-check form-switch"><input type="hidden" name="' . e($inputName) . '" value="0">'
                       . '<input class="form-check-input" type="checkbox" id="' . e($id) . '" name="' . e($inputName) . '" value="1"'
                       . (($value ?? $field['default'] ?? false) ? ' checked' : '') . '><label class="form-check-label" for="' . e($id) . '">' . e($field['label'] ?? '') . '</label></div>',
+        'category' => '<select class="form-select' . $invalid . '" id="' . e($id) . '" name="' . e($inputName) . '" style="max-width: 360px"><option value="">— ყველა —</option>'
+                      . implode('', array_map(fn ($v, $l) => '<option value="' . e($v) . '"' . ((int)$value === (int)$v ? ' selected' : '') . '>' . e($l) . '</option>',
+                          array_keys($categoryOptions = app(App\Models\Category::class)->options((string)($field['collection'] ?? ''), config('app.default_locale'))), $categoryOptions))
+                      . '</select>',
         'image'    => $this->insert('admin/partials/media-input', ['name' => $inputName, 'value' => $value, 'inputId' => $id, 'invalid' => $invalid !== '']),
         'link'     => $this->insert('admin/blocks/link', ['inputName' => $inputName, 'value' => is_array($value) ? $value : [], 'id' => $id, 'invalid' => $invalid !== '', 'pageOptions' => $pageOptions]),
         default    => '',
@@ -43,6 +47,7 @@ $control = function (string $inputName, mixed $value, string $id, string $errorK
     return $html;
 };
 ?>
+<?php if (!empty($field['show_if'])): ?><div data-show-if="<?= e(json_encode($field['show_if'])) ?>"><?php endif ?>
 
 <?php if ($type === 'repeater'): ?>
     <?php
@@ -110,3 +115,4 @@ $control = function (string $inputName, mixed $value, string $id, string $errorK
         <?php if (!empty($field['help'])): ?><div class="form-text"><?= e($field['help']) ?></div><?php endif ?>
     </div>
 <?php endif ?>
+<?php if (!empty($field['show_if'])): ?></div><?php endif ?>

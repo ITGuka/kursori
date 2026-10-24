@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Blocks;
 
+use App\Models\Category;
 use App\Models\Media;
 use App\Models\Page;
 use Core\Support\HtmlSanitizer;
@@ -32,6 +33,7 @@ final class BlockInput
         private readonly HtmlSanitizer $sanitizer,
         private readonly Media $mediaModel,
         private readonly Page $pages,
+        private readonly Category $categories,
     ) {
     }
 
@@ -51,23 +53,40 @@ final class BlockInput
         $content = array_fill_keys($langs, []);
 
         foreach ($fields as $name => $field) {
+            // show_if-ით დამალული ველი ინახება (წყაროს დაბრუნებისას რომ არ დაიკარგოს), მაგრამ არ მოწმდება
+            $hidden = !self::visible($field, $settingsInput, $fields);
+            $errorsBefore = $this->errors;
             if (($field['type'] ?? 'text') === 'repeater') {
                 [$settings[$name], $byLang] = $this->repeater($name, $field, $settingsInput[$name] ?? [], $contentInput);
                 foreach ($byLang as $lang => $value) {
                     $content[$lang][$name] = $value;
                 }
-                continue;
-            }
-            if (!empty($field['translatable'])) {
+            } elseif (!empty($field['translatable'])) {
                 foreach ($langs as $lang) {
                     $content[$lang][$name] = $this->value($field, $contentInput[$lang][$name] ?? null, "$name.$lang", $lang === $defaultLang);
                 }
             } else {
                 $settings[$name] = $this->value($field, $settingsInput[$name] ?? null, $name, true);
             }
+
+            if ($hidden) {
+                $this->errors = $errorsBefore;
+            }
         }
 
         return ['settings' => $settings, 'content' => $content, 'errors' => $this->errors, 'media' => array_keys($this->media)];
+    }
+
+    /** show_if: ['source' => 'manual'] — ველი ჩანს, როცა ფორმაში source = manual (ან მისი default) */
+    public static function visible(array $field, array $settings, array $fields): bool
+    {
+        foreach ((array)($field['show_if'] ?? []) as $other => $expected) {
+            $value = $settings[$other] ?? $fields[$other]['default'] ?? null;
+            if ((string)$value !== (string)$expected) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** @return array{0: list<array>, 1: array<string, array<string, array>>} */
@@ -117,6 +136,7 @@ final class BlockInput
             'select'   => $this->select($raw, $field),
             'number'   => $this->number($raw, $field, $path),
             'toggle'   => $raw === '1' || $raw === true,
+            'category' => $this->category($raw, $field, $path),
             default    => null,
         };
 
@@ -179,6 +199,20 @@ final class BlockInput
             $link['url'] = mb_substr($url, 0, 2000);
         }
         return $link;
+    }
+
+    private function category(mixed $raw, array $field, string $path): ?int
+    {
+        $id = is_scalar($raw) ? (int)$raw : 0;
+        if ($id === 0) {
+            return null;
+        }
+        $category = $this->categories->find($id);
+        if ($category === null || $category['collection'] !== ($field['collection'] ?? '')) {
+            $this->errors[$path] = 'არასწორი კატეგორია.';
+            return null;
+        }
+        return $id;
     }
 
     private function select(mixed $raw, array $field): string
