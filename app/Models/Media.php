@@ -175,14 +175,35 @@ final class Media
         return $usages;
     }
 
-    /** საჯარო URL; ვარიანტი აკლია (პატარა სურათი, GIF, PDF) → ორიგინალი */
-    public function url(array $media, string $variant = 'original'): string
+    /** საჯარო URL; ვარიანტი აკლია (პატარა სურათი, GIF, PDF) → ორიგინალი. $webp — WebP ასლი, თუ არსებობს */
+    public function url(array $media, string $variant = 'original', bool $webp = false): string
     {
         $path = $media['path'];
         if ($variant !== 'original' && isset(self::variants($media)[$variant])) {
             $path = ImageResizer::variantPath($path, $variant);
         }
+        if ($webp && !empty($media['webp'])) {
+            $path = ImageResizer::webpPath($path);
+        }
         return url(config('media.directory') . '/' . $path);
+    }
+
+    /** ვარიანტებისა და WebP ასლების თავიდან შექმნა (მაგ. ზომების ან ხარისხის შეცვლის შემდეგ) */
+    public function regenerate(int $id): ?array
+    {
+        $media = $this->find($id);
+        if ($media === null || !ImageResizer::supports((string)$media['mime'])) {
+            return $media;
+        }
+        foreach (array_slice($this->files($media), 1) as $file) {
+            if (is_file($file)) {
+                @unlink($file);
+            }
+        }
+        $processed = $this->process($media);
+        $this->db->update('media', $processed, 'id = ?', [$id]);
+        unset($this->found[$id]);
+        return $this->find($id);
     }
 
     public static function isImage(array $media): bool
@@ -220,16 +241,6 @@ final class Media
 
     private function register(array $stored, ?string $folder, ?int $userId): array
     {
-        $absolute = $this->absolute($stored['path']);
-        $variants = ImageResizer::supports($stored['mime']) ? $this->resizer->createVariants($absolute, $stored['mime']) : [];
-        // ვარიანტი, რომელიც ორიგინალის ზომისაა, არ ინახება — ზედმეტი ფაილია
-        foreach ($variants as $name => $variant) {
-            if ($variant['width'] === $stored['width'] && $variant['height'] === $stored['height']) {
-                @unlink(ImageResizer::variantPath($absolute, $name));
-                unset($variants[$name]);
-            }
-        }
-
         $id = $this->db->insert('media', [
             'path'          => $stored['path'],
             'original_name' => $stored['original_name'],
@@ -238,11 +249,28 @@ final class Media
             'size'          => $stored['size'],
             'width'         => $stored['width'],
             'height'        => $stored['height'],
-            'variants'      => $variants === [] ? null : json_encode(array_map(fn ($v) => ['width' => $v['width'], 'height' => $v['height']], $variants)),
             'folder'        => $folder,
             'uploaded_by'   => $userId,
-        ]);
+        ] + $this->process($stored));
         return $this->find($id);
+    }
+
+    /** @return array{variants: ?string, webp: int} ზომის ვარიანტები და WebP ასლები დისკზე */
+    private function process(array $media): array
+    {
+        $absolute = $this->absolute($media['path']);
+        $variants = ImageResizer::supports($media['mime']) ? $this->resizer->createVariants($absolute, $media['mime']) : [];
+        // ვარიანტი, რომელიც ორიგინალის ზომისაა, არ ინახება — ზედმეტი ფაილია
+        foreach ($variants as $name => $variant) {
+            if ($variant['width'] === (int)$media['width'] && $variant['height'] === (int)$media['height']) {
+                @unlink(ImageResizer::variantPath($absolute, $name));
+                unset($variants[$name]);
+            }
+        }
+        return [
+            'variants' => $variants === [] ? null : json_encode(array_map(fn ($v) => ['width' => $v['width'], 'height' => $v['height']], $variants)),
+            'webp'     => (int)$this->resizer->createWebp($absolute, $media['mime'], array_keys($variants)),
+        ];
     }
 
     /** @return list<string> */
@@ -252,6 +280,9 @@ final class Media
         $files = [$original];
         foreach (array_keys(self::variants($media)) as $variant) {
             $files[] = ImageResizer::variantPath($original, $variant);
+        }
+        if (!empty($media['webp'])) {
+            array_push($files, ...array_map(ImageResizer::webpPath(...), $files));
         }
         return $files;
     }

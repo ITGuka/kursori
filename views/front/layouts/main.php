@@ -52,14 +52,25 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
     ]);
     ?>
     <script type="application/ld+json"><?= json_encode($organization, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
-    <?php if ($favicon = media_url(setting('general.favicon'))): ?><link rel="icon" href="<?= e($favicon) ?>"><?php endif ?>
+    <?php if ($favicon = media_url(setting('general.favicon'))): ?>
+        <link rel="icon" href="<?= e($favicon) ?>">
+        <link rel="apple-touch-icon" href="<?= e(media_url(setting('general.favicon'), 'thumb')) ?>">
+    <?php endif ?>
+    <?php if ($verification = (string)setting('seo.google_verification')): ?><meta name="google-site-verification" content="<?= e($verification) ?>"><?php endif ?>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;700&family=Work+Sans:wght@400;600&family=Noto+Sans+Georgian:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" rel="stylesheet">
-    <link href="<?= asset('front/lib/animate/animate.min.css') ?>" rel="stylesheet">
-    <link href="<?= asset('front/lib/owlcarousel/assets/owl.carousel.min.css') ?>" rel="stylesheet">
+    <?php
+    // პირველ ხატვას არ აყოვნებს (media="print" → onload "all"); DOM-ში რიგი იგივეა, ამიტომ კასკადი არ იცვლება
+    $deferred = ['https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;700&family=Work+Sans:wght@400;600&family=Noto+Sans+Georgian:wght@300;400;600;700&display=swap',
+                 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css',
+                 asset('front/lib/animate/animate.min.css'),
+                 asset('front/lib/owlcarousel/assets/owl.carousel.min.css')];
+    ?>
+    <?php foreach ($deferred as $href): ?>
+        <link href="<?= e($href) ?>" rel="stylesheet" media="print" onload="this.media='all'">
+        <noscript><link href="<?= e($href) ?>" rel="stylesheet"></noscript>
+    <?php endforeach ?>
     <link href="<?= asset('front/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?= asset('front/css/style.css') ?>" rel="stylesheet">
     <link href="<?= asset('front/css/site.css') ?>" rel="stylesheet">

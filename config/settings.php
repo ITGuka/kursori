@@ -5,7 +5,7 @@ declare(strict_types=1);
  * საიტის პარამეტრების განსაზღვრებები. ადმინის ფორმა (ჩანართები ჯგუფებად) აქედან გენერირდება,
  * მნიშვნელობები ინახება `settings` ცხრილში. წაკითხვა: setting('contact.phone').
  *
- * ველი: type     — text | textarea | email | url | tel | number | toggle | select | image (მედიის id) | code
+ * ველი: type     — text | textarea | email | url | tel | number | toggle | select | image (მედიის id) | page (გვერდის id) | code
  *                   | password (ინახება დაშიფრულად — Core\Support\Crypt, ფორმაში არ ჩანს)
  *       label    — წარწერა ადმინში
  *       translatable — თითო ენაზე ცალკე მნიშვნელობა
@@ -66,8 +66,18 @@ return [
             'og_image'         => ['label' => 'Open Graph სურათი (default)', 'type' => 'image'],
             'indexing'         => ['label' => 'საძიებო სისტემებისთვის ღია', 'type' => 'toggle', 'default' => true,
                                    'help' => 'გამორთვისას ყველა გვერდს ემატება noindex, robots.txt — Disallow: /, sitemap ცარიელია.'],
+            'google_verification' => ['label' => 'Google Search Console — ვერიფიკაციის კოდი', 'max' => 100,
+                                      'help' => 'Search Console → HTML tag მეთოდი: მხოლოდ content="..." მნიშვნელობა.'],
             'robots_extra'     => ['label' => 'robots.txt — დამატებითი წესები', 'type' => 'code', 'max' => 5000,
                                    'help' => 'მაგ. „Disallow: /ka/drafts“. Disallow: /admin და Sitemap ავტომატურად ემატება.'],
+        ],
+    ],
+
+    'legal' => [
+        'label'  => 'სამართლებრივი',
+        'fields' => [
+            'privacy_page' => ['label' => 'კონფიდენციალურობის პოლიტიკის გვერდი', 'type' => 'page',
+                               'help' => 'ფორმებისა და გამოწერის ქვეშ ჩნდება თანხმობის ტექსტი ამ გვერდის ბმულით. ცარიელი — ტექსტი არ ჩანს.'],
         ],
     ],
 

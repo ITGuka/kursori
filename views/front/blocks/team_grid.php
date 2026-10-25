@@ -25,7 +25,7 @@ $members = array_values(array_filter($data['members'], fn ($member) => $member['
                                 <div class="team-before"><?php foreach ($attributes as [$label]): ?><span><?= e($label) ?></span><?php endforeach ?></div>
                             <?php endif ?>
                             <?php if ($image !== ''): ?>
-                                <img class="img-fluid" src="<?= e($image) ?>" alt="<?= e(media_alt($member['image']) ?: $member['name']) ?>" loading="lazy">
+                                <?= picture($member['image'], 'medium', ['class' => 'img-fluid', 'alt' => media_alt($member['image']) ?: $member['name']], '(min-width: 992px) 25vw, (min-width: 576px) 50vw, 100vw') ?>
                             <?php endif ?>
                             <?php if ($attributes !== []): ?>
                                 <div class="team-after"><?php foreach ($attributes as [, $value]): ?><span><?= e($value) ?></span><?php endforeach ?></div>

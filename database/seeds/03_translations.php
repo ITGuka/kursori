@@ -44,6 +44,8 @@ return new class extends Seeder {
             'about_you'     => ['მოგვიყევით თქვენ შესახებ', 'Tell us about yourself'],
             'apply'         => ['განაცხადის გაგზავნა', 'Submit Application'],
             'too_many'      => ['ძალიან ბევრი მცდელობა. გთხოვთ, სცადოთ რამდენიმე წუთში.', 'Too many attempts. Please try again in a few minutes.'],
+            'consent'       => ['გაგზავნით ეთანხმებით თქვენი მონაცემების დამუშავებას :policy შესაბამისად.', 'By submitting, you agree to the processing of your data in line with our :policy.'],
+            'consent_link'  => ['კონფიდენციალურობის პოლიტიკის', 'privacy policy'],
         ],
         'portfolio' => [
             'all' => ['ყველა', 'All'],

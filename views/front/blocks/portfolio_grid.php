@@ -33,7 +33,7 @@ $gridId = 'portfolio-' . $block['id'];
                     <a class="team-item d-block portfolio-card"<?= link_attrs($item['link']) ?>>
                         <div class="team-body">
                             <?php if ($image !== ''): ?>
-                                <img class="img-fluid w-100" src="<?= e($image) ?>" alt="<?= e(media_alt($item['image']) ?: $item['title']) ?>" loading="lazy">
+                                <?= picture($item['image'], 'medium', ['class' => 'img-fluid w-100', 'alt' => media_alt($item['image']) ?: $item['title']], '(min-width: 992px) 33vw, (min-width: 768px) 50vw, 100vw') ?>
                             <?php endif ?>
                         </div>
                         <div class="team-name flex-column">

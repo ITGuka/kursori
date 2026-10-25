@@ -17,7 +17,7 @@ final class ImageResizer
     /**
      * @param array<string, array{0: int, 1: int, 2?: string}> $variants სახელი => [სიგანე, სიმაღლე, 'fit'|'crop']
      */
-    public function __construct(private readonly array $variants, private readonly int $quality = 85)
+    public function __construct(private readonly array $variants, private readonly int $quality = 85, private readonly int $webpQuality = 80)
     {
     }
 
@@ -58,6 +58,44 @@ final class ImageResizer
         }
         imagedestroy($source);
         return $created;
+    }
+
+    /**
+     * WebP ასლები ორიგინალისა და ვარიანტებისთვის: "abc.jpg" → "abc.webp", "abc-medium.jpg" → "abc-medium.webp".
+     * @param list<string> $variantNames უკვე შექმნილი ვარიანტები
+     * @return bool true — ყველა ასლი შეიქმნა (WebP თავად ან GD-ის მხარდაჭერის გარეშე — false)
+     */
+    public function createWebp(string $file, string $mime, array $variantNames): bool
+    {
+        if ($mime === 'image/webp' || !self::supports($mime) || !function_exists('imagewebp')) {
+            return false;
+        }
+        foreach (array_merge([$file], array_map(fn (string $name) => self::variantPath($file, $name), $variantNames)) as $path) {
+            $image = $this->load($path, $mime);
+            if ($image === null) {
+                return false;
+            }
+            // ორიგინალი EXIF-ით შეიძლება იყოს შემობრუნებული; ვარიანტები უკვე სწორადაა
+            if ($path === $file) {
+                $image = $this->applyOrientation($image, $file, $mime);
+            }
+            imagepalettetotruecolor($image);
+            imagealphablending($image, false);
+            imagesavealpha($image, true);
+            $saved = imagewebp($image, self::webpPath($path), $this->webpQuality);
+            imagedestroy($image);
+            if (!$saved) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** "2026/10/abc-medium.jpg" → "2026/10/abc-medium.webp" */
+    public static function webpPath(string $path): string
+    {
+        $dot = strrpos($path, '.');
+        return ($dot === false ? $path : substr($path, 0, $dot)) . '.webp';
     }
 
     /** "2026/10/abc.jpg" + "thumb" → "2026/10/abc-thumb.jpg" (მუშაობს როგორც სრულ, ისე შედარებით ბილიკზე) */

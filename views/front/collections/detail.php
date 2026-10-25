@@ -27,7 +27,7 @@ foreach ($definition['fields'] as $name => $field) {
         <div class="row g-5">
             <?php if ($image !== ''): ?>
                 <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <img class="img-fluid w-100" src="<?= e($image) ?>" alt="<?= e(media_alt($item['image']) ?: $item['title']) ?>">
+                    <?= picture($item['image'], 'large', ['class' => 'img-fluid w-100', 'alt' => media_alt($item['image']) ?: $item['title'], 'loading' => 'eager'], '(min-width: 992px) 50vw, 100vw') ?>
                 </div>
             <?php endif ?>
             <div class="<?= $image !== '' ? 'col-lg-6' : 'col-12' ?> wow fadeInUp" data-wow-delay="0.3s">

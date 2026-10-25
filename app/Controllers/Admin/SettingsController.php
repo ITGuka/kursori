@@ -6,6 +6,7 @@ namespace App\Controllers\Admin;
 use App\Models\ActivityLog;
 use App\Models\Language;
 use App\Models\Media;
+use App\Models\Page;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Settings\Settings;
@@ -116,6 +117,7 @@ final class SettingsController
             'select' => !array_key_exists($value, $field['options'] ?? []) ? 'არასწორი მნიშვნელობა.' : null,
             'image'  => !ctype_digit($value) || ($media = $this->media->find((int)$value)) === null || !Media::isImage($media)
                         ? 'აირჩიეთ სურათი მედია ბიბლიოთეკიდან.' : null,
+            'page'   => !ctype_digit($value) || app(Page::class)->find((int)$value) === null ? 'აირჩიეთ გვერდი.' : null,
             default  => null,
         };
     }

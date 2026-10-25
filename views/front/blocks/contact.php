@@ -53,6 +53,7 @@ $socialLinks = array_filter(array_map(fn ($network) => setting("social.$network"
                             <div class="col-12"><?= $field('message', t('form.message'), 'textarea', true, 5000) ?></div>
                             <div class="col-12">
                                 <button class="btn btn-outline-primary border-2 w-100 py-3" type="submit"><?= e(t('form.send')) ?></button>
+                                <?= $this->insert('front/partials/form-consent', ['class' => 'mt-3']) ?>
                             </div>
                         </div>
                     </form>

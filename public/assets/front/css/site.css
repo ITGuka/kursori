@@ -65,6 +65,27 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     width: auto;
 }
 
+/* picture() — <picture> განლაგებაში არ მონაწილეობს, სტილი <img>-ზეა */
+picture {
+    display: contents;
+}
+
+/* width/height ატრიბუტები მხოლოდ პროპორციისთვისაა (CLS) — სიმაღლე სიგანეს მიჰყვება */
+img[width][height] {
+    height: auto;
+}
+
+/* page header-ის ნაგულისხმევი ფონი (style.css) — WebP, თუ ბრაუზერი უჭერს მხარს */
+.page-header {
+    background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), image-set(url(../img/carousel-1.webp) type("image/webp"), url(../img/carousel-1.jpg) type("image/jpeg"));
+}
+
+@media (max-width: 1024px) {
+    .page-header {
+        background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), image-set(url(../img/carousel-1-medium.webp) type("image/webp"), url(../img/carousel-1-medium.jpg) type("image/jpeg"));
+    }
+}
+
 /* page_header ბლოკის საკუთარი ფონი (style.css-ში ფიქსირებული carousel-1.jpg-ის ნაცვლად) */
 .page-header[data-custom-bg] {
     background-size: cover;
@@ -98,6 +119,17 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     width: 1px;
     height: 1px;
     overflow: hidden;
+}
+
+/* თანხმობის ტექსტი ფორმის ქვეშ */
+.form-consent {
+    color: var(--bs-gray-500, #adb5bd);
+    line-height: 1.5;
+}
+
+.form-consent a {
+    color: var(--bs-primary);
+    text-decoration: underline;
 }
 
 .form-floating .invalid-feedback {

@@ -10,7 +10,7 @@ $carouselId = 'header-carousel-' . $block['id'];
     <div class="carousel-inner">
         <?php foreach ($slides as $i => $slide): ?>
             <div class="carousel-item<?= $i === 0 ? ' active' : '' ?>">
-                <img class="w-100" src="<?= e(media_url($slide['image'], 'large')) ?>" alt="<?= e(media_alt($slide['image'])) ?>"<?= $i > 0 ? ' loading="lazy"' : '' ?>>
+                <?= picture($slide['image'], 'large', ['class' => 'w-100'] + ($i === 0 ? ['loading' => 'eager', 'fetchpriority' => 'high'] : [])) ?>
                 <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                     <?php if ($slide['subtitle'] !== '' || $slide['title'] !== ''): ?>
                         <div class="title mx-5 px-5 animated slideInDown">

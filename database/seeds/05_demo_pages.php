@@ -10,6 +10,38 @@ use Core\Database\Seeder;
 // სერვისები, გუნდი, შეფასებები, პორტფოლიო — კოლექციებიდან (07_demo_collections).
 // გაეშვება მხოლოდ მაშინ, როცა გვერდები ჯერ არ არის. თავიდან: php bin/console content:reset --force
 return new class extends Seeder {
+    /** meta description გვერდებზე [ka, en] — ინგლისური slug-ით */
+    private const DESCRIPTIONS = [
+        'home' => [
+            'ვებ დიზაინ სტუდია თბილისში: თანამედროვე საიტები, ონლაინ მაღაზიები, ბრენდინგი და SEO, რომლებიც ვიზიტორს კლიენტად აქცევს.',
+            'Web design studio in Tbilisi: modern websites, online stores, branding and SEO that turn visitors into clients.',
+        ],
+        'about' => [
+            'გაიცანით WEBDEV — დიზაინერებისა და დეველოპერების გუნდი, რომელიც ბიზნესებისთვის სწრაფ და მოსახერხებელ საიტებს ქმნის.',
+            'Meet WEBDEV — a team of designers and developers building fast, user-friendly websites for businesses.',
+        ],
+        'services' => [
+            'ვებ დიზაინი, ვებ დეველოპმენტი, ბრენდინგი და SEO — სრული ციკლი იდეიდან გაშვებამდე და შემდგომ მხარდაჭერამდე.',
+            'Web design, web development, branding and SEO — the full cycle from idea to launch and ongoing support.',
+        ],
+        'portfolio' => [
+            'WEBDEV-ის პროექტები: კორპორატიული საიტები, ონლაინ მაღაზიები და ბრენდინგი სხვადასხვა ინდუსტრიისთვის.',
+            'WEBDEV projects: corporate websites, online stores and branding for different industries.',
+        ],
+        'team' => [
+            'WEBDEV-ის გუნდი: არტ-დირექტორი, UI/UX დიზაინერი, ფრონტენდ დეველოპერი და პროექტის მენეჯერი.',
+            'The WEBDEV team: art director, UI/UX designer, frontend developer and project manager.',
+        ],
+        'testimonials' => [
+            'რას ამბობენ კლიენტები WEBDEV-თან თანამშრომლობაზე — შეფასებები საიტებისა და ბრენდინგის პროექტებზე.',
+            'What clients say about working with WEBDEV — reviews of our website and branding projects.',
+        ],
+        'contact' => [
+            'დაგვიკავშირდით ახალი საიტის, ონლაინ მაღაზიის ან ბრენდინგის პროექტისთვის — პირველი კონსულტაცია უფასოა.',
+            'Get in touch about a new website, online store or branding project — the first consultation is free.',
+        ],
+    ];
+
     private const MAP = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
 
     private Page $pages;
@@ -91,9 +123,10 @@ return new class extends Seeder {
 
     private function page(array $titles, array $slugs, int $sort, bool $home = false, ?int $parent = null): int
     {
+        $descriptions = self::DESCRIPTIONS[$slugs[1]] ?? ['', ''];
         return $this->pages->save(null, ['parent_id' => $parent, 'status' => 'published', 'is_home' => $home, 'sort' => $sort, 'og_image_id' => null], [
-            'ka' => ['title' => $titles[0], 'slug' => $slugs[0], 'meta_title' => '', 'meta_description' => ''],
-            'en' => ['title' => $titles[1], 'slug' => $slugs[1], 'meta_title' => '', 'meta_description' => ''],
+            'ka' => ['title' => $titles[0], 'slug' => $slugs[0], 'meta_title' => '', 'meta_description' => $descriptions[0]],
+            'en' => ['title' => $titles[1], 'slug' => $slugs[1], 'meta_title' => '', 'meta_description' => $descriptions[1]],
         ]);
     }
 

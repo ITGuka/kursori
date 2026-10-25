@@ -6,8 +6,13 @@
  */
 $heading = $data['title'] !== '' ? $data['title'] : ($page['title'] ?? '');
 $background = media_url($data['image'], 'large');
+$overlay = 'linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7))';
+$webp = ($media = media($data['image'])) !== null && !empty($media['webp']) ? app(App\Models\Media::class)->url($media, 'large', true) : '';
+// image-set: WebP-ის მხარდამჭერი ბრაუზერი მას ჩატვირთავს, სხვა — პირველ (JPEG/PNG) წესს დატოვებს
 $style = $background !== ''
-    ? ' style="background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url(\'' . e($background) . '\')" data-custom-bg'
+    ? ' style="background-image: ' . $overlay . ', url(\'' . e($background) . '\')'
+        . ($webp !== '' ? '; background-image: ' . $overlay . ', image-set(url(\'' . e($webp) . '\') type(\'image/webp\'), url(\'' . e($background) . '\') type(\'' . e($media['mime']) . '\'))' : '')
+        . '" data-custom-bg'
     : '';
 ?>
 <div class="page-header pb-5"<?= $style ?>>

@@ -10,7 +10,7 @@ use Core\Support\Cache;
 
 /**
  * საიტის კონტენტის დაბრუნება საწყის (დემო) მდგომარეობაში: გვერდები, ბლოკები, მენიუს პუნქტები, კოლექციები, კატეგორიები,
- * ავტომატური გადამისამართებები — იშლება და seed-ები (05–08) თავიდან ეშვება.
+ * ავტომატური გადამისამართებები — იშლება და seed-ები (05–09) თავიდან ეშვება.
  * არ ეხება: მედიას, ენებს, UI თარგმანებს, პარამეტრებს, მომხმარებლებს, Inbox-ს, newsletter-ს.
  */
 final class ContentResetCommand extends Command
@@ -19,7 +19,7 @@ final class ContentResetCommand extends Command
     protected string $description = 'Replace pages, menus and collections with the starter content (destructive)';
     protected string $usage = '--force';
 
-    private const SEEDS = ['05_demo_pages', '06_menus', '07_demo_collections', '08_site_settings'];
+    private const SEEDS = ['05_demo_pages', '06_menus', '07_demo_collections', '08_site_settings', '09_privacy_page'];
 
     public function handle(array $args, array $options): int
     {

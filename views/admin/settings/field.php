@@ -48,6 +48,15 @@ $input = function (string $inputName, string $inputId, string $current, string $
         <label class="form-label" for="<?= e($id) ?>"><?= e($field['label'] ?? $key) ?></label>
         <?= $this->insert('admin/partials/media-input', ['name' => $name, 'value' => $value($key), 'inputId' => $id, 'invalid' => (bool)errors($key)]) ?>
         <?php if ($error = errors($key)): ?><div class="invalid-feedback d-block"><?= e($error) ?></div><?php endif ?>
+    <?php elseif ($type === 'page'): ?>
+        <label class="form-label" for="<?= e($id) ?>"><?= e($field['label'] ?? $key) ?></label>
+        <select class="form-select<?= errors($key) ? ' is-invalid' : '' ?>" id="<?= e($id) ?>" name="<?= e($name) ?>" style="max-width: 420px">
+            <option value="">— არ არის —</option>
+            <?php foreach (app(App\Models\Page::class)->options(config('app.default_locale')) as $pageId => $pageTitle): ?>
+                <option value="<?= e($pageId) ?>"<?= (string)$pageId === $value($key) ? ' selected' : '' ?>><?= e($pageTitle) ?></option>
+            <?php endforeach ?>
+        </select>
+        <?php if ($error = errors($key)): ?><div class="invalid-feedback"><?= e($error) ?></div><?php endif ?>
     <?php elseif ($type === 'toggle'): ?>
         <?php $checked = $value($key) === '' ? (bool)($field['default'] ?? false) : $value($key) === '1'; ?>
         <div class="form-check form-switch">

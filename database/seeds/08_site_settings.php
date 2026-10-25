@@ -18,10 +18,22 @@ return new class extends Seeder {
                                        'en' => 'Web design, website development, online stores, branding and SEO in Tbilisi.'],
     ];
 
+    /** სურათის პარამეტრები — 04_demo_media-ს ფაილები (resources/stock) */
+    private const IMAGES = [
+        'general.favicon' => 'favicon.png',
+        'seo.og_image'    => 'carousel-1.jpg',
+    ];
+
     public function run(DB $db): void
     {
         $settings = app(Settings::class);
         $values = [];
+        foreach (self::IMAGES as $key => $file) {
+            $id = $db->value("SELECT id FROM media WHERE folder = 'demo' AND original_name = ?", [$file]);
+            if ($id !== null && $settings->raw($key) === '') {
+                $values[$key] = (string)$id;
+            }
+        }
         foreach (self::VALUES as $key => $value) {
             if (is_array($value)) {
                 foreach ($value as $lang => $text) {

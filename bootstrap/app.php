@@ -12,6 +12,7 @@ use App\Models\Redirect;
 use App\Models\Translation;
 use Core\App;
 use Core\Database\DB;
+use Core\Http\Middleware\CanonicalUrl;
 use Core\Http\Middleware\VerifyCsrf;
 use Core\Http\Request;
 use Core\Http\Response;
@@ -48,7 +49,7 @@ $app->singleton(Uploader::class, fn (App $app) => new Uploader(
     (int)config('media.max_pixels'),
     (array)config('media.messages', []),
 ));
-$app->singleton(ImageResizer::class, fn () => new ImageResizer((array)config('media.variants'), (int)config('media.quality', 85)));
+$app->singleton(ImageResizer::class, fn () => new ImageResizer((array)config('media.variants'), (int)config('media.quality', 85), (int)config('media.webp_quality', 80)));
 
 // ელ-ფოსტა: SMTP პარამეტრები ადმინიდან (პარამეტრები → ელ-ფოსტა)
 $app->singleton(Mailer::class, function (App $app): Mailer {
@@ -79,6 +80,7 @@ $app->onNotFound(function (Request $request) use ($app): ?Response {
     return null;
 });
 
+$app->addMiddleware(CanonicalUrl::class);
 $app->addMiddleware(VerifyCsrf::class);
 
 $router = $app->make(Router::class);

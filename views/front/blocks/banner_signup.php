@@ -33,6 +33,7 @@ $error = $isThis ? errors('email') : null;
                         <button type="submit" class="btn btn-primary py-3 px-4 position-absolute top-0 end-0 me-2" style="margin-top: 7px;"><?= e(t('newsletter.subscribe')) ?></button>
                     </div>
                     <?php if ($error): ?><div class="text-danger small mt-2"><?= e($error) ?></div><?php endif ?>
+                    <?= $this->insert('front/partials/form-consent', ['class' => 'mt-3']) ?>
                 </form>
             </div>
         </div>

@@ -10,9 +10,9 @@ if ($items === []) {
         <?= $this->insert('front/partials/title', ['subtitle' => $data['subtitle'], 'heading' => $data['title']]) ?>
         <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.3s">
             <?php foreach ($items as $item): ?>
-                <?php $photo = media_url($item['image'], 'thumb'); ?>
+                <?php $photo = picture($item['image'], 'thumb', ['class' => 'img-fluid', 'alt' => '']); ?>
                 <div class="testimonial-item text-center"
-                     data-dot="<?= e($photo !== '' ? '<img class="img-fluid" src="' . e($photo) . '" alt="">' : '<span></span>') ?>">
+                     data-dot="<?= e($photo !== '' ? $photo : '<span></span>') ?>">
                     <p class="fs-5"><?= nl2br(e($item['quote'])) ?></p>
                     <?php if ($item['name'] !== ''): ?><h5 class="text-uppercase"><?= e($item['name']) ?></h5><?php endif ?>
                     <?php if ($item['profession'] !== ''): ?><span class="text-primary"><?= e($item['profession']) ?></span><?php endif ?>
