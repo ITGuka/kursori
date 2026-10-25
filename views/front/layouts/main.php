@@ -60,14 +60,12 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
     <?php endif ?>
     <?php if ($verification = (string)setting('seo.google_verification')): ?><meta name="google-site-verification" content="<?= e($verification) ?>"><?php endif ?>
 
-    <?php // მენიუს მთავრულის შრიფტი — URL ზუსტად site.css-ის url()-ის მსგავსი (ვერსიის გარეშე), თორემ ორჯერ ჩამოიტვირთება ?>
-    <?php if (locale() === 'ka'): ?><link rel="preload" href="<?= e(url('assets/front/fonts/firago-mtavruli-regular.woff2')) ?>" as="font" type="font/woff2" crossorigin><?php endif ?>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <?php // FiraGO (site.css) — URL ზუსტად site.css-ის url()-ის მსგავსი (ვერსიის გარეშე), თორემ ორჯერ ჩამოიტვირთება ?>
+    <link rel="preload" href="<?= e(url('assets/front/fonts/firago-regular.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+    <?php if (locale() === 'ka'): ?><link rel="preload" href="<?= e(url('assets/front/fonts/firago-mtavruli-bold.woff2')) ?>" as="font" type="font/woff2" crossorigin><?php endif ?>
     <?php
     // პირველ ხატვას არ აყოვნებს (media="print" → onload "all"); DOM-ში რიგი იგივეა, ამიტომ კასკადი არ იცვლება
-    $deferred = ['https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;700&family=Work+Sans:wght@400;600&family=Noto+Sans+Georgian:wght@300;400;600;700&display=swap',
-                 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css',
+    $deferred = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css',
                  asset('front/lib/animate/animate.min.css'),
                  asset('front/lib/owlcarousel/assets/owl.carousel.min.css')];
     ?>
