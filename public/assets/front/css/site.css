@@ -52,6 +52,38 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     font-size: 15px;
 }
 
+/* 6 პუნქტი + CTA + ენები ერთ ხაზზე: პუნქტი არ იყოფა, დაშორება ეკრანის სიგანეს მიჰყვება */
+@media (min-width: 992px) {
+    .navbar .navbar-nav .nav-link {
+        margin-right: clamp(10px, 1.6vw, 25px);
+        white-space: nowrap;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    /* px-lg-5 (48px) ამ სიგანეზე ენების ღილაკებს ეკრანიდან აგდებდა */
+    .navbar {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .navbar .navbar-nav .nav-link,
+    html[lang="ka"] .navbar .navbar-nav .nav-link {
+        margin-right: 6px;
+        font-size: 13px;
+    }
+
+    .navbar .navbar-brand h2 {
+        font-size: 1.5rem;
+    }
+
+    .navbar-cta {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        font-size: 13px;
+    }
+}
+
 /* style.css-ის #header-carousel წესები — ბლოკის სლაიდერს უნიკალური id აქვს, ამიტომ კლასით */
 @media (max-width: 768px) {
     .header-carousel .carousel-item {
@@ -367,6 +399,66 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     margin: 0 0 2rem;
     padding: 0;
     list-style: none;
+}
+
+/* ბლოგი: სტატიის ბარათი (blog_list) და სტატიის გვერდი (collections/post) */
+.post-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bs-secondary);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    transition: border-color .3s;
+}
+
+.bg-secondary .post-card {
+    background: var(--bs-dark);
+}
+
+.post-card:hover {
+    border-color: var(--bs-primary);
+}
+
+.post-card-img img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.post-card-body {
+    padding: 1.5rem;
+}
+
+.post-card-title {
+    color: var(--bs-white);
+}
+
+.post-card-title:hover {
+    color: var(--bs-primary);
+}
+
+.post-meta {
+    color: var(--bs-gray-500, #adb5bd);
+    font-size: .875rem;
+}
+
+.post-body {
+    font-size: 1.125rem;
+    line-height: 1.8;
+}
+
+.post-body h2,
+.post-body h3 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.post-cta {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--bs-secondary);
+    border-left: 3px solid var(--bs-primary);
+    border-radius: 8px;
 }
 
 /* ნდობის ზოლი (stats ბლოკი) */

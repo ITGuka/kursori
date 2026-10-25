@@ -77,6 +77,15 @@ return new class extends Seeder {
             'form_text'         => ['მოგვიყევით იდეაზე — 1 სამუშაო დღეში დაგიკავშირდებით შეთავაზებით.', 'Tell us about your idea — we will get back to you with a proposal within 1 business day.'],
             'form_message'      => ['მოგვიყევით პროექტზე', 'Tell us about the project'],
         ],
+        // ბლოგი (blog_list ბლოკი, collections/post)
+        'blog' => [
+            'min_read'            => [':min წთ საკითხავი', ':min min read'],
+            'all_posts'           => ['ყველა სტატია', 'All articles'],
+            'cta_text'            => ['ახალ საიტზე ან მაღაზიაზე ფიქრობთ? მოგვიყევით იდეაზე — პირველი კონსულტაცია უფასოა.', 'Thinking about a new site or store? Tell us about your idea — the first consultation is free.'],
+            'newsletter_subtitle' => ['სიახლეები', 'Newsletter'],
+            'newsletter_title'    => ['მიიღეთ ახალი სტატიები', 'Get New Articles'],
+            'newsletter_text'     => ['თვეში ერთხელ — რჩევები ვებ დიზაინზე, ახალი პროექტები და სტუდიის სიახლეები.', 'Once a month — web design tips, new projects and studio news.'],
+        ],
         'mobile_cta' => [
             'call' => ['დარეკვა', 'Call'],
         ],

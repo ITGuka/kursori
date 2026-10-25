@@ -197,9 +197,10 @@ final class Collection
             $where .= ' AND i.category_id IN (' . implode(', ', array_fill(0, count($ids), '?')) . ')';
             array_push($bindings, ...$ids);
         }
+        $order = (self::type($type)['order'] ?? '') === 'newest' ? 'i.created_at DESC, i.id DESC' : 'i.sort, i.id';
         $ids = $this->db->column(
             "SELECT i.id FROM collection_items i JOIN collection_item_translations t ON t.item_id = i.id AND t.lang = ?
-             WHERE $where ORDER BY i.sort, i.id" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
+             WHERE $where ORDER BY $order" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
             $bindings,
         );
         return array_map(fn (array $item) => $this->resolve($item, $lang, $defaultLang), $this->findMany(array_map('intval', $ids)));
@@ -241,7 +242,7 @@ final class Collection
     }
 
     /**
-     * ჩანაწერი → view-ის მონაცემები ენაზე: id, title, slug, image, category_id, category, url + დამატებითი ველები.
+     * ჩანაწერი → view-ის მონაცემები ენაზე: id, title, slug, image, category_id, category, url, date (შექმნის, Y-m-d) + დამატებითი ველები.
      */
     public function resolve(array $item, string $lang, string $defaultLang): array
     {
@@ -263,6 +264,7 @@ final class Collection
             'category_id' => $item['category_id'] !== null ? (int)$item['category_id'] : null,
             'category'    => $item['category_id'] !== null ? $this->categories->name((int)$item['category_id'], $lang, $defaultLang) : '',
             'url'         => $this->url($item, $lang, $defaultLang),
+            'date'        => substr((string)($item['created_at'] ?? ''), 0, 10),
             'alternates'  => array_filter(array_map(fn ($l) => $this->url($item, $l, $defaultLang), array_combine(array_keys($item['translations']), array_keys($item['translations'])))),
         ] + $fields;
     }

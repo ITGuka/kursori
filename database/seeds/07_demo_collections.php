@@ -156,6 +156,108 @@ return new class extends Seeder {
         ],
     ];
 
+    /** ბლოგის კატეგორიები: გასაღები => [სახელი [ka, en], slug [ka, en]] */
+    public const BLOG_CATEGORIES = [
+        'tips'     => [['რჩევები', 'Tips'], ['rchevebi', 'tips']],
+        'business' => [['ონლაინ ბიზნესი', 'Online Business'], ['onlain-biznesi', 'online-business']],
+    ];
+
+    /** ბლოგის სტატიები — ინგლისური slug => კატეგორია, სურათი, თარიღი, სათაური/slug/excerpt/body/author [ka, en] */
+    public const BLOG_POSTS = [
+        'what-determines-website-cost' => [
+            'category' => 'tips', 'image' => 'service-1.jpg', 'date' => '2026-09-15 10:00:00',
+            'title'    => ['რა განსაზღვრავს საიტის დამზადების ფასს', 'What Determines the Cost of a Website'],
+            'slug'     => ['ra-gansazghvravs-saitis-pass', 'what-determines-website-cost'],
+            'excerpt'  => ['ერთი საიტი 1 500 ₾ ღირს, მეორე — 15 000. ვხსნით, საიდან მოდის სხვაობა და როგორ დაგეგმოთ ბიუჯეტი ზედმეტი ხარჯის გარეშე.',
+                           'One website costs 1,500 GEL, another 15,000. We explain where the difference comes from and how to plan a budget without overspending.'],
+            'author'   => ['თამარ ჯაფარიძე', 'Tamar Japaridze'],
+            'body'     => ['<p>„რა ღირს საიტი?“ — ყველაზე ხშირი კითხვაა, რომელსაც ვიღებთ. პასუხი ყოველთვის ერთია: დამოკიდებულია იმაზე, რა უნდა გააკეთოს საიტმა. ფასს ოთხი რამ განსაზღვრავს.</p>'
+                           . '<h2>1. გვერდების რაოდენობა და სტრუქტურა</h2><p>სავიზიტო საიტი 5 გვერდით და კორპორატიული საიტი 30 გვერდით სხვადასხვა მოცულობის სამუშაოა: ყოველ გვერდს სჭირდება სტრუქტურა, დიზაინი და კონტენტი.</p>'
+                           . '<h2>2. დიზაინი: შაბლონი თუ უნიკალური</h2><p>მზა შაბლონი იაფია, მაგრამ თქვენი ბრენდი სხვას დაემსგავსება. უნიკალური დიზაინი მეტ დროს მოითხოვს, სამაგიეროდ ზუსტად თქვენს მომხმარებელზეა მორგებული.</p>'
+                           . '<h2>3. ფუნქციები</h2><p>ონლაინ გადახდა, მარაგის მართვა, ჯავშნების სისტემა, რამდენიმე ენა — ყოველი ფუნქცია დამატებითი დეველოპმენტია. ჩამოწერეთ, რა გჭირდებათ ახლა და რა შეიძლება დაელოდოს მეორე ეტაპს.</p>'
+                           . '<h2>4. კონტენტი</h2><p>ტექსტები და ფოტოები ხშირად ყველაზე დიდი დამაყოვნებელია. თუ კონტენტს თავად მოამზადებთ, ღირებულებაც და ვადაც მცირდება.</p>'
+                           . '<h2>როგორ დაგეგმოთ ბიუჯეტი</h2><p>დაიწყეთ მიზნით: რამდენი შეკვეთა ან ზარი გინდათ საიტიდან. ამის მიხედვით განსაზღვრეთ მინიმალური ვერსია, გაუშვით და შემდეგ გააფართოვეთ რეალური მონაცემებით.</p>',
+                           '<p>"How much does a website cost?" is the question we hear most. The answer is always the same: it depends on what the site needs to do. Four things set the price.</p>'
+                           . '<h2>1. Number of pages and structure</h2><p>A five-page business card site and a thirty-page corporate site are different amounts of work: every page needs structure, design and content.</p>'
+                           . '<h2>2. Design: template or custom</h2><p>A ready-made template is cheap, but your brand will look like someone else’s. Custom design takes longer but is built around your customers.</p>'
+                           . '<h2>3. Features</h2><p>Online payments, stock management, bookings, several languages — every feature is extra development. List what you need now and what can wait for a second phase.</p>'
+                           . '<h2>4. Content</h2><p>Texts and photos are often the biggest source of delay. If you prepare the content yourself, both cost and timeline go down.</p>'
+                           . '<h2>How to plan the budget</h2><p>Start with the goal: how many orders or calls you want from the site. Define the smallest version that reaches it, launch it, then grow it with real data.</p>'],
+        ],
+        'online-store-or-instagram' => [
+            'category' => 'business', 'image' => 'portfolio-2.jpg', 'date' => '2026-10-02 10:00:00',
+            'title'    => ['ონლაინ მაღაზია თუ Instagram: როდის ღირს საკუთარ საიტზე გადასვლა', 'Online Store or Instagram: When to Move to Your Own Site'],
+            'slug'     => ['onlain-maghazia-tu-instagram', 'online-store-or-instagram'],
+            'excerpt'  => ['Instagram კარგი დასაწყისია, მაგრამ ზრდასთან ერთად შეკვეთები DM-ში იკარგება. ხუთი ნიშანი, რომ საკუთარი მაღაზიის დროა.',
+                           'Instagram is a great start, but as you grow, orders get lost in DMs. Five signs it’s time for your own store.'],
+            'author'   => ['ნინო ბერიძე', 'Nino Beridze'],
+            'body'     => ['<p>ბევრი ქართული ბრენდი Instagram-ით იწყებს — და სწორადაც. მაგრამ არის მომენტი, როცა სოციალური ქსელი ზრდას აფერხებს. აი, ხუთი ნიშანი, რომ ეს მომენტი დადგა.</p>'
+                           . '<h2>1. შეკვეთებს პასუხის მოლოდინში კარგავთ</h2><p>თუ მომხმარებელი ფასსა და ზომას DM-ში კითხულობს და პასუხს საათობით ელოდება, ნაწილი უბრალოდ სხვაგან იყიდის.</p>'
+                           . '<h2>2. მარაგს ხელით ითვლით</h2><p>როცა ერთი ნივთი ორჯერ იყიდება ან ცხრილი დღეში რამდენჯერმე უნდა განაახლოთ, დროა სისტემის, რომელიც ამას თავად აკეთებს.</p>'
+                           . '<h2>3. Google-ში არ ჩანხართ</h2><p>Instagram-ის პოსტები საძიებო სისტემაში თითქმის არ ჩანს. საკუთარი საიტი ახალ მყიდველებს მოიყვანს, რომლებიც თქვენ ჯერ არ გიცნობენ.</p>'
+                           . '<h2>4. ბარათით გადახდა გჭირდებათ</h2><p>გადარიცხვის ქვითრის გამოგზავნა მყიდველისთვის დამატებითი ნაბიჯია. ონლაინ გადახდა შეკვეთას რამდენიმე წამში ასრულებს.</p>'
+                           . '<h2>5. ალგორითმზე ხართ დამოკიდებული</h2><p>ერთი ცვლილება ალგორითმში და გაყიდვები ეცემა. საიტი და მომხმარებლების ელ-ფოსტების სია თქვენ გეკუთვნით.</p>'
+                           . '<p>Instagram-ის დატოვება საჭირო არ არის: საუკეთესო შედეგს ორივე ერთად იძლევა — სოციალური ქსელი აცნობს ბრენდს, მაღაზია კი ყიდის.</p>',
+                           '<p>Many Georgian brands start on Instagram — and rightly so. But there comes a point when social media holds growth back. Here are five signs that point has arrived.</p>'
+                           . '<h2>1. You lose orders while customers wait</h2><p>If customers ask about prices and sizes in DMs and wait hours for a reply, some will simply buy elsewhere.</p>'
+                           . '<h2>2. You count stock by hand</h2><p>When the same item is sold twice or a spreadsheet needs updating several times a day, it’s time for a system that does it for you.</p>'
+                           . '<h2>3. You don’t show up on Google</h2><p>Instagram posts barely appear in search. Your own site brings new buyers who don’t know you yet.</p>'
+                           . '<h2>4. You need card payments</h2><p>Sending a bank transfer receipt is an extra step for the buyer. Online payment completes the order in seconds.</p>'
+                           . '<h2>5. You depend on the algorithm</h2><p>One algorithm change and sales drop. Your site and your customers’ email list belong to you.</p>'
+                           . '<p>You don’t need to leave Instagram: the best results come from both together — social media introduces the brand, the store sells.</p>'],
+        ],
+        'website-launch-checklist' => [
+            'category' => 'tips', 'image' => 'service-2.jpg', 'date' => '2026-10-20 10:00:00',
+            'title'    => ['8 რამ, რაც საიტის გაშვებამდე უნდა შეამოწმოთ', '8 Things to Check Before Launching Your Website'],
+            'slug'     => ['saitis-gashvebamde-shemotsmeba', 'website-launch-checklist'],
+            'excerpt'  => ['მოკლე ჩეკლისტი, რომ გაშვების დღეს არაფერი გამოგრჩეთ: ფორმებიდან და მობილური ვერსიიდან ანალიტიკამდე.',
+                           'A short checklist so nothing slips on launch day: from forms and the mobile version to analytics.'],
+            'author'   => ['მარიამ კაპანაძე', 'Mariam Kapanadze'],
+            'body'     => ['<p>გაშვების დღეს ყველაზე ხშირად წვრილმანები ავიწყდებათ. ეს სია ჩვენს პროექტებზე ვიყენებთ — გამოიყენეთ თქვენც.</p>'
+                           . '<ol><li><strong>ფორმები.</strong> გააგზავნეთ თითოეული ფორმა და დარწმუნდით, რომ შეტყობინება სწორ მისამართზე მოდის.</li>'
+                           . '<li><strong>მობილური ვერსია.</strong> გახსენით საიტი ტელეფონზე: იკითხება თუ არა ტექსტი, ეტევა თუ არა ღილაკები.</li>'
+                           . '<li><strong>სიჩქარე.</strong> შეამოწმეთ PageSpeed Insights-ში; დიდი ფოტოები შეკუმშეთ.</li>'
+                           . '<li><strong>სათაურები და აღწერები.</strong> ყოველ გვერდს უნდა ჰქონდეს საკუთარი title და meta description.</li>'
+                           . '<li><strong>ბმულები.</strong> გადაამოწმეთ, რომ მენიუ და ღილაკები სწორ გვერდზე მიდის და 404 არსად ჩნდება.</li>'
+                           . '<li><strong>ანალიტიკა.</strong> დააყენეთ Google Analytics და Search Console გაშვებამდე, რომ პირველი დღიდან ნახოთ მონაცემები.</li>'
+                           . '<li><strong>კონფიდენციალურობის პოლიტიკა.</strong> თუ ფორმებით მონაცემებს აგროვებთ, პოლიტიკა სავალდებულოა.</li>'
+                           . '<li><strong>სარეზერვო ასლი.</strong> დარწმუნდით, რომ ჰოსტინგზე ავტომატური backup ჩართულია.</li></ol>'
+                           . '<p>ყველაფერი რიგზეა? გაუშვით და პირველი კვირა ყოველდღე ნახეთ ანალიტიკა — ის გეტყვით, რა გასაუმჯობესებელია.</p>',
+                           '<p>On launch day it’s the small things that get forgotten. We use this list on our own projects — feel free to use it too.</p>'
+                           . '<ol><li><strong>Forms.</strong> Submit every form and make sure the message reaches the right address.</li>'
+                           . '<li><strong>Mobile version.</strong> Open the site on a phone: is the text readable, do the buttons fit?</li>'
+                           . '<li><strong>Speed.</strong> Check it in PageSpeed Insights and compress large photos.</li>'
+                           . '<li><strong>Titles and descriptions.</strong> Every page needs its own title and meta description.</li>'
+                           . '<li><strong>Links.</strong> Check that menus and buttons go to the right pages and no 404s appear.</li>'
+                           . '<li><strong>Analytics.</strong> Set up Google Analytics and Search Console before launch so you have data from day one.</li>'
+                           . '<li><strong>Privacy policy.</strong> If your forms collect personal data, a policy is required.</li>'
+                           . '<li><strong>Backups.</strong> Make sure automatic backups are switched on at your host.</li></ol>'
+                           . '<p>All good? Launch, and check analytics every day for the first week — it will tell you what to improve.</p>'],
+        ],
+    ];
+
+    /** ბლოგის კატეგორიები და სტატიები (public — არსებული საიტის ერთჯერადი განახლებისთვისაც); სტატია უკვე არის → არ ეხება */
+    public function blog(DB $db): void
+    {
+        $this->items ??= app(Collection::class);
+        $this->categories ??= app(Category::class);
+        if ($this->media === []) {
+            foreach ($db->select("SELECT id, original_name FROM media WHERE folder = 'demo'") as $row) {
+                $this->media[$row['original_name']] = (int)$row['id'];
+            }
+        }
+        if ((int)$db->value("SELECT COUNT(*) FROM collection_items WHERE collection = 'blog'") > 0) {
+            return;
+        }
+        $categories = array_map(fn ($c) => $this->category('blog', $c[0], $c[1]), self::BLOG_CATEGORIES);
+        foreach (array_reverse(self::BLOG_POSTS) as $post) {
+            $id = $this->item('blog', $categories[$post['category']], $post['image'], $post['title'], $post['slug'], [],
+                ['excerpt' => $post['excerpt'], 'body' => $post['body'], 'author' => $post['author']]);
+            // სადემონსტრაციო თარიღი (სიაში უახლესი პირველია — შექმნის თარიღით)
+            $db->update('collection_items', ['created_at' => $post['date']], 'id = ?', [$id]);
+        }
+    }
+
     /** შეფასებები — slug => ავტორი, პროფესია, ტექსტი [ka, en]; კლიენტები ქეისებს ემთხვევა */
     public const REVIEWS = [
         'review-1' => [
@@ -261,6 +363,8 @@ return new class extends Seeder {
                 ['year' => $year, 'website' => ['type' => '', 'page_id' => null, 'url' => '', 'new_tab' => true]], self::CASES[$slug[1]]);
         }
 
+        $this->blog($db);
+
         // header-ის „სერვისები ▾“ ქვემენიუ (06_menus სერვისებამდე ეშვება)
         (require __DIR__ . '/06_menus.php')::serviceChildren($db, app(Menu::class));
     }
@@ -293,14 +397,14 @@ return new class extends Seeder {
     }
 
     /** @param array<string, array{0: mixed, 1: mixed}> $translated */
-    private function item(string $type, ?int $category, string $image, array $title, array $slug, array $settings, array $translated): void
+    private function item(string $type, ?int $category, string $image, array $title, array $slug, array $settings, array $translated): int
     {
         $content = ['ka' => [], 'en' => []];
         foreach ($translated as $field => [$ka, $en]) {
             $content['ka'][$field] = $ka;
             $content['en'][$field] = $en;
         }
-        $this->items->save(null, $type, ['category_id' => $category, 'image_id' => $this->media[$image] ?? null, 'is_active' => true], $settings, [
+        return $this->items->save(null, $type, ['category_id' => $category, 'image_id' => $this->media[$image] ?? null, 'is_active' => true], $settings, [
             'ka' => ['title' => $title[0], 'slug' => $slug[0]],
             'en' => ['title' => $title[1], 'slug' => $slug[1]],
         ], $content, []);

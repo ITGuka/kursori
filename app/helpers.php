@@ -57,6 +57,26 @@ function tel_href(string $phone): string
     return 'tel:' . preg_replace('/[^0-9+]/', '', $phone);
 }
 
+/** თარიღი მიმდინარე ენაზე: '2026-10-25' → „25 ოქტომბერი, 2026“ / „25 October 2026“ ('' → '') */
+function date_human(string $date): string
+{
+    $time = $date !== '' ? strtotime($date) : false;
+    if ($time === false) {
+        return '';
+    }
+    $months = [
+        'ka' => ['იანვარი', 'თებერვალი', 'მარტი', 'აპრილი', 'მაისი', 'ივნისი', 'ივლისი', 'აგვისტო', 'სექტემბერი', 'ოქტომბერი', 'ნოემბერი', 'დეკემბერი'],
+    ][locale()] ?? null;
+    return $months === null ? date('j F Y', $time) : date('j', $time) . ' ' . $months[(int)date('n', $time) - 1] . ', ' . date('Y', $time);
+}
+
+/** საკითხავი დრო წუთებში (HTML ტექსტიდან, ~200 სიტყვა წუთში; მინ. 1) */
+function reading_minutes(string $html): int
+{
+    $words = preg_split('/\s+/u', trim(strip_tags($html)), -1, PREG_SPLIT_NO_EMPTY);
+    return max(1, (int)ceil(count($words) / 200));
+}
+
 /** <a<?= link_target($item) ?>> — ახალ ფანჯარაში გახსნის ატრიბუტები */
 function link_target(array $item): string
 {

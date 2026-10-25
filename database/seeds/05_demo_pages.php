@@ -151,7 +151,9 @@ return new class extends Seeder {
         $team = $this->page(['გუნდი', 'Our Team'], ['gundi', 'team'], 1, false, $about);
         $reviews = $this->page(['შეფასებები', 'Testimonials'], ['shepasebebi', 'testimonials'], 2, false, $about);
         $pricing = $this->page(['ფასები', 'Pricing'], ['fasebi', 'pricing'], 5);
-        $contact = $this->page(['კონტაქტი', 'Contact'], ['kontakti', 'contact'], 6);
+        // slug = ბლოგის კოლექციის მისამართი (სტატიის გვერდზე „უკან“ აქ მოდის)
+        $blog = $this->page(['ბლოგი', 'Blog'], ['blogi', 'blog'], 6);
+        $contact = $this->page(['კონტაქტი', 'Contact'], ['kontakti', 'contact'], 7);
 
         // მთავარი
         $this->hero($home, $portfolio, $contact);
@@ -161,6 +163,7 @@ return new class extends Seeder {
         $this->portfolio($home, 6, 'secondary');
         $this->process($home);
         $this->collectionBlock($home, 'testimonials', ['შეფასებები', 'Testimonials'], ['რას ამბობენ კლიენტები', 'What Clients Say'], ['background' => 'dark']);
+        $this->latestPosts($home, $blog);
         $this->banner($home);
 
         // ჩვენ შესახებ
@@ -200,6 +203,7 @@ return new class extends Seeder {
         $this->collectionBlock($reviews, 'testimonials', ['შეფასებები', 'Testimonials'], ['რას ამბობენ კლიენტები', 'What Clients Say'], ['background' => 'dark']);
 
         $this->pricingPage($pricing, $contact);
+        $this->blogPage($blog);
 
         $this->header($contact);
         $this->block($contact, 'contact', ['show_form' => true], [
@@ -324,6 +328,25 @@ return new class extends Seeder {
             'text'          => ['<p>მოგვიყევით იდეაზე — 1 სამუშაო დღეში დაგიკავშირდებით შეთავაზებით.</p>', '<p>Tell us about your idea — we will get back to you with a proposal within 1 business day.</p>'],
             'message_label' => ['მოგვიყევით პროექტზე', 'Tell us about the project'],
             'button_label'  => ['მოთხოვნის გაგზავნა', 'Send Request'],
+        ]);
+    }
+
+    /** ბლოგის გვერდი: ყველა სტატია (public — ერთჯერადი განახლებისთვისაც) */
+    public function blogPage(int $pageId): void
+    {
+        $this->blocks ??= app(PageBlock::class);
+        $this->header($pageId);
+        $this->block($pageId, 'blog_list', ['category' => null, 'limit' => 0, 'button_link' => $this->link(null), 'background' => 'dark'], [
+            'subtitle' => ['ბლოგი', 'Blog'], 'title' => ['რჩევები და სიახლეები', 'Tips & News'], 'button_label' => ['', ''],
+        ]);
+    }
+
+    /** მთავარზე — 3 ბოლო სტატია ბლოგის ბმულით (public — ერთჯერადი განახლებისთვისაც) */
+    public function latestPosts(int $pageId, int $blog): void
+    {
+        $this->blocks ??= app(PageBlock::class);
+        $this->block($pageId, 'blog_list', ['category' => null, 'limit' => 3, 'button_link' => $this->link($blog), 'background' => 'secondary'], [
+            'subtitle' => ['ბლოგი', 'Blog'], 'title' => ['ბოლო სტატიები', 'Latest Articles'], 'button_label' => ['ყველა სტატია', 'All Articles'],
         ]);
     }
 

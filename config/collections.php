@@ -10,6 +10,7 @@ declare(strict_types=1);
  * categories — კატეგორიების მხარდაჭერა;
  * public — საჯარო გვერდი ყოველ ჩანაწერს: /{lang}/{route[lang]}/{slug} (route აკლია ენაზე → ძირითადი ენის, შემდეგ გასაღები);
  * view — საჯარო გვერდის შაბლონი (default: front/collections/detail).
+ * order — newest: სიაში უახლესი პირველი (შექმნის თარიღით, მაგ. ბლოგი); default — ადმინის რიგით (sort).
  * ახალი კოლექცია = ჩანაწერი აქ (მიგრაცია არ სჭირდება); ადმინის მენიუში ავტომატურად ჩნდება.
  */
 return [
@@ -61,6 +62,23 @@ return [
         'fields'      => [
             'quote'      => ['type' => 'textarea', 'label' => 'ტექსტი', 'translatable' => true, 'required' => true, 'max' => 1000],
             'profession' => ['type' => 'text', 'label' => 'პროფესია / კომპანია', 'translatable' => true, 'max' => 100],
+        ],
+    ],
+
+    'blog' => [
+        'label'       => 'ბლოგი',
+        'singular'    => 'სტატია',
+        'icon'        => 'fa fa-newspaper',
+        'title_label' => 'სათაური',
+        'categories'  => true,
+        'public'      => true,
+        'route'       => ['ka' => 'blogi', 'en' => 'blog'],
+        'view'        => 'front/collections/post',
+        'order'       => 'newest',
+        'fields'      => [
+            'excerpt' => ['type' => 'textarea', 'label' => 'მოკლე აღწერა', 'translatable' => true, 'max' => 500, 'help' => 'ჩანს სიაში და Google-ის შედეგებში.'],
+            'body'    => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
+            'author'  => ['type' => 'text', 'label' => 'ავტორი', 'translatable' => true, 'max' => 100],
         ],
     ],
 

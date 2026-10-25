@@ -136,6 +136,23 @@ return [
         ],
     ],
 
+    'blog_list' => [
+        'label'  => 'ბლოგი (სტატიების სია)',
+        'icon'   => 'fa fa-newspaper',
+        'view'   => 'front/blocks/blog_list',
+        // ყოველთვის კოლექციიდან, უახლესი პირველი (collections.php → blog.order)
+        'collection' => ['type' => 'blog', 'target' => 'posts', 'always' => true, 'map' => [
+            'image' => 'image', 'title' => 'title', 'category' => 'category', 'excerpt' => 'excerpt', 'date' => 'date', 'body' => 'body', 'link' => '@url',
+        ]],
+        'fields' => $title + [
+            'category'     => ['type' => 'category', 'label' => 'კატეგორია', 'collection' => 'blog', 'help' => 'ცარიელი — ყველა სტატია.'],
+            'limit'        => ['type' => 'number', 'label' => 'რაოდენობა', 'min' => 0, 'max' => 100, 'default' => 0, 'help' => '0 — ყველა. მთავარ გვერდზე, მაგ., 3.'],
+            'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'მაგ. „ყველა სტატია“ — ბლოგის გვერდზე ბმულით.'],
+            'button_link'  => ['type' => 'link', 'label' => 'ღილაკის ბმული'],
+            'background'   => $background,
+        ],
+    ],
+
     'faq' => [
         'label'  => 'ხშირი კითხვები (FAQ)',
         'icon'   => 'fa fa-question-circle',

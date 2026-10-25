@@ -5,11 +5,11 @@ use App\Models\Menu;
 use Core\Database\DB;
 use Core\Database\Seeder;
 
-// საწყისი მენიუები. header — კლიენტის გადაწყვეტილების რიგით: სერვისები ▾ (თითო სერვისი) · პორტფოლიო · ფასები · ჩვენ შესახებ · კონტაქტი;
+// საწყისი მენიუები. header — კლიენტის გადაწყვეტილების რიგით: სერვისები ▾ (თითო სერვისი) · პორტფოლიო · ფასები · ბლოგი · ჩვენ შესახებ · კონტაქტი;
 // სტუდიის გვერდები არ არის → გვერდების ხე. footer — ზედა დონე მთავრის გარეშე. მენიუში უკვე არის პუნქტი → არ ეხება.
 return new class extends Seeder {
     /** header-ის რიგი — გვერდების ინგლისური slug-ები */
-    public const HEADER = ['services', 'portfolio', 'pricing', 'about', 'contact'];
+    public const HEADER = ['services', 'portfolio', 'pricing', 'blog', 'about', 'contact'];
 
     public function run(DB $db): void
     {
