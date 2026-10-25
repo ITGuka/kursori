@@ -96,6 +96,33 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     border-bottom: 1px solid var(--bs-white);
 }
 
+/*
+ * Scroll reveal (main.js) — WOW.js შიგთავსს visibility:hidden-ით მალავდა ეკრანზე გამოჩენამდე.
+ * ახლა ბლოკი ყოველთვის ჩანს (ტექსტი იკითხება, crawler-ი და preview ხედავს), მხოლოდ მსუბუქად ამოდის.
+ */
+.reveal {
+    opacity: .6;
+    transform: translateY(16px);
+    transition: opacity .6s ease-out, transform .6s ease-out;
+}
+
+.reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animated {
+        animation: none !important;
+    }
+
+    .btn,
+    .navbar,
+    .navbar .navbar-nav .nav-link {
+        transition: none;
+    }
+}
+
 /* მენიუს CTA ღილაკი — მთავრული შრიფტით, როგორც მენიუს ბმულები */
 .navbar-cta {
     font-family: "DejaVu Sans Mtavruli", "Josefin Sans", "Noto Sans Georgian", sans-serif;

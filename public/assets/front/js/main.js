@@ -1,19 +1,31 @@
 (function ($) {
     "use strict";
 
-    // Spinner
-    var spinner = function () {
-        setTimeout(function () {
-            if ($('#spinner').length > 0) {
-                $('#spinner').removeClass('show');
+    // Scroll reveal (WOW.js-ის ნაცვლად): .wow ბლოკები თავიდანვე ჩანს და ეკრანზე გამოჩენისას მხოლოდ მსუბუქად ამოდის.
+    // ეკრანზე უკვე მყოფს, prefers-reduced-motion-ს ან IntersectionObserver-ის გარეშე ანიმაცია არ აქვს.
+    var reveal = function () {
+        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-revealed');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {rootMargin: '0px 0px -40px 0px'});
+        document.querySelectorAll('.wow').forEach(function (item) {
+            if (item.getBoundingClientRect().top < window.innerHeight) {
+                return;
             }
-        }, 1);
+            var delay = parseFloat(item.getAttribute('data-wow-delay')) || 0;
+            item.style.transitionDelay = Math.min(delay, 0.5) / 2 + 's';
+            item.classList.add('reveal');
+            observer.observe(item);
+        });
     };
-    spinner();
-    
-    
-    // Initiate the wowjs
-    new WOW().init();
+    reveal();
 
 
     // Sticky Navbar
