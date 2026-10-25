@@ -62,7 +62,7 @@ $variants = Media::variants($media);
 
                 <?php foreach ($languages as $language): ?>
                     <?php $code = $language['code']; ?>
-                    <fieldset class="border rounded p-3 mb-3">
+                    <fieldset class="border rounded p-3 mb-3" data-lang="<?= e($code) ?>">
                         <legend class="float-none w-auto px-2 fs-6 mb-0"><?= e($language['native_name']) ?></legend>
                         <?php if ($isImage): ?>
                             <div class="mb-2">

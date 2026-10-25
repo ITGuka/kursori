@@ -268,3 +268,32 @@ body {
 .dropdown-menu form .dropdown-item {
     cursor: pointer;
 }
+
+/* ---- ენის გადამრთველი ---- */
+
+.lang-switch .btn {
+    min-width: 40px;
+    font-weight: 600;
+}
+
+.lang-switch .btn.has-error:not(.active) {
+    color: var(--bs-danger, #dc3545);
+    border-color: var(--bs-danger, #dc3545);
+}
+
+.lang-switch .btn.has-error::after {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 4px;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: var(--bs-danger, #dc3545);
+}
+
+/* ერთ ენაზე ორსვეტიანი თარგმნადი ველი მთელ სიგანეზე იშლება */
+html[data-admin-lang]:not([data-admin-lang="all"]) .row > [data-lang] {
+    flex: 0 0 100%;
+    max-width: 100%;
+}

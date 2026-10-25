@@ -21,7 +21,7 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
 
     <?php foreach ($languages as $language): ?>
         <?php $code = $language['code']; $t = $translations[$code] ?? []; ?>
-        <fieldset class="border rounded p-3 mb-3" data-slug-group>
+        <fieldset class="border rounded p-3 mb-3" data-slug-group data-lang="<?= e($code) ?>">
             <legend class="float-none w-auto px-2 fs-6 mb-0"><?= e($language['native_name']) ?><?= $code === $defaultLang ? ' *' : '' ?></legend>
             <div class="row g-2">
                 <div class="col-md-6">

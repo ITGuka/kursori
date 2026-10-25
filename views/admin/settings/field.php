@@ -60,7 +60,7 @@ $input = function (string $inputName, string $inputId, string $current, string $
         <div class="row g-2">
             <?php foreach ($languages as $language): ?>
                 <?php $code = $language['code']; ?>
-                <div class="col-md-6">
+                <div class="col-md-6" data-lang="<?= e($code) ?>">
                     <label class="small text-muted mb-1" for="<?= e("$id-$code") ?>"><?= e($language['native_name']) ?></label>
                     <?= $input($name . '[' . $code . ']', "$id-$code", $value($key, $code), "$key.$code") ?>
                 </div>

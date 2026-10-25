@@ -29,20 +29,11 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
                 <?php endif ?>
             </div>
 
-            <ul class="nav nav-tabs mb-3" role="tablist">
-                <?php foreach ($languages as $i => $language): ?>
-                    <?php $code = $language['code']; $tabError = array_filter(array_keys($formErrors), fn ($k) => str_starts_with($k, "$code.")); ?>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link<?= $i === 0 ? ' active' : '' ?><?= $tabError ? ' text-danger' : '' ?>" data-bs-toggle="tab" data-bs-target="#lang-<?= e($code) ?>" type="button" role="tab">
-                            <?= e($language['native_name']) ?><?= $code === $defaultLang ? ' *' : '' ?>
-                        </button>
-                    </li>
-                <?php endforeach ?>
-            </ul>
-            <div class="tab-content mb-3">
-                <?php foreach ($languages as $i => $language): ?>
+            <div class="mb-3">
+                <?php foreach ($languages as $language): ?>
                     <?php $code = $language['code']; $t = $translations[$code] ?? []; ?>
-                    <div class="tab-pane fade<?= $i === 0 ? ' show active' : '' ?>" id="lang-<?= e($code) ?>" role="tabpanel" data-slug-group>
+                    <fieldset class="border rounded p-3 mb-3" id="lang-<?= e($code) ?>" data-slug-group data-lang="<?= e($code) ?>">
+                        <legend class="float-none w-auto px-2 fs-6 mb-0"><?= e($language['native_name']) ?><?= $code === $defaultLang ? ' *' : '' ?></legend>
                         <div class="mb-3">
                             <label class="form-label" for="title-<?= e($code) ?>">სათაური</label>
                             <input type="text" class="form-control<?= $invalid("$code.title") ?>" id="title-<?= e($code) ?>" name="t[<?= e($code) ?>][title]"
@@ -69,7 +60,7 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
                             <textarea class="form-control" id="meta-desc-<?= e($code) ?>" name="t[<?= e($code) ?>][meta_description]" maxlength="300" rows="2"><?= e($t['meta_description'] ?? '') ?></textarea>
                             <div class="form-text">ცარიელი — პარამეტრები → SEO.</div>
                         </div>
-                    </div>
+                    </fieldset>
                 <?php endforeach ?>
             </div>
 

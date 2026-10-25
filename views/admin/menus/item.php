@@ -63,7 +63,7 @@ $type = $data['type'] ?? 'page';
 
     <?php foreach ($languages as $language): ?>
         <?php $code = $language['code']; $t = $translations[$code] ?? []; ?>
-        <fieldset class="border rounded p-3 mb-3">
+        <fieldset class="border rounded p-3 mb-3" data-lang="<?= e($code) ?>">
             <legend class="float-none w-auto px-2 fs-6 mb-0"><?= e($language['native_name']) ?></legend>
             <div class="mb-2">
                 <label class="form-label small" for="label-<?= e($code) ?>">წარწერა<span data-show-type="url"><?= $code === $defaultLang ? ' *' : '' ?></span></label>

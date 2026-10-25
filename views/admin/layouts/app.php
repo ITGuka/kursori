@@ -2,6 +2,9 @@
 /** @var Core\View\Template $this */
 $admin = auth()->user();
 $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
+// ფორმებში ენის გადამრთველი: [data-lang="xx"] ელემენტები ჩანს მხოლოდ არჩეულ ენაზე (ან „ყველა“)
+$switchLanguages = count($languages ?? []) > 1 ? $languages : [];
+$langCodes = array_column($switchLanguages, 'code');
 ?>
 <!doctype html>
 <html lang="ka">
@@ -13,6 +16,22 @@ $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
     <title><?= e(($title ?? 'Admin') . ' · ' . config('app.name')) ?></title>
     <?= $this->insert('admin/partials/head') ?>
     <?= $this->section('styles') ?>
+    <?php if ($langCodes !== []): ?>
+        <style>
+            <?php foreach ($langCodes as $code): ?>
+            html[data-admin-lang="<?= e($code) ?>"] [data-lang]:not([data-lang="<?= e($code) ?>"]) { display: none !important; }
+            <?php endforeach ?>
+        </style>
+        <script>
+            // არჩეული ენა გვერდის დახატვამდე — რომ ველები არ „ახტეს“
+            (function () {
+                var codes = <?= json_encode($langCodes) ?>, lang = null;
+                try { lang = localStorage.getItem('admin.lang'); } catch (e) {}
+                if (lang !== 'all' && codes.indexOf(lang) === -1) lang = <?= json_encode(config('app.default_locale')) ?>;
+                document.documentElement.setAttribute('data-admin-lang', lang);
+            })();
+        </script>
+    <?php endif ?>
 </head>
 <body>
 <div class="container-fluid position-relative bg-white d-flex p-0">
@@ -54,6 +73,16 @@ $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
                 <i class="fa fa-bars"></i>
             </a>
             <div class="navbar-nav align-items-center ms-auto">
+                <?php if ($switchLanguages !== []): ?>
+                    <div class="btn-group btn-group-sm lang-switch me-2 me-lg-3 d-none" role="group" aria-label="შესავსები ენა" data-lang-switch>
+                        <?php foreach ($switchLanguages as $language): ?>
+                            <button type="button" class="btn btn-outline-primary" data-lang-option="<?= e($language['code']) ?>" title="<?= e($language['native_name']) ?>">
+                                <?= e(strtoupper($language['code'])) ?>
+                            </button>
+                        <?php endforeach ?>
+                        <button type="button" class="btn btn-outline-primary" data-lang-option="all" title="ყველა ენა ერთად">ყველა</button>
+                    </div>
+                <?php endif ?>
                 <a href="<?= e(url(config('app.default_locale'))) ?>" class="nav-link" target="_blank" rel="noopener">
                     <i class="fa fa-external-link-alt me-lg-2"></i><span class="d-none d-lg-inline-flex">საიტი</span>
                 </a>

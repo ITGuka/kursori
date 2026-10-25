@@ -99,7 +99,7 @@ $control = function (string $inputName, mixed $value, string $id, string $errorK
         <div class="row g-2">
             <?php foreach ($languages as $language): ?>
                 <?php $code = $language['code']; ?>
-                <div class="<?= $type === 'wysiwyg' ? 'col-12' : 'col-md-6' ?>">
+                <div class="<?= $type === 'wysiwyg' ? 'col-12' : 'col-md-6' ?>" data-lang="<?= e($code) ?>">
                     <label class="small text-muted mb-1" for="<?= e("$domId-$code") ?>"><?= e($language['native_name']) ?></label>
                     <?= $control($cName($code), $contentVals[$code] ?? '', "$domId-$code", "$path.$code") ?>
                 </div>

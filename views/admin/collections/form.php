@@ -46,7 +46,7 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
             <div class="row g-2">
                 <?php foreach ($languages as $language): ?>
                     <?php $code = $language['code']; ?>
-                    <div class="col-md-6" data-slug-group>
+                    <div class="col-md-6" data-slug-group data-lang="<?= e($code) ?>">
                         <label class="small text-muted mb-1" for="title-<?= e($code) ?>"><?= e($language['native_name']) ?></label>
                         <input type="text" class="form-control<?= $invalid("t.$code.title") ?>" id="title-<?= e($code) ?>" name="t[<?= e($code) ?>][title]" maxlength="190"
                                value="<?= e($translations[$code]['title'] ?? '') ?>" data-slug-source>
