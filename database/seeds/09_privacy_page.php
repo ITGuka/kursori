@@ -58,8 +58,8 @@ return new class extends Seeder {
 <p>ეს პოლიტიკა აღწერს, როგორ აგროვებს, იყენებს და იცავს WEBDEV (შემდგომში — „ჩვენ“) პერსონალურ მონაცემებს, რომლებსაც საიტის მეშვეობით გვიზიარებთ. მონაცემებს ვამუშავებთ საქართველოს კანონის „პერსონალურ მონაცემთა დაცვის შესახებ“ შესაბამისად, ხოლო ევროკავშირის მომხმარებლების შემთხვევაში — GDPR-ის მოთხოვნების გათვალისწინებით.</p>
 <h3>რა მონაცემებს ვაგროვებთ</h3>
 <ul>
-<li><strong>საკონტაქტო ფორმა:</strong> სახელი, ელ-ფოსტა, თემა და შეტყობინების ტექსტი.</li>
-<li><strong>განაცხადის ფორმა:</strong> სახელი, ელ-ფოსტა, ტელეფონი და თქვენ მიერ დაწერილი ინფორმაცია.</li>
+<li><strong>საკონტაქტო ფორმა:</strong> სახელი, ელ-ფოსტა და/ან ტელეფონი, თქვენთვის საინტერესო სერვისი და შეტყობინების ტექსტი.</li>
+<li><strong>შეთავაზების მოთხოვნის ფორმა:</strong> სახელი, ელ-ფოსტა და/ან ტელეფონი, სერვისი, სავარაუდო ბიუჯეტი და თქვენ მიერ დაწერილი ინფორმაცია.</li>
 <li><strong>სიახლეების გამოწერა:</strong> ელ-ფოსტა და გამოწერის დადასტურების თარიღი.</li>
 <li><strong>ტექნიკური მონაცემები:</strong> IP მისამართი, ბრაუზერის ტიპი და გვერდი, საიდანაც ფორმა გაიგზავნა — სპამისა და ბოროტად გამოყენებისგან დასაცავად.</li>
 </ul>
@@ -96,8 +96,8 @@ HTML;
 <p>This policy explains how WEBDEV ("we") collects, uses and protects the personal data you share with us through this website. We process data in accordance with the Law of Georgia on Personal Data Protection and, for users in the European Union, the GDPR.</p>
 <h3>What we collect</h3>
 <ul>
-<li><strong>Contact form:</strong> name, email, subject and message.</li>
-<li><strong>Application form:</strong> name, email, phone number and the information you write.</li>
+<li><strong>Contact form:</strong> name, email and/or phone number, the service you are interested in and your message.</li>
+<li><strong>Quote request form:</strong> name, email and/or phone number, service, estimated budget and the information you write.</li>
 <li><strong>Newsletter:</strong> email address and the date you confirmed your subscription.</li>
 <li><strong>Technical data:</strong> IP address, browser type and the page a form was sent from — to protect the site from spam and abuse.</li>
 </ul>

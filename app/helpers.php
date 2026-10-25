@@ -39,6 +39,24 @@ function menu(string $location): array
     return $items;
 }
 
+/**
+ * მთავარი CTA (პარამეტრები → ზოგადი → მენიუს ღილაკი): navbar-ში და მობილურის ქვედა ზოლში.
+ * @return array{href: string, label: string}|null გვერდი ან ტექსტი არ არის → null
+ */
+function cta_link(): ?array
+{
+    $pageId = (int)setting('general.cta_page');
+    $href = $pageId > 0 ? app(Page::class)->url($pageId, locale()) : '';
+    $label = (string)setting('general.cta_label');
+    return $href !== '' && $label !== '' ? ['href' => $href, 'label' => $label] : null;
+}
+
+/** ტელეფონის tel: ბმული ფორმატირებული ნომრიდან ('+995 32 247 18 90' → 'tel:+995322471890') */
+function tel_href(string $phone): string
+{
+    return 'tel:' . preg_replace('/[^0-9+]/', '', $phone);
+}
+
 /** <a<?= link_target($item) ?>> — ახალ ფანჯარაში გახსნის ატრიბუტები */
 function link_target(array $item): string
 {

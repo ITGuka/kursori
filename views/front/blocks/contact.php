@@ -4,7 +4,7 @@
  * კონტაქტები — პარამეტრებიდან. ფორმა → POST /{lang}/forms/contact → ადმინის Inbox.
  */
 $rows = array_filter([
-    t('contact.phone')   => setting('contact.phone') ? '<a href="tel:' . e(preg_replace('/[^0-9+]/', '', (string)setting('contact.phone'))) . '">' . e(setting('contact.phone')) . '</a>' : '',
+    t('contact.phone')   => setting('contact.phone') ? '<a href="' . e(tel_href((string)setting('contact.phone'))) . '">' . e(setting('contact.phone')) . '</a>' : '',
     t('contact.email')   => setting('contact.email') ? '<a href="mailto:' . e(setting('contact.email')) . '">' . e(setting('contact.email')) . '</a>' : '',
     t('contact.address') => setting('contact.address') ? e(setting('contact.address')) : '',
     t('contact.hours')   => setting('contact.working_hours') ? e(setting('contact.working_hours')) : '',
@@ -47,12 +47,16 @@ $socialLinks = array_filter(array_map(fn ($network) => setting("social.$network"
                         <?php $field = fn (string $name, string $label, string $type, bool $required, int $max) => $this->insert('front/partials/form-field',
                             ['form' => 'contact', 'name' => $name, 'label' => $label, 'type' => $type, 'required' => $required, 'max' => $max, 'uid' => $block['id']]); ?>
                         <div class="row g-3">
-                            <div class="col-md-6"><?= $field('name', t('form.name'), 'text', true, 100) ?></div>
-                            <div class="col-md-6"><?= $field('email', t('form.email'), 'email', true, 190) ?></div>
-                            <div class="col-12"><?= $field('subject', t('form.subject'), 'text', false, 190) ?></div>
+                            <div class="col-12"><?= $field('name', t('form.name'), 'text', true, 100) ?></div>
+                            <div class="col-md-6"><?= $field('email', t('form.email'), 'email', false, 190) ?></div>
+                            <div class="col-md-6"><?= $field('phone', t('form.phone'), 'tel', false, 50) ?></div>
+                            <div class="col-12"><p class="form-hint mb-0"><?= e(t('form.one_of_hint')) ?></p></div>
+                            <div class="col-12"><?= $this->insert('front/partials/form-choice', ['form' => 'contact', 'name' => 'service', 'label' => t('form.service'),
+                                'options' => config('forms.contact.fields.service.options'), 'uid' => $block['id']]) ?></div>
                             <div class="col-12"><?= $field('message', t('form.message'), 'textarea', true, 5000) ?></div>
                             <div class="col-12">
-                                <button class="btn btn-outline-primary border-2 w-100 py-3" type="submit"><?= e(t('form.send')) ?></button>
+                                <button class="btn btn-primary w-100 py-3" type="submit"><?= e(t('form.send')) ?></button>
+                                <p class="form-hint text-center mt-2 mb-0"><?= e(t('form.reply_time')) ?></p>
                                 <?= $this->insert('front/partials/form-consent', ['class' => 'mt-3']) ?>
                             </div>
                         </div>

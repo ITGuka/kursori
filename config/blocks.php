@@ -123,6 +123,19 @@ return [
         ],
     ],
 
+    'process' => [
+        'label'  => 'პროცესი (ეტაპები)',
+        'icon'   => 'fa fa-list-ol',
+        'view'   => 'front/blocks/process',
+        'fields' => $title + [
+            'steps'      => ['type' => 'repeater', 'label' => 'ეტაპები', 'min_items' => 2, 'max_items' => 8, 'fields' => [
+                'title' => ['type' => 'text', 'label' => 'ეტაპი', 'translatable' => true, 'max' => 100],
+                'text'  => ['type' => 'textarea', 'label' => 'აღწერა', 'translatable' => true, 'max' => 300],
+            ]],
+            'background' => $background,
+        ],
+    ],
+
     'banner_signup' => [
         'label'  => 'ბანერი + გამოწერა',
         'icon'   => 'fa fa-envelope-open-text',

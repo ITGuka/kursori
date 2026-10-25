@@ -40,12 +40,18 @@ final class FormController
         $data = $this->input($request, $definition);
         $validator = Validator::make(
             $data,
-            array_map(fn ($field) => $field['rules'], $definition['fields']),
+            array_map(fn ($field) => self::rules($field), $definition['fields']),
             array_map(fn ($field) => t($field['label']), $definition['fields']),
             self::messages(),
         );
-        if ($validator->fails()) {
-            return redirect($back)->with('_form', $form)->withErrors($validator->errors())->withInput($data);
+        $errors = $validator->errors();
+        // one_of: მაგ. ელ-ფოსტა ან ტელეფონი — ერთი მაინც
+        $oneOf = $definition['one_of'] ?? [];
+        if ($oneOf !== [] && array_filter(array_map(fn ($name) => $data[$name] ?? '', $oneOf), fn ($value) => $value !== '') === []) {
+            $errors[$oneOf[0]] ??= t('validation.one_of');
+        }
+        if ($errors !== []) {
+            return redirect($back)->with('_form', $form)->withErrors($errors)->withInput($data);
         }
 
         $this->limiter->hit($key, (int)$limit['decay']);
@@ -65,11 +71,21 @@ final class FormController
         return $data;
     }
 
+    /** ველის წესები სიად; options-იან ველს ემატება in:… (მხოლოდ ჩამოთვლილი მნიშვნელობები) */
+    private static function rules(array $field): array
+    {
+        $rules = array_values(array_filter(is_array($field['rules']) ? $field['rules'] : explode('|', (string)$field['rules'])));
+        if (!empty($field['options'])) {
+            $rules[] = 'in:' . implode(',', array_keys($field['options']));
+        }
+        return $rules;
+    }
+
     /** ვალიდაციის შეტყობინებები მიმდინარე ენაზე (UI თარგმანები: validation.*) */
     public static function messages(): array
     {
         $messages = [];
-        foreach (['required', 'email', 'max', 'regex'] as $rule) {
+        foreach (['required', 'email', 'max', 'regex', 'in'] as $rule) {
             $messages[$rule] = t("validation.$rule");
         }
         return $messages;

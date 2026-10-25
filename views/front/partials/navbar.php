@@ -9,9 +9,7 @@ $currentPath = rtrim(app()->baseUrlPath() . (string)app()->request()?->path(), '
 $isActive = fn (string $href) => $href !== '' && !preg_match('~^[a-z]+:~i', $href) && rtrim((string)parse_url($href, PHP_URL_PATH), '/') === $currentPath;
 $logo = setting('general.logo');
 $siteName = (string)setting('general.site_name');
-$ctaPage = (int)setting('general.cta_page');
-$ctaHref = $ctaPage > 0 ? app(App\Models\Page::class)->url($ctaPage, $lang) : '';
-$ctaLabel = (string)setting('general.cta_label');
+$cta = cta_link();
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark px-lg-5">
     <a href="<?= e(url($lang)) ?>" class="navbar-brand ms-4 ms-lg-0">
@@ -45,9 +43,9 @@ $ctaLabel = (string)setting('general.cta_label');
                 <?php endif ?>
             <?php endforeach ?>
         </div>
-        <?php if ($ctaHref !== '' && $ctaLabel !== ''): ?>
+        <?php if ($cta !== null): ?>
             <div class="px-4 px-lg-0 pb-3 pb-lg-0 me-lg-3">
-                <a href="<?= e($ctaHref) ?>" class="btn btn-primary border-2 px-4 navbar-cta"<?= $isActive($ctaHref) ? ' aria-current="page"' : '' ?>><?= e($ctaLabel) ?></a>
+                <a href="<?= e($cta['href']) ?>" class="btn btn-primary border-2 px-4 navbar-cta"<?= $isActive($cta['href']) ? ' aria-current="page"' : '' ?>><?= e($cta['label']) ?></a>
             </div>
         <?php endif ?>
         <?php if (count($languageLinks) > 1): ?>

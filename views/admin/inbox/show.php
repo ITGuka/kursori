@@ -34,6 +34,7 @@ $email = (string)($data['email'] ?? '');
     <dl class="row mb-0">
         <?php foreach ($data as $name => $value): ?>
             <?php $field = $definition['fields'][$name] ?? []; ?>
+            <?php if (isset($field['options'][$value])) { $value = t($field['options'][$value], [], config('app.default_locale')); } ?>
             <dt class="col-sm-3"><?= e(isset($field['label']) ? t($field['label'], [], config('app.default_locale')) : $name) ?></dt>
             <dd class="col-sm-9 text-break"><?= (string)$value === '' ? '<span class="text-muted">—</span>' : (!empty($field['multiline']) ? nl2br(e((string)$value)) : e((string)$value)) ?></dd>
         <?php endforeach ?>

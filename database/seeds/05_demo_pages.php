@@ -57,7 +57,26 @@ return new class extends Seeder {
         [['1 დღე', '1 day'], ['პასუხი ყოველ მოთხოვნაზე', 'Reply to every request']],
     ];
 
-    private const MAP ='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
+    /** პროცესის ეტაპები: [სათაური, ტექსტი] — [ka, en] */
+    public const PROCESS = [
+        [['ბრიფი და კვლევა', 'Brief & Research'],
+         ['ვეცნობით თქვენს ბიზნესს, მომხმარებელს და მიზანს. ვთანხმდებით სტრუქტურაზე, ვადებსა და ბიუჯეტზე.',
+          'We get to know your business, customers and goals, then agree on structure, timeline and budget.']],
+        [['პროტოტიპი', 'Prototype'],
+         ['ვაწყობთ გვერდების სქემას, რომ დიზაინამდე შევთანხმდეთ, რა სად იქნება.',
+          'We map out the pages so we agree on what goes where before any design work.']],
+        [['დიზაინი', 'Design'],
+         ['ვქმნით დიზაინს კომპიუტერისა და მობილურისთვის და ვასწორებთ თქვენი შენიშვნებით.',
+          'We design for desktop and mobile and refine it with your feedback.']],
+        [['დეველოპმენტი', 'Development'],
+         ['ვაწყობთ საიტს მართვის პანელით, ვამატებთ კონტენტს და ვამოწმებთ ყველა მოწყობილობაზე.',
+          'We build the site with an admin panel, add the content and test it on every device.']],
+        [['გაშვება და მხარდაჭერა', 'Launch & Support'],
+         ['ვუშვებთ საიტს, ვაწყობთ ანალიტიკას და გასწავლით პანელის მართვას.',
+          'We launch the site, set up analytics and show your team how to use the admin panel.']],
+    ];
+
+    private const MAP = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
 
     private Page $pages;
     private PageBlock $blocks;
@@ -89,6 +108,7 @@ return new class extends Seeder {
         $this->about($home, $portfolio, $contact, 'secondary');
         $this->collectionBlock($home, 'services', ['ჩვენი სერვისები', 'Our Services'], ['რას ვაკეთებთ', 'What We Do'], ['limit' => 4, 'layout' => 'grid']);
         $this->portfolio($home, 6, 'secondary');
+        $this->process($home);
         $this->collectionBlock($home, 'testimonials', ['შეფასებები', 'Testimonials'], ['რას ამბობენ კლიენტები', 'What Clients Say'], ['background' => 'dark']);
         $this->banner($home);
 
@@ -226,6 +246,14 @@ return new class extends Seeder {
         ]);
         // სტატიკური: ჩანს მხოლოდ პირველი სლაიდი, მეორე ადმინში რჩება
         $this->block($pageId, 'hero_carousel', ['mode' => 'static', 'slides' => $slides], ['slides' => [$ka, $en]]);
+    }
+
+    /** თანამშრომლობის ეტაპები */
+    private function process(int $pageId): void
+    {
+        [$steps, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['title' => $row[0], 'text' => $row[1]]], self::PROCESS));
+        $this->block($pageId, 'process', ['steps' => $steps, 'background' => 'dark'],
+            ['subtitle' => ['როგორ ვმუშაობთ', 'How We Work'], 'title' => ['იდეიდან გაშვებამდე', 'From Idea to Launch'], 'steps' => [$ka, $en]]);
     }
 
     /** ნდობის ზოლი ჰეროს ქვეშ */

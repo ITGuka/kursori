@@ -9,6 +9,14 @@ $social = [
     'dribbble'  => 'fab fa-dribbble',
 ];
 $siteName = (string)setting('general.site_name');
+$phone = (string)setting('contact.phone');
+$email = (string)setting('contact.email');
+$contacts = array_filter([
+    $phone !== '' ? ['fa fa-phone', $phone, tel_href($phone)] : null,
+    $email !== '' ? ['fa fa-envelope', $email, 'mailto:' . $email] : null,
+    ($address = (string)setting('contact.address')) !== '' ? ['fa fa-location-dot', $address, null] : null,
+    ($hours = (string)setting('contact.working_hours')) !== '' ? ['fa fa-clock', $hours, null] : null,
+]);
 ?>
 <div class="container-fluid bg-dark text-light footer py-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="container text-center py-5">
@@ -16,6 +24,16 @@ $siteName = (string)setting('general.site_name');
             <span class="d-block h1 display-4 mb-3 text-white text-uppercase"><i class="fa-regular fa-face-smile me-1"></i><?= e($siteName) ?></span>
         </a>
         <?php if ($tagline = setting('general.tagline')): ?><p class="mb-4"><?= e($tagline) ?></p><?php endif ?>
+        <?php if ($contacts !== []): ?>
+            <ul class="footer-contacts mb-4">
+                <?php foreach ($contacts as [$icon, $text, $href]): ?>
+                    <li>
+                        <i class="<?= e($icon) ?> text-primary me-2" aria-hidden="true"></i>
+                        <?php if ($href !== null): ?><a href="<?= e($href) ?>"><?= e($text) ?></a><?php else: ?><?= e($text) ?><?php endif ?>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+        <?php endif ?>
         <?php if ($footerMenu = menu('footer')): ?>
             <nav class="footer-menu mb-4" aria-label="<?= e(t('nav.menu')) ?>">
                 <?php foreach ($footerMenu as $item): ?>

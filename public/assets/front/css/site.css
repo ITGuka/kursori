@@ -201,6 +201,43 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     }
 }
 
+/* პროცესი (process ბლოკი): ეტაპები რიგით — ფართო ეკრანზე ერთ ხაზად, ვიწროზე სვეტად */
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 2rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.process-step {
+    position: relative;
+    padding-top: 1.25rem;
+    border-top: 2px solid rgba(255, 255, 255, .12);
+}
+
+.process-step::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 48px;
+    height: 2px;
+    background: var(--bs-primary);
+}
+
+.process-number {
+    display: block;
+    margin-bottom: .5rem;
+    color: var(--bs-primary);
+    font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
 /* ნდობის ზოლი (stats ბლოკი) */
 .stats-value {
     font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
@@ -317,6 +354,101 @@ img[width][height] {
 
 .form-floating .invalid-feedback {
     text-align: left;
+}
+
+/* ველები bg-secondary-ზეა (form-field) — იმავე ფერის სექციაში (მაგ. განაცხადის ფორმა) არ ჩანდა */
+.bg-secondary .form-control.bg-secondary {
+    background-color: var(--bs-dark) !important;
+}
+
+/* ფორმის მინიშნებები და არჩევანი ღილაკებად (partials/form-choice) */
+.form-hint {
+    color: var(--bs-gray-500, #adb5bd);
+    font-size: .875rem;
+}
+
+.form-choice {
+    text-align: left;
+}
+
+.form-choice-legend {
+    float: none;
+    width: auto;
+    margin-bottom: .5rem;
+    font-size: 1rem;
+}
+
+.form-choice .btn {
+    font-weight: 400;
+}
+
+/* footer-ის კონტაქტები */
+.footer-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 32px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer-contacts a {
+    color: var(--bs-light);
+}
+
+.footer-contacts a:hover {
+    color: var(--bs-primary);
+}
+
+/* მობილურის ქვედა ზოლი (layout): დარეკვა + CTA; back-to-top მხოლოდ დიდ ეკრანზე */
+@media (max-width: 991.98px) {
+    .mobile-cta {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 98;
+        display: flex;
+        gap: 8px;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+        background: rgba(13, 13, 13, .95);
+        border-top: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    .mobile-cta .btn {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 12px;
+        font-size: .9rem;
+        line-height: 1.2;
+        text-align: center;
+    }
+
+    /* „დარეკვა“ მოკლეა — CTA-ს მეტი ადგილი რჩება */
+    .mobile-cta .btn-outline-primary {
+        flex: 0 0 auto;
+    }
+
+    body:has(.mobile-cta) {
+        padding-bottom: 72px;
+    }
+
+    .back-to-top {
+        display: none !important;
+    }
+
+    /* footer-ის ბმულები — შეხების არე მინ. 44px */
+    .footer-menu a,
+    .footer-contacts a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+    }
 }
 
 /* footer-ის მენიუ */

@@ -98,6 +98,19 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
 
 <a href="#" class="btn btn-outline-primary border-2 btn-lg-square back-to-top" aria-label="<?= e(t('common.back_to_top')) ?>"><i class="fa fa-arrow-up"></i></a>
 
+<?php // მობილურზე ქვედა ზოლი: დარეკვა + მთავარი CTA (back-to-top-ის ნაცვლად) ?>
+<?php $cta = cta_link(); $phone = (string)setting('contact.phone'); ?>
+<?php if ($cta !== null || $phone !== ''): ?>
+    <div class="mobile-cta d-lg-none">
+        <?php if ($phone !== ''): ?>
+            <a href="<?= e(tel_href($phone)) ?>" class="btn btn-outline-primary border-2"><i class="fa fa-phone me-2" aria-hidden="true"></i><?= e(t('mobile_cta.call')) ?></a>
+        <?php endif ?>
+        <?php if ($cta !== null): ?>
+            <a href="<?= e($cta['href']) ?>" class="btn btn-primary border-2"><?= e($cta['label']) ?></a>
+        <?php endif ?>
+    </div>
+<?php endif ?>
+
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= asset('front/lib/easing/easing.min.js') ?>"></script>
