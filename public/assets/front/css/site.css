@@ -238,6 +238,137 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     font-variant-numeric: tabular-nums;
 }
 
+/* სერვისის გვერდი (front/collections/service) */
+.service-summary {
+    position: sticky;
+    top: 100px;
+    padding: 2rem;
+    background: var(--bs-secondary);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+}
+
+.service-summary-label {
+    margin-bottom: .25rem;
+    color: var(--bs-gray-500, #adb5bd);
+    font-size: .875rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.service-summary-value {
+    margin-bottom: 1.25rem;
+    color: var(--bs-white);
+    font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.service-deliverables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* ხშირი კითხვები (partials/faq) */
+.faq-item {
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    color: var(--bs-white);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    color: var(--bs-primary);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.faq-item[open] summary::after {
+    content: "−";
+}
+
+.faq-item summary:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 4px;
+}
+
+.faq-item p {
+    padding-bottom: 1.25rem;
+}
+
+/* ფასების პაკეტები (pricing ბლოკი) */
+.pricing-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem 2rem 2rem;
+    background: var(--bs-secondary);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+}
+
+.bg-secondary .pricing-card {
+    background: var(--bs-dark);
+}
+
+.pricing-card.is-featured {
+    border: 2px solid var(--bs-primary);
+}
+
+.pricing-badge {
+    position: absolute;
+    top: -14px;
+    left: 2rem;
+    padding: 4px 14px;
+    border-radius: 50px;
+    background: var(--bs-primary);
+    color: var(--bs-white);
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.pricing-price {
+    color: var(--bs-primary);
+    font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.pricing-note {
+    color: var(--bs-gray-500, #adb5bd);
+    font-size: .9rem;
+}
+
+.pricing-features {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    margin: 0 0 2rem;
+    padding: 0;
+    list-style: none;
+}
+
 /* ნდობის ზოლი (stats ბლოკი) */
 .stats-value {
     font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;

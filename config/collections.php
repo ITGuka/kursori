@@ -21,9 +21,18 @@ return [
         'categories'  => true,
         'public'      => true,
         'route'       => ['ka' => 'servisebi', 'en' => 'services'],
+        'view'        => 'front/collections/service',
         'fields'      => [
-            'excerpt' => ['type' => 'textarea', 'label' => 'მოკლე აღწერა', 'translatable' => true, 'max' => 1000, 'help' => 'ჩანს სიაში (სერვისების ბლოკში).'],
-            'body'    => ['type' => 'wysiwyg', 'label' => 'სრული აღწერა', 'translatable' => true, 'help' => 'ჩანს სერვისის გვერდზე.'],
+            'excerpt'      => ['type' => 'textarea', 'label' => 'მოკლე აღწერა', 'translatable' => true, 'max' => 1000, 'help' => 'ჩანს სიაში (სერვისების ბლოკში).'],
+            'body'         => ['type' => 'wysiwyg', 'label' => 'სრული აღწერა', 'translatable' => true, 'help' => 'ჩანს სერვისის გვერდზე: რა პრობლემას ხსნის, როგორ ვმუშაობთ.'],
+            'price_from'   => ['type' => 'text', 'label' => 'ფასი', 'translatable' => true, 'max' => 60, 'help' => 'მაგ. „1 500 ₾-დან“.'],
+            'duration'     => ['type' => 'text', 'label' => 'ვადა', 'translatable' => true, 'max' => 60, 'help' => 'მაგ. „3–6 კვირა“.'],
+            'deliverables' => ['type' => 'textarea', 'label' => 'რა შედის', 'translatable' => true, 'max' => 2000, 'help' => 'თითო პუნქტი ახალ ხაზზე.'],
+            'cases'        => ['type' => 'category', 'label' => 'ქეისები (პორტფოლიოს კატეგორია)', 'collection' => 'portfolio', 'help' => 'გვერდზე ჩანს ამ კატეგორიის 3 პროექტი. ცარიელი — ქეისები არ ჩანს.'],
+            'faq'          => ['type' => 'repeater', 'label' => 'ხშირი კითხვები', 'max_items' => 12, 'fields' => [
+                'question' => ['type' => 'text', 'label' => 'კითხვა', 'translatable' => true, 'max' => 190],
+                'answer'   => ['type' => 'textarea', 'label' => 'პასუხი', 'translatable' => true, 'max' => 1500],
+            ]],
         ],
     ],
 

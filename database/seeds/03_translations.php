@@ -61,6 +61,22 @@ return new class extends Seeder {
             'budget_xl'        => ['15 000 ₾-ზე მეტი', 'Over 15,000 GEL'],
             'budget_unknown'   => ['ჯერ არ ვიცი', 'Not sure yet'],
         ],
+        // სერვისის გვერდი (front/collections/service)
+        'service' => [
+            'price'             => ['ფასი', 'Price'],
+            'duration'          => ['ვადა', 'Timeline'],
+            'cta'               => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
+            'included_subtitle' => ['პროექტში', 'In the project'],
+            'included'          => ['რა შედის', 'What’s Included'],
+            'cases_subtitle'    => ['პორტფოლიო', 'Portfolio'],
+            'cases'             => ['ნამუშევრები ამ მიმართულებით', 'Related Work'],
+            'faq_subtitle'      => ['კითხვები', 'Questions'],
+            'faq'               => ['ხშირად გვეკითხებიან', 'Frequently Asked'],
+            'form_subtitle'     => ['ახალი პროექტი', 'New Project'],
+            'form_title'        => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
+            'form_text'         => ['მოგვიყევით იდეაზე — 1 სამუშაო დღეში დაგიკავშირდებით შეთავაზებით.', 'Tell us about your idea — we will get back to you with a proposal within 1 business day.'],
+            'form_message'      => ['მოგვიყევით პროექტზე', 'Tell us about the project'],
+        ],
         'mobile_cta' => [
             'call' => ['დარეკვა', 'Call'],
         ],

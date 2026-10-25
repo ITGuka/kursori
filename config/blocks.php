@@ -136,6 +136,38 @@ return [
         ],
     ],
 
+    'faq' => [
+        'label'  => 'ხშირი კითხვები (FAQ)',
+        'icon'   => 'fa fa-question-circle',
+        'view'   => 'front/blocks/faq',
+        'fields' => $title + [
+            'items'      => ['type' => 'repeater', 'label' => 'კითხვები', 'min_items' => 1, 'max_items' => 20, 'fields' => [
+                'question' => ['type' => 'text', 'label' => 'კითხვა', 'translatable' => true, 'max' => 190],
+                'answer'   => ['type' => 'textarea', 'label' => 'პასუხი', 'translatable' => true, 'max' => 1500],
+            ]],
+            'background' => $background,
+        ],
+    ],
+
+    'pricing' => [
+        'label'  => 'ფასები (პაკეტები)',
+        'icon'   => 'fa fa-tags',
+        'view'   => 'front/blocks/pricing',
+        'fields' => $title + [
+            'text'       => ['type' => 'textarea', 'label' => 'ტექსტი', 'translatable' => true, 'max' => 500],
+            'packages'   => ['type' => 'repeater', 'label' => 'პაკეტები', 'min_items' => 1, 'max_items' => 6, 'fields' => [
+                'name'         => ['type' => 'text', 'label' => 'სახელი', 'translatable' => true, 'max' => 60],
+                'price'        => ['type' => 'text', 'label' => 'ფასი', 'translatable' => true, 'max' => 40, 'help' => 'მაგ. „1 500 ₾-დან“.'],
+                'note'         => ['type' => 'text', 'label' => 'ფასის მინიშნება', 'translatable' => true, 'max' => 100, 'help' => 'მაგ. „ვადა: 3–4 კვირა“.'],
+                'features'     => ['type' => 'textarea', 'label' => 'რა შედის', 'translatable' => true, 'max' => 1500, 'help' => 'თითო პუნქტი ახალ ხაზზე.'],
+                'badge'        => ['type' => 'text', 'label' => 'ნიშანი', 'translatable' => true, 'max' => 40, 'help' => 'მაგ. „პოპულარული“ — პაკეტი გამოიკვეთება. ცარიელი — ჩვეულებრივი.'],
+                'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60],
+                'button_link'  => ['type' => 'link', 'label' => 'ღილაკის ბმული'],
+            ]],
+            'background' => $background,
+        ],
+    ],
+
     'banner_signup' => [
         'label'  => 'ბანერი + გამოწერა',
         'icon'   => 'fa fa-envelope-open-text',

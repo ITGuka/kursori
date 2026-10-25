@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Models\Category;
 use App\Models\Collection;
+use App\Models\Menu;
 use Core\Database\DB;
 use Core\Database\Seeder;
 
@@ -80,6 +81,81 @@ return new class extends Seeder {
         ],
     ];
 
+    /**
+     * სერვისის გვერდი — ინგლისური slug => body, ფასი, ვადა, რა შედის, ქეისების კატეგორია (პორტფოლიოს ინგლისური slug), FAQ [ka, en].
+     * ფასები და ვადები სადემონსტრაციოა — გაშვებამდე ჩაანაცვლეთ სტუდიის რეალურით.
+     */
+    public const SERVICE_DETAILS = [
+        'web-design' => [
+            'body'         => ['<h3>რას გიშველით</h3><p>საიტი ლამაზია, მაგრამ ზარებსა და შეკვეთებს ვერ მოაქვს? ხშირად მიზეზი სტრუქტურაა: ვიზიტორი ვერ პოულობს, რაც სჭირდება, ან არ იცის, შემდეგ რა გააკეთოს. დიზაინს ვიწყებთ იმით, რა უნდა გააკეთოს ვიზიტორმა, და ყოველ ეკრანს ამ მიზანს ვუქვემდებარებთ.</p><h3>როგორ ვმუშაობთ</h3><ol><li>ვსწავლობთ თქვენს მომხმარებელს და კონკურენტებს</li><li>ვაწყობთ გვერდების სტრუქტურას და პროტოტიპს</li><li>ვქმნით დიზაინს კომპიუტერისა და მობილურისთვის</li><li>ვასწორებთ თქვენი შენიშვნებით და გადავცემთ დეველოპმენტს</li></ol>',
+                               '<h3>What it solves</h3><p>Is your site good-looking but not bringing calls or orders? Often the cause is structure: visitors can’t find what they need or don’t know what to do next. We start design from what the visitor should do and shape every screen around that goal.</p><h3>How we work</h3><ol><li>We study your customers and competitors</li><li>We build the page structure and a prototype</li><li>We design for desktop and mobile</li><li>We refine it with your feedback and hand it over to development</li></ol>'],
+            'price_from'   => ['1 500 ₾-დან', 'From 1,500 GEL'],
+            'duration'     => ['3–6 კვირა', '3–6 weeks'],
+            'deliverables' => ["UX კვლევა და კონკურენტების ანალიზი\nგვერდების სტრუქტურა და პროტოტიპი\nდიზაინი კომპიუტერისა და მობილურისთვის\nUI კომპონენტების ნაკრები\n2 რაუნდი შესწორება\nდიზაინის ფაილები Figma-ში",
+                               "UX research and competitor analysis\nPage structure and prototype\nDesign for desktop and mobile\nUI component kit\n2 rounds of revisions\nDesign files in Figma"],
+            'cases'        => 'web-design',
+            'faq'          => [
+                [['შემიძლია მხოლოდ დიზაინის შეკვეთა, დეველოპმენტის გარეშე?', 'Can I order only the design, without development?'],
+                 ['დიახ. მიიღებთ Figma-ს ფაილებს და კომპონენტების ნაკრებს, რომლითაც ნებისმიერი დეველოპერი იმუშავებს.', 'Yes. You get the Figma files and a component kit any developer can work with.']],
+                [['რამდენი შესწორება შედის ფასში?', 'How many revisions are included?'],
+                 ['ორი რაუნდი თითო ეტაპზე. დამატებით შესწორებებს წინასწარ შევათანხმებთ.', 'Two rounds per stage. Any extra revisions are agreed in advance.']],
+                [['რა მჭირდება დასაწყებად?', 'What do I need to get started?'],
+                 ['მოკლე ბრიფი: ვინ არის თქვენი მომხმარებელი, რა გინდათ საიტმა გააკეთოს და რომელი საიტები მოგწონთ. დანარჩენს პირველ შეხვედრაზე გავარკვევთ.', 'A short brief: who your customer is, what the site should do and which sites you like. We work out the rest at the first meeting.']],
+            ],
+        ],
+        'web-development' => [
+            'body'         => ['<h3>რას გიშველით</h3><p>საიტი, რომლის შესაცვლელად ყოველ ჯერზე დეველოპერი გჭირდებათ, ძვირი და ნელია. ვაწყობთ სწრაფ და უსაფრთხო საიტს მართვის პანელით, რომელშიც გვერდებს, მენიუს, თარგმანებსა და პროდუქტებს თავად ცვლით.</p><h3>როგორ ვმუშაობთ</h3><ol><li>ვთანხმდებით ფუნქციებზე და ინტეგრაციებზე</li><li>ვაწყობთ საიტს დამტკიცებული დიზაინით</li><li>ვამატებთ კონტენტს და ვამოწმებთ ყველა მოწყობილობაზე</li><li>ვუშვებთ, ვაწყობთ ანალიტიკას და გასწავლით პანელის მართვას</li></ol>',
+                               '<h3>What it solves</h3><p>A site that needs a developer for every change is slow and expensive. We build a fast, secure site with an admin panel where you edit pages, menus, translations and products yourself.</p><h3>How we work</h3><ol><li>We agree on features and integrations</li><li>We build the site from the approved design</li><li>We add the content and test it on every device</li><li>We launch, set up analytics and show you how to use the panel</li></ol>'],
+            'price_from'   => ['2 500 ₾-დან', 'From 2,500 GEL'],
+            'duration'     => ['4–10 კვირა', '4–10 weeks'],
+            'deliverables' => ["მართვის პანელი ქართულ ენაზე\nმრავალენოვანი საიტი\nმობილურზე მორგება და სწრაფი ჩატვირთვა\nტექნიკური SEO და ანალიტიკა\nონლაინ გადახდა (მაღაზიისთვის)\n1 თვე უფასო მხარდაჭერა",
+                               "Admin panel\nMultilingual website\nMobile-ready and fast loading\nTechnical SEO and analytics\nOnline payments (for stores)\n1 month of free support"],
+            'cases'        => 'e-commerce',
+            'faq'          => [
+                [['რა ტექნოლოგიაზე აწყობთ საიტს?', 'What technology do you build on?'],
+                 ['საკუთარ PHP ფრეიმვორკზე, რომელიც სწრაფია და ზედმეტ დანამატებს არ საჭიროებს. მართვის პანელი ქართულ ენაზეა.', 'On our own PHP framework, which is fast and needs no extra plugins. The admin panel comes in Georgian.']],
+                [['ჰოსტინგი და დომენი ფასში შედის?', 'Are hosting and the domain included?'],
+                 ['არა, ისინი თქვენს სახელზე იყიდება. შერჩევასა და გამართვაში დაგეხმარებით.', 'No, they are bought in your name. We help you choose and set them up.']],
+                [['რა ხდება გაშვების შემდეგ?', 'What happens after launch?'],
+                 ['პირველი თვის მხარდაჭერა უფასოა. შემდეგ შეგიძლიათ აირჩიოთ ყოველთვიური მხარდაჭერის პაკეტი.', 'The first month of support is free. After that you can choose a monthly support plan.']],
+            ],
+        ],
+        'branding' => [
+            'body'         => ['<h3>რას გიშველით</h3><p>როცა საიტი, სოციალური ქსელები და შეფუთვა სხვადასხვა სტილშია, ბრენდი არ გამახსოვრდებათ. ვქმნით ვიზუალურ ენას, რომელიც ყველგან ერთნაირად მუშაობს და გუნდს ზუსტ წესებს აძლევს.</p><h3>როგორ ვმუშაობთ</h3><ol><li>ვსაუბრობთ ბრენდის ხასიათზე და აუდიტორიაზე</li><li>ვთავაზობთ 2–3 მიმართულებას</li><li>ვამუშავებთ არჩეულს: ლოგო, ფერები, შრიფტები</li><li>ვაწყობთ ბრენდბუქს და შაბლონებს</li></ol>',
+                               '<h3>What it solves</h3><p>When your website, social media and packaging all look different, nobody remembers the brand. We create a visual language that works the same everywhere and gives your team clear rules.</p><h3>How we work</h3><ol><li>We talk about the brand’s personality and audience</li><li>We propose 2–3 directions</li><li>We develop the chosen one: logo, colours, typography</li><li>We put together the brand book and templates</li></ol>'],
+            'price_from'   => ['2 000 ₾-დან', 'From 2,000 GEL'],
+            'duration'     => ['3–5 კვირა', '3–5 weeks'],
+            'deliverables' => ["ლოგო და მისი ვერსიები\nფერების პალიტრა და შრიფტები\nბრენდბუქი (PDF)\nსავიზიტო ბარათი და ბლანკი\nსოციალური ქსელების შაბლონები\nყველა ფაილი ბეჭდვისა და ვებისთვის",
+                               "Logo and its variations\nColour palette and typography\nBrand book (PDF)\nBusiness card and letterhead\nSocial media templates\nAll files for print and web"],
+            'cases'        => 'branding',
+            'faq'          => [
+                [['რამდენ ვარიანტს მივიღებ?', 'How many options will I get?'],
+                 ['2–3 მიმართულებას. არჩეულს შემდეგ ერთად ვამუშავებთ.', '2–3 directions. We then develop the one you choose together.']],
+                [['ლოგოს უფლებები ვის ეკუთვნის?', 'Who owns the rights to the logo?'],
+                 ['საბოლოო ანგარიშსწორების შემდეგ ყველა უფლება თქვენ გადმოგეცემათ.', 'All rights pass to you once the final payment is made.']],
+                [['შეფუთვის დიზაინსაც აკეთებთ?', 'Do you design packaging too?'],
+                 ['დიახ, ცალკე ან ბრენდინგთან ერთად. ფასი პროდუქტების რაოდენობაზეა დამოკიდებული.', 'Yes, separately or together with branding. The price depends on the number of products.']],
+            ],
+        ],
+        'seo-marketing' => [
+            'body'         => ['<h3>რას გიშველით</h3><p>კარგ საიტსაც არ მოაქვს კლიენტები, თუ Google-ში არ ჩანს. ვასწორებთ ტექნიკურ შეცდომებს, ვარჩევთ საძიებო ფრაზებს და ვგეგმავთ კონტენტს, რომ ორგანული ტრაფიკი თვიდან თვემდე იზრდებოდეს.</p><h3>როგორ ვმუშაობთ</h3><ol><li>ვატარებთ საიტის ტექნიკურ აუდიტს</li><li>ვარჩევთ საძიებო ფრაზებს და კონკურენტებს</li><li>ვასწორებთ გვერდებს და ვგეგმავთ ახალ კონტენტს</li><li>ყოველთვიურად ვაგზავნით ანგარიშს შედეგებით</li></ol>',
+                               '<h3>What it solves</h3><p>Even a good site brings no customers if it doesn’t show up on Google. We fix technical errors, pick the right search phrases and plan content so organic traffic grows month after month.</p><h3>How we work</h3><ol><li>We run a technical audit of the site</li><li>We research search phrases and competitors</li><li>We improve pages and plan new content</li><li>We send a monthly report with results</li></ol>'],
+            'price_from'   => ['800 ₾ / თვე-დან', 'From 800 GEL / month'],
+            'duration'     => ['მინიმუმ 3 თვე', '3 months minimum'],
+            'deliverables' => ["ტექნიკური SEO აუდიტი\nსაძიებო ფრაზების კვლევა\nგვერდების ოპტიმიზაცია\nGoogle Analytics და Search Console\nკონტენტის გეგმა\nყოველთვიური ანგარიში",
+                               "Technical SEO audit\nKeyword research\nOn-page optimisation\nGoogle Analytics and Search Console\nContent plan\nMonthly report"],
+            'cases'        => 'e-commerce',
+            'faq'          => [
+                [['როდის გამოჩნდება შედეგი?', 'When will I see results?'],
+                 ['პირველი ცვლილებები ჩვეულებრივ 2–3 თვეში ჩანს. სტაბილური ზრდისთვის 6 თვე და მეტი სჭირდება.', 'First changes usually show in 2–3 months. Steady growth takes 6 months or more.']],
+                [['გარანტიას იძლევით Google-ის პირველ ადგილზე?', 'Do you guarantee first place on Google?'],
+                 ['არა, ამას პატიოსნად ვერავინ დაგპირდებათ. ვპირდებით გამჭვირვალე სამუშაოს და ყოველთვიურ ანგარიშს.', 'No, nobody can honestly promise that. We promise transparent work and a monthly report.']],
+                [['სხვის მიერ გაკეთებულ საიტზეც მუშაობთ?', 'Do you work on sites built by others?'],
+                 ['დიახ. ვიწყებთ აუდიტით და გეტყვით, რა შეიძლება გამოსწორდეს.', 'Yes. We start with an audit and tell you what can be improved.']],
+            ],
+        ],
+    ];
+
     /** შეფასებები — slug => ავტორი, პროფესია, ტექსტი [ka, en]; კლიენტები ქეისებს ემთხვევა */
     public const REVIEWS = [
         'review-1' => [
@@ -122,27 +198,33 @@ return new class extends Seeder {
         $services = [
             ['service-1.jpg', ['ვებ დიზაინი', 'Web Design'], ['veb-dizaini', 'web-design'],
                 ['უნიკალური, თანამედროვე დიზაინი, რომელიც თქვენს ბრენდს ასახავს და ვიზიტორს მარტივად მიიყვანს მიზნამდე.',
-                 'Unique, modern design that reflects your brand and guides visitors straight to their goal.'],
-                ['<p>ვიწყებთ კვლევით: ვინ არის თქვენი მომხმარებელი და რა სურს. შემდეგ — სტრუქტურა, პროტოტიპი და დიზაინი ყველა ეკრანისთვის.</p><ul><li>UX კვლევა და სტრუქტურა</li><li>პროტოტიპი</li><li>დიზაინი კომპიუტერისა და მობილურისთვის</li></ul>',
-                 '<p>We start with research: who your customer is and what they need. Then structure, prototype and design for every screen.</p><ul><li>UX research and structure</li><li>Prototype</li><li>Design for desktop and mobile</li></ul>']],
+                 'Unique, modern design that reflects your brand and guides visitors straight to their goal.']],
             ['service-2.jpg', ['ვებ დეველოპმენტი', 'Web Development'], ['veb-developmenti', 'web-development'],
                 ['სწრაფი, უსაფრთხო და მართვადი საიტები და ონლაინ მაღაზიები — მართვის პანელით.',
-                 'Fast, secure and manageable websites and online stores — with an admin panel.'],
-                ['<p>ვაწყობთ საიტს, რომელსაც თავად მართავთ: გვერდები, მენიუ, თარგმანები, სიახლეები და ფორმები — ერთ პანელში.</p><ul><li>მრავალენოვანი საიტები</li><li>ონლაინ მაღაზია</li><li>ინტეგრაციები</li></ul>',
-                 '<p>We build a site you manage yourself: pages, menus, translations, news and forms — in one panel.</p><ul><li>Multilingual websites</li><li>Online stores</li><li>Integrations</li></ul>']],
+                 'Fast, secure and manageable websites and online stores — with an admin panel.']],
             ['service-3.jpg', ['ბრენდინგი', 'Branding'], ['brendingi', 'branding'],
                 ['ლოგო, ფერები, შრიფტები და ბრენდბუქი — იდენტობა, რომელიც ახსოვთ.',
-                 'Logo, colours, typography and a brand book — an identity people remember.'],
-                ['<p>ვქმნით ვიზუალურ ენას, რომელიც ერთნაირად კარგად მუშაობს საიტზე, სოციალურ ქსელებსა და ბეჭდურ მასალაზე.</p>',
-                 '<p>We create a visual language that works equally well on the website, social media and print.</p>']],
+                 'Logo, colours, typography and a brand book — an identity people remember.']],
             ['service-4.jpg', ['SEO და მარკეტინგი', 'SEO & Marketing'], ['seo-marketingi', 'seo-marketing'],
                 ['საიტი, რომელსაც პოულობენ: ტექნიკური SEO, კონტენტი და ანალიტიკა.',
-                 'A website people find: technical SEO, content and analytics.'],
-                ['<p>ვაწყობთ ანალიტიკას, ვასწორებთ ტექნიკურ SEO-ს და ვგეგმავთ კონტენტს, რომ საიტმა ახალი კლიენტები მოიყვანოს.</p>',
-                 '<p>We set up analytics, fix technical SEO and plan content so the site brings new customers.</p>']],
+                 'A website people find: technical SEO, content and analytics.']],
         ];
-        foreach ($services as [$image, $title, $slug, $excerpt, $body]) {
-            $this->item('services', null, $image, $title, $slug, [], ['excerpt' => $excerpt, 'body' => $body]);
+        // ქეისების კატეგორიები სერვისებს სჭირდება, ამიტომ პორტფოლიოს კატეგორიები აქვე იქმნება
+        $web = $this->category('portfolio', ['ვებ დიზაინი', 'Web Design'], ['veb-dizaini', 'web-design']);
+        $brand = $this->category('portfolio', ['ბრენდინგი', 'Branding'], ['brendingi', 'branding']);
+        $shop = $this->category('portfolio', ['ონლაინ მაღაზია', 'E-commerce'], ['onlain-maghazia', 'e-commerce']);
+        $caseCategories = ['web-design' => $web, 'branding' => $brand, 'e-commerce' => $shop];
+        foreach ($services as [$image, $title, $slug, $excerpt]) {
+            $details = self::SERVICE_DETAILS[$slug[1]];
+            [$faqSettings, $faqKa, $faqEn] = self::repeater(array_map(fn ($row) => ['question' => $row[0], 'answer' => $row[1]], $details['faq']));
+            $this->item('services', null, $image, $title, $slug, ['cases' => $caseCategories[$details['cases']] ?? null, 'faq' => $faqSettings], [
+                'excerpt'      => $excerpt,
+                'body'         => $details['body'],
+                'price_from'   => $details['price_from'],
+                'duration'     => $details['duration'],
+                'deliverables' => $details['deliverables'],
+                'faq'          => [$faqKa, $faqEn],
+            ]);
         }
 
         // ---- გუნდი ----
@@ -165,10 +247,7 @@ return new class extends Seeder {
                 ['quote' => $review['quote'], 'profession' => $review['profession']]);
         }
 
-        // ---- პორტფოლიო ----
-        $web = $this->category('portfolio', ['ვებ დიზაინი', 'Web Design'], ['veb-dizaini', 'web-design']);
-        $brand = $this->category('portfolio', ['ბრენდინგი', 'Branding'], ['brendingi', 'branding']);
-        $shop = $this->category('portfolio', ['ონლაინ მაღაზია', 'E-commerce'], ['onlain-maghazia', 'e-commerce']);
+        // ---- პორტფოლიო (კატეგორიები — სერვისებთან) ----
         $projects = [
             [$web, 'portfolio-1.jpg', ['მოდის სახლის საიტი', 'Fashion House Website'], ['modis-sakhlis-saiti', 'fashion-house-website'], 2026],
             [$shop, 'portfolio-2.jpg', ['ტანსაცმლის ონლაინ მაღაზია', 'Apparel Online Store'], ['tansatsmlis-maghazia', 'apparel-store'], 2025],
@@ -181,6 +260,27 @@ return new class extends Seeder {
             $this->item('portfolio', $category, $image, $title, $slug,
                 ['year' => $year, 'website' => ['type' => '', 'page_id' => null, 'url' => '', 'new_tab' => true]], self::CASES[$slug[1]]);
         }
+
+        // header-ის „სერვისები ▾“ ქვემენიუ (06_menus სერვისებამდე ეშვება)
+        (require __DIR__ . '/06_menus.php')::serviceChildren($db, app(Menu::class));
+    }
+
+    /**
+     * repeater-ის მონაცემები: [[ველი => [ka, en]], ...] → [settings, ka content, en content]
+     * @return array{0: list<array>, 1: array, 2: array}
+     */
+    public static function repeater(array $rows): array
+    {
+        $settings = $ka = $en = [];
+        foreach ($rows as $row) {
+            $id = bin2hex(random_bytes(5));
+            $settings[] = ['_id' => $id];
+            foreach ($row as $field => [$k, $e]) {
+                $ka[$id][$field] = $k;
+                $en[$id][$field] = $e;
+            }
+        }
+        return [$settings, $ka, $en];
     }
 
     /** @param array{0: string, 1: string} $names @param array{0: string, 1: string} $slugs */

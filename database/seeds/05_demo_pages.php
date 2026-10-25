@@ -57,6 +57,56 @@ return new class extends Seeder {
         [['1 დღე', '1 day'], ['პასუხი ყოველ მოთხოვნაზე', 'Reply to every request']],
     ];
 
+    /** ფასების პაკეტები (სადემონსტრაციო ფასები — გაშვებამდე ჩაანაცვლეთ): ველი => [ka, en] */
+    public const PACKAGES = [
+        [
+            'name'         => ['სტარტი', 'Start'],
+            'price'        => ['1 500 ₾-დან', 'From 1,500 GEL'],
+            'note'         => ['ვადა: 3–4 კვირა', 'Timeline: 3–4 weeks'],
+            'features'     => ["სავიზიტო საიტი 5 გვერდამდე\nმობილურზე მორგებული დიზაინი\nმართვის პანელი\nსაკონტაქტო ფორმა და რუკა\nსაბაზისო SEO",
+                               "Business card site, up to 5 pages\nMobile-ready design\nAdmin panel\nContact form and map\nBasic SEO"],
+            'badge'        => ['', ''],
+            'button_label' => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
+        ],
+        [
+            'name'         => ['ბიზნესი', 'Business'],
+            'price'        => ['3 500 ₾-დან', 'From 3,500 GEL'],
+            'note'         => ['ვადა: 5–7 კვირა', 'Timeline: 5–7 weeks'],
+            'features'     => ["15 გვერდამდე, უნიკალური დიზაინი\nორი ან მეტი ენა\nსიახლეები ან ბლოგი\nპორტფოლიო ან კატალოგი\nტექნიკური SEO და ანალიტიკა\n1 თვე უფასო მხარდაჭერა",
+                               "Up to 15 pages, custom design\nTwo or more languages\nNews or blog\nPortfolio or catalogue\nTechnical SEO and analytics\n1 month of free support"],
+            'badge'        => ['პოპულარული', 'Most popular'],
+            'button_label' => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
+        ],
+        [
+            'name'         => ['ონლაინ მაღაზია', 'Online Store'],
+            'price'        => ['6 000 ₾-დან', 'From 6,000 GEL'],
+            'note'         => ['ვადა: 7–10 კვირა', 'Timeline: 7–10 weeks'],
+            'features'     => ["კატალოგი ფილტრებით\nბარათით გადახდა\nმარაგისა და შეკვეთების მართვა\nმიწოდების ღირებულების გამოთვლა\nპროდუქტების SEO\n1 თვე უფასო მხარდაჭერა",
+                               "Catalogue with filters\nCard payments\nStock and order management\nDelivery cost calculation\nProduct SEO\n1 month of free support"],
+            'badge'        => ['', ''],
+            'button_label' => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
+        ],
+    ];
+
+    /** ზოგადი ხშირი კითხვები (ფასების გვერდი): [კითხვა, პასუხი] — [ka, en] */
+    public const FAQ = [
+        [['რამდენი ხანი სჭირდება საიტის დამზადებას?', 'How long does a website take?'],
+         ['სავიზიტო საიტს 3–4 კვირა, ბიზნეს საიტს 5–7, ონლაინ მაღაზიას 7–10 კვირა. ზუსტ ვადას ბრიფის შემდეგ გეტყვით.',
+          'A business card site takes 3–4 weeks, a business site 5–7 and an online store 7–10. We confirm the exact timeline after the brief.']],
+        [['როგორ ხდება გადახდა?', 'How does payment work?'],
+         ['50% სამუშაოს დაწყებისას და 50% საიტის გაშვებამდე. დიდ პროექტებს ეტაპებად ვყოფთ.',
+          '50% when work starts and 50% before launch. Larger projects are split into stages.']],
+        [['შემიძლია კონტენტი თავად შევცვალო?', 'Can I update the content myself?'],
+         ['დიახ. ყველა საიტს აქვს მართვის პანელი, სადაც გვერდებს, სურათებს, მენიუსა და თარგმანებს თავად ცვლით.',
+          'Yes. Every site has an admin panel where you edit pages, images, menus and translations yourself.']],
+        [['ჰოსტინგი და დომენი ფასში შედის?', 'Are hosting and the domain included?'],
+         ['არა, ისინი თქვენს სახელზე იყიდება, რომ საიტი სრულად თქვენი იყოს. შერჩევასა და გამართვაში დაგეხმარებით.',
+          'No, they are bought in your name so the site fully belongs to you. We help you choose and set them up.']],
+        [['რა ხდება გაშვების შემდეგ?', 'What happens after launch?'],
+         ['პირველი თვის მხარდაჭერა უფასოა. შემდეგ შეგიძლიათ აირჩიოთ ყოველთვიური მხარდაჭერის პაკეტი.',
+          'The first month of support is free. After that you can choose a monthly support plan.']],
+    ];
+
     /** პროცესის ეტაპები: [სათაური, ტექსტი] — [ka, en] */
     public const PROCESS = [
         [['ბრიფი და კვლევა', 'Brief & Research'],
@@ -100,7 +150,8 @@ return new class extends Seeder {
         $portfolio = $this->page(['პორტფოლიო', 'Portfolio'], ['portpolio', 'portfolio'], 4);
         $team = $this->page(['გუნდი', 'Our Team'], ['gundi', 'team'], 1, false, $about);
         $reviews = $this->page(['შეფასებები', 'Testimonials'], ['shepasebebi', 'testimonials'], 2, false, $about);
-        $contact = $this->page(['კონტაქტი', 'Contact'], ['kontakti', 'contact'], 5);
+        $pricing = $this->page(['ფასები', 'Pricing'], ['fasebi', 'pricing'], 5);
+        $contact = $this->page(['კონტაქტი', 'Contact'], ['kontakti', 'contact'], 6);
 
         // მთავარი
         $this->hero($home, $portfolio, $contact);
@@ -147,6 +198,8 @@ return new class extends Seeder {
 
         $this->header($reviews);
         $this->collectionBlock($reviews, 'testimonials', ['შეფასებები', 'Testimonials'], ['რას ამბობენ კლიენტები', 'What Clients Say'], ['background' => 'dark']);
+
+        $this->pricingPage($pricing, $contact);
 
         $this->header($contact);
         $this->block($contact, 'contact', ['show_form' => true], [
@@ -235,7 +288,7 @@ return new class extends Seeder {
                 'title'         => self::HERO_TITLE,
                 'text'          => self::HERO_TEXT,
                 'button_label'  => ['უფასო კონსულტაცია', 'Free Consultation'],
-                'button2_label' => ['ნამუშევრები', 'Our Work'],
+                'button2_label' => ['პორტფოლიო', 'Portfolio'],
             ]],
             [['image' => $this->img('carousel-2.jpg'), 'button_link' => $this->link($contact)], [
                 'subtitle'     => ['ბრენდინგი', 'Branding'],
@@ -246,6 +299,32 @@ return new class extends Seeder {
         ]);
         // სტატიკური: ჩანს მხოლოდ პირველი სლაიდი, მეორე ადმინში რჩება
         $this->block($pageId, 'hero_carousel', ['mode' => 'static', 'slides' => $slides], ['slides' => [$ka, $en]]);
+    }
+
+    /** ფასები: პაკეტები + ხშირი კითხვები + შეთავაზების ფორმა (public — არსებული საიტის ერთჯერადი განახლებისთვისაც) */
+    public function pricingPage(int $pageId, int $contact): void
+    {
+        $this->pages ??= app(Page::class);
+        $this->blocks ??= app(PageBlock::class);
+        $this->header($pageId);
+        [$packages, $ka, $en] = $this->items(array_map(fn (array $row) => [['button_link' => $this->link($contact)], $row], self::PACKAGES));
+        $this->block($pageId, 'pricing', ['packages' => $packages, 'background' => 'dark'], [
+            'subtitle' => ['ფასები', 'Pricing'],
+            'title'    => ['პაკეტები', 'Packages'],
+            'text'     => ['ფასები საორიენტაციოა. ზუსტ ღირებულებას ბრიფის შემდეგ, უფასო კონსულტაციაზე დაგისახელებთ.',
+                           'Prices are a guide. We give you an exact quote after the brief, at a free consultation.'],
+            'packages' => [$ka, $en],
+        ]);
+        [$faq, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['question' => $row[0], 'answer' => $row[1]]], self::FAQ));
+        $this->block($pageId, 'faq', ['items' => $faq, 'background' => 'secondary'],
+            ['subtitle' => ['კითხვები', 'Questions'], 'title' => ['ხშირად გვეკითხებიან', 'Frequently Asked'], 'items' => [$ka, $en]]);
+        $this->block($pageId, 'application_form', ['background' => 'dark'], [
+            'subtitle'      => ['ახალი პროექტი', 'New Project'],
+            'title'         => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
+            'text'          => ['<p>მოგვიყევით იდეაზე — 1 სამუშაო დღეში დაგიკავშირდებით შეთავაზებით.</p>', '<p>Tell us about your idea — we will get back to you with a proposal within 1 business day.</p>'],
+            'message_label' => ['მოგვიყევით პროექტზე', 'Tell us about the project'],
+            'button_label'  => ['მოთხოვნის გაგზავნა', 'Send Request'],
+        ]);
     }
 
     /** თანამშრომლობის ეტაპები */
