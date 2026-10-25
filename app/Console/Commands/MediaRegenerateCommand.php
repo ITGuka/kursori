@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Middleware\PageCache;
 use App\Models\Media;
 use Core\Console\Command;
 use Core\Database\DB;
+use Core\Support\Cache;
 
 /**
  * სურათების ზომის ვარიანტებისა და WebP ასლების თავიდან შექმნა — config/media.php-ის შეცვლის შემდეგ
@@ -20,13 +22,16 @@ final class MediaRegenerateCommand extends Command
     public function handle(array $args, array $options): int
     {
         $media = $this->app->make(Media::class);
-        $where = isset($options['missing']) ? " AND webp = 0" : '';
+        // WebP ორიგინალს ასლი არ სჭირდება — --missing მას ყოველ ჯერზე თავიდან არ დაამუშავებს
+        $where = isset($options['missing']) ? " AND webp = 0 AND mime <> 'image/webp'" : '';
         $ids = $this->app->make(DB::class)->column("SELECT id FROM media WHERE mime IN ('image/jpeg', 'image/png', 'image/webp')$where ORDER BY id");
 
         foreach ($ids as $id) {
             $row = $media->regenerate((int)$id);
             $this->output->line(sprintf('#%d %s%s', $id, $row['original_name'] ?? '', !empty($row['webp']) ? ' + webp' : ''));
         }
+        // ქეშირებულ გვერდებში ძველი srcset დარჩებოდა
+        $this->app->make(Cache::class)->flush(PageCache::PREFIX);
         $this->output->info(count($ids) . ' image(s) processed.');
         return 0;
     }
