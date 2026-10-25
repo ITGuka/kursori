@@ -42,7 +42,22 @@ return new class extends Seeder {
         ],
     ];
 
-    private const MAP = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
+    /** ჰეროს გზავნილი [ka, en] */
+    public const HERO_TITLE = ['საიტები, რომლებიც შეკვეთებს მოგიტანთ', 'Websites That Bring You Orders'];
+    public const HERO_TEXT = [
+        'ვებ დიზაინი, ონლაინ მაღაზიები, ბრენდინგი და SEO ერთ გუნდში — მართვის პანელით, რომელშიც კონტენტს თავად შეცვლით.',
+        'Web design, online stores, branding and SEO under one roof — with an admin panel where you update the content yourself.',
+    ];
+
+    /** ნდობის ზოლი: [მნიშვნელობა, წარწერა] — [ka, en] */
+    public const STATS = [
+        [['10+', '10+'], ['წელი ბაზარზე', 'Years in business']],
+        [['150+', '150+'], ['დასრულებული პროექტი', 'Projects delivered']],
+        [['4', '4'], ['მიმართულება ერთ გუნდში', 'Services under one roof']],
+        [['1 დღე', '1 day'], ['პასუხი ყოველ მოთხოვნაზე', 'Reply to every request']],
+    ];
+
+    private const MAP ='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
 
     private Page $pages;
     private PageBlock $blocks;
@@ -70,8 +85,9 @@ return new class extends Seeder {
 
         // მთავარი
         $this->hero($home, $portfolio, $contact);
+        $this->stats($home);
         $this->about($home, $portfolio, $contact, 'secondary');
-        $this->collectionBlock($home, 'services', ['ჩვენი სერვისები', 'Our Services'], ['რას ვაკეთებთ', 'What We Do'], ['limit' => 4]);
+        $this->collectionBlock($home, 'services', ['ჩვენი სერვისები', 'Our Services'], ['რას ვაკეთებთ', 'What We Do'], ['limit' => 4, 'layout' => 'grid']);
         $this->portfolio($home, 6, 'secondary');
         $this->collectionBlock($home, 'testimonials', ['შეფასებები', 'Testimonials'], ['რას ამბობენ კლიენტები', 'What Clients Say'], ['background' => 'dark']);
         $this->banner($home);
@@ -93,7 +109,7 @@ return new class extends Seeder {
 
         // სერვისები
         $this->header($services);
-        $this->collectionBlock($services, 'services', ['სერვისები', 'Services'], ['როგორ დაგეხმარებით', 'How We Help You'], []);
+        $this->collectionBlock($services, 'services', ['სერვისები', 'Services'], ['როგორ დაგეხმარებით', 'How We Help You'], ['layout' => 'grid']);
         $this->block($services, 'application_form', ['background' => 'secondary'], [
             'subtitle'      => ['ახალი პროექტი', 'New Project'],
             'title'         => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
@@ -196,8 +212,8 @@ return new class extends Seeder {
         [$slides, $ka, $en] = $this->items([
             [['image' => $this->img('carousel-1.jpg'), 'button_link' => $this->link($contact), 'button2_link' => $this->link($portfolio)], [
                 'subtitle'      => ['ვებ დიზაინ სტუდია', 'Web Design Studio'],
-                'title'         => ['საიტები, რომლებიც მუშაობს', 'Websites That Work'],
-                'text'          => ['ვქმნით ლამაზ, სწრაფ და მოსახერხებელ საიტებს, რომლებიც ვიზიტორს კლიენტად აქცევს.', 'We build beautiful, fast and easy-to-use websites that turn visitors into customers.'],
+                'title'         => self::HERO_TITLE,
+                'text'          => self::HERO_TEXT,
                 'button_label'  => ['უფასო კონსულტაცია', 'Free Consultation'],
                 'button2_label' => ['ნამუშევრები', 'Our Work'],
             ]],
@@ -208,7 +224,15 @@ return new class extends Seeder {
                 'button_label' => ['დაგვიკავშირდით', 'Contact Us'],
             ]],
         ]);
-        $this->block($pageId, 'hero_carousel', ['slides' => $slides], ['slides' => [$ka, $en]]);
+        // სტატიკური: ჩანს მხოლოდ პირველი სლაიდი, მეორე ადმინში რჩება
+        $this->block($pageId, 'hero_carousel', ['mode' => 'static', 'slides' => $slides], ['slides' => [$ka, $en]]);
+    }
+
+    /** ნდობის ზოლი ჰეროს ქვეშ */
+    private function stats(int $pageId): void
+    {
+        [$items, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['value' => $row[0], 'label' => $row[1]]], self::STATS));
+        $this->block($pageId, 'stats', ['items' => $items, 'background' => 'dark'], ['items' => [$ka, $en]]);
     }
 
     private function about(int $pageId, int $portfolio, int $contact, string $background): void

@@ -5,6 +5,26 @@ $items = array_values(array_filter($data['items'], fn ($item) => $item['title'] 
 <div class="container-fluid py-5">
     <div class="container py-5">
         <?= $this->insert('front/partials/title', ['subtitle' => $data['subtitle'], 'heading' => $data['title']]) ?>
+        <?php if ($data['layout'] === 'grid'): ?>
+            <div class="row g-4">
+                <?php foreach ($items as $item): ?>
+                    <div class="col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="service-card h-100">
+                            <?php if (media_url($item['image'], 'thumb') !== ''): ?>
+                                <?= picture($item['image'], 'thumb', ['class' => 'service-card-img rounded-circle', 'alt' => '']) ?>
+                            <?php endif ?>
+                            <div class="service-card-body">
+                                <h3 class="h4 text-uppercase"><?= e($item['title']) ?></h3>
+                                <?php if ($item['text'] !== ''): ?><p class="mb-3"><?= nl2br(e($item['text'])) ?></p><?php endif ?>
+                                <?php if ($item['button_label'] !== '' && $item['button_link']): ?>
+                                    <a<?= link_attrs($item['button_link']) ?> class="service-card-link"><?= e($item['button_label']) ?><span class="visually-hidden">: <?= e($item['title']) ?></span> <i class="fa fa-arrow-right ms-1"></i></a>
+                                <?php endif ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach ?>
+            </div>
+        <?php else: ?>
         <?php foreach ($items as $i => $item): ?>
             <?php $left = $i % 2 === 0; $image = media_url($item['image'], 'thumb'); ?>
             <div class="service-item service-item-<?= $left ? 'left' : 'right' ?>">
@@ -28,5 +48,6 @@ $items = array_values(array_filter($data['items'], fn ($item) => $item['title'] 
                 </div>
             </div>
         <?php endforeach ?>
+        <?php endif ?>
     </div>
 </div>

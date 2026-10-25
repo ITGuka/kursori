@@ -44,7 +44,10 @@ return [
         'view'   => 'front/blocks/hero_carousel',
         'header' => true,
         'fields' => [
-            'slides' => ['type' => 'repeater', 'label' => 'სლაიდები', 'min_items' => 1, 'max_items' => 8, 'fields' => [
+            'mode'   => ['type' => 'select', 'label' => 'რეჟიმი', 'default' => 'carousel',
+                         'options' => ['carousel' => 'სლაიდერი', 'static' => 'სტატიკური (მხოლოდ პირველი სლაიდი)'],
+                         'help' => 'სტატიკური — ერთი გზავნილი, ისრებისა და ავტომატური გადართვის გარეშე; დანარჩენი სლაიდები ინახება.'],
+            'slides' =>['type' => 'repeater', 'label' => 'სლაიდები', 'min_items' => 1, 'max_items' => 8, 'fields' => [
                 'image'        => ['type' => 'image', 'label' => 'სურათი', 'required' => true, 'help' => 'რეკომენდებული 1920×1080'],
                 'subtitle'     => ['type' => 'text', 'label' => 'ქვესათაური', 'translatable' => true, 'max' => 100],
                 'title'        => ['type' => 'text', 'label' => 'სათაური', 'translatable' => true, 'max' => 190],
@@ -95,13 +98,28 @@ return [
             'image' => 'image', 'title' => 'title', 'text' => 'excerpt', 'button_label' => '@read_more', 'button_link' => '@url',
         ]],
         'fields' => $title + $source('services') + [
-            'items' => $manual + ['type' => 'repeater', 'label' => 'სერვისები', 'max_items' => 20, 'fields' => [
+            'layout' => ['type' => 'select', 'label' => 'განლაგება', 'default' => 'alternating',
+                         'options' => ['alternating' => 'მონაცვლე (დიდი წრიული ფოტოებით)', 'grid' => 'ბადე (კომპაქტური ბარათები, 2 სვეტი)']],
+            'items' => $manual +['type' => 'repeater', 'label' => 'სერვისები', 'max_items' => 20, 'fields' => [
                 'image'        => ['type' => 'image', 'label' => 'სურათი', 'help' => 'კვადრატული, მინ. 500×500'],
                 'title'        => ['type' => 'text', 'label' => 'სახელი', 'translatable' => true, 'max' => 190],
                 'text'         => ['type' => 'textarea', 'label' => 'აღწერა', 'translatable' => true, 'max' => 1000],
                 'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60],
                 'button_link'  => ['type' => 'link', 'label' => 'ღილაკის ბმული'],
             ]],
+        ],
+    ],
+
+    'stats' => [
+        'label'  => 'ციფრები (ნდობის ზოლი)',
+        'icon'   => 'fa fa-chart-bar',
+        'view'   => 'front/blocks/stats',
+        'fields' => [
+            'items'      => ['type' => 'repeater', 'label' => 'ციფრები', 'min_items' => 1, 'max_items' => 6, 'fields' => [
+                'value' => ['type' => 'text', 'label' => 'მნიშვნელობა', 'translatable' => true, 'max' => 20, 'help' => 'მაგ. „10+“, „150+“, „24 სთ“.'],
+                'label' => ['type' => 'text', 'label' => 'წარწერა', 'translatable' => true, 'max' => 100],
+            ]],
+            'background' => ['default' => 'secondary'] + $background,
         ],
     ],
 

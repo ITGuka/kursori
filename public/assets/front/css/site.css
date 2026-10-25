@@ -83,9 +83,49 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     }
 }
 
+/* სტატიკური ჰერო (hero_carousel, mode = static): ფოტო ფონად, ტექსტი ნაკადში — სიმაღლე შიგთავსს მიჰყვება */
+.hero-static {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: min(100vh, 760px);
+    padding: 140px 0 80px;
+    overflow: hidden;
+}
+
+/* !important — ქვემოთ img[width][height] { height: auto } უფრო სპეციფიკურია */
+.hero-static .hero-static-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100% !important;
+    object-fit: cover;
+}
+
+.hero-static::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .7);
+}
+
+.hero-static-content {
+    position: relative;
+    z-index: 1;
+    color: var(--bs-white);
+}
+
+@media (max-width: 991.98px) {
+    .hero-static {
+        min-height: 0;
+        padding: 120px 0 64px;
+    }
+}
+
 .title h1,
 .title h2,
-.carousel-caption .display-1 {
+.carousel-caption .display-1,
+.hero-static .display-1 {
     overflow-wrap: anywhere;
 }
 
@@ -123,13 +163,71 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     }
 }
 
+/* სერვისები — ბადის განლაგება (services ბლოკი, layout = grid) */
+.service-card {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 2rem;
+    background: var(--bs-secondary);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    transition: border-color .3s;
+}
+
+.service-card:hover {
+    border-color: var(--bs-primary);
+}
+
+.service-card-img {
+    flex: 0 0 88px;
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+}
+
+.service-card-body {
+    min-width: 0;
+}
+
+.service-card-link {
+    font-weight: 600;
+}
+
+@media (max-width: 575.98px) {
+    .service-card {
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+}
+
+/* ნდობის ზოლი (stats ბლოკი) */
+.stats-value {
+    font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
+    font-size: calc(1.8rem + 1.2vw);
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.stats-label {
+    margin-top: .5rem;
+    color: var(--bs-light);
+}
+
+@media (min-width: 1200px) {
+    .stats-value {
+        font-size: 3rem;
+    }
+}
+
 /* მენიუს CTA ღილაკი — მთავრული შრიფტით, როგორც მენიუს ბმულები */
 .navbar-cta {
     font-family: "DejaVu Sans Mtavruli", "Josefin Sans", "Noto Sans Georgian", sans-serif;
     white-space: nowrap;
 }
 
-/* ქართული მთავრული ლათინურზე ფართოა — სლაიდერის სათაური დიდ ეკრანზეც მცირდება, რომ navbar-ს არ შეეხოს */
+/* ქართული მთავრული ლათინურზე ფართოა — სლაიდერის/ჰეროს სათაური დიდ ეკრანზეც მცირდება, რომ navbar-ს არ შეეხოს */
 @media (min-width: 992px) {
     html[lang="ka"] .header-carousel .display-1 {
         font-size: calc(1.5rem + 2.6vw);
