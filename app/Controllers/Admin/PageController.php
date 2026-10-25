@@ -129,7 +129,7 @@ final class PageController
     {
         $errors = [];
         $parentId = (int)$request->input('parent_id', 0) ?: null;
-        $ogImage = trim((string)$request->input('og_image_id', ''));
+        $ogImage = trim($request->string('og_image_id', ''));
         $data = [
             'parent_id'   => $parentId,
             'status'      => $request->input('status') === 'published' ? 'published' : 'draft',

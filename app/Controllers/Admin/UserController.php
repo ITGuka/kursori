@@ -111,11 +111,11 @@ final class UserController
     private function input(Request $request): array
     {
         return [
-            'name'                  => trim((string)$request->input('name', '')),
-            'email'                 => AdminUser::normalizeEmail((string)$request->input('email', '')),
-            'password'              => (string)$request->input('password', ''),
-            'password_confirmation' => (string)$request->input('password_confirmation', ''),
-            'current_password'      => (string)$request->input('current_password', ''),
+            'name'                  => trim($request->string('name', '')),
+            'email'                 => AdminUser::normalizeEmail($request->string('email', '')),
+            'password'              => $request->string('password', ''),
+            'password_confirmation' => $request->string('password_confirmation', ''),
+            'current_password'      => $request->string('current_password', ''),
             'is_active'             => $request->input('is_active') === '1',
         ];
     }

@@ -43,6 +43,10 @@ final class RateLimiter
                 reset_at = IF(reset_at <= NOW(), VALUES(reset_at), reset_at)",
             [self::hash($key), $decaySeconds],
         );
+        // ვადაგასული ჩანაწერები ცხრილში არ უნდა დაგროვდეს (cron-ის გარეშე)
+        if (random_int(1, 100) === 1) {
+            $this->prune();
+        }
         return $this->attempts($key);
     }
 

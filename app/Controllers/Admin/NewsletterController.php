@@ -37,7 +37,7 @@ final class NewsletterController
 
     public function subscribers(Request $request): Response
     {
-        $filters = ['status' => (string)$request->query('status', ''), 'q' => trim((string)$request->query('q', ''))];
+        $filters = ['status' => $request->string('status', ''), 'q' => trim($request->string('q', ''))];
         $page = max(1, (int)$request->query('page', 1));
         $result = $this->subscribers->paginate($filters, $page, self::PER_PAGE);
         return view('admin/newsletter/subscribers', [
@@ -53,7 +53,7 @@ final class NewsletterController
 
     public function export(Request $request): Response
     {
-        $rows = $this->subscribers->all(['status' => (string)$request->query('status', ''), 'q' => trim((string)$request->query('q', ''))]);
+        $rows = $this->subscribers->all(['status' => $request->string('status', ''), 'q' => trim($request->string('q', ''))]);
         $out = fopen('php://temp', 'r+');
         fwrite($out, "\xEF\xBB\xBF"); // UTF-8 BOM — Excel-ისთვის
         fputcsv($out, ['email', 'lang', 'status', 'confirmed_at', 'created_at']);
@@ -140,7 +140,7 @@ final class NewsletterController
     public function test(Request $request, int $id): Response
     {
         $campaign = $this->campaigns->find($id) ?? abort(404);
-        $email = trim((string)$request->input('email', ''));
+        $email = trim($request->string('email', ''));
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             return redirect(route('admin.newsletter.edit', ['id' => $id]))->with('error', 'მიუთითეთ სწორი ელ-ფოსტა.');
         }
@@ -176,10 +176,10 @@ final class NewsletterController
     private function input(Request $request): array
     {
         $codes = array_column($this->languages->all(), 'code');
-        $lang = (string)$request->input('lang', '');
+        $lang = $request->string('lang', '');
         $data = [
-            'subject' => mb_substr(trim((string)$request->input('subject', '')), 0, 190),
-            'body'    => $this->sanitizer->clean((string)$request->input('body', '')),
+            'subject' => mb_substr(trim($request->string('subject', '')), 0, 190),
+            'body'    => $this->sanitizer->clean($request->string('body', '')),
             'lang'    => in_array($lang, $codes, true) ? $lang : '',
         ];
         $errors = [];

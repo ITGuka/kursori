@@ -33,7 +33,7 @@ final class LanguageController
 
     public function store(Request $request): Response
     {
-        $data = $this->input($request) + ['code' => strtolower(trim((string)$request->input('code', '')))];
+        $data = $this->input($request) + ['code' => strtolower(trim($request->string('code', '')))];
         $validator = Validator::make($data, $this->rules() + [
             'code' => ['required', 'regex:/^[a-z]{2}$/', 'unique:languages,code'],
         ], ['code' => 'კოდი']);
@@ -98,9 +98,9 @@ final class LanguageController
     private function input(Request $request): array
     {
         return [
-            'name'        => trim((string)$request->input('name', '')),
-            'native_name' => trim((string)$request->input('native_name', '')),
-            'sort'        => trim((string)$request->input('sort', '0')),
+            'name'        => trim($request->string('name', '')),
+            'native_name' => trim($request->string('native_name', '')),
+            'sort'        => trim($request->string('sort', '0')),
             'is_active'   => $request->input('is_active') === '1',
             'is_default'  => $request->input('is_default') === '1',
         ];

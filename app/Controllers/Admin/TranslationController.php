@@ -27,8 +27,8 @@ final class TranslationController
     public function index(Request $request): Response
     {
         $languages = $this->languages->all();
-        $group = (string)$request->query('group', '');
-        $search = trim((string)$request->query('q', ''));
+        $group = $request->string('group', '');
+        $search = trim($request->string('q', ''));
         $missing = $request->query('missing') === '1';
         $page = max(1, (int)$request->query('page', 1));
 
@@ -74,9 +74,9 @@ final class TranslationController
 
     public function store(Request $request): Response
     {
-        $group = strtolower(trim((string)$request->input('group', '')));
-        $key = strtolower(trim((string)$request->input('key', '')));
-        $description = trim((string)$request->input('description', ''));
+        $group = strtolower(trim($request->string('group', '')));
+        $key = strtolower(trim($request->string('key', '')));
+        $description = trim($request->string('description', ''));
         $values = array_filter((array)$request->input('new_values', []), 'is_string');
 
         $errors = Validator::make(compact('group', 'key', 'description'), [

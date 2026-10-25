@@ -27,7 +27,7 @@ final class BlockController
     public function create(Request $request, int $id): Response
     {
         $page = $this->pages->find($id) ?? abort(404);
-        $type = (string)$request->query('type', '');
+        $type = $request->string('type', '');
         if (!$this->registry->has($type)) {
             abort(404);
         }
@@ -37,7 +37,7 @@ final class BlockController
     public function store(Request $request, int $id): Response
     {
         $page = $this->pages->find($id) ?? abort(404);
-        $type = (string)$request->input('type', '');
+        $type = $request->string('type', '');
         $definition = $this->registry->get($type) ?? abort(422, 'Unknown block type.');
 
         $result = $this->parse($request, $definition);

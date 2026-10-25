@@ -16,7 +16,7 @@ final class RedirectController
 
     public function index(Request $request): Response
     {
-        $search = trim((string)$request->query('q', ''));
+        $search = trim($request->string('q', ''));
         return view('admin/redirects/index', [
             'title'     => 'გადამისამართებები',
             'redirects' => $this->redirects->all($search),
@@ -28,7 +28,7 @@ final class RedirectController
 
     public function create(Request $request): Response
     {
-        return $this->form(null, ['from_path' => Redirect::normalize((string)$request->query('from', '/')), 'to_url' => '', 'code' => 301, 'is_active' => true], []);
+        return $this->form(null, ['from_path' => Redirect::normalize($request->string('from', '/')), 'to_url' => '', 'code' => 301, 'is_active' => true], []);
     }
 
     public function store(Request $request): Response
@@ -78,8 +78,8 @@ final class RedirectController
     /** @return array{0: array, 1: array<string, string>} */
     private function input(Request $request, ?int $id): array
     {
-        $from = Redirect::normalize((string)$request->input('from_path', ''));
-        $to = trim((string)$request->input('to_url', ''));
+        $from = Redirect::normalize($request->string('from_path', ''));
+        $to = trim($request->string('to_url', ''));
         if ($to !== '' && !preg_match('~^https?://~i', $to)) {
             $to = Redirect::normalize($to);
         }

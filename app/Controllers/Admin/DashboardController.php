@@ -59,7 +59,7 @@ final class DashboardController
 
     public function storeTodo(Request $request): array
     {
-        $text = trim(mb_substr((string)$request->input('text', ''), 0, 255));
+        $text = trim(mb_substr($request->string('text', ''), 0, 255));
         $userId = (int)auth()->id();
         if ($text === '') {
             return ['ok' => false, 'error' => 'ჩაწერეთ დავალება.'];

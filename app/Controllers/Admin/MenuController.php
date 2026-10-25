@@ -24,7 +24,7 @@ final class MenuController
     public function index(Request $request): Response
     {
         $locations = Menu::locations();
-        $location = (string)$request->query('location', (string)array_key_first($locations));
+        $location = $request->string('location', (string)array_key_first($locations));
         if (!isset($locations[$location])) {
             abort(404);
         }
@@ -117,7 +117,7 @@ final class MenuController
         $errors = [];
         $type = $request->input('type') === 'url' ? 'url' : 'page';
         $pageId = (int)$request->input('page_id', 0) ?: null;
-        $url = trim((string)$request->input('url', ''));
+        $url = trim($request->string('url', ''));
         $parentId = (int)$request->input('parent_id', 0) ?: null;
         $data = ['type' => $type, 'page_id' => $pageId, 'url' => mb_substr($url, 0, 2000), 'parent_id' => $parentId,
                  'new_tab' => $request->input('new_tab') === '1', 'is_active' => $request->input('is_active') === '1'];

@@ -28,8 +28,8 @@ final class AuthController
 
     public function login(Request $request): Response
     {
-        $email = AdminUser::normalizeEmail((string)$request->input('email', ''));
-        $password = (string)$request->input('password', '');
+        $email = AdminUser::normalizeEmail($request->string('email', ''));
+        $password = $request->string('password', '');
         $throttle = config('auth.throttle');
         $keys = ['login:' . $email . '|' . $request->ip() => $throttle['max_attempts'], 'login-ip:' . $request->ip() => $throttle['ip_max_attempts']];
 

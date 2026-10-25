@@ -26,7 +26,7 @@ final class FormController
         $back = self::backTo($request, $lang, "form-$form");
 
         // honeypot შევსებულია → ბოტი: წარმატებას ვაჩვენებთ, არაფერს ვინახავთ
-        if (trim((string)$request->input((string)config('forms.honeypot', 'website'), '')) !== '') {
+        if (trim($request->string((string)config('forms.honeypot', 'website'), '')) !== '') {
             return redirect($back)->with('_form', $form)->with('_form_success', t('form.sent'));
         }
 

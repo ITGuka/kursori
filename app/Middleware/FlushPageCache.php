@@ -15,6 +15,9 @@ use Core\Support\Cache;
  */
 final class FlushPageCache implements Middleware
 {
+    /** route-ები, რომლებიც საიტზე არაფერს ცვლის (Inbox, newsletter, მომხმარებლები, დავალებები) */
+    private const SKIP = ['admin.inbox.', 'admin.newsletter.', 'admin.users.', 'admin.todos.', 'admin.logout'];
+
     public function __construct(private readonly Cache $cache)
     {
     }
@@ -22,7 +25,9 @@ final class FlushPageCache implements Middleware
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
-        if (!$request->isMethod('GET') && $response->status() < 400) {
+        $route = (string)$request->routeName();
+        $affectsSite = array_filter(self::SKIP, fn (string $prefix) => str_starts_with($route, $prefix)) === [];
+        if ($affectsSite && !$request->isMethod('GET') && $response->status() < 400) {
             $this->cache->flush(PageCache::PREFIX);
         }
         return $response;

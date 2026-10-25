@@ -37,7 +37,7 @@ final class Request
         }
 
         // HTML ფორმები მხოლოდ GET/POST-ს აგზავნიან: <input name="_method" value="DELETE">
-        if ($method === 'POST' && isset($body['_method'])) {
+        if ($method === 'POST' && isset($body['_method']) && is_string($body['_method'])) {
             $spoofed = strtoupper((string)$body['_method']);
             if (in_array($spoofed, ['PUT', 'PATCH', 'DELETE'], true)) {
                 $method = $spoofed;
@@ -100,6 +100,13 @@ final class Request
             return $this->body + $this->query;
         }
         return $this->body[$key] ?? $this->query[$key] ?? $default;
+    }
+
+    /** სტრიქონი input()-იდან; მასივი (მაგ. ?q[]=1) ან სხვა არასკალარული → $default */
+    public function string(string $key, string $default = ''): string
+    {
+        $value = $this->input($key, $default);
+        return is_scalar($value) ? (string)$value : $default;
     }
 
     public function has(string $key): bool

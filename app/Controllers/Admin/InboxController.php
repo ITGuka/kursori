@@ -19,8 +19,8 @@ final class InboxController
     public function index(Request $request): Response
     {
         $forms = FormSubmission::forms();
-        $form = (string)$request->query('form', '');
-        $filters = ['form' => isset($forms[$form]) ? $form : '', 'unread' => $request->query('unread') === '1', 'q' => trim((string)$request->query('q', ''))];
+        $form = $request->string('form', '');
+        $filters = ['form' => isset($forms[$form]) ? $form : '', 'unread' => $request->query('unread') === '1', 'q' => trim($request->string('q', ''))];
         $page = max(1, (int)$request->query('page', 1));
         $result = $this->submissions->paginate($filters, $page, self::PER_PAGE);
 

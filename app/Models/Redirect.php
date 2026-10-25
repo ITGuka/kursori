@@ -128,11 +128,6 @@ final class Redirect
         return $this->db->select('SELECT * FROM not_found_log ORDER BY hits DESC, last_seen_at DESC LIMIT ' . max(1, $limit));
     }
 
-    public function findNotFound(int $id): ?array
-    {
-        return $this->db->first('SELECT * FROM not_found_log WHERE id = ?', [$id]);
-    }
-
     public function deleteNotFound(?int $id = null): void
     {
         $id === null ? $this->db->statement('DELETE FROM not_found_log') : $this->db->delete('not_found_log', 'id = ?', [$id]);

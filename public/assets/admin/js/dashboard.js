@@ -44,7 +44,8 @@
 
     // კალენდარი ქართულად
     if (window.moment && $.fn.datetimepicker && $('#calender').length) {
-        moment.defineLocale('ka', {
+        // moment-ის build-ში ka უკვე შეიძლება იყოს — მაშინ defineLocale გაფრთხილებას აგდებს
+        (moment.locales().indexOf('ka') === -1 ? moment.defineLocale : moment.updateLocale).call(moment, 'ka', {
             months: 'იანვარი_თებერვალი_მარტი_აპრილი_მაისი_ივნისი_ივლისი_აგვისტო_სექტემბერი_ოქტომბერი_ნოემბერი_დეკემბერი'.split('_'),
             monthsShort: 'იან_თებ_მარ_აპრ_მაი_ივნ_ივლ_აგვ_სექ_ოქტ_ნოე_დეკ'.split('_'),
             weekdays: 'კვირა_ორშაბათი_სამშაბათი_ოთხშაბათი_ხუთშაბათი_პარასკევი_შაბათი'.split('_'),

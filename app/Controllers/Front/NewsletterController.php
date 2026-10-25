@@ -28,11 +28,11 @@ final class NewsletterController
     public function subscribe(Request $request, string $lang): Response
     {
         $back = FormController::backTo($request, $lang, 'form-newsletter');
-        if (trim((string)$request->input((string)config('forms.honeypot', 'website'), '')) !== '') {
+        if (trim($request->string((string)config('forms.honeypot', 'website'), '')) !== '') {
             return redirect($back)->with('_form', 'newsletter')->with('_form_success', t('newsletter.check_email'));
         }
 
-        $email = strtolower(trim((string)$request->input('email', '')));
+        $email = strtolower(trim($request->string('email', '')));
         $key = 'newsletter:' . $request->ip();
         if ($this->limiter->tooManyAttempts($key, (int)config('forms.rate_limit.max', 5))) {
             return redirect($back)->with('_form', 'newsletter')->with('_form_error', t('form.too_many'))->withInput(['email' => $email]);

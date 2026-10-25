@@ -39,7 +39,7 @@ final class CollectionController
     {
         $definition = $this->definition($type);
         $default = $this->languages->defaultCode();
-        $filters = ['q' => trim((string)$request->query('q', '')), 'category' => (int)$request->query('category', 0)];
+        $filters = ['q' => trim($request->string('q', '')), 'category' => (int)$request->query('category', 0)];
         $page = max(1, (int)$request->query('page', 1));
         $result = $this->items->paginate($type, $filters, $default, $page, self::PER_PAGE);
 
@@ -154,7 +154,7 @@ final class CollectionController
         $errors = [];
 
         $categoryId = (int)$request->input('category_id', 0) ?: null;
-        $imageId = trim((string)$request->input('image_id', ''));
+        $imageId = trim($request->string('image_id', ''));
         $core = [
             'category_id' => $definition['categories'] ? $categoryId : null,
             'image_id'    => ctype_digit($imageId) ? (int)$imageId : null,

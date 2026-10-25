@@ -91,7 +91,7 @@ final class MediaController
         if ($folder === false) {
             return back(route('admin.media.edit', ['id' => $id]))
                 ->withErrors(['folder' => 'საქაღალდის სახელი: ასოები, ციფრები, ჰიფენი, ქვედა ტირე (მაქს. 50).'])
-                ->withInput(['folder' => (string)$request->input('folder', ''), 'texts' => (array)$request->input('texts', [])]);
+                ->withInput(['folder' => $request->string('folder', ''), 'texts' => (array)$request->input('texts', [])]);
         }
 
         $texts = (array)$request->input('texts', []);
@@ -137,10 +137,10 @@ final class MediaController
     /** @return array{q: string, folder: string, type: string} */
     private function filters(Request $request): array
     {
-        $type = (string)$request->query('type', '');
+        $type = $request->string('type', '');
         return [
-            'q'      => trim((string)$request->query('q', '')),
-            'folder' => trim((string)$request->query('folder', '')),
+            'q'      => trim($request->string('q', '')),
+            'folder' => trim($request->string('folder', '')),
             'type'   => in_array($type, ['image', 'document'], true) ? $type : '',
         ];
     }

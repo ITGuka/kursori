@@ -111,13 +111,6 @@ final class Settings
         $this->forgetCache();
     }
 
-    /** ენის წაშლისას მისი მნიშვნელობების გასუფთავება */
-    public function deleteLocale(string $locale): void
-    {
-        $this->db->delete($this->table, 'lang = ?', [$locale]);
-        $this->forgetCache();
-    }
-
     public function forgetCache(): void
     {
         $this->values = null;

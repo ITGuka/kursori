@@ -36,9 +36,4 @@ final class BlockRegistry
     {
         return (string)($this->types[$type]['label'] ?? $type);
     }
-
-    public function isHeader(string $type): bool
-    {
-        return !empty($this->types[$type]['header']);
-    }
 }
