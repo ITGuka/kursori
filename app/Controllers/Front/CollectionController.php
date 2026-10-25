@@ -44,6 +44,7 @@ final class CollectionController
 
         return view($definition['view'] ?? 'front/collections/detail', [
             'item'        => $item,
+            'type'        => $type,
             'definition'  => $definition,
             'breadcrumbs' => $breadcrumbs,
             'meta'        => [

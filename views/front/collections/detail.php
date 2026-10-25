@@ -4,6 +4,7 @@
  * @var Core\View\Template $this
  * @var array $item resolve-ის ფორმატი (title, image, category, url + config-ის ველები)
  * @var array $definition
+ * @var string $type კოლექციის გასაღები (ველების წარწერები: თარგმანი „{type}.{ველი}“, თუ არ არის — ადმინის label)
  */
 $this->layout('front/layouts/main');
 $this->start('header');
@@ -15,10 +16,11 @@ $image = media_url($item['image'], 'large');
 $facts = [];
 foreach ($definition['fields'] as $name => $field) {
     $value = $item[$name] ?? null;
+    $label = ($key = "$type.$name") !== ($translated = t($key)) ? $translated : $field['label'];
     if (in_array($field['type'], ['text', 'number'], true) && $value !== '' && $value !== null) {
-        $facts[] = [$field['label'], e((string)$value)];
+        $facts[] = [$label, e((string)$value)];
     } elseif ($field['type'] === 'link' && $value) {
-        $facts[] = [$field['label'], '<a' . link_attrs($value) . '>' . e(preg_replace('~^https?://(www\.)?~', '', $value['href'])) . '</a>'];
+        $facts[] = [$label, '<a' . link_attrs($value) . '>' . e(preg_replace('~^https?://(www\.)?~', '', $value['href'])) . '</a>'];
     }
 }
 ?>

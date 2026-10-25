@@ -48,7 +48,11 @@ return new class extends Seeder {
             'consent_link'  => ['კონფიდენციალურობის პოლიტიკის', 'privacy policy'],
         ],
         'portfolio' => [
-            'all' => ['ყველა', 'All'],
+            'all'     => ['ყველა', 'All'],
+            // პროექტის გვერდის მონაცემების ცხრილი (front/collections/detail)
+            'client'  => ['კლიენტი', 'Client'],
+            'year'    => ['წელი', 'Year'],
+            'website' => ['საიტი', 'Website'],
         ],
         'validation' => [
             'required' => ['ველი „:attribute“ სავალდებულოა.', 'The :attribute field is required.'],
