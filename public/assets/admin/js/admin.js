@@ -41,7 +41,7 @@
         }
     });
 
-    // ენის გადამრთველი ზედა ზოლში — ჩანს მხოლოდ გვერდზე, სადაც თარგმნადი ველებია ([data-lang])
+    // ფორმის ენის გადამრთველი (partials/lang-switch) — ჩანს მხოლოდ თუ ფორმაში თარგმნადი ველებია ([data-lang])
     (function () {
         var $switch = $('[data-lang-switch]');
         if (!$switch.length || !$('[data-lang]').length) {

@@ -22,11 +22,14 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
         <form method="post" action="<?= e($action) ?>" class="bg-light rounded p-4" novalidate>
             <?= csrf_field() ?>
             <?php if ($isEdit): ?><input type="hidden" name="_method" value="PUT"><?php endif ?>
-            <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <h6 class="mb-0"><?= $isEdit ? 'გვერდის პარამეტრები' : e($title) ?></h6>
-                <?php if ($viewUrl !== ''): ?>
-                    <a href="<?= e($viewUrl) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary"><i class="fa fa-external-link-alt me-1"></i>ნახვა</a>
-                <?php endif ?>
+                <div class="d-flex align-items-center gap-2">
+                    <?= $this->insert('admin/partials/lang-switch') ?>
+                    <?php if ($viewUrl !== ''): ?>
+                        <a href="<?= e($viewUrl) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary"><i class="fa fa-external-link-alt me-1"></i>ნახვა</a>
+                    <?php endif ?>
+                </div>
             </div>
 
             <div class="mb-3">

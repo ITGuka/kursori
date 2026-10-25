@@ -2,9 +2,8 @@
 /** @var Core\View\Template $this */
 $admin = auth()->user();
 $initial = mb_strtoupper(mb_substr((string)$admin['name'], 0, 1));
-// ფორმებში ენის გადამრთველი: [data-lang="xx"] ელემენტები ჩანს მხოლოდ არჩეულ ენაზე (ან „ყველა“)
-$switchLanguages = count($languages ?? []) > 1 ? $languages : [];
-$langCodes = array_column($switchLanguages, 'code');
+// ფორმის ენის გადამრთველი (partials/lang-switch): [data-lang="xx"] ელემენტები ჩანს მხოლოდ არჩეულ ენაზე
+$langCodes = count($languages ?? []) > 1 ? array_column($languages, 'code') : [];
 ?>
 <!doctype html>
 <html lang="ka">
@@ -17,6 +16,7 @@ $langCodes = array_column($switchLanguages, 'code');
     <?= $this->insert('admin/partials/head') ?>
     <?= $this->section('styles') ?>
     <?php if ($langCodes !== []): ?>
+        <link href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css" rel="stylesheet">
         <style>
             <?php foreach ($langCodes as $code): ?>
             html[data-admin-lang="<?= e($code) ?>"] [data-lang]:not([data-lang="<?= e($code) ?>"]) { display: none !important; }
@@ -73,16 +73,6 @@ $langCodes = array_column($switchLanguages, 'code');
                 <i class="fa fa-bars"></i>
             </a>
             <div class="navbar-nav align-items-center ms-auto">
-                <?php if ($switchLanguages !== []): ?>
-                    <div class="btn-group btn-group-sm lang-switch me-2 me-lg-3 d-none" role="group" aria-label="შესავსები ენა" data-lang-switch>
-                        <?php foreach ($switchLanguages as $language): ?>
-                            <button type="button" class="btn btn-outline-primary" data-lang-option="<?= e($language['code']) ?>" title="<?= e($language['native_name']) ?>">
-                                <?= e(strtoupper($language['code'])) ?>
-                            </button>
-                        <?php endforeach ?>
-                        <button type="button" class="btn btn-outline-primary" data-lang-option="all" title="ყველა ენა ერთად">ყველა</button>
-                    </div>
-                <?php endif ?>
                 <a href="<?= e(url(config('app.default_locale'))) ?>" class="nav-link" target="_blank" rel="noopener">
                     <i class="fa fa-external-link-alt me-lg-2"></i><span class="d-none d-lg-inline-flex">საიტი</span>
                 </a>

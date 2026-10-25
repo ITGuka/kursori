@@ -61,6 +61,7 @@ $type = $data['type'] ?? 'page';
         <?= $feedback('url') ?>
     </div>
 
+    <div class="d-flex justify-content-end mb-3"><?= $this->insert('admin/partials/lang-switch') ?></div>
     <?php foreach ($languages as $language): ?>
         <?php $code = $language['code']; $t = $translations[$code] ?? []; ?>
         <fieldset class="border rounded p-3 mb-3" data-lang="<?= e($code) ?>">

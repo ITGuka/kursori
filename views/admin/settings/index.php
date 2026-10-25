@@ -32,7 +32,10 @@ foreach (array_keys(errors()) as $errorKey) {
     <div class="bg-light rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h6 class="mb-0"><?= e($title) ?></h6>
-            <button type="submit" class="btn btn-sm btn-primary">შენახვა</button>
+            <div class="d-flex align-items-center gap-2">
+                <?= $this->insert('admin/partials/lang-switch') ?>
+                <button type="submit" class="btn btn-sm btn-primary">შენახვა</button>
+            </div>
         </div>
 
         <ul class="nav nav-tabs mb-4" role="tablist">

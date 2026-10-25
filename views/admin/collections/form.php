@@ -33,11 +33,14 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
     <?= csrf_field() ?>
     <?php if ($isEdit): ?><input type="hidden" name="_method" value="PUT"><?php endif ?>
 
-    <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
         <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'fa fa-th-list') ?> text-primary me-2"></i><?= e($isEdit ? $definition['singular'] : 'ახალი: ' . $definition['singular']) ?></h6>
-        <?php if ($publicUrl !== ''): ?>
-            <a href="<?= e($publicUrl) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary"><i class="fa fa-external-link-alt me-1"></i>ნახვა</a>
-        <?php endif ?>
+        <div class="d-flex align-items-center gap-2">
+            <?= $this->insert('admin/partials/lang-switch') ?>
+            <?php if ($publicUrl !== ''): ?>
+                <a href="<?= e($publicUrl) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary"><i class="fa fa-external-link-alt me-1"></i>ნახვა</a>
+            <?php endif ?>
+        </div>
     </div>
 
     <div style="max-width: 1000px">

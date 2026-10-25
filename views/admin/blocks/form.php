@@ -35,7 +35,10 @@ $action = $isEdit ? route('admin.blocks.update', ['id' => $block['id']]) : route
         <input type="hidden" name="type" value="<?= e($type) ?>">
     <?php endif ?>
 
-    <h6 class="mb-4"><i class="<?= e($definition['icon'] ?? 'fa fa-square') ?> text-primary me-2"></i><?= e($definition['label']) ?></h6>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'fa fa-square') ?> text-primary me-2"></i><?= e($definition['label']) ?></h6>
+        <?= $this->insert('admin/partials/lang-switch') ?>
+    </div>
 
     <div style="max-width: 1000px">
         <?php foreach ($definition['fields'] as $name => $field): ?>

@@ -60,6 +60,7 @@ $variants = Media::variants($media);
                     <?php if ($error = errors('folder')): ?><div class="invalid-feedback"><?= e($error) ?></div><?php endif ?>
                 </div>
 
+                <div class="d-flex justify-content-end mb-3"><?= $this->insert('admin/partials/lang-switch') ?></div>
                 <?php foreach ($languages as $language): ?>
                     <?php $code = $language['code']; ?>
                     <fieldset class="border rounded p-3 mb-3" data-lang="<?= e($code) ?>">

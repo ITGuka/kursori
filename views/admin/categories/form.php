@@ -19,6 +19,7 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
     <?= csrf_field() ?>
     <?php if ($isEdit): ?><input type="hidden" name="_method" value="PUT"><?php endif ?>
 
+    <div class="d-flex justify-content-end mb-3"><?= $this->insert('admin/partials/lang-switch') ?></div>
     <?php foreach ($languages as $language): ?>
         <?php $code = $language['code']; $t = $translations[$code] ?? []; ?>
         <fieldset class="border rounded p-3 mb-3" data-slug-group data-lang="<?= e($code) ?>">

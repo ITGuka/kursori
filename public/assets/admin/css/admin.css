@@ -276,6 +276,12 @@ body {
     font-weight: 600;
 }
 
+.lang-switch .fi {
+    margin-right: 6px;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .1);
+}
+
 .lang-switch .btn.has-error:not(.active) {
     color: var(--bs-danger, #dc3545);
     border-color: var(--bs-danger, #dc3545);
