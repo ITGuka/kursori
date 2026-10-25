@@ -194,11 +194,12 @@ return new class extends Seeder {
     private function hero(int $pageId, int $portfolio, int $contact): void
     {
         [$slides, $ka, $en] = $this->items([
-            [['image' => $this->img('carousel-1.jpg'), 'button_link' => $this->link($portfolio)], [
-                'subtitle'     => ['ვებ დიზაინ სტუდია', 'Web Design Studio'],
-                'title'        => ['საიტები, რომლებიც მუშაობს', 'Websites That Work'],
-                'text'         => ['ვქმნით ლამაზ, სწრაფ და მოსახერხებელ საიტებს, რომლებიც ვიზიტორს კლიენტად აქცევს.', 'We build beautiful, fast and easy-to-use websites that turn visitors into customers.'],
-                'button_label' => ['ნამუშევრები', 'Our Work'],
+            [['image' => $this->img('carousel-1.jpg'), 'button_link' => $this->link($contact), 'button2_link' => $this->link($portfolio)], [
+                'subtitle'      => ['ვებ დიზაინ სტუდია', 'Web Design Studio'],
+                'title'         => ['საიტები, რომლებიც მუშაობს', 'Websites That Work'],
+                'text'          => ['ვქმნით ლამაზ, სწრაფ და მოსახერხებელ საიტებს, რომლებიც ვიზიტორს კლიენტად აქცევს.', 'We build beautiful, fast and easy-to-use websites that turn visitors into customers.'],
+                'button_label'  => ['უფასო კონსულტაცია', 'Free Consultation'],
+                'button2_label' => ['ნამუშევრები', 'Our Work'],
             ]],
             [['image' => $this->img('carousel-2.jpg'), 'button_link' => $this->link($contact)], [
                 'subtitle'     => ['ბრენდინგი', 'Branding'],

@@ -14,7 +14,7 @@ if (($subtitle ?? '') === '' && ($heading ?? '') === '') {
 <div class="title wow fadeInUp" data-wow-delay="0.1s">
     <div class="title-<?= $align ?>">
         <?php if (($subtitle ?? '') !== ''): ?><h5><?= e($subtitle) ?></h5><?php endif ?>
-        <?php if (($heading ?? '') !== ''): ?><h1><?= e($heading) ?></h1><?php endif ?>
+        <?php if (($heading ?? '') !== ''): ?><h2 class="h1"><?= e($heading) ?></h2><?php endif ?>
     </div>
 </div>
 <?php if ($align === 'center'): ?></div><?php endif ?>

@@ -79,11 +79,7 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
     <?= setting('scripts.head_code') ?>
 </head>
 <body>
-<div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-    <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
-        <span class="sr-only"><?= e(t('common.loading')) ?></span>
-    </div>
-</div>
+<?php // Poseify-ის ჩატვირთვის spinner ამოღებულია — გვერდს ფარავდა მაშინაც, როცა უკვე ჩატვირთული იყო ?>
 
 <?php if (!empty($preview)): ?>
     <div class="preview-bar"><?= e($preview) ?></div>

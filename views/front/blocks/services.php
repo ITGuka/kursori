@@ -12,7 +12,7 @@ $items = array_values(array_filter($data['items'], fn ($item) => $item['title'] 
                     <div class="col-md-5<?= $left ? '' : ' order-md-1 text-md-end' ?>">
                         <?php if ($image !== ''): ?>
                             <div class="service-img p-5 wow <?= $left ? 'fadeInRight' : 'fadeInLeft' ?>" data-wow-delay="0.2s">
-                                <?= picture($item['image'], 'thumb', ['class' => 'img-fluid rounded-circle']) ?>
+                                <?= picture($item['image'], 'thumb', ['class' => 'img-fluid rounded-circle', 'alt' => media_alt($item['image']) ?: $item['title']]) ?>
                             </div>
                         <?php endif ?>
                     </div>

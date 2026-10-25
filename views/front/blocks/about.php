@@ -38,7 +38,7 @@ $image = media_url($data['image'], 'medium');
             </div>
             <?php if ($image !== ''): ?>
                 <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.5s">
-                    <?= picture($data['image'], 'medium', ['class' => 'img-fluid'], '(min-width: 992px) 40vw, 100vw') ?>
+                    <?= picture($data['image'], 'medium', ['class' => 'img-fluid', 'alt' => media_alt($data['image']) ?: $data['title']], '(min-width: 992px) 40vw, 100vw') ?>
                 </div>
             <?php endif ?>
         </div>

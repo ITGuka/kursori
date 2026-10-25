@@ -16,7 +16,7 @@ $error = $isThis ? errors('email') : null;
                     <div class="title mx-5 px-5 wow fadeInUp" data-wow-delay="0.1s">
                         <div class="title-center">
                             <?php if ($data['subtitle'] !== ''): ?><h5><?= e($data['subtitle']) ?></h5><?php endif ?>
-                            <?php if ($data['title'] !== ''): ?><h1><?= e($data['title']) ?></h1><?php endif ?>
+                            <?php if ($data['title'] !== ''): ?><h2 class="h1"><?= e($data['title']) ?></h2><?php endif ?>
                         </div>
                     </div>
                 <?php endif ?>

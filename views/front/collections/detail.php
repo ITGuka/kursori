@@ -34,7 +34,7 @@ foreach ($definition['fields'] as $name => $field) {
                 <div class="title">
                     <div class="title-left">
                         <?php if ($item['category'] !== ''): ?><h5><?= e($item['category']) ?></h5><?php endif ?>
-                        <h1><?= e($item['title']) ?></h1>
+                        <h2 class="h1"><?= e($item['title']) ?></h2>
                     </div>
                 </div>
                 <?php if (($item['excerpt'] ?? '') !== ''): ?>

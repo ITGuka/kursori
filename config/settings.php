@@ -20,6 +20,10 @@ return [
         'fields' => [
             'site_name'        => ['label' => 'საიტის სახელი', 'translatable' => true, 'default' => 'WEBDEV', 'max' => 100],
             'tagline'          => ['label' => 'სლოგანი', 'translatable' => true, 'max' => 150],
+            'cta_label'        => ['label' => 'მენიუს ღილაკის ტექსტი', 'translatable' => true, 'max' => 40,
+                                   'default' => ['ka' => 'მოითხოვეთ შეთავაზება', 'en' => 'Get a Quote']],
+            'cta_page'         => ['label' => 'მენიუს ღილაკის გვერდი', 'type' => 'page',
+                                   'help' => 'მენიუს მარჯვნივ გამოკვეთილი ღილაკი (მაგ. კონტაქტი). ცარიელი — ღილაკი არ ჩანს.'],
             'logo'             => ['label' => 'ლოგო', 'type' => 'image', 'help' => 'ცარიელის შემთხვევაში ჩანს საიტის სახელი.'],
             'favicon'          => ['label' => 'Favicon', 'type' => 'image', 'help' => 'კვადრატული PNG, მინიმუმ 48×48.'],
             'copyright'        => ['label' => 'Copyright ტექსტი', 'translatable' => true, 'help' => ':year ჩანაცვლდება მიმდინარე წლით.',

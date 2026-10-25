@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Models\Page;
 use Core\Database\DB;
 use Core\Database\Seeder;
 use Core\Settings\Settings;
@@ -44,6 +45,12 @@ return new class extends Seeder {
             } elseif ($settings->raw($key) === '') {
                 $values[$key] = $value;
             }
+        }
+        // მენიუს ღილაკი → კონტაქტის გვერდი (05_demo_pages)
+        $contact = $db->value("SELECT page_id FROM page_translations WHERE lang = 'en' AND slug = 'contact'");
+        $current = (int)$settings->raw('general.cta_page');
+        if ($contact !== null && ($current === 0 || app(Page::class)->find($current) === null)) {
+            $values['general.cta_page'] = (string)$contact;
         }
         if ($values !== []) {
             $settings->save($values);

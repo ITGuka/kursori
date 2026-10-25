@@ -84,8 +84,22 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
 }
 
 .title h1,
+.title h2,
 .carousel-caption .display-1 {
     overflow-wrap: anywhere;
+}
+
+/* გვერდზე ერთი H1 (hero / page_header) — სექციების სათაურები h2.h1-ია, style.css-ის h1-ის ხაზით */
+.title .title-left h2,
+.title .title-center h2,
+.title .title-right h2 {
+    border-bottom: 1px solid var(--bs-white);
+}
+
+/* მენიუს CTA ღილაკი — მთავრული შრიფტით, როგორც მენიუს ბმულები */
+.navbar-cta {
+    font-family: "DejaVu Sans Mtavruli", "Josefin Sans", "Noto Sans Georgian", sans-serif;
+    white-space: nowrap;
 }
 
 /* ქართული მთავრული ლათინურზე ფართოა — სლაიდერის სათაური დიდ ეკრანზეც მცირდება, რომ navbar-ს არ შეეხოს */
