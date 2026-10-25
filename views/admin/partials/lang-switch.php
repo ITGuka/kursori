@@ -10,12 +10,12 @@ $flags = ['ka' => 'ge', 'en' => 'gb', 'uk' => 'ua', 'el' => 'gr', 'hy' => 'am', 
     'be' => 'by', 'fa' => 'ir', 'ar' => 'sa', 'hi' => 'in', 'vi' => 'vn', 'nb' => 'no', 'ms' => 'my'];
 ?>
 <?php if (count($languages ?? []) > 1): ?>
-    <div class="btn-group btn-group-sm lang-switch d-none" role="group" aria-label="შესავსები ენა" data-lang-switch>
+    <div class="lang-switch d-none" role="group" aria-label="შესავსები ენა" data-lang-switch>
         <?php foreach ($languages as $language): ?>
-            <button type="button" class="btn btn-outline-primary" data-lang-option="<?= e($language['code']) ?>" title="<?= e($language['native_name']) ?>">
-                <span class="fi fi-<?= e($flags[$language['code']] ?? $language['code']) ?>"></span><?= e(strtoupper($language['code'])) ?>
+            <button type="button" class="lang-switch-btn" data-lang-option="<?= e($language['code']) ?>" title="<?= e($language['native_name']) ?>">
+                <span class="fi fis fi-<?= e($flags[$language['code']] ?? $language['code']) ?>"></span><?= e(strtoupper($language['code'])) ?>
             </button>
         <?php endforeach ?>
-        <button type="button" class="btn btn-outline-primary" data-lang-option="all" title="ყველა ენა ერთად">ყველა</button>
+        <button type="button" class="lang-switch-btn" data-lang-option="all" title="ყველა ენა ერთად"><i class="fa fa-layer-group"></i>ყველა</button>
     </div>
 <?php endif ?>

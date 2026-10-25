@@ -271,29 +271,66 @@ body {
 
 /* ---- ენის გადამრთველი ---- */
 
-.lang-switch .btn {
-    min-width: 40px;
+.lang-switch {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    background: #e4e9f0;
+    border-radius: 50px;
+}
+
+.lang-switch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 14px;
+    border: 0;
+    border-radius: 50px;
+    background: transparent;
+    color: #6c7293;
+    font-size: 13px;
     font-weight: 600;
+    line-height: 1.4;
+    transition: background-color .15s, color .15s, box-shadow .15s;
 }
 
-.lang-switch .fi {
-    margin-right: 6px;
-    border-radius: 2px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, .1);
+.lang-switch-btn:hover {
+    color: #191c24;
 }
 
-.lang-switch .btn.has-error:not(.active) {
+.lang-switch-btn:focus-visible {
+    outline: 2px solid var(--bs-primary, #009cff);
+    outline-offset: 1px;
+}
+
+.lang-switch-btn.active {
+    background: #fff;
+    color: var(--bs-primary, #009cff);
+    box-shadow: 0 1px 4px rgba(25, 28, 36, .12);
+}
+
+.lang-switch-btn .fi {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .08);
+}
+
+.lang-switch-btn .fa {
+    font-size: 12px;
+}
+
+.lang-switch-btn.has-error:not(.active) {
     color: var(--bs-danger, #dc3545);
-    border-color: var(--bs-danger, #dc3545);
 }
 
-.lang-switch .btn.has-error::after {
+.lang-switch-btn.has-error::after {
     content: "";
     display: inline-block;
     width: 6px;
     height: 6px;
-    margin-left: 4px;
-    vertical-align: middle;
+    margin-left: -2px;
     border-radius: 50%;
     background: var(--bs-danger, #dc3545);
 }
