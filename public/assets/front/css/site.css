@@ -12,6 +12,41 @@ h1, h2, h3, h4, h5, h6,
     font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
 }
 
+/*
+ * მენიუს ქართული ტექსტი მთავრულით: DejaVu Sans-იდან აწყობილი შრიფტი (fonts/DejaVu-LICENSE.txt), რომელშიც
+ * მხედრულის ასოები (U+10D0–10FA) მთავრულის ფორმითაა — ტექსტი თავად არ იცვლება (SEO, კოპირება, ძებნა).
+ * unicode-range — მხოლოდ ქართული ასოები; ლათინური მენიუში Josefin Sans-ით რჩება.
+ */
+@font-face {
+    font-family: "DejaVu Sans Mtavruli";
+    src: url(../fonts/dejavu-sans-mtavruli-regular.woff2) format("woff2");
+    font-weight: 400;
+    font-display: swap;
+    unicode-range: U+10D0-10FF, U+1C90-1CBF;
+}
+
+@font-face {
+    font-family: "DejaVu Sans Mtavruli";
+    src: url(../fonts/dejavu-sans-mtavruli-bold.woff2) format("woff2");
+    font-weight: 700;
+    font-display: swap;
+    unicode-range: U+10D0-10FF, U+1C90-1CBF;
+}
+
+.navbar .navbar-nav .nav-link,
+.navbar .dropdown-item,
+.footer-menu {
+    font-family: "DejaVu Sans Mtavruli", "Josefin Sans", "Noto Sans Georgian", sans-serif;
+}
+
+/* მობილურზე გახსნილი მენიუ გვერდის თავში გამჭვირვალე იყო (main.js მუქ ფონს მხოლოდ scroll-ზე ამატებს) */
+@media (max-width: 991.98px) {
+    .navbar:has(.navbar-collapse.show),
+    .navbar:has(.navbar-collapse.collapsing) {
+        background: var(--bs-dark);
+    }
+}
+
 /* ქართული ტექსტი upper-case-ში (მთავრული) ზედმეტად გრძელდება — სათაურებში ვტოვებთ, ნავიგაციაში ვამცირებთ */
 html[lang="ka"] .navbar .navbar-nav .nav-link {
     font-size: 15px;
@@ -75,18 +110,27 @@ img[width][height] {
     height: auto;
 }
 
-/* page header-ის ნაგულისხმევი ფონი (style.css) — WebP, თუ ბრაუზერი უჭერს მხარს */
+/*
+ * თემის ფონები (style.css-ის carousel-1.jpg / footer-bg.png-ის ნაცვლად). სურათის შეცვლისას — ახალი ფაილის სახელი:
+ * ვერსიის გარეშე URL ბრაუზერში დიდხანს ინახება (public/.htaccess).
+ */
 .page-header {
-    background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), image-set(url(../img/carousel-1.webp) type("image/webp"), url(../img/carousel-1.jpg) type("image/jpeg"));
+    background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url(../img/page-header.jpg);
+    background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), image-set(url(../img/page-header.webp) type("image/webp"), url(../img/page-header.jpg) type("image/jpeg"));
 }
 
 @media (max-width: 1024px) {
     .page-header {
-        background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), image-set(url(../img/carousel-1-medium.webp) type("image/webp"), url(../img/carousel-1-medium.jpg) type("image/jpeg"));
+        background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url(../img/page-header-medium.jpg);
+        background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), image-set(url(../img/page-header-medium.webp) type("image/webp"), url(../img/page-header-medium.jpg) type("image/jpeg"));
     }
 }
 
-/* page_header ბლოკის საკუთარი ფონი (style.css-ში ფიქსირებული carousel-1.jpg-ის ნაცვლად) */
+.footer {
+    background-image: url(../img/footer-studio.png);
+}
+
+/* page_header ბლოკის საკუთარი ფონი */
 .page-header[data-custom-bg] {
     background-size: cover;
     background-position: top center;
@@ -143,7 +187,6 @@ img[width][height] {
     justify-content: center;
     gap: 8px 28px;
     text-transform: uppercase;
-    font-family: "Josefin Sans", "Noto Sans Georgian", sans-serif;
 }
 
 .footer-menu a {

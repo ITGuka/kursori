@@ -19,10 +19,13 @@ DirectoryIndex index.php
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 
-    # სტატიკური ფაილები: CSS/JS-ს ვერსია URL-შია (?v=ცვლილების დრო), ატვირთვებს — შემთხვევითი სახელი,
-    # ამიტომ ბრაუზერში 1 წელი ინახება. თემის სურათის (assets/front/img) შეცვლისას — ახალი სახელით.
+    # სტატიკური ფაილები: ვერსიიანი (?v=ცვლილების დრო, asset()) და ატვირთვები (შემთხვევითი სახელი) — 1 წელი,
+    # immutable; დანარჩენი (CSS-იდან მოთხოვნილი თემის სურათები, შრიფტები, favicon) — 1 კვირა.
     <FilesMatch "\.(css|js|woff2?|ttf|svg|ico|png|jpe?g|gif|webp)$">
-        Header set Cache-Control "public, max-age=31536000, immutable"
+        Header set Cache-Control "public, max-age=604800"
+        <If "%{QUERY_STRING} =~ /(^|&)v=/ || %{REQUEST_URI} =~ m#/uploads/#">
+            Header set Cache-Control "public, max-age=31536000, immutable"
+        </If>
     </FilesMatch>
 </IfModule>
 
