@@ -6,7 +6,7 @@ use App\Models\PageBlock;
 use Core\Database\DB;
 use Core\Database\Seeder;
 
-// ვებ სტუდიის საწყისი გვერდები ბლოკებით (ka + en). სურათები — Poseify-ის დემო (04_demo_media), ჩაანაცვლეთ რეალურით.
+// ვებ სტუდიის საწყისი გვერდები ბლოკებით (ka + en). სურათები — 04_demo_media (resources/stock), ჩაანაცვლეთ რეალურით.
 // სერვისები, გუნდი, შეფასებები, პორტფოლიო — კოლექციებიდან (07_demo_collections).
 // გაეშვება მხოლოდ მაშინ, როცა გვერდები ჯერ არ არის. თავიდან: php bin/console content:reset --force
 return new class extends Seeder {
@@ -185,7 +185,7 @@ return new class extends Seeder {
             [[], ['text' => ['მართვის პანელი — კონტენტს თავად ცვლით', 'An admin panel — you edit the content yourself']]],
         ]);
         $this->block($pageId, 'about', [
-            'items' => $items, 'image' => $this->img('about.png'), 'background' => $background,
+            'items' => $items, 'image' => $this->img('about.jpg'), 'background' => $background,
             'button1_link' => $this->link($portfolio), 'button2_link' => $this->link($contact),
         ], [
             'subtitle'      => ['ჩვენ შესახებ', 'About Us'],

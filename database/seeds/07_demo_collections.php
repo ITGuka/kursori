@@ -7,7 +7,7 @@ use Core\Database\DB;
 use Core\Database\Seeder;
 
 // ვებ სტუდიის კოლექციები: სერვისები, გუნდი, შეფასებები, პორტფოლიო (კატეგორიებით).
-// სურათები — დემო (04_demo_media), ჩაანაცვლეთ რეალურით. გაეშვება მხოლოდ მაშინ, როცა კოლექციებში ჯერ არაფერია.
+// სურათები — 04_demo_media (resources/stock), ჩაანაცვლეთ რეალურით. გაეშვება მხოლოდ მაშინ, როცა კოლექციებში ჯერ არაფერია.
 return new class extends Seeder {
     private Collection $items;
     private Category $categories;
@@ -86,12 +86,12 @@ return new class extends Seeder {
         $brand = $this->category('portfolio', ['ბრენდინგი', 'Branding'], ['brendingi', 'branding']);
         $shop = $this->category('portfolio', ['ონლაინ მაღაზია', 'E-commerce'], ['onlain-maghazia', 'e-commerce']);
         $projects = [
-            [$web, 'carousel-1.jpg', ['მოდის სახლის საიტი', 'Fashion House Website'], ['modis-sakhlis-saiti', 'fashion-house-website'], 2026, ['მოდის სახლი', 'Fashion House']],
-            [$shop, 'carousel-2.jpg', ['ტანსაცმლის ონლაინ მაღაზია', 'Apparel Online Store'], ['tansatsmlis-maghazia', 'apparel-store'], 2025, ['Style Market', 'Style Market']],
-            [$brand, 'about.png', ['სტუდიის ბრენდინგი', 'Studio Branding'], ['studiis-brendingi', 'studio-branding'], 2025, ['Photo Lab', 'Photo Lab']],
-            [$web, 'service-1.jpg', ['ღონისძიებების სააგენტო', 'Event Agency'], ['ghonisdziebebis-saagento', 'event-agency'], 2024, ['Event Pro', 'Event Pro']],
-            [$brand, 'service-3.jpg', ['კოსმეტიკის ბრენდი', 'Cosmetics Brand'], ['kosmetikis-brendi', 'cosmetics-brand'], 2024, ['Glow', 'Glow']],
-            [$shop, 'service-4.jpg', ['აქსესუარების მაღაზია', 'Accessories Store'], ['aksesuarebis-maghazia', 'accessories-store'], 2023, ['Accent', 'Accent']],
+            [$web, 'portfolio-1.jpg', ['მოდის სახლის საიტი', 'Fashion House Website'], ['modis-sakhlis-saiti', 'fashion-house-website'], 2026, ['მოდის სახლი', 'Fashion House']],
+            [$shop, 'portfolio-2.jpg', ['ტანსაცმლის ონლაინ მაღაზია', 'Apparel Online Store'], ['tansatsmlis-maghazia', 'apparel-store'], 2025, ['Style Market', 'Style Market']],
+            [$brand, 'portfolio-3.jpg', ['სტუდიის ბრენდინგი', 'Studio Branding'], ['studiis-brendingi', 'studio-branding'], 2025, ['Photo Lab', 'Photo Lab']],
+            [$web, 'portfolio-4.jpg', ['ღონისძიებების სააგენტო', 'Event Agency'], ['ghonisdziebebis-saagento', 'event-agency'], 2024, ['Event Pro', 'Event Pro']],
+            [$brand, 'portfolio-5.jpg', ['კოსმეტიკის ბრენდი', 'Cosmetics Brand'], ['kosmetikis-brendi', 'cosmetics-brand'], 2024, ['Glow', 'Glow']],
+            [$shop, 'portfolio-6.jpg', ['აქსესუარების მაღაზია', 'Accessories Store'], ['aksesuarebis-maghazia', 'accessories-store'], 2023, ['Accent', 'Accent']],
         ];
         foreach ($projects as [$category, $image, $title, $slug, $year, $client]) {
             $this->item('portfolio', $category, $image, $title, $slug,
