@@ -39,10 +39,12 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
         <meta name="twitter:card" content="summary_large_image">
     <?php endif ?>
     <?php
-    // ორგანიზაციის სტრუქტურირებული მონაცემები (Google: სახელი, ლოგო, სოც. ქსელები, კონტაქტი)
+    // ორგანიზაციის სტრუქტურირებული მონაცემები (Google: სახელი, ლოგო, სოც. ქსელები, კონტაქტი, მისამართი)
+    $address = (string)setting('contact.address');
     $organization = array_filter([
         '@context' => 'https://schema.org',
-        '@type'    => 'Organization',
+        '@type'    => 'ProfessionalService',
+        'address'  => $address !== '' ? ['@type' => 'PostalAddress', 'streetAddress' => $address, 'addressCountry' => 'GE'] : null,
         'name'     => $siteName,
         'url'      => absolute_url(locale()),
         'logo'     => ($logo = media_url(setting('general.logo'))) !== '' ? $absolute($logo) : null,
