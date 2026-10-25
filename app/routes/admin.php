@@ -29,6 +29,9 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
     $router->group(['middleware' => ['auth', 'flush_page_cache'], 'where' => ['id' => '\d+']], function (Router $router): void {
         $router->post('/logout', [AuthController::class, 'logout'])->name('logout');
         $router->get('/', [DashboardController::class, 'index'])->name('dashboard');
+        $router->post('/todos', [DashboardController::class, 'storeTodo'])->name('todos.store');
+        $router->post('/todos/{id}/toggle', [DashboardController::class, 'toggleTodo'])->name('todos.toggle');
+        $router->delete('/todos/{id}', [DashboardController::class, 'destroyTodo'])->name('todos.destroy');
 
         $router->get('/users', [UserController::class, 'index'])->name('users.index');
         $router->get('/users/create', [UserController::class, 'create'])->name('users.create');
