@@ -13,21 +13,21 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /*
- * მენიუს ქართული ტექსტი მთავრულით: DejaVu Sans-იდან აწყობილი შრიფტი (fonts/DejaVu-LICENSE.txt), რომელშიც
- * მხედრულის ასოები (U+10D0–10FA) მთავრულის ფორმითაა — ტექსტი თავად არ იცვლება (SEO, კოპირება, ძებნა).
+ * მენიუს ქართული ტექსტი მთავრულით: FiraGO-დან აწყობილი შრიფტი (fonts/FiraGO-LICENSE.txt), რომელშიც
+ * მხედრულის ასოები (U+10D0–10FA) FiraGO-ს მთავრულის (.case) ფორმითაა — ტექსტი თავად არ იცვლება (SEO, კოპირება, ძებნა).
  * unicode-range — მხოლოდ ქართული ასოები; ლათინური მენიუში Josefin Sans-ით რჩება.
  */
 @font-face {
-    font-family: "DejaVu Sans Mtavruli";
-    src: url(../fonts/dejavu-sans-mtavruli-regular.woff2) format("woff2");
+    font-family: "FiraGO Mtavruli";
+    src: url(../fonts/firago-mtavruli-regular.woff2) format("woff2");
     font-weight: 400;
     font-display: swap;
     unicode-range: U+10D0-10FF, U+1C90-1CBF;
 }
 
 @font-face {
-    font-family: "DejaVu Sans Mtavruli";
-    src: url(../fonts/dejavu-sans-mtavruli-bold.woff2) format("woff2");
+    font-family: "FiraGO Mtavruli";
+    src: url(../fonts/firago-mtavruli-bold.woff2) format("woff2");
     font-weight: 700;
     font-display: swap;
     unicode-range: U+10D0-10FF, U+1C90-1CBF;
@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5, h6,
 .navbar .navbar-nav .nav-link,
 .navbar .dropdown-item,
 .footer-menu {
-    font-family: "DejaVu Sans Mtavruli", "Josefin Sans", "Noto Sans Georgian", sans-serif;
+    font-family: "FiraGO Mtavruli", "Josefin Sans", "Noto Sans Georgian", sans-serif;
 }
 
 /* მობილურზე გახსნილი მენიუ გვერდის თავში გამჭვირვალე იყო (main.js მუქ ფონს მხოლოდ scroll-ზე ამატებს) */
@@ -483,7 +483,7 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
 
 /* მენიუს CTA ღილაკი — მთავრული შრიფტით, როგორც მენიუს ბმულები */
 .navbar-cta {
-    font-family: "DejaVu Sans Mtavruli", "Josefin Sans", "Noto Sans Georgian", sans-serif;
+    font-family: "FiraGO Mtavruli", "Josefin Sans", "Noto Sans Georgian", sans-serif;
     white-space: nowrap;
 }
 

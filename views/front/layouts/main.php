@@ -61,7 +61,7 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
     <?php if ($verification = (string)setting('seo.google_verification')): ?><meta name="google-site-verification" content="<?= e($verification) ?>"><?php endif ?>
 
     <?php // მენიუს მთავრულის შრიფტი — URL ზუსტად site.css-ის url()-ის მსგავსი (ვერსიის გარეშე), თორემ ორჯერ ჩამოიტვირთება ?>
-    <?php if (locale() === 'ka'): ?><link rel="preload" href="<?= e(url('assets/front/fonts/dejavu-sans-mtavruli-regular.woff2')) ?>" as="font" type="font/woff2" crossorigin><?php endif ?>
+    <?php if (locale() === 'ka'): ?><link rel="preload" href="<?= e(url('assets/front/fonts/firago-mtavruli-regular.woff2')) ?>" as="font" type="font/woff2" crossorigin><?php endif ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <?php
