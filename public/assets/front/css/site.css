@@ -499,7 +499,54 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     border-radius: 8px;
 }
 
-/* ნდობის ზოლი (stats ბლოკი) */
+/*
+ * ნდობის ზოლი (stats ბლოკი): ერთი ბარათი, როგორც ფასების/სერვისების ბარათები.
+ * გამყოფი ხაზები — grid-ის 1px gap-ში ჩანს ბარათის ფონი (ორივე მიმართულებით, ზედმეტი border-ების გარეშე)
+ */
+.stats-panel {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-top: 3px solid var(--bs-primary);
+    border-radius: 12px;
+}
+
+.stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.75rem 1rem;
+    background: var(--bs-secondary);
+    text-align: center;
+}
+
+.stats.bg-secondary .stats-item {
+    background: var(--bs-dark);
+}
+
+/* მობილურზე კენტი რაოდენობისას ბოლო ელემენტი მთელ რიგზე — ცარიელი უჯრა არ ჩანს */
+.stats-item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
+@media (min-width: 992px) {
+    .stats-panel {
+        grid-template-columns: repeat(var(--stats-cols, 4), 1fr);
+    }
+
+    .stats-item:last-child:nth-child(odd) {
+        grid-column: auto;
+    }
+
+    .stats-item {
+        padding: 2.25rem 1.5rem;
+    }
+}
+
 .stats-value {
     font-size: calc(1.8rem + 1.2vw);
     font-weight: 700;
@@ -508,8 +555,12 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
 }
 
 .stats-label {
-    margin-top: .5rem;
-    color: var(--bs-light);
+    margin-top: .6rem;
+    max-width: 16rem;
+    color: var(--bs-white);
+    font-size: 1.05rem;
+    line-height: 1.4;
+    opacity: .75;
 }
 
 @media (min-width: 1200px) {
