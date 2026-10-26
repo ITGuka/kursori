@@ -72,6 +72,11 @@ $input = function (string $inputName, string $inputId, string $current, string $
                 <div class="col-md-6" data-lang="<?= e($code) ?>">
                     <label class="small text-muted mb-1" for="<?= e("$id-$code") ?>"><?= e($language['native_name']) ?></label>
                     <?= $input($name . '[' . $code . ']', "$id-$code", $value($key, $code), "$key.$code") ?>
+                    <?php // default თითო ენის ველის ქვეშ — ზოგადი მინიშნება ქვემოთ ყველა ენაზე ძირითადი ენის default-ს აჩვენებდა ?>
+                    <?php $langDefault = is_array($field['default'] ?? null) ? ($field['default'][$code] ?? null) : ($field['default'] ?? null); ?>
+                    <?php if (is_string($langDefault) && $langDefault !== ''): ?>
+                        <div class="form-text">ცარიელის შემთხვევაში: „<?= e($langDefault) ?>“</div>
+                    <?php endif ?>
                 </div>
             <?php endforeach ?>
         </div>
@@ -82,7 +87,8 @@ $input = function (string $inputName, string $inputId, string $current, string $
 
     <?php
     $default = $field['default'] ?? null;
-    $defaultText = is_array($default) ? ($default[config('app.default_locale')] ?? reset($default)) : (is_string($default) ? $default : null);
+    $defaultText = !empty($field['translatable']) ? null // თარგმნადს default ენის ველთან აქვს
+        : (is_array($default) ? ($default[config('app.default_locale')] ?? reset($default)) : (is_string($default) ? $default : null));
     ?>
     <?php if (!empty($field['help']) || ($defaultText && $type !== 'toggle')): ?>
         <div class="form-text">
