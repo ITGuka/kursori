@@ -642,6 +642,100 @@ img[width][height] {
     margin-bottom: 0;
 }
 
+/* „ჩვენ შესახებ“ ბლოკი (blocks/about): ორივე სვეტს ერთნაირი padding, სია და ღილაკები კიდეებს არ ეკვრის */
+.about-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+@media (min-width: 992px) {
+    .about-section {
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+    }
+}
+
+.about-text {
+    color: var(--bs-light);
+    font-size: 1.15rem;
+    line-height: 1.7;
+}
+
+.about-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+.about-list li {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    padding: .9rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    color: var(--bs-white);
+}
+
+.about-list-icon {
+    display: inline-flex;
+    flex: 0 0 32px;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(228, 23, 121, .15); /* --bs-primary, 15% */
+    color: var(--bs-primary);
+    font-size: .8rem;
+}
+
+.about-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 575.98px) {
+    .about-actions .btn {
+        width: 100%;
+    }
+}
+
+/* სურათი: მომრგვალებული, ვარდისფერი ჩარჩო 16px-ით გადაწეული (ადგილი margin-ით რჩება, რომ სექციიდან არ გავიდეს) */
+.about-media {
+    position: relative;
+    isolation: isolate;
+    margin: 0 16px 16px 0;
+}
+
+.about-media::before {
+    content: "";
+    position: absolute;
+    inset: 16px -16px -16px 16px;
+    z-index: -1;
+    border: 2px solid var(--bs-primary);
+    border-radius: 12px;
+}
+
+.about-media picture {
+    display: block;
+}
+
+.about-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+@media (min-width: 992px) {
+    .about-image {
+        aspect-ratio: 4 / 5;
+    }
+}
+
 /* ფორმის honeypot ველი — ეკრანზე არ ჩანს (display:none-ს ზოგი ბოტი ცნობს) */
 .form-hp {
     position: absolute;
