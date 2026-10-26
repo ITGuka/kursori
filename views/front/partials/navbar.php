@@ -49,13 +49,15 @@ $cta = cta_link();
             </div>
         <?php endif ?>
         <?php if (count($languageLinks) > 1): ?>
-            <div class="d-flex gap-2 px-4 px-lg-0 pb-3 pb-lg-0" aria-label="<?= e(t('common.language')) ?>">
-                <?php foreach ($languages ?? [] as $language): ?>
-                    <?php if (isset($languageLinks[$language['code']])): ?>
-                        <a href="<?= e($languageLinks[$language['code']]) ?>" hreflang="<?= e($language['code']) ?>" lang="<?= e($language['code']) ?>"
-                           class="btn btn-sm <?= $language['code'] === $lang ? 'btn-primary' : 'btn-outline-primary' ?> border-2 text-uppercase"><?= e($language['code']) ?></a>
-                    <?php endif ?>
-                <?php endforeach ?>
+            <div class="px-4 px-lg-0 pb-3 pb-lg-0">
+                <div class="lang-switch" role="group" aria-label="<?= e(t('common.language')) ?>">
+                    <?php foreach ($languages ?? [] as $language): ?>
+                        <?php if (isset($languageLinks[$language['code']])): ?>
+                            <a href="<?= e($languageLinks[$language['code']]) ?>" hreflang="<?= e($language['code']) ?>" lang="<?= e($language['code']) ?>"
+                               class="lang-switch-item<?= $language['code'] === $lang ? ' is-active' : '' ?>"<?= $language['code'] === $lang ? ' aria-current="true"' : '' ?>><?= e($language['code']) ?></a>
+                        <?php endif ?>
+                    <?php endforeach ?>
+                </div>
             </div>
         <?php endif ?>
     </div>

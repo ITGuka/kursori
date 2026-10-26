@@ -673,28 +673,60 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /*
- * მენიუს CTA და ენის ღილაკები: ფიქსირებული სიმაღლე, ორივე ენაზე ერთნაირი ზომა
+ * მენიუს CTA: ფიქსირებული სიმაღლე, ორივე ენაზე ერთნაირი ზომა
  * (შრიფტის ზომაზე მიბმისას en/ka-ზე სხვადასხვა სიმაღლის გამოდიოდა), ცენტრი — მენიუს ტექსტის ხაზზე
  */
-.navbar-cta,
-.navbar .btn-sm {
+.navbar-cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     height: 36px;
+    padding: 0 1.25rem;
+    font-size: 15px;
+    font-weight: 400;
     line-height: 1;
     white-space: nowrap;
 }
 
-.navbar-cta {
-    padding: 0 1.25rem;
-    font-size: 15px;
-    font-weight: 400;
+/* ენის გადამრთველი: ერთი „აბი“ (segmented control) CTA-ს სიმაღლით; აქტიური — ვარდისფერი, დანარჩენი მშვიდი */
+.lang-switch {
+    display: inline-flex;
+    height: 36px;
+    padding: 3px;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 50px;
 }
 
-.navbar .btn-sm {
-    min-width: 36px;
-    padding: 0 .5rem;
+.lang-switch-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    padding: 0 .65rem;
+    border-radius: 50px;
+    color: rgba(255, 255, 255, .7);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color .2s, background-color .2s;
+}
+
+.lang-switch-item:hover {
+    background: rgba(255, 255, 255, .08);
+    color: var(--bs-white);
+}
+
+.lang-switch-item.is-active {
+    background: var(--bs-primary);
+    color: var(--bs-white);
+}
+
+.lang-switch-item:focus-visible {
+    outline: 2px solid var(--bs-white);
+    outline-offset: 1px;
 }
 
 /* 992–1199px: მენიუს ბმულებივით 13px (ზემოთ, navbar-ის წესებთან) */
