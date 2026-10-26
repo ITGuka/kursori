@@ -1,6 +1,10 @@
 <?php
 /** @var Core\View\Template $this @var array $data */
 $items = array_values(array_filter($data['items'], fn ($item) => $item['title'] !== ''));
+// სათაური — იგივე ბმული, რაც ღილაკს (ბმულის გარეშე ტექსტად რჩება)
+$titleLink = fn (array $item): string => $item['button_link']
+    ? '<a' . link_attrs($item['button_link']) . ' class="service-title-link">' . e($item['title']) . '</a>'
+    : e($item['title']);
 ?>
 <div class="container-fluid py-5">
     <div class="container py-5">
@@ -14,7 +18,7 @@ $items = array_values(array_filter($data['items'], fn ($item) => $item['title'] 
                                 <?= picture($item['image'], 'thumb', ['class' => 'service-card-img rounded-circle', 'alt' => '']) ?>
                             <?php endif ?>
                             <div class="service-card-body">
-                                <h3 class="h4 text-uppercase"><?= e($item['title']) ?></h3>
+                                <h3 class="h4 text-uppercase"><?= $titleLink($item) ?></h3>
                                 <?php if ($item['text'] !== ''): ?><p class="mb-3"><?= nl2br(e($item['text'])) ?></p><?php endif ?>
                                 <?php if ($item['button_label'] !== '' && $item['button_link']): ?>
                                     <a<?= link_attrs($item['button_link']) ?> class="service-card-link"><?= e($item['button_label']) ?><span class="visually-hidden">: <?= e($item['title']) ?></span> <i class="fa fa-arrow-right ms-1"></i></a>
@@ -38,7 +42,7 @@ $items = array_values(array_filter($data['items'], fn ($item) => $item['title'] 
                     </div>
                     <div class="col-md-7">
                         <div class="service-text px-5 px-md-0 py-md-5<?= $left ? '' : ' text-md-end' ?> wow <?= $left ? 'fadeInRight' : 'fadeInLeft' ?>" data-wow-delay="0.5s">
-                            <h3 class="text-uppercase"><?= e($item['title']) ?></h3>
+                            <h3 class="text-uppercase"><?= $titleLink($item) ?></h3>
                             <?php if ($item['text'] !== ''): ?><p class="mb-4"><?= nl2br(e($item['text'])) ?></p><?php endif ?>
                             <?php if ($item['button_label'] !== '' && $item['button_link']): ?>
                                 <a<?= link_attrs($item['button_link']) ?> class="btn btn-outline-primary border-2 px-4"><?= e($item['button_label']) ?> <i class="fa fa-arrow-right ms-1"></i></a>
