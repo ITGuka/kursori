@@ -47,6 +47,9 @@ return [
             'mode'   => ['type' => 'select', 'label' => 'რეჟიმი', 'default' => 'carousel',
                          'options' => ['carousel' => 'სლაიდერი', 'static' => 'სტატიკური (მხოლოდ პირველი სლაიდი)'],
                          'help' => 'სტატიკური — ერთი გზავნილი, ისრებისა და ავტომატური გადართვის გარეშე; დანარჩენი სლაიდები ინახება.'],
+            'interval' => ['type' => 'number', 'label' => 'სლაიდის ხანგრძლივობა (წამი)', 'min' => 2, 'max' => 30, 'default' => 5,
+                           'show_if' => ['mode' => 'carousel'], 'help' => 'რამდენ წამში ერთხელ გადაირთოს სლაიდი.'],
+            'arrows'   => ['type' => 'toggle', 'label' => 'ისრების ჩვენება', 'default' => false, 'show_if' => ['mode' => 'carousel']],
             'slides' =>['type' => 'repeater', 'label' => 'სლაიდები', 'min_items' => 1, 'max_items' => 8, 'fields' => [
                 'image'        => ['type' => 'image', 'label' => 'სურათი', 'required' => true, 'help' => 'რეკომენდებული 1920×1080'],
                 'subtitle'     => ['type' => 'text', 'label' => 'ქვესათაური', 'translatable' => true, 'max' => 100],

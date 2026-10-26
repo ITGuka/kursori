@@ -46,18 +46,23 @@ $caption = function (array $slide, bool $first): void { ?>
         </div>
     </div>
 <?php else: ?>
-    <div id="<?= e($carouselId) ?>" class="carousel slide header-carousel" data-bs-ride="carousel">
+    <?php // თითო სლაიდი — იგივე დიზაინი, რაც სტატიკურ ჰეროს (.hero-static); ინტერვალი და ისრები — ადმინიდან ?>
+    <?php $interval = max(2, min(30, (int)$data['interval'])) * 1000; ?>
+    <div id="<?= e($carouselId) ?>" class="carousel slide header-carousel hero-carousel" data-bs-ride="carousel" data-bs-interval="<?= $interval ?>">
         <div class="carousel-inner">
             <?php foreach ($slides as $i => $slide): ?>
-                <div class="carousel-item<?= $i === 0 ? ' active' : '' ?>">
-                    <?= picture($slide['image'], 'large', ['class' => 'w-100', 'alt' => media_alt($slide['image']) ?: $slide['title']] + ($i === 0 ? ['loading' => 'eager', 'fetchpriority' => 'high'] : [])) ?>
-                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                        <?php $caption($slide, $i === 0) ?>
+                <div class="carousel-item<?= $i === 0 ? ' active' : '' ?>" data-bs-interval="<?= $interval ?>">
+                    <div class="hero-static">
+                        <?php // ყველა სლაიდი eager: lazy სურათი display:none სლაიდში გამოჩენამდე არ იტვირთება და გადართვისას შავი ფონი ჩანდა ?>
+                        <?= picture($slide['image'], 'large', ['class' => 'hero-static-img', 'alt' => media_alt($slide['image']) ?: $slide['title'], 'loading' => 'eager'] + ($i === 0 ? ['fetchpriority' => 'high'] : [])) ?>
+                        <div class="hero-static-content container text-center">
+                            <?php $caption($slide, $i === 0) ?>
+                        </div>
                     </div>
                 </div>
             <?php endforeach ?>
         </div>
-        <?php if (count($slides) > 1): ?>
+        <?php if (count($slides) > 1 && $data['arrows']): ?>
             <button class="carousel-control-prev" type="button" data-bs-target="#<?= e($carouselId) ?>" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden"><?= e(t('common.previous')) ?></span>

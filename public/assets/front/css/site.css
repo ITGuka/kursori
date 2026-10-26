@@ -286,6 +286,26 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
+/*
+ * სლაიდერი (hero_carousel, mode = carousel): სლაიდები .hero-static-ის დიზაინით.
+ * ყველა სლაიდი ერთი სიმაღლისაა (მობილურზეც), რომ გადართვისას გვერდი არ „ხტოდეს“
+ */
+.hero-carousel .hero-static {
+    min-height: min(100vh, 760px);
+}
+
+@media (max-width: 991.98px) {
+    .hero-carousel .hero-static {
+        min-height: min(100vh, 640px);
+    }
+}
+
+.hero-carousel .carousel-control-prev,
+.hero-carousel .carousel-control-next {
+    z-index: 2;
+    width: 8%;
+}
+
 .title h1,
 .title h2,
 .carousel-caption .display-1,
