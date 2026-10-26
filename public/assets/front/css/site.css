@@ -702,22 +702,7 @@ img[width][height] {
     }
 }
 
-/* სურათი: მომრგვალებული, ვარდისფერი ჩარჩო 16px-ით გადაწეული (ადგილი margin-ით რჩება, რომ სექციიდან არ გავიდეს) */
-.about-media {
-    position: relative;
-    isolation: isolate;
-    margin: 0 16px 16px 0;
-}
-
-.about-media::before {
-    content: "";
-    position: absolute;
-    inset: 16px -16px -16px 16px;
-    z-index: -1;
-    border: 2px solid var(--bs-primary);
-    border-radius: 12px;
-}
-
+/* სურათი: სვეტის მთელ სიგანეზე, მომრგვალებული, ბარათების მსგავსი თხელი ჩარჩოთი (გადაწეული დეკორი სურათს ადგილიდან ამოვარდნილად აჩენდა) */
 .about-media picture {
     display: block;
 }
@@ -727,7 +712,9 @@ img[width][height] {
     width: 100%;
     aspect-ratio: 16 / 10;
     object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, .08);
     border-radius: 12px;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, .35);
 }
 
 @media (min-width: 992px) {
