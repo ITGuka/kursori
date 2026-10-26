@@ -117,12 +117,6 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     .navbar .navbar-brand h2 {
         font-size: 1.5rem;
     }
-
-    .navbar-cta {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-        font-size: 13px;
-    }
 }
 
 /* style.css-ის #header-carousel წესები — ბლოკის სლაიდერს უნიკალური id აქვს, ამიტომ კლასით */
@@ -569,9 +563,26 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     }
 }
 
-/* მენიუს CTA ღილაკი (შრიფტი — ზედა საერთო წესით, როგორც მენიუს ბმულები) */
+/* მენიუს CTA ღილაკი: ტექსტი მენიუს ბმულების ზომის და წონის (style.css: 17px, ka — 15px), padding — კომპაქტური */
 .navbar-cta {
+    padding: .5rem 1.25rem;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.3;
     white-space: nowrap;
+}
+
+html[lang="ka"] .navbar-cta {
+    font-size: 15px;
+}
+
+/* 992–1199px: მენიუს ბმულებივით 13px (ზემოთ, navbar-ის წესებთან) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .navbar-cta,
+    html[lang="ka"] .navbar-cta {
+        padding: .4rem 1rem;
+        font-size: 13px;
+    }
 }
 
 /* მთავრული (ka) და UPPERCASE (en) ფართოა — სლაიდერის/ჰეროს სათაური დიდ ეკრანზეც მცირდება, რომ navbar-ს არ შეეხოს */

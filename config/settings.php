@@ -20,8 +20,9 @@ return [
         'fields' => [
             'site_name'        => ['label' => 'საიტის სახელი', 'translatable' => true, 'default' => 'WEBDEV', 'max' => 100],
             'tagline'          => ['label' => 'სლოგანი', 'translatable' => true, 'max' => 150],
-            'cta_label'        => ['label' => 'მენიუს ღილაკის ტექსტი', 'translatable' => true, 'max' => 40,
-                                   'default' => ['ka' => 'მოითხოვეთ შეთავაზება', 'en' => 'Get a Quote']],
+            'cta_label'        => ['label' => 'ჰედერის ღილაკის ტექსტი („მოითხოვეთ შეთავაზება“)', 'translatable' => true, 'max' => 40,
+                                   'help' => 'ჰედერში, მენიუს მარჯვნივ ვარდისფერი ღილაკის წარწერა — თითო ენაზე აქ იცვლება (თარგმანებში არ არის).',
+                                   'default' => ['ka' => 'მოითხოვეთ შეთავაზება', 'en' => 'Request a Proposal']],
             'cta_page'         => ['label' => 'მენიუს ღილაკის გვერდი', 'type' => 'page',
                                    'help' => 'მენიუს მარჯვნივ გამოკვეთილი ღილაკი (მაგ. კონტაქტი). ცარიელი — ღილაკი არ ჩანს.'],
             'logo'             => ['label' => 'ლოგო', 'type' => 'image', 'help' => 'ცარიელის შემთხვევაში ჩანს საიტის სახელი.'],

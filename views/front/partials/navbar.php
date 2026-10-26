@@ -45,7 +45,7 @@ $cta = cta_link();
         </div>
         <?php if ($cta !== null): ?>
             <div class="px-4 px-lg-0 pb-3 pb-lg-0 me-lg-3">
-                <a href="<?= e($cta['href']) ?>" class="btn btn-primary border-2 px-4 navbar-cta"<?= $isActive($cta['href']) ? ' aria-current="page"' : '' ?>><?= e($cta['label']) ?></a>
+                <a href="<?= e($cta['href']) ?>" class="btn btn-primary border-2 navbar-cta"<?= $isActive($cta['href']) ? ' aria-current="page"' : '' ?>><?= e($cta['label']) ?></a>
             </div>
         <?php endif ?>
         <?php if (count($languageLinks) > 1): ?>
