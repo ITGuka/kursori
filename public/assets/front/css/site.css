@@ -119,6 +119,22 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
+/*
+ * ბლოკებს შორის დაშორება: Poseify-ის ორმაგი py-5 (გარე + შიდა = 96px თითო მხარეს, ბლოკებს შორის 192px) →
+ * desktop 64px (ბლოკებს შორის 128px), მობილური 48px (96px). bootstrap-ის py-5 !important-ითაა, ამიტომ აქაც.
+ */
+.container-fluid.py-5 > .container.py-5 {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+@media (min-width: 768px) {
+    .container-fluid.py-5 > .container.py-5 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+}
+
 /* style.css-ის #header-carousel წესები — ბლოკის სლაიდერს უნიკალური id აქვს, ამიტომ კლასით */
 @media (max-width: 768px) {
     .header-carousel .carousel-item {
@@ -678,14 +694,14 @@ img[width][height] {
 
 /* „ჩვენ შესახებ“ ბლოკი (blocks/about): ორივე სვეტს ერთნაირი padding, სია და ღილაკები კიდეებს არ ეკვრის */
 .about-section {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
     .about-section {
-        padding-top: 6rem;
-        padding-bottom: 6rem;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
     }
 }
 
