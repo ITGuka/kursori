@@ -22,6 +22,9 @@ final class Auth
     private string $sessionKey;
     private int $idleTimeout;
 
+    /** @var array{table: string, cookie: string, lifetime: int}|null „დამიმახსოვრე“ (null — გამორთულია) */
+    private ?array $remember;
+
     /** @var array<string, mixed>|false|null false — უკვე შემოწმდა და სტუმარია */
     private array|false|null $user = null;
 
@@ -31,10 +34,15 @@ final class Auth
         $this->table = DB::ident($this->tableName);
         $this->sessionKey = $config['session_key'] ?? '_auth_id';
         $this->idleTimeout = (int)($config['idle_timeout'] ?? 7200);
+        $this->remember = isset($config['remember']['table'], $config['remember']['cookie']) ? [
+            'table'    => (string)$config['remember']['table'],
+            'cookie'   => (string)$config['remember']['cookie'],
+            'lifetime' => (int)($config['remember']['lifetime'] ?? 30 * 86400),
+        ] : null;
     }
 
     /** @return array<string, mixed>|null წარმატებისას მომხმარებელი (უკვე შესული) */
-    public function attempt(string $email, string $password): ?array
+    public function attempt(string $email, string $password, bool $remember = false): ?array
     {
         $user = $this->db->first("SELECT * FROM {$this->table} WHERE email = ? AND is_active = 1", [strtolower(trim($email))]);
 
@@ -51,6 +59,9 @@ final class Auth
         }
 
         $this->login($user);
+        if ($remember) {
+            $this->issueRememberToken($user);
+        }
         return $user;
     }
 
@@ -75,7 +86,18 @@ final class Auth
         }
     }
 
+    /** სესიის დასრულება და ამ მოწყობილობის „დამიმახსოვრე“ token-ის გაუქმება */
     public function logout(): void
+    {
+        [$selector] = $this->rememberCookie() ?? [null];
+        if ($selector !== null) {
+            $this->db->delete($this->remember['table'], 'selector = ?', [$selector]);
+        }
+        $this->forgetRememberCookie();
+        $this->endSession();
+    }
+
+    private function endSession(): void
     {
         $this->user = false;
         Session::invalidate();
@@ -104,7 +126,7 @@ final class Auth
     {
         $id = Session::get($this->sessionKey);
         if (!is_int($id)) {
-            return null;
+            return $this->resolveFromRememberCookie();
         }
 
         $last = (int)Session::get(self::LAST_ACTIVITY, 0);
@@ -113,12 +135,110 @@ final class Auth
         if ($user === null
             || time() - $last > $this->idleTimeout
             || !hash_equals((string)Session::get(self::FINGERPRINT, ''), self::fingerprint($user))) {
-            $this->logout();
-            return null;
+            // სესია დასრულდა; „დამიმახსოვრე“ token (თუ ვალიდურია) ახალ სესიას ხსნის
+            $this->endSession();
+            return $this->resolveFromRememberCookie();
         }
 
         Session::set(self::LAST_ACTIVITY, time());
         return $user;
+    }
+
+    // ---- „დამიმახსოვრე“ ----
+
+    /** ახალი token: ბაზაში validator-ის sha256, cookie-ში selector:validator */
+    private function issueRememberToken(array $user): void
+    {
+        if ($this->remember === null) {
+            return;
+        }
+        $table = $this->remember['table'];
+        // დრო PHP-დან (expires_at-იც PHP-ის date()-ით იწერება — MySQL-ის NOW() სხვა timezone-ში შეიძლება იყოს)
+        $this->db->delete($table, 'user_id = ? AND expires_at < ?', [$user['id'], date('Y-m-d H:i:s')]);
+
+        $selector = bin2hex(random_bytes(12));
+        $validator = bin2hex(random_bytes(32));
+        $expires = time() + $this->remember['lifetime'];
+        $this->db->insert($table, [
+            'user_id'        => (int)$user['id'],
+            'selector'       => $selector,
+            'validator_hash' => hash('sha256', $validator),
+            'fingerprint'    => self::fingerprint($user),
+            'expires_at'     => date('Y-m-d H:i:s', $expires),
+        ]);
+        $this->setRememberCookie($selector . ':' . $validator, $expires);
+    }
+
+    /** @return array<string, mixed>|null */
+    private function resolveFromRememberCookie(): ?array
+    {
+        [$selector, $validator] = $this->rememberCookie() ?? [null, null];
+        if ($selector === null) {
+            return null;
+        }
+
+        $table = DB::ident($this->remember['table']);
+        $token = $this->db->first("SELECT * FROM $table WHERE selector = ? AND expires_at > ?", [$selector, date('Y-m-d H:i:s')]);
+        $user = $token ? $this->db->first("SELECT * FROM {$this->table} WHERE id = ? AND is_active = 1", [$token['user_id']]) : null;
+
+        // ერთჯერადი: ძველი token ყოველთვის იშლება (ვალიდურზე — ახლით იცვლება)
+        if ($token !== null) {
+            $this->db->delete($this->remember['table'], 'id = ?', [$token['id']]);
+        }
+        if ($token === null || $user === null
+            || !hash_equals((string)$token['validator_hash'], hash('sha256', $validator))
+            || !hash_equals((string)$token['fingerprint'], self::fingerprint($user))) {
+            $this->forgetRememberCookie();
+            return null;
+        }
+
+        $this->login($user);
+        $this->issueRememberToken($user);
+        return $user;
+    }
+
+    /** @return array{0: string, 1: string}|null */
+    private function rememberCookie(): ?array
+    {
+        if ($this->remember === null) {
+            return null;
+        }
+        $value = $_COOKIE[$this->remember['cookie']] ?? null;
+        if (!is_string($value) || !preg_match('/^([0-9a-f]{24}):([0-9a-f]{64})$/', $value, $m)) {
+            return null;
+        }
+        return [$m[1], $m[2]];
+    }
+
+    private function setRememberCookie(string $value, int $expires): void
+    {
+        $_COOKIE[$this->remember['cookie']] = $value;
+        if (!headers_sent()) {
+            setcookie($this->remember['cookie'], $value, [
+                'expires'  => $expires,
+                'path'     => '/',
+                'secure'   => (bool)session_get_cookie_params()['secure'],
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
+        }
+    }
+
+    private function forgetRememberCookie(): void
+    {
+        if ($this->remember === null || !isset($_COOKIE[$this->remember['cookie']])) {
+            return;
+        }
+        unset($_COOKIE[$this->remember['cookie']]);
+        if (!headers_sent()) {
+            setcookie($this->remember['cookie'], '', [
+                'expires'  => time() - 3600,
+                'path'     => '/',
+                'secure'   => (bool)session_get_cookie_params()['secure'],
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
+        }
     }
 
     /** პაროლის შეცვლისას იცვლება — ძველი სესიები ავტომატურად იხურება */

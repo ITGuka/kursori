@@ -7,6 +7,13 @@ return [
     // უმოქმედობის შემდეგ ავტომატური გამოსვლა (წამები)
     'idle_timeout' => 2 * 60 * 60,
 
+    // „დამიმახსოვრე“ — ვადის განმავლობაში სესიის გარეშეც შედის (ბრაუზერის დახურვის/უმოქმედობის შემდეგ)
+    'remember' => [
+        'table'    => 'admin_remember_tokens',
+        'cookie'   => 'webdev_remember',
+        'lifetime' => 30 * 24 * 60 * 60,
+    ],
+
     'throttle' => [
         'max_attempts'    => 5,    // ერთი email + IP
         'ip_max_attempts' => 20,   // ერთი IP, ნებისმიერი email

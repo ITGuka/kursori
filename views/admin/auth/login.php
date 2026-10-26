@@ -17,10 +17,14 @@
                value="<?= e(old('email')) ?>" autocomplete="username" required autofocus>
         <label for="email">ელ-ფოსტა</label>
     </div>
-    <div class="form-floating mb-4">
+    <div class="form-floating mb-3">
         <input type="password" class="form-control" id="password" name="password" placeholder="პაროლი"
                autocomplete="current-password" required>
         <label for="password">პაროლი</label>
+    </div>
+    <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" id="remember" name="remember" value="1"<?= old('remember') === '1' ? ' checked' : '' ?>>
+        <label class="form-check-label" for="remember">დამიმახსოვრე ამ კომპიუტერზე (30 დღე)</label>
     </div>
     <button type="submit" class="btn btn-primary py-3 w-100">შესვლა</button>
 </form>
