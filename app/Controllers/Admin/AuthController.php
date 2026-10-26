@@ -38,18 +38,18 @@ final class AuthController
                 $minutes = (int)ceil($this->limiter->availableIn($key) / 60);
                 return back(route('admin.login'))
                     ->withErrors(['email' => "ძალიან ბევრი მცდელობა. სცადეთ $minutes წუთში."])
-                    ->withInput(['email' => $email]);
+                    ->withInput(['email' => $email, 'remember' => $request->string('remember')]);
             }
         }
 
-        if ($email === '' || $password === '' || ($user = $this->auth->attempt($email, $password)) === null) {
+        if ($email === '' || $password === '' || ($user = $this->auth->attempt($email, $password, $request->string('remember') === '1')) === null) {
             foreach ($keys as $key => $max) {
                 $this->limiter->hit($key, $throttle['decay']);
             }
             $this->log->log('login_failed', data: ['email' => $email]);
             return back(route('admin.login'))
                 ->withErrors(['email' => 'ელ-ფოსტა ან პაროლი არასწორია.'])
-                ->withInput(['email' => $email]);
+                ->withInput(['email' => $email, 'remember' => $request->string('remember')]);
         }
 
         $this->limiter->clear(array_key_first($keys));
