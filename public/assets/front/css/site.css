@@ -563,24 +563,35 @@ html[lang="ka"] .navbar .navbar-nav .nav-link {
     }
 }
 
-/* მენიუს CTA ღილაკი: ტექსტი მენიუს ბმულების ზომის და წონის (style.css: 17px, ka — 15px), padding — კომპაქტური */
-.navbar-cta {
-    padding: .5rem 1.25rem;
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.3;
+/*
+ * მენიუს CTA და ენის ღილაკები: ფიქსირებული სიმაღლე, ორივე ენაზე ერთნაირი ზომა
+ * (შრიფტის ზომაზე მიბმისას en/ka-ზე სხვადასხვა სიმაღლის გამოდიოდა), ცენტრი — მენიუს ტექსტის ხაზზე
+ */
+.navbar-cta,
+.navbar .btn-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    line-height: 1;
     white-space: nowrap;
 }
 
-html[lang="ka"] .navbar-cta {
+.navbar-cta {
+    padding: 0 1.25rem;
     font-size: 15px;
+    font-weight: 400;
+}
+
+.navbar .btn-sm {
+    min-width: 36px;
+    padding: 0 .5rem;
 }
 
 /* 992–1199px: მენიუს ბმულებივით 13px (ზემოთ, navbar-ის წესებთან) */
 @media (min-width: 992px) and (max-width: 1199.98px) {
-    .navbar-cta,
-    html[lang="ka"] .navbar-cta {
-        padding: .4rem 1rem;
+    .navbar-cta {
+        padding: 0 1rem;
         font-size: 13px;
     }
 }
