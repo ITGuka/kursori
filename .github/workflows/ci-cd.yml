@@ -1,0 +1,110 @@
+name: CI/CD
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: Lint & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # hosting runs PHP 8.2 — check against the same version
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: gd, fileinfo, mbstring, pdo, pdo_mysql
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish
+
+      - name: Install dependencies
+        run: composer install --no-dev --prefer-dist --no-progress --optimize-autoloader
+
+      - name: PHP syntax check
+        run: |
+          find . -path ./vendor -prune -o -name '*.php' -print0 \
+            | xargs -0 -n1 -P4 php -l -d display_errors=1 > /dev/null
+          php -l bin/console > /dev/null
+
+      - name: Pack build
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: tar -czf build.tar.gz --exclude=.git --exclude=build.tar.gz .
+
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          name: build
+          path: build.tar.gz
+          retention-days: 7
+
+  deploy:
+    name: Deploy to kursori.dev
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://kursori.dev
+    env:
+      APP_DIR: kursori.dev
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+
+      - name: Unpack build
+        run: mkdir app && tar -xzf build.tar.gz -C app
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<EOF
+          Host prod
+            HostName ${{ secrets.SSH_HOST }}
+            Port ${{ secrets.SSH_PORT }}
+            User ${{ secrets.SSH_USER }}
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+          EOF
+
+      # server-only files (.env, uploads, cache, logs, SSL validation, cPanel files)
+      # are excluded, so --delete never touches them
+      - name: Sync files
+        run: |
+          rsync -rltz --delete --omit-dir-times \
+            --exclude='/.env' \
+            --exclude='/.github/' \
+            --exclude='/docs/' \
+            --exclude='/storage/cache/*' \
+            --exclude='/storage/logs/*' \
+            --exclude='/public/uploads/' \
+            --exclude='/public/.well-known/' \
+            --exclude='/public/cgi-bin/' \
+            --exclude='/resources/templates/*.zip' \
+            --exclude='.user.ini' \
+            --exclude='php.ini' \
+            --exclude='error_log' \
+            app/ prod:"$APP_DIR/"
+
+      - name: Migrate & clear cache
+        run: ssh prod "cd $APP_DIR && php bin/console migrate && php bin/console cache:clear"
+
+      - name: Smoke test
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -L "https://kursori.dev/ka?nc=${{ github.run_id }}")
+          echo "HTTP $code"
+          test "$code" = "200"
