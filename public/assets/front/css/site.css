@@ -51,8 +51,61 @@
     unicode-range: U+10D0-10FF, U+1C90-1CBF;
 }
 
+/*
+ * ფერები — ერთ ადგილას. კონტრასტი WCAG AA-ს (4.5:1) აკმაყოფილებს:
+ * --bs-primary       — ვარდისფერი ფონი (ღილაკი, ნიშანი): თეთრი ტექსტი მასზე 4.6:1 (#E41779-ზე 4.47 იყო)
+ * --site-accent-text — ვარდისფერი ტექსტი მუქ ფონზე: #1A1A1A-ზე 4.8:1 (#E41779 — 3.9)
+ * --site-text-muted  — მეორეხარისხოვანი ტექსტი (მინიშნებები, text-muted): ძირითადზე (#A0A0A0) მკრთალი, #1A1A1A-ზე 5.2:1
+ */
+:root {
+    --bs-primary: #E01677;
+    --site-accent-text: #F0408F;
+    --site-text-muted: #8C8C8C;
+}
+
 body {
     font-family: "FiraGO", sans-serif;
+}
+
+/* bootstrap.min.css-ში ფერები პირდაპირაა ჩაწერილი — აქ ცვლადებზე გადაყვანა */
+a,
+.btn-link,
+.link-primary,
+.btn-outline-primary,
+.btn-outline-primary:disabled,
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link.active {
+    color: var(--site-accent-text);
+}
+
+.text-primary {
+    color: var(--site-accent-text) !important;
+}
+
+.text-muted {
+    color: var(--site-text-muted) !important;
+}
+
+.btn-primary,
+.btn-primary:disabled,
+.btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-check:checked + .btn-outline-primary,
+.form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.btn-outline-primary {
+    border-color: var(--bs-primary);
+}
+
+.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
+
+.border-primary {
+    border-color: var(--bs-primary) !important;
 }
 
 /* სათაურები, მენიუ, ღილაკები, ციფრები: ka — მთავრული, en — UPPERCASE */
@@ -123,13 +176,13 @@ h1, h2, h3, h4, h5, h6,
 .navbar .dropdown-item:focus-visible {
     padding-left: 1.25rem;
     background: rgba(228, 23, 121, .12); /* --bs-primary, 12% */
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
 }
 
 .navbar .dropdown-item.active,
 .navbar .dropdown-item:active {
     background: transparent;
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
     box-shadow: inset 3px 0 0 var(--bs-primary);
 }
 
@@ -387,7 +440,7 @@ h1, h2, h3, h4, h5, h6,
 
 .service-title-link:hover,
 .service-title-link:focus-visible {
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
 }
 
 @media (max-width: 575.98px) {
@@ -426,7 +479,7 @@ h1, h2, h3, h4, h5, h6,
 .process-number {
     display: block;
     margin-bottom: .5rem;
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
     font-size: 2rem;
     font-weight: 700;
     line-height: 1;
@@ -445,7 +498,7 @@ h1, h2, h3, h4, h5, h6,
 
 .service-summary-label {
     margin-bottom: .25rem;
-    color: var(--bs-gray-500, #adb5bd);
+    color: var(--site-text-muted);
     font-size: .875rem;
     text-transform: uppercase;
     letter-spacing: .04em;
@@ -492,7 +545,7 @@ h1, h2, h3, h4, h5, h6,
 .faq-item summary::after {
     content: "+";
     flex: 0 0 auto;
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
     font-size: 1.5rem;
     line-height: 1;
 }
@@ -542,14 +595,14 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .pricing-price {
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
     font-size: 2.25rem;
     font-weight: 700;
     line-height: 1.1;
 }
 
 .pricing-note {
-    color: var(--bs-gray-500, #adb5bd);
+    color: var(--site-text-muted);
     font-size: .9rem;
 }
 
@@ -595,11 +648,11 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .post-card-title:hover {
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
 }
 
 .post-meta {
-    color: var(--bs-gray-500, #adb5bd);
+    color: var(--site-text-muted);
     font-size: .875rem;
 }
 
@@ -807,7 +860,7 @@ img[width][height] {
 
 /* ტექსტური (WYSIWYG) შიგთავსი */
 .rich-text a {
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
 }
 
 .rich-text ul,
@@ -869,7 +922,7 @@ img[width][height] {
     height: 32px;
     border-radius: 50%;
     background: rgba(228, 23, 121, .15); /* --bs-primary, 15% */
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
     font-size: .8rem;
 }
 
@@ -917,12 +970,12 @@ img[width][height] {
 
 /* თანხმობის ტექსტი ფორმის ქვეშ */
 .form-consent {
-    color: var(--bs-gray-500, #adb5bd);
+    color: var(--site-text-muted);
     line-height: 1.5;
 }
 
 .form-consent a {
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
     text-decoration: underline;
 }
 
@@ -937,7 +990,7 @@ img[width][height] {
 
 /* ფორმის მინიშნებები და არჩევანი ღილაკებად (partials/form-choice) */
 .form-hint {
-    color: var(--bs-gray-500, #adb5bd);
+    color: var(--site-text-muted);
     font-size: .875rem;
 }
 
@@ -972,7 +1025,7 @@ img[width][height] {
 }
 
 .footer-contacts a:hover {
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
 }
 
 /* მობილურის ქვედა ზოლი (layout): დარეკვა + CTA; back-to-top მხოლოდ დიდ ეკრანზე */
@@ -1039,7 +1092,7 @@ img[width][height] {
 }
 
 .footer-menu a:hover {
-    color: var(--bs-primary);
+    color: var(--site-accent-text);
 }
 
 /* პორტფოლიოს ბარათი — team-item-ის სტილით, სურათი თანაბარი პროპორციით */
