@@ -58,6 +58,11 @@ jobs:
       url: https://kursori.dev
     env:
       APP_DIR: kursori.dev
+      SSH_HOST: server348-3.web-hosting.com
+      SSH_PORT: '21098'
+      SSH_USER: stamhcxs
+      # ssh-keyscan -p 21098 -t ed25519 server348-3.web-hosting.com
+      SSH_KNOWN_HOST: '[server348-3.web-hosting.com]:21098 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIwQDX4h2ng3IIl695bObHIOpshK5G+JuyDMh4ZkBeWm'
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -71,12 +76,12 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          echo "$SSH_KNOWN_HOST" > ~/.ssh/known_hosts
           cat >> ~/.ssh/config <<EOF
           Host prod
-            HostName ${{ secrets.SSH_HOST }}
-            Port ${{ secrets.SSH_PORT }}
-            User ${{ secrets.SSH_USER }}
+            HostName $SSH_HOST
+            Port $SSH_PORT
+            User $SSH_USER
             IdentityFile ~/.ssh/deploy_key
             IdentitiesOnly yes
           EOF
