@@ -20,6 +20,8 @@ return [
         ['label' => 'Dashboard', 'icon' => 'fa fa-tachometer-alt', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
         ['label' => 'გვერდები', 'icon' => 'fa fa-file-alt', 'route' => 'admin.pages.index', 'active' => ['admin.pages.*', 'admin.blocks.*']],
         ...$collections,
+        // დიზაინები (შეკვეთის ფორმა); collection — აქტიურია დიზაინებისა და მათი კატეგორიების გვერდებზე
+        ['label' => 'დიზაინები', 'icon' => 'fa fa-palette', 'route' => 'admin.designs.index', 'collection' => 'designs'],
         ['label' => 'Inbox', 'icon' => 'fa fa-inbox', 'route' => 'admin.inbox.index', 'active' => 'admin.inbox.*', 'badge' => 'inbox'],
         ['label' => 'Newsletter', 'icon' => 'fa fa-paper-plane', 'route' => 'admin.newsletter.campaigns', 'active' => 'admin.newsletter.*'],
         ['label' => 'მენიუები', 'icon' => 'fa fa-bars', 'route' => 'admin.menus.index', 'active' => 'admin.menus.*'],

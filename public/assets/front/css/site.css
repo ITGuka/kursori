@@ -1125,3 +1125,142 @@ img[width][height] {
     font-size: 14px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
 }
+
+/* საიტის შეკვეთის ფორმა (blocks/order_form): დიზაინის ბარათები და preview მოდალი */
+.order-form .form-select {
+    color: var(--bs-white);
+}
+
+.order-designs {
+    text-align: left;
+}
+
+.design-card {
+    position: relative;
+    height: 100%;
+}
+
+.design-card-select {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    background: var(--bs-dark);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color .2s;
+}
+
+.design-card-select:hover,
+.design-card-select:focus-visible {
+    border-color: rgba(228, 23, 121, .5); /* --bs-primary, 50% */
+}
+
+.btn-check:checked + .design-card-select {
+    border-color: var(--bs-primary);
+}
+
+.design-card-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--bs-secondary);
+    color: var(--site-text-muted);
+    font-size: 2.5rem;
+}
+
+/* absolute — სურათი ბარათის 4:3 არეს მთლიანად ავსებს (თემის img { height: auto } არ ჭრის) */
+.design-card-image picture,
+.design-card-image img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: top;
+}
+
+.design-card-title {
+    display: block;
+    padding: .75rem 1rem;
+    color: var(--bs-white);
+}
+
+.design-card-check {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+    display: none;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    color: var(--bs-white);
+}
+
+.btn-check:checked + .design-card-select .design-card-check {
+    display: flex;
+}
+
+.design-card-image {
+    position: relative;
+}
+
+/* „სანახავად დააკლიკეთ“: hover-ზე — მთელ სურათზე; სენსორულ ეკრანზე — ყოველთვის, ქვედა ზოლად */
+.design-card-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .6);
+    color: var(--bs-white);
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+.design-card-select:hover .design-card-hint,
+.design-card-select:focus-visible .design-card-hint {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .design-card-hint {
+        inset: auto 0 0 0;
+        padding: .4rem;
+        font-size: .875rem;
+        opacity: 1;
+    }
+}
+
+.order-extra-check {
+    display: none;
+}
+
+.btn-check:checked + label .order-extra-check {
+    display: inline-block;
+}
+
+.design-preview .modal-body {
+    background: var(--bs-secondary);
+    overflow: auto;
+}
+
+.design-preview-frame {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+    transition: width .3s;
+}

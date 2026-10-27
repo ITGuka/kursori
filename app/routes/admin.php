@@ -8,6 +8,7 @@ use App\Controllers\Admin\CollectionController;
 use App\Controllers\Admin\PageController;
 use App\Controllers\Admin\RedirectController;
 use App\Controllers\Admin\DashboardController;
+use App\Controllers\Admin\DesignController;
 use App\Controllers\Admin\InboxController;
 use App\Controllers\Admin\NewsletterController;
 use App\Controllers\Admin\LanguageController;
@@ -85,9 +86,19 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
         $router->delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
+        $router->get('/designs', [DesignController::class, 'index'])->name('designs.index');
+        $router->get('/designs/create', [DesignController::class, 'create'])->name('designs.create');
+        $router->post('/designs', [DesignController::class, 'store'])->name('designs.store');
+        $router->post('/designs/reorder', [DesignController::class, 'reorder'])->name('designs.reorder');
+        $router->get('/designs/{id}/edit', [DesignController::class, 'edit'])->name('designs.edit');
+        $router->put('/designs/{id}', [DesignController::class, 'update'])->name('designs.update');
+        $router->post('/designs/{id}/toggle', [DesignController::class, 'toggle'])->name('designs.toggle');
+        $router->delete('/designs/{id}', [DesignController::class, 'destroy'])->name('designs.destroy');
+
         $router->get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
         $router->get('/inbox/{id}', [InboxController::class, 'show'])->name('inbox.show');
         $router->post('/inbox/{id}/unread', [InboxController::class, 'markUnread'])->name('inbox.unread');
+        $router->post('/inbox/{id}/status', [InboxController::class, 'status'])->name('inbox.status');
         $router->delete('/inbox/{id}', [InboxController::class, 'destroy'])->name('inbox.destroy');
 
         $router->get('/newsletter/subscribers', [NewsletterController::class, 'subscribers'])->name('newsletter.subscribers');

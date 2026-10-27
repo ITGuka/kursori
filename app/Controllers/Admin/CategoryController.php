@@ -6,6 +6,7 @@ namespace App\Controllers\Admin;
 use App\Models\ActivityLog;
 use App\Models\Category;
 use App\Models\Collection;
+use App\Models\Design;
 use App\Models\Language;
 use Core\Http\Request;
 use Core\Http\Response;
@@ -13,6 +14,7 @@ use Core\Support\Str;
 
 /**
  * კოლექციის კატეგორიები: /admin/collections/{type}/categories (2 დონე).
+ * დიზაინების (= ბიზნესის) კატეგორიებიც: /admin/collections/designs/categories.
  */
 final class CategoryController
 {
@@ -86,10 +88,14 @@ final class CategoryController
             ->with('success', "კატეგორია „{$name}“ წაიშალა. მისი ჩანაწერები კატეგორიის გარეშე დარჩა.");
     }
 
+    /** კოლექციის (categories = true) ან დიზაინების განსაზღვრება; index — ჩანაწერების სიის URL (?category= ფილტრით) */
     private function definition(string $type): array
     {
+        if ($type === Design::CATEGORIES) {
+            return ['label' => 'დიზაინები', 'categories' => true, 'index' => route('admin.designs.index')];
+        }
         $definition = Collection::type($type) ?? abort(404);
-        return $definition['categories'] ? $definition : abort(404);
+        return $definition['categories'] ? $definition + ['index' => route('admin.collections.index', ['type' => $type])] : abort(404);
     }
 
     /** @return array{0: array, 1: array<string, array{name: string, slug: string}>, 2: array<string, string>} */
@@ -133,7 +139,7 @@ final class CategoryController
 
     private function form(string $type, ?array $category, array $data, array $translations, array $errors = []): Response
     {
-        $definition = Collection::type($type);
+        $definition = $this->definition($type);
         $default = $this->languages->defaultCode();
         return view('admin/categories/form', [
             'title'          => ($category === null ? 'ახალი კატეგორია' : 'კატეგორია') . ' · ' . $definition['label'],

@@ -32,8 +32,20 @@ final class FormSubmission
         ]);
     }
 
+    /** სტატუსები: მნიშვნელობა => [წარწერა, badge-ის კლასი] */
+    public const STATUSES = [
+        'new'         => ['ახალი', 'bg-primary'],
+        'in_progress' => ['განხილვაში', 'bg-warning text-dark'],
+        'done'        => ['დასრულებული', 'bg-success'],
+    ];
+
+    public function setStatus(int $id, string $status): void
+    {
+        $this->db->update('form_submissions', ['status' => $status], 'id = ?', [$id]);
+    }
+
     /**
-     * @param array{form?: string, unread?: bool, q?: string} $filters
+     * @param array{form?: string, unread?: bool, status?: string, q?: string} $filters
      * @return array{rows: list<array>, total: int}
      */
     public function paginate(array $filters, int $page, int $perPage): array
@@ -46,6 +58,10 @@ final class FormSubmission
         }
         if (!empty($filters['unread'])) {
             $where[] = 'is_read = 0';
+        }
+        if (($filters['status'] ?? '') !== '') {
+            $where[] = 'status = ?';
+            $bindings[] = $filters['status'];
         }
         if (($filters['q'] ?? '') !== '') {
             $where[] = 'CAST(data AS CHAR) LIKE ?';

@@ -20,7 +20,9 @@ final class InboxController
     {
         $forms = FormSubmission::forms();
         $form = $request->string('form', '');
-        $filters = ['form' => isset($forms[$form]) ? $form : '', 'unread' => $request->query('unread') === '1', 'q' => trim($request->string('q', ''))];
+        $status = $request->string('status', '');
+        $filters = ['form' => isset($forms[$form]) ? $form : '', 'unread' => $request->query('unread') === '1',
+                    'status' => isset(FormSubmission::STATUSES[$status]) ? $status : '', 'q' => trim($request->string('q', ''))];
         $page = max(1, (int)$request->query('page', 1));
         $result = $this->submissions->paginate($filters, $page, self::PER_PAGE);
 
@@ -54,6 +56,17 @@ final class InboxController
         $this->submissions->find($id) ?? abort(404);
         $this->submissions->setRead($id, false);
         return redirect(route('admin.inbox.index'))->with('success', 'მონიშნულია წაუკითხავად.');
+    }
+
+    public function status(Request $request, int $id): Response
+    {
+        $this->submissions->find($id) ?? abort(404);
+        $status = $request->string('status', '');
+        if (!isset(FormSubmission::STATUSES[$status])) {
+            abort(422);
+        }
+        $this->submissions->setStatus($id, $status);
+        return redirect(route('admin.inbox.show', ['id' => $id]))->with('success', 'სტატუსი: ' . FormSubmission::STATUSES[$status][0] . '.');
     }
 
     public function destroy(int $id): Response

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Models\Design;
 use Core\Console\Command;
 use Core\Database\DB;
 use Core\Database\Seeder;
@@ -10,8 +11,8 @@ use Core\Support\Cache;
 
 /**
  * საიტის კონტენტის დაბრუნება საწყის (დემო) მდგომარეობაში: გვერდები, ბლოკები, მენიუს პუნქტები, კოლექციები, კატეგორიები,
- * ავტომატური გადამისამართებები — იშლება და seed-ები (05–09) თავიდან ეშვება.
- * არ ეხება: მედიას, ენებს, UI თარგმანებს, პარამეტრებს, მომხმარებლებს, Inbox-ს, newsletter-ს.
+ * ავტომატური გადამისამართებები — იშლება და seed-ები (05–10) თავიდან ეშვება.
+ * არ ეხება: მედიას, ენებს, UI თარგმანებს, პარამეტრებს, მომხმარებლებს, Inbox-ს, newsletter-ს, დიზაინებს და მათ კატეგორიებს.
  */
 final class ContentResetCommand extends Command
 {
@@ -19,7 +20,7 @@ final class ContentResetCommand extends Command
     protected string $description = 'Replace pages, menus and collections with the starter content (destructive)';
     protected string $usage = '--force';
 
-    private const SEEDS = ['05_demo_pages', '06_menus', '07_demo_collections', '08_site_settings', '09_privacy_page'];
+    private const SEEDS = ['05_demo_pages', '06_menus', '07_demo_collections', '08_site_settings', '09_privacy_page', '10_order_page'];
 
     public function handle(array $args, array $options): int
     {
@@ -40,7 +41,8 @@ final class ContentResetCommand extends Command
             $db->statement('DELETE FROM menu_items');
             $db->statement('DELETE FROM pages');
             $db->statement('DELETE FROM collection_items');
-            $db->statement('DELETE FROM categories');
+            // დიზაინები (შეკვეთის ფორმა) და მათი კატეგორიები რჩება
+            $db->query('DELETE FROM categories WHERE collection <> ?', [Design::CATEGORIES]);
             $db->statement('DELETE FROM redirects WHERE is_auto = 1');
         });
 

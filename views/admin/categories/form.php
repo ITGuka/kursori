@@ -9,7 +9,7 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
 
 <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="<?= e(route('admin.collections.index', ['type' => $type])) ?>"><?= e($definition['label']) ?></a></li>
+        <li class="breadcrumb-item"><a href="<?= e($definition['index']) ?>"><?= e($definition['label']) ?></a></li>
         <li class="breadcrumb-item"><a href="<?= e(route('admin.categories.index', ['type' => $type])) ?>">კატეგორიები</a></li>
         <li class="breadcrumb-item active" aria-current="page"><?= $isEdit ? 'რედაქტირება' : 'ახალი' ?></li>
     </ol>

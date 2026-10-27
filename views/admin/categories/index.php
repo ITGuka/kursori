@@ -5,7 +5,7 @@ $this->layout('admin/layouts/app');
 
 <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="<?= e(route('admin.collections.index', ['type' => $type])) ?>"><?= e($definition['label']) ?></a></li>
+        <li class="breadcrumb-item"><a href="<?= e($definition['index']) ?>"><?= e($definition['label']) ?></a></li>
         <li class="breadcrumb-item active" aria-current="page">კატეგორიები</li>
     </ol>
 </nav>
@@ -36,7 +36,7 @@ $this->layout('admin/layouts/app');
                                 <span class="badge <?= in_array($language['code'], $row['langs'], true) ? 'bg-success' : 'bg-light text-muted border' ?> text-uppercase"><?= e($language['code']) ?></span>
                             <?php endforeach ?>
                         </td>
-                        <td><a href="<?= e(route('admin.collections.index', ['type' => $type, 'category' => $row['id']])) ?>"><?= e($row['items']) ?></a></td>
+                        <td><a href="<?= e($definition['index'] . '?category=' . $row['id']) ?>"><?= e($row['items']) ?></a></td>
                         <td><?= e($row['sort']) ?></td>
                         <td class="text-end text-nowrap">
                             <a href="<?= e(route('admin.categories.edit', ['id' => $row['id']])) ?>" class="btn btn-sm btn-outline-primary"><i class="fa fa-pen"></i><span class="visually-hidden">რედაქტირება</span></a>

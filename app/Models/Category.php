@@ -7,6 +7,7 @@ use Core\Database\DB;
 
 /**
  * კოლექციის კატეგორიები (2 დონემდე): categories + category_translations (სახელი, slug ენებზე).
+ * collection — კოლექციის გასაღები ან Design::CATEGORIES (დიზაინები, design_category-ით).
  */
 final class Category
 {
@@ -43,7 +44,8 @@ final class Category
                     COALESCE((SELECT name FROM category_translations t WHERE t.category_id = c.id AND t.lang = ?),
                              (SELECT name FROM category_translations t WHERE t.category_id = c.id LIMIT 1), CONCAT('#', c.id)) AS name,
                     (SELECT GROUP_CONCAT(lang) FROM category_translations t WHERE t.category_id = c.id) AS langs,
-                    (SELECT COUNT(*) FROM collection_items i WHERE i.category_id = c.id) AS items
+                    (SELECT COUNT(*) FROM collection_items i WHERE i.category_id = c.id)
+                      + (SELECT COUNT(*) FROM design_category d WHERE d.category_id = c.id) AS items
              FROM categories c WHERE c.collection = ? ORDER BY c.sort, c.id",
             [$lang, $collection],
         );

@@ -50,6 +50,25 @@ return [
         ],
     ],
 
+    // საიტის შეკვეთა (order_form ბლოკი) — POST /{lang}/order (Front\OrderController: დიზაინები და კატეგორიები ბაზიდან,
+    // Inbox-ში ინახება მათი სახელები). handler — ზოგადი /forms/{form} ამ ფორმას არ იღებს.
+    'order' => [
+        'label'   => 'საიტის შეკვეთა',
+        'icon'    => 'fa fa-shopping-cart',
+        'handler' => 'order',
+        'notify'  => true,
+        'fields'  => [
+            'name'        => ['rules' => 'required|max:100', 'label' => 'order.name'],
+            'phone'       => ['rules' => ['required', ...$phone], 'label' => 'order.phone'],
+            'email'       => ['rules' => 'required|email|max:190', 'label' => 'order.email'],
+            'category'    => ['rules' => '', 'label' => 'order.category'],
+            'design'      => ['rules' => '', 'label' => 'order.design_name'],
+            'description' => ['rules' => 'required|max:5000', 'label' => 'order.description', 'multiline' => true],
+            'has_domain'  => ['rules' => '', 'label' => 'order.has_domain', 'options' => ['yes' => 'order.yes', 'no' => 'order.no']],
+            'has_hosting' => ['rules' => '', 'label' => 'order.has_hosting', 'options' => ['yes' => 'order.yes', 'no' => 'order.no']],
+        ],
+    ],
+
     // ანტი-სპამი: honeypot ველი (ბოტი ავსებს, ადამიანი ვერ ხედავს) და გაგზავნების ლიმიტი IP-ზე
     'honeypot'   => 'website',
     'rate_limit' => ['max' => 5, 'decay' => 10 * 60],

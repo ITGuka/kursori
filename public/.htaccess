@@ -19,6 +19,14 @@ DirectoryIndex index.php
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 
+    # დიზაინების შაბლონები (ადმინიდან ატვირთული HTML/JS): CSP sandbox — პირდაპირ გახსნისასაც უცხო origin-ზე
+    # მუშაობს (ჩვენი cookie/DOM მიუწვდომელია), მხოლოდ ჩვენი საიტის iframe-ში ჩაისმება. sandbox-იან გვერდს origin
+    # „null“ აქვს — შრიფტები/მოდულები CORS-ით იტვირთება, ამიტომ Access-Control-Allow-Origin: *.
+    <If "%{REQUEST_URI} =~ m#/uploads/designs/#">
+        Header always set Content-Security-Policy "sandbox allow-scripts allow-forms allow-popups allow-modals; frame-ancestors 'self'; object-src 'none'"
+        Header always set Access-Control-Allow-Origin "*"
+    </If>
+
     # სტატიკური ფაილები: ვერსიიანი (?v=ცვლილების დრო, asset()) და ატვირთვები (შემთხვევითი სახელი) — 1 წელი,
     # immutable; დანარჩენი (CSS-იდან მოთხოვნილი თემის სურათები, შრიფტები, favicon) — 1 კვირა.
     <FilesMatch "\.(css|js|woff2?|ttf|svg|ico|png|jpe?g|gif|webp)$">

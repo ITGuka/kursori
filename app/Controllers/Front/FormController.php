@@ -23,6 +23,9 @@ final class FormController
     public function submit(Request $request, string $lang, string $form): Response
     {
         $definition = FormSubmission::forms()[$form] ?? throw new HttpException(404);
+        if (isset($definition['handler'])) {
+            throw new HttpException(404); // საკუთარი კონტროლერი აქვს (მაგ. order → OrderController)
+        }
         $back = self::backTo($request, $lang, "form-$form");
 
         // honeypot შევსებულია → ბოტი: წარმატებას ვაჩვენებთ, არაფერს ვინახავთ

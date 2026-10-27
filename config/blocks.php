@@ -276,6 +276,18 @@ return [
         ],
     ],
 
+    // დიზაინები და კატეგორიები — ადმინი → დიზაინები; გაგზავნა: POST /{lang}/order → Inbox + წერილი
+    'order_form' => [
+        'label'  => 'საიტის შეკვეთის ფორმა',
+        'icon'   => 'fa fa-shopping-cart',
+        'view'   => 'front/blocks/order_form',
+        'fields' => $title + [
+            'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
+            'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „შეკვეთის გაგზავნა“.'],
+            'background'   => $background,
+        ],
+    ],
+
     'map' => [
         'label'  => 'რუკა',
         'icon'   => 'fa fa-map-marked-alt',

@@ -15,7 +15,16 @@ $email = (string)($data['email'] ?? '');
 <div class="bg-light rounded p-4" style="max-width: 900px">
     <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-4">
         <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'fa fa-envelope') ?> text-primary me-2"></i><?= e($definition['label']) ?></h6>
-        <div class="d-flex gap-2">
+        <div class="d-flex flex-wrap gap-2">
+            <form method="post" action="<?= e(route('admin.inbox.status', ['id' => $submission['id']])) ?>" class="d-flex gap-1">
+                <?= csrf_field() ?>
+                <select name="status" class="form-select form-select-sm" aria-label="სტატუსი" onchange="this.form.submit()">
+                    <?php foreach (App\Models\FormSubmission::STATUSES as $key => [$label]): ?>
+                        <option value="<?= e($key) ?>"<?= $submission['status'] === $key ? ' selected' : '' ?>><?= e($label) ?></option>
+                    <?php endforeach ?>
+                </select>
+                <noscript><button class="btn btn-sm btn-outline-primary">შენახვა</button></noscript>
+            </form>
             <?php if (filter_var($email, FILTER_VALIDATE_EMAIL)): ?>
                 <a class="btn btn-sm btn-primary" href="mailto:<?= e($email) ?>?subject=<?= e(rawurlencode('Re: ' . ($data['subject'] ?? $definition['label']))) ?>"><i class="fa fa-reply me-1"></i>პასუხი</a>
             <?php endif ?>
@@ -32,7 +41,8 @@ $email = (string)($data['email'] ?? '');
     </div>
 
     <dl class="row mb-0">
-        <?php foreach ($data as $name => $value): ?>
+        <?php // ფორმის ველების რიგით (MySQL JSON-ში გასაღებები სიგრძით ლაგდება), შემდეგ — დანარჩენი ?>
+        <?php foreach (array_replace(array_intersect_key($definition['fields'], $data), $data) as $name => $value): ?>
             <?php $field = $definition['fields'][$name] ?? []; ?>
             <?php if (isset($field['options'][$value])) { $value = t($field['options'][$value], [], config('app.default_locale')); } ?>
             <dt class="col-sm-3"><?= e(isset($field['label']) ? t($field['label'], [], config('app.default_locale')) : $name) ?></dt>

@@ -172,6 +172,14 @@ final class Media
         foreach ($rows as $row) {
             $usages[] = ($collections[$row['collection']]['label'] ?? $row['collection']) . " → „{$row['title']}“";
         }
+
+        $rows = $this->db->column(
+            'SELECT (SELECT title FROM design_translations t WHERE t.design_id = d.id ORDER BY t.lang = ? DESC LIMIT 1) FROM designs d WHERE d.image_id = ?',
+            [$lang, $id],
+        );
+        foreach ($rows as $title) {
+            $usages[] = "დიზაინი „{$title}“ → ბარათის სურათი";
+        }
         return $usages;
     }
 

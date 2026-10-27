@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Controllers\Front\CollectionController;
 use App\Controllers\Front\FormController;
 use App\Controllers\Front\NewsletterController;
+use App\Controllers\Front\OrderController;
 use App\Controllers\Front\PageController;
 use App\Controllers\Front\SeoController;
 use App\Models\Language;
@@ -28,6 +29,7 @@ $router->group([
 
     // ფორმები და newsletter (კონკრეტული ბილიკები — /{slug}-ზე ადრე)
     $router->post('/forms/{form}', [FormController::class, 'submit'])->where('form', '[a-z_]+')->name('form.submit');
+    $router->post('/order', [OrderController::class, 'submit'])->name('order.submit');
     $router->post('/newsletter', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
     $router->get('/newsletter/confirm/{token}', [NewsletterController::class, 'confirm'])->where('token', '[a-f0-9]{64}')->name('newsletter.confirm');
     $router->get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribePage'])->where('token', '[a-f0-9]{64}')->name('newsletter.unsubscribe');
