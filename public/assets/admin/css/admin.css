@@ -477,3 +477,14 @@ html[data-admin-lang]:not([data-admin-lang="all"]) .row > [data-lang] {
 .sortable-list .sortable-ghost {
     background: var(--bs-primary-bg-subtle);
 }
+
+/* საშუალო სიგანის გვერდები (შეტყობინების ნახვა) */
+.form-wide {
+    max-width: 960px;
+}
+
+/* ცხრილში გრძელი ტექსტის სვეტი */
+.cell-text {
+    min-width: 280px;
+    white-space: normal;
+}

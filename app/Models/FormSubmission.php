@@ -34,9 +34,9 @@ final class FormSubmission
 
     /** სტატუსები: მნიშვნელობა => [წარწერა, badge-ის კლასი] */
     public const STATUSES = [
-        'new'         => ['ახალი', 'bg-primary'],
-        'in_progress' => ['განხილვაში', 'bg-warning text-dark'],
-        'done'        => ['დასრულებული', 'bg-success'],
+        'new'         => ['ახალი', 'bg-label-primary'],
+        'in_progress' => ['განხილვაში', 'bg-label-warning'],
+        'done'        => ['დასრულებული', 'bg-label-success'],
     ];
 
     public function setStatus(int $id, string $status): void

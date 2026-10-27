@@ -16,85 +16,94 @@ $invalid = fn (string $key) => isset($formErrors[$key]) ? ' is-invalid' : '';
 <?php $this->stop() ?>
 <?= $this->insert('admin/newsletter/tabs') ?>
 
-<div class="row g-4">
+<div class="row g-6">
     <div class="col-xl-8">
-        <form method="post" action="<?= e($action) ?>" class="bg-light rounded-bottom p-4 block-form" novalidate>
+        <form method="post" action="<?= e($action) ?>" class="card block-form" novalidate>
             <?= csrf_field() ?>
             <?php if ($isEdit): ?><input type="hidden" name="_method" value="PUT"><?php endif ?>
-            <fieldset<?= $editable ? '' : ' disabled' ?>>
-                <div class="mb-3">
-                    <label class="form-label" for="subject">თემა</label>
-                    <input type="text" class="form-control<?= $invalid('subject') ?>" id="subject" name="subject" maxlength="190" value="<?= e($data['subject']) ?>">
-                    <?php if (isset($formErrors['subject'])): ?><div class="invalid-feedback"><?= e($formErrors['subject']) ?></div><?php endif ?>
-                </div>
-                <div class="mb-3" style="max-width: 320px">
-                    <label class="form-label" for="lang">ადრესატები</label>
-                    <select class="form-select" id="lang" name="lang">
-                        <option value="">ყველა აქტიური გამომწერი</option>
-                        <?php foreach ($languages as $language): ?>
-                            <option value="<?= e($language['code']) ?>"<?= $data['lang'] === $language['code'] ? ' selected' : '' ?>>მხოლოდ: <?= e($language['native_name']) ?></option>
-                        <?php endforeach ?>
-                    </select>
-                    <div class="form-text">გამომწერის ენა — ის ენა, რომელზეც საიტზე გამოიწერა.</div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label" for="body">ტექსტი</label>
-                    <textarea class="form-control<?= $invalid('body') ?>" id="body" name="body" rows="10" data-wysiwyg><?= e($data['body']) ?></textarea>
-                    <?php if (isset($formErrors['body'])): ?><div class="invalid-feedback d-block"><?= e($formErrors['body']) ?></div><?php endif ?>
-                    <div class="form-text">წერილს ავტომატურად ემატება საიტის სახელი და გამოწერის გაუქმების ბმული.</div>
-                </div>
-            </fieldset>
-            <?php if ($editable): ?>
-                <button type="submit" class="btn btn-primary">შენახვა</button>
-            <?php endif ?>
-            <a href="<?= e(route('admin.newsletter.campaigns')) ?>" class="btn btn-outline-secondary ms-2">სიაში დაბრუნება</a>
+            <h5 class="card-header"><?= $isEdit ? 'კამპანია' : 'ახალი კამპანია' ?></h5>
+            <div class="card-body">
+                <fieldset<?= $editable ? '' : ' disabled' ?>>
+                    <div class="mb-5">
+                        <label class="form-label" for="subject">თემა</label>
+                        <input type="text" class="form-control<?= $invalid('subject') ?>" id="subject" name="subject" maxlength="190" value="<?= e($data['subject']) ?>">
+                        <?php if (isset($formErrors['subject'])): ?><div class="invalid-feedback"><?= e($formErrors['subject']) ?></div><?php endif ?>
+                    </div>
+                    <div class="mb-5" style="max-width: 320px">
+                        <label class="form-label" for="lang">ადრესატები</label>
+                        <select class="form-select" id="lang" name="lang">
+                            <option value="">ყველა აქტიური გამომწერი</option>
+                            <?php foreach ($languages as $language): ?>
+                                <option value="<?= e($language['code']) ?>"<?= $data['lang'] === $language['code'] ? ' selected' : '' ?>>მხოლოდ: <?= e($language['native_name']) ?></option>
+                            <?php endforeach ?>
+                        </select>
+                        <div class="form-text">გამომწერის ენა — ის ენა, რომელზეც საიტზე გამოიწერა.</div>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label" for="body">ტექსტი</label>
+                        <textarea class="form-control<?= $invalid('body') ?>" id="body" name="body" rows="10" data-wysiwyg><?= e($data['body']) ?></textarea>
+                        <?php if (isset($formErrors['body'])): ?><div class="invalid-feedback d-block"><?= e($formErrors['body']) ?></div><?php endif ?>
+                        <div class="form-text">წერილს ავტომატურად ემატება საიტის სახელი და გამოწერის გაუქმების ბმული.</div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="card-footer border-top d-flex flex-wrap gap-2">
+                <?php if ($editable): ?>
+                    <button type="submit" class="btn btn-primary"><i class="icon-base bx bx-save me-1"></i>შენახვა</button>
+                <?php endif ?>
+                <a href="<?= e(route('admin.newsletter.campaigns')) ?>" class="btn btn-outline-secondary">სიაში დაბრუნება</a>
+            </div>
         </form>
     </div>
 
     <?php if ($isEdit): ?>
         <div class="col-xl-4">
-            <div class="bg-light rounded p-4 mb-4">
-                <h6 class="mb-3">ტესტური წერილი</h6>
-                <form method="post" action="<?= e(route('admin.newsletter.test', ['id' => $campaign['id']])) ?>" class="d-flex gap-2">
-                    <?= csrf_field() ?>
-                    <input type="email" class="form-control form-control-sm" name="email" value="<?= e($adminEmail) ?>" required aria-label="ელ-ფოსტა">
-                    <button class="btn btn-sm btn-outline-primary text-nowrap"><i class="fa fa-paper-plane me-1"></i>ტესტი</button>
-                </form>
+            <div class="card mb-6">
+                <h5 class="card-header">ტესტური წერილი</h5>
+                <div class="card-body">
+                    <form method="post" action="<?= e(route('admin.newsletter.test', ['id' => $campaign['id']])) ?>" class="d-flex gap-2">
+                        <?= csrf_field() ?>
+                        <input type="email" class="form-control" name="email" value="<?= e($adminEmail) ?>" required aria-label="ელ-ფოსტა">
+                        <button class="btn btn-outline-primary text-nowrap"><i class="icon-base bx bx-send icon-sm me-1"></i>ტესტი</button>
+                    </form>
+                </div>
             </div>
 
-            <div class="bg-light rounded p-4" data-campaign data-status="<?= e($campaign['status']) ?>" data-batch-url="<?= e(route('admin.newsletter.batch', ['id' => $campaign['id']])) ?>">
-                <h6 class="mb-3">გაგზავნა</h6>
-                <?php if ($campaign['status'] === 'draft'): ?>
-                    <p class="small">წერილს მიიღებს <strong><?= e($recipients) ?></strong> აქტიური გამომწერი<?= $campaign['lang'] !== '' ? ' (მხოლოდ ' . e(strtoupper($campaign['lang'])) . ')' : '' ?>. გაგზავნის შემდეგ კამპანია აღარ შეიცვლება.</p>
-                    <form method="post" action="<?= e(route('admin.newsletter.start', ['id' => $campaign['id']])) ?>" data-confirm="გავგზავნოთ კამპანია „<?= e($campaign['subject']) ?>“?">
-                        <?= csrf_field() ?>
-                        <button class="btn btn-primary w-100"><i class="fa fa-paper-plane me-1"></i>გაგზავნა</button>
-                    </form>
-                <?php else: ?>
-                    <div class="progress mb-2" style="height: 22px">
-                        <div class="progress-bar" role="progressbar" data-progress style="width: <?= $stats['total'] ? round(($stats['sent'] + $stats['failed']) / $stats['total'] * 100) : 0 ?>%"></div>
-                    </div>
-                    <p class="small mb-2" data-progress-text>
-                        გაგზავნილი: <?= e($stats['sent']) ?> / <?= e($stats['total']) ?><?= $stats['failed'] ? ' · შეცდომა: ' . (int)$stats['failed'] : '' ?>
-                    </p>
-                    <?php if ($campaign['status'] === 'sending'): ?>
-                        <p class="small text-muted mb-0" data-progress-note>იგზავნება — ნუ დახურავთ გვერდს. დახურვის შემთხვევაში გააგრძელეთ ამ გვერდიდან ან: <code>php bin/console newsletter:send</code></p>
+            <div class="card mb-6" data-campaign data-status="<?= e($campaign['status']) ?>" data-batch-url="<?= e(route('admin.newsletter.batch', ['id' => $campaign['id']])) ?>">
+                <h5 class="card-header">გაგზავნა</h5>
+                <div class="card-body">
+                    <?php if ($campaign['status'] === 'draft'): ?>
+                        <p>წერილს მიიღებს <strong><?= e($recipients) ?></strong> აქტიური გამომწერი<?= $campaign['lang'] !== '' ? ' (მხოლოდ ' . e(strtoupper($campaign['lang'])) . ')' : '' ?>. გაგზავნის შემდეგ კამპანია აღარ შეიცვლება.</p>
+                        <form method="post" action="<?= e(route('admin.newsletter.start', ['id' => $campaign['id']])) ?>" data-confirm="გავგზავნოთ კამპანია „<?= e($campaign['subject']) ?>“?">
+                            <?= csrf_field() ?>
+                            <button class="btn btn-primary w-100"><i class="icon-base bx bx-paper-plane me-1"></i>გაგზავნა</button>
+                        </form>
                     <?php else: ?>
-                        <p class="small text-success mb-0">დასრულდა <?= e(date('d.m.Y H:i', strtotime((string)$campaign['sent_at']))) ?>.</p>
+                        <div class="progress mb-3" style="height: 10px">
+                            <div class="progress-bar" role="progressbar" data-progress style="width: <?= $stats['total'] ? round(($stats['sent'] + $stats['failed']) / $stats['total'] * 100) : 0 ?>%"></div>
+                        </div>
+                        <p class="mb-2" data-progress-text>
+                            გაგზავნილი: <?= e($stats['sent']) ?> / <?= e($stats['total']) ?><?= $stats['failed'] ? ' · შეცდომა: ' . (int)$stats['failed'] : '' ?>
+                        </p>
+                        <?php if ($campaign['status'] === 'sending'): ?>
+                            <small class="text-body-secondary" data-progress-note>იგზავნება — ნუ დახურავთ გვერდს. დახურვის შემთხვევაში გააგრძელეთ ამ გვერდიდან ან: <code>php bin/console newsletter:send</code></small>
+                        <?php else: ?>
+                            <small class="text-success">დასრულდა <?= e(date('d.m.Y H:i', strtotime((string)$campaign['sent_at']))) ?>.</small>
+                        <?php endif ?>
+                        <?php if ($failures !== []): ?>
+                            <details class="small mt-3"><summary class="text-danger">შეცდომები</summary>
+                                <ul class="mb-0 ps-3"><?php foreach ($failures as $failure): ?><li><?= e($failure['email']) ?>: <?= e($failure['error']) ?></li><?php endforeach ?></ul>
+                            </details>
+                        <?php endif ?>
                     <?php endif ?>
-                    <?php if ($failures !== []): ?>
-                        <details class="small mt-2"><summary class="text-danger">შეცდომები</summary>
-                            <ul class="mb-0 ps-3"><?php foreach ($failures as $failure): ?><li><?= e($failure['email']) ?>: <?= e($failure['error']) ?></li><?php endforeach ?></ul>
-                        </details>
-                    <?php endif ?>
-                <?php endif ?>
+                </div>
             </div>
 
             <?php if ($campaign['status'] !== 'sending'): ?>
-                <form method="post" action="<?= e(route('admin.newsletter.destroy', ['id' => $campaign['id']])) ?>" class="mt-3" data-confirm="წავშალოთ კამპანია (გაგზავნის სტატისტიკითურთ)?">
+                <form method="post" action="<?= e(route('admin.newsletter.destroy', ['id' => $campaign['id']])) ?>" data-confirm="წავშალოთ კამპანია (გაგზავნის სტატისტიკითურთ)?">
                     <?= csrf_field() ?>
                     <input type="hidden" name="_method" value="DELETE">
-                    <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash me-1"></i>კამპანიის წაშლა</button>
+                    <button class="btn btn-outline-danger"><i class="icon-base bx bx-trash me-1"></i>კამპანიის წაშლა</button>
                 </form>
             <?php endif ?>
         </div>
