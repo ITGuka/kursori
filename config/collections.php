@@ -24,6 +24,7 @@ return [
         'route'       => ['ka' => 'servisebi', 'en' => 'services'],
         'view'        => 'front/collections/service',
         'fields'      => [
+            'header_image' => ['type' => 'image', 'label' => 'ჰედერის ფონის სურათი', 'help' => 'ჩანაწერის გვერდის თავში. ცარიელი — თემის სტანდარტული ფონი. რეკომენდებული 1920×1080.'],
             'excerpt'      => ['type' => 'textarea', 'label' => 'მოკლე აღწერა', 'translatable' => true, 'max' => 1000, 'help' => 'ჩანს სიაში (სერვისების ბლოკში).'],
             'body'         => ['type' => 'wysiwyg', 'label' => 'სრული აღწერა', 'translatable' => true, 'help' => 'ჩანს სერვისის გვერდზე: რა პრობლემას ხსნის, როგორ ვმუშაობთ.'],
             'price_from'   => ['type' => 'text', 'label' => 'ფასი', 'translatable' => true, 'max' => 60, 'help' => 'მაგ. „1 500 ₾-დან“.'],
@@ -76,6 +77,7 @@ return [
         'view'        => 'front/collections/post',
         'order'       => 'newest',
         'fields'      => [
+            'header_image' => ['type' => 'image', 'label' => 'ჰედერის ფონის სურათი', 'help' => 'ჩანაწერის გვერდის თავში. ცარიელი — თემის სტანდარტული ფონი. რეკომენდებული 1920×1080.'],
             'excerpt' => ['type' => 'textarea', 'label' => 'მოკლე აღწერა', 'translatable' => true, 'max' => 500, 'help' => 'ჩანს სიაში და Google-ის შედეგებში.'],
             'body'    => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
             'author'  => ['type' => 'text', 'label' => 'ავტორი', 'translatable' => true, 'max' => 100],
@@ -91,6 +93,7 @@ return [
         'public'      => true,
         'route'       => ['ka' => 'portpolio', 'en' => 'portfolio'],
         'fields'      => [
+            'header_image' => ['type' => 'image', 'label' => 'ჰედერის ფონის სურათი', 'help' => 'ჩანაწერის გვერდის თავში. ცარიელი — თემის სტანდარტული ფონი. რეკომენდებული 1920×1080.'],
             'client'  => ['type' => 'text', 'label' => 'კლიენტი', 'translatable' => true, 'max' => 150],
             'year'    => ['type' => 'number', 'label' => 'წელი', 'min' => 1990, 'max' => 2100],
             'website' => ['type' => 'link', 'label' => 'საიტი'],

@@ -12,7 +12,7 @@ use App\Models\Language;
 
 $this->layout('front/layouts/main');
 $this->start('header');
-echo $this->insert('front/blocks/page_header', ['data' => ['title' => '', 'image' => null, 'breadcrumb' => true], 'page' => ['title' => $item['title']], 'breadcrumbs' => $breadcrumbs]);
+echo $this->insert('front/blocks/page_header', ['data' => ['title' => '', 'image' => $item['header_image'] ?? null, 'breadcrumb' => true], 'page' => ['title' => $item['title']], 'breadcrumbs' => $breadcrumbs]);
 $this->stop();
 
 $deliverables = array_filter(array_map('trim', explode("\n", (string)$item['deliverables'])));

@@ -8,7 +8,7 @@
  */
 $this->layout('front/layouts/main');
 $this->start('header');
-echo $this->insert('front/blocks/page_header', ['data' => ['title' => '', 'image' => null, 'breadcrumb' => true], 'page' => ['title' => $item['title']]]);
+echo $this->insert('front/blocks/page_header', ['data' => ['title' => '', 'image' => $item['header_image'] ?? null, 'breadcrumb' => true], 'page' => ['title' => $item['title']]]);
 $this->stop();
 
 $image = media_url($item['image'], 'large');
