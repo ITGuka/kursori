@@ -14,8 +14,8 @@
         var $button = $(this);
         var $field = $($button.data('copy'));
         var done = function () {
-            $button.find('i').attr('class', 'fa fa-check');
-            setTimeout(function () { $button.find('i').attr('class', 'fa fa-copy'); }, 1500);
+            $button.find('i').attr('class', 'icon-base bx bx-check');
+            setTimeout(function () { $button.find('i').attr('class', 'icon-base bx bx-copy'); }, 1500);
         };
         if (navigator.clipboard) {
             navigator.clipboard.writeText($field.val()).then(done);

@@ -21,16 +21,16 @@ $preview = $current !== null ? app(Media::class)->toArray($current) : null;
             <?php if ($preview['image']): ?>
                 <img src="<?= e($preview['thumb']) ?>" alt="">
             <?php else: ?>
-                <i class="fa fa-file-pdf fa-2x text-danger"></i>
+                <i class="icon-base bx bxs-file-pdf icon-lg text-danger"></i>
             <?php endif ?>
         <?php else: ?>
-            <i class="fa fa-image fa-2x text-muted"></i>
+            <i class="icon-base bx bx-image icon-lg text-body-secondary"></i>
         <?php endif ?>
     </div>
     <div class="media-input-body">
-        <div class="small text-truncate" data-media-name><?= $preview !== null ? e($preview['name']) : '<span class="text-muted">არ არის არჩეული</span>' ?></div>
-        <div class="mt-1">
-            <button type="button" class="btn btn-sm btn-outline-primary" data-media-choose>არჩევა</button>
+        <div class="small text-truncate" data-media-name><?= $preview !== null ? e($preview['name']) : '<span class="text-body-secondary">არ არის არჩეული</span>' ?></div>
+        <div class="d-flex gap-2 mt-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" data-media-choose><i class="icon-base bx bx-images icon-sm me-1"></i>არჩევა</button>
             <button type="button" class="btn btn-sm btn-outline-secondary<?= $preview === null ? ' d-none' : '' ?>" data-media-clear>მოხსნა</button>
         </div>
     </div>

@@ -8,19 +8,20 @@
             </div>
             <div class="modal-body">
                 <?= $this->insert('admin/partials/upload-zone', ['zoneId' => 'picker-upload', 'folders' => app(App\Models\Media::class)->folders(), 'accept' => '']) ?>
-                <div class="d-flex gap-2 my-3">
-                    <input type="search" class="form-control form-control-sm" placeholder="ძებნა" data-picker-search aria-label="ძებნა">
+                <div class="input-group input-group-merge my-4">
+                    <span class="input-group-text"><i class="icon-base bx bx-search"></i></span>
+                    <input type="search" class="form-control" placeholder="ძებნა" data-picker-search aria-label="ძებნა">
                 </div>
                 <div class="media-grid" data-picker-grid></div>
-                <p class="text-muted small mb-0 d-none" data-picker-empty>ფაილები ვერ მოიძებნა.</p>
+                <p class="text-body-secondary mb-0 d-none" data-picker-empty>ფაილები ვერ მოიძებნა.</p>
             </div>
             <div class="modal-footer justify-content-between">
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-outline-secondary" data-picker-prev>‹</button>
+                <div class="btn-group btn-group-sm" role="group" aria-label="გვერდები">
+                    <button type="button" class="btn btn-outline-secondary" data-picker-prev aria-label="წინა"><i class="icon-base bx bx-chevron-left icon-sm"></i></button>
                     <span class="btn btn-outline-secondary disabled" data-picker-page>1 / 1</span>
-                    <button type="button" class="btn btn-outline-secondary" data-picker-next>›</button>
+                    <button type="button" class="btn btn-outline-secondary" data-picker-next aria-label="შემდეგი"><i class="icon-base bx bx-chevron-right icon-sm"></i></button>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">დახურვა</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">დახურვა</button>
             </div>
         </div>
     </div>

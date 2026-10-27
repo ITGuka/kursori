@@ -54,9 +54,9 @@ $control = function (string $inputName, mixed $value, string $id, string $errorK
     $items = is_array($settingsVal) ? array_values($settingsVal) : [];
     $renderItem = function (array $item, string $index, string $itemId) use ($field, $name, $contentVals, $path, $sName, $languages): string {
         $html = '<div class="repeater-item" data-repeater-item><div class="repeater-item-head">'
-            . '<span class="repeater-handle" title="გადაადგილება"><i class="fa fa-grip-vertical"></i></span>'
-            . '<span class="repeater-title small text-muted" data-repeater-number></span>'
-            . '<button type="button" class="btn btn-sm btn-link text-danger ms-auto" data-repeater-remove><i class="fa fa-times me-1"></i>წაშლა</button></div>'
+            . '<span class="repeater-handle" title="გადაადგილება"><i class="icon-base bx bx-grid-vertical"></i></span>'
+            . '<span class="badge bg-label-secondary" data-repeater-number></span>'
+            . '<button type="button" class="btn btn-sm btn-icon btn-outline-danger border-0 ms-auto" data-repeater-remove title="წაშლა" aria-label="წაშლა"><i class="icon-base bx bx-trash"></i></button></div>'
             . '<input type="hidden" name="' . e($sName . "[$index][_id]") . '" value="' . e($itemId) . '">';
         foreach ($field['fields'] as $sub => $subField) {
             $html .= $this->insert('admin/blocks/field', [
@@ -75,8 +75,8 @@ $control = function (string $inputName, mixed $value, string $id, string $errorK
         return $html . '</div>';
     };
     ?>
-    <fieldset class="repeater mb-4<?= isset($formErrors[$path]) ? ' is-invalid' : '' ?>" data-repeater data-max="<?= (int)($field['max_items'] ?? 50) ?>">
-        <legend class="fs-6 fw-semibold"><?= e($label) ?></legend>
+    <fieldset class="repeater mb-5<?= isset($formErrors[$path]) ? ' is-invalid' : '' ?>" data-repeater data-max="<?= (int)($field['max_items'] ?? 50) ?>">
+        <legend class="fs-6 fw-medium text-heading"><?= e($label) ?></legend>
         <?php if (isset($formErrors[$path])): ?><div class="text-danger small mb-2"><?= e($formErrors[$path]) ?></div><?php endif ?>
         <div class="repeater-items" data-repeater-items>
             <?php foreach ($items as $i => $item): ?>
@@ -84,23 +84,23 @@ $control = function (string $inputName, mixed $value, string $id, string $errorK
             <?php endforeach ?>
         </div>
         <template data-repeater-template><?= $renderItem([], '__INDEX__', '__ID__') ?></template>
-        <button type="button" class="btn btn-sm btn-outline-primary" data-repeater-add><i class="fa fa-plus me-1"></i>დამატება</button>
+        <button type="button" class="btn btn-sm btn-outline-primary" data-repeater-add><i class="icon-base bx bx-plus icon-sm me-1"></i>დამატება</button>
     </fieldset>
 
 <?php elseif ($type === 'toggle'): ?>
-    <div class="mb-3">
+    <div class="mb-5">
         <?= $control($sName, $settingsVal, $domId, $path) ?>
         <?php if (!empty($field['help'])): ?><div class="form-text"><?= e($field['help']) ?></div><?php endif ?>
     </div>
 
 <?php elseif (!empty($field['translatable'])): ?>
-    <div class="mb-3">
-        <label class="form-label d-block"><?= e($label) ?><?= !empty($field['required']) ? ' *' : '' ?> <span class="badge bg-info text-dark fw-normal">თარგმნადი</span></label>
+    <div class="mb-5">
+        <label class="form-label d-block"><?= e($label) ?><?= !empty($field['required']) ? ' *' : '' ?> <span class="badge bg-label-info ms-1">თარგმნადი</span></label>
         <div class="row g-2">
             <?php foreach ($languages as $language): ?>
                 <?php $code = $language['code']; ?>
                 <div class="<?= $type === 'wysiwyg' ? 'col-12' : 'col-md-6' ?>" data-lang="<?= e($code) ?>">
-                    <label class="small text-muted mb-1" for="<?= e("$domId-$code") ?>"><?= e($language['native_name']) ?></label>
+                    <label class="form-label small text-body-secondary mb-1" for="<?= e("$domId-$code") ?>"><?= e($language['native_name']) ?></label>
                     <?= $control($cName($code), $contentVals[$code] ?? '', "$domId-$code", "$path.$code") ?>
                 </div>
             <?php endforeach ?>
@@ -109,7 +109,7 @@ $control = function (string $inputName, mixed $value, string $id, string $errorK
     </div>
 
 <?php else: ?>
-    <div class="mb-3">
+    <div class="mb-5">
         <label class="form-label" for="<?= e($domId) ?>"><?= e($label) ?><?= !empty($field['required']) ? ' *' : '' ?></label>
         <?= $control($sName, $settingsVal, $domId, $path) ?>
         <?php if (!empty($field['help'])): ?><div class="form-text"><?= e($field['help']) ?></div><?php endif ?>

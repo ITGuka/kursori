@@ -30,7 +30,7 @@
 .admin-logo {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: var(--bs-border-radius-lg);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -64,10 +64,10 @@
 /* ---- მედია ---- */
 
 .upload-zone {
-    border: 2px dashed #ced4da;
-    border-radius: 8px;
+    border: 2px dashed var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
     padding: 16px;
-    background: #fff;
+    background: var(--bs-paper-bg, #fff);
     transition: border-color .15s, background-color .15s;
 }
 
@@ -91,9 +91,9 @@
     flex-direction: column;
     gap: 4px;
     padding: 8px;
-    border: 1px solid #e3e6ea;
-    border-radius: 8px;
-    background: #fff;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    background: var(--bs-paper-bg, #fff);
     color: inherit;
     text-align: left;
     text-decoration: none;
@@ -111,8 +111,8 @@
     align-items: center;
     justify-content: center;
     aspect-ratio: 1 / 1;
-    background: #f3f6f9;
-    border-radius: 4px;
+    background: var(--bs-gray-50, #f6f7f8);
+    border-radius: var(--bs-border-radius-sm);
     overflow: hidden;
 }
 
@@ -131,7 +131,7 @@
 
 .media-card-meta {
     font-size: 12px;
-    color: #6c757d;
+    color: var(--bs-secondary-color);
 }
 
 .media-preview {
@@ -139,8 +139,8 @@
     align-items: center;
     justify-content: center;
     min-height: 200px;
-    background: #fff;
-    border-radius: 8px;
+    background: var(--bs-paper-bg, #fff);
+    border-radius: var(--bs-border-radius-lg);
     padding: 8px;
 }
 
@@ -149,14 +149,14 @@
     align-items: center;
     gap: 12px;
     padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    background: #fff;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    background: var(--bs-paper-bg, #fff);
     max-width: 480px;
 }
 
 .media-input.is-invalid {
-    border-color: var(--bs-danger, #dc3545);
+    border-color: var(--bs-danger);
 }
 
 .media-input-preview {
@@ -165,8 +165,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f3f6f9;
-    border-radius: 4px;
+    background: var(--bs-gray-50, #f6f7f8);
+    border-radius: var(--bs-border-radius-sm);
     overflow: hidden;
 }
 
@@ -189,9 +189,9 @@
     gap: 12px;
     padding: 10px 12px;
     margin-bottom: 8px;
-    background: #fff;
-    border: 1px solid #e3e6ea;
-    border-radius: 6px;
+    background: var(--bs-paper-bg, #fff);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
 }
 
 .block-row.is-hidden {
@@ -205,7 +205,7 @@
 .block-handle,
 .repeater-handle {
     cursor: grab;
-    color: #adb5bd;
+    color: var(--bs-secondary-color);
     padding: 0 4px;
 }
 
@@ -221,14 +221,14 @@
 }
 
 .repeater {
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
     padding: 12px 16px 16px;
-    background: #f8f9fa;
+    background: var(--bs-body-bg);
 }
 
 .repeater.is-invalid {
-    border-color: var(--bs-danger, #dc3545);
+    border-color: var(--bs-danger);
 }
 
 .repeater > legend {
@@ -239,9 +239,9 @@
 }
 
 .repeater-item {
-    background: #fff;
-    border: 1px solid #e3e6ea;
-    border-radius: 6px;
+    background: var(--bs-paper-bg, #fff);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
     padding: 8px 16px 4px;
     margin-bottom: 12px;
 }
@@ -252,13 +252,13 @@
     gap: 8px;
     margin: 0 -8px 8px;
     padding-bottom: 6px;
-    border-bottom: 1px solid #f1f3f5;
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
 .link-input.is-invalid {
-    outline: 1px solid var(--bs-danger, #dc3545);
+    outline: 1px solid var(--bs-danger);
     outline-offset: 4px;
-    border-radius: 4px;
+    border-radius: var(--bs-border-radius-sm);
 }
 
 /* ---- კოლექციები ---- */
@@ -269,8 +269,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f3f6f9;
-    border-radius: 4px;
+    background: var(--bs-gray-50, #f6f7f8);
+    border-radius: var(--bs-border-radius-sm);
     overflow: hidden;
 }
 
@@ -316,7 +316,7 @@
     border: 0;
     border-radius: 50px;
     background: transparent;
-    color: #6c7293;
+    color: var(--bs-secondary-color);
     font-size: 13px;
     font-weight: 600;
     line-height: 1.4;
@@ -324,7 +324,7 @@
 }
 
 .lang-switch-btn:hover {
-    color: #191c24;
+    color: var(--bs-heading-color);
 }
 
 .lang-switch-btn:focus-visible {
@@ -333,9 +333,9 @@
 }
 
 .lang-switch-btn.active {
-    background: #fff;
+    background: var(--bs-paper-bg, #fff);
     color: var(--bs-primary);
-    box-shadow: 0 1px 4px rgba(25, 28, 36, .12);
+    box-shadow: var(--bs-box-shadow-sm);
 }
 
 .lang-switch-btn .fi {
@@ -350,7 +350,7 @@
 }
 
 .lang-switch-btn.has-error:not(.active) {
-    color: var(--bs-danger, #dc3545);
+    color: var(--bs-danger);
 }
 
 .lang-switch-btn.has-error::after {
@@ -360,7 +360,7 @@
     height: 6px;
     margin-left: -2px;
     border-radius: 50%;
-    background: var(--bs-danger, #dc3545);
+    background: var(--bs-danger);
 }
 
 /* ერთ ენაზე ორსვეტიანი თარგმნადი ველი მთელ სიგანეზე იშლება */
@@ -375,7 +375,7 @@ html[data-admin-lang]:not([data-admin-lang="all"]) .row > [data-lang] {
 }
 
 .dash-stat:hover {
-    box-shadow: 0 4px 16px rgba(25, 28, 36, .08);
+    box-shadow: var(--bs-box-shadow);
     transform: translateY(-2px);
 }
 
@@ -431,4 +431,35 @@ html[data-admin-lang]:not([data-admin-lang="all"]) .row > [data-lang] {
 
 #calender .bootstrap-datetimepicker-widget table td.active.today::before {
     border-bottom-color: #fff;
+}
+/* ატვირთვის ზონის საქაღალდის ველი */
+.upload-zone-folder {
+    min-width: 200px;
+}
+
+/* ბლოკის / repeater-ის გადასათრევი სახელური */
+.block-handle:hover,
+.repeater-handle:hover {
+    color: var(--bs-primary);
+}
+
+/* ფილტრების ზოლი სიების თავში */
+.list-filters .form-control,
+.list-filters .form-select {
+    min-width: 160px;
+}
+
+/* ცხრილის მოქმედებების ღილაკები ერთ ხაზზე */
+.table-actions {
+    display: inline-flex;
+    gap: .375rem;
+    justify-content: flex-end;
+}
+
+.table-actions form {
+    display: inline;
+}
+/* ბლოკის ფორმის ველები — კითხვადი სიგანე */
+.block-form-fields {
+    max-width: 1000px;
 }

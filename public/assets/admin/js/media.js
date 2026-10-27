@@ -97,7 +97,7 @@
         var $card = $('<button type="button" class="media-card"></button>');
         var $thumb = $('<span class="media-card-thumb"></span>');
         if (media.image) { $thumb.append($('<img loading="lazy" alt="">').attr('src', media.thumb)); }
-        else { $thumb.append('<i class="fa fa-file-pdf fa-3x text-danger"></i>'); }
+        else { $thumb.append('<i class="icon-base bx bxs-file-pdf icon-xl text-danger"></i>'); }
         $card.append($thumb)
             .append($('<span class="media-card-name"></span>').text(media.name))
             .append($('<span class="media-card-meta"></span>').text((media.width ? media.width + '×' + media.height + ' · ' : '') + media.size));
@@ -121,14 +121,14 @@
         var $preview = $input.find('[data-media-preview]').empty();
         if (!media) {
             $input.find('[data-media-value]').val('');
-            $preview.append('<i class="fa fa-image fa-2x text-muted"></i>');
-            $input.find('[data-media-name]').html('<span class="text-muted">არ არის არჩეული</span>');
+            $preview.append('<i class="icon-base bx bx-image icon-lg text-body-secondary"></i>');
+            $input.find('[data-media-name]').html('<span class="text-body-secondary">არ არის არჩეული</span>');
             $input.find('[data-media-clear]').addClass('d-none');
             return;
         }
         $input.find('[data-media-value]').val(media.id);
         if (media.image) { $preview.append($('<img alt="">').attr('src', media.thumb)); }
-        else { $preview.append('<i class="fa fa-file-pdf fa-2x text-danger"></i>'); }
+        else { $preview.append('<i class="icon-base bx bxs-file-pdf icon-lg text-danger"></i>'); }
         $input.find('[data-media-name]').text(media.name);
         $input.find('[data-media-clear]').removeClass('d-none');
     }
