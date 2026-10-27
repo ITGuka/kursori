@@ -99,11 +99,15 @@ jobs:
             --exclude='/public/uploads/' \
             --exclude='/public/.well-known/' \
             --exclude='/public/cgi-bin/' \
-            --exclude='/resources/templates/*.zip' \
+            --exclude='/resources/' \
             --exclude='.user.ini' \
             --exclude='php.ini' \
             --exclude='error_log' \
             app/ prod:"$APP_DIR/"
+
+      # resources/ (template sources, seed stock images) is not needed in production
+      - name: Remove dev-only files
+        run: ssh prod "rm -rf $APP_DIR/resources"
 
       - name: Migrate & clear cache
         run: ssh prod "cd $APP_DIR && php bin/console migrate && php bin/console cache:clear"
