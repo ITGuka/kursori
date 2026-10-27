@@ -1,0 +1,463 @@
+<title>WEBDEV საიტის რუკა</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: არქიტექტორის ნახაზი — ბადიანი „ქაღალდი“, მელნის ხაზები, სტუდიის ვარდისფერი მხოლოდ მნიშვნელოვანზე; მარცხნივ შინაარსი (desktop) */
+:root {
+  --paper: #f6f7fb;
+  --sheet: #ffffff;
+  --ink: #1d2340;
+  --ink-soft: #545b7a;
+  --line: #d5d9e8;
+  --grid: rgba(60, 80, 160, .06);
+  --accent: #d4136d;
+  --accent-soft: #fbe3ef;
+  --blue: #2f55d4;
+  --blue-soft: #e5ebff;
+  --green: #1f8a5b;
+  --green-soft: #e1f4ea;
+  --amber: #b26a00;
+  --amber-soft: #fbf0dc;
+  --f-display: "Noto Serif Georgian", "Sylfaen", Georgia, serif;
+  --f-body: "Noto Sans Georgian", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12152a; --sheet: #191d36; --ink: #e7e9f5; --ink-soft: #a3a9c7; --line: #2e3458; --grid: rgba(140, 160, 255, .06);
+    --accent: #ff5aa5; --accent-soft: #3a1830; --blue: #8aa4ff; --blue-soft: #1f2a55; --green: #5fd19b; --green-soft: #15332a;
+    --amber: #f0b44e; --amber-soft: #3a2c12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12152a; --sheet: #191d36; --ink: #e7e9f5; --ink-soft: #a3a9c7; --line: #2e3458; --grid: rgba(140, 160, 255, .06);
+  --accent: #ff5aa5; --accent-soft: #3a1830; --blue: #8aa4ff; --blue-soft: #1f2a55; --green: #5fd19b; --green-soft: #15332a;
+  --amber: #f0b44e; --amber-soft: #3a2c12; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background-color: var(--paper);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font: 15px/1.65 var(--f-body);
+}
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 40px;
+}
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); } .toc { display: none; } }
+
+.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 13px; }
+.toc b { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+.toc a { display: block; padding: 4px 0 4px 12px; border-left: 2px solid var(--line); color: var(--ink-soft); text-decoration: none; }
+.toc a:hover, .toc a:focus-visible { color: var(--accent); border-left-color: var(--accent); outline: none; }
+
+main { display: grid; gap: 56px; min-width: 0; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font: 800 clamp(30px, 5vw, 46px)/1.15 var(--f-display); }
+h2 { font: 800 26px/1.25 var(--f-display); }
+h3 { font: 600 16px/1.4 var(--f-body); }
+p { margin: 0; max-width: 68ch; }
+.lead { font-size: 17px; color: var(--ink-soft); }
+.eyebrow { font: 600 11px/1 var(--f-body); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+section { display: grid; gap: 18px; scroll-margin-top: 24px; min-width: 0; }
+code, .mono { font-family: var(--f-mono); font-size: .86em; }
+code { background: var(--blue-soft); color: var(--blue); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+
+.sheet { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 22px; min-width: 0; }
+.note { font-size: 13px; color: var(--ink-soft); }
+.scroll-x { overflow-x: auto; }
+
+/* ფაქტები */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.fact { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.fact strong { display: block; font: 800 26px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.fact span { font-size: 13px; color: var(--ink-soft); }
+
+/* საიტის რუკა */
+.sitemap { display: grid; gap: 18px; min-width: 640px; }
+.sm-root { justify-self: center; }
+.sm-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; position: relative; padding-top: 18px; border-top: 2px solid var(--line); }
+.node { background: var(--sheet); border: 1.5px solid var(--ink); border-radius: 8px; padding: 10px 12px; display: grid; gap: 4px; position: relative; }
+.node::before { content: ""; position: absolute; top: -20px; left: 50%; width: 2px; height: 18px; background: var(--line); }
+.sm-root .node::before { display: none; }
+.node.home { border-color: var(--accent); box-shadow: 4px 4px 0 var(--accent-soft); min-width: 260px; text-align: center; }
+.node.new { border-color: var(--accent); }
+.node .t { font-weight: 700; }
+.node .u { font: 12px/1.3 var(--f-mono); color: var(--ink-soft); overflow-wrap: anywhere; }
+.node .kids { margin-top: 6px; display: grid; gap: 4px; border-top: 1px dashed var(--line); padding-top: 6px; }
+.node .kid { font-size: 12.5px; display: flex; gap: 6px; align-items: baseline; }
+.node .kid::before { content: "└"; color: var(--ink-soft); font-family: var(--f-mono); }
+.tag { display: inline-block; font: 600 10.5px/1 var(--f-body); letter-spacing: .04em; padding: 4px 7px; border-radius: 99px; background: var(--blue-soft); color: var(--blue); white-space: nowrap; }
+.tag.pink { background: var(--accent-soft); color: var(--accent); }
+.tag.green { background: var(--green-soft); color: var(--green); }
+.tag.amber { background: var(--amber-soft); color: var(--amber); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 13px; color: var(--ink-soft); }
+
+/* გვერდის ანატომია */
+.anatomy { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 720px) { .anatomy { grid-template-columns: minmax(0, 1fr); } }
+.browser { border: 1.5px solid var(--ink); border-radius: 10px; overflow: hidden; background: var(--sheet); }
+.browser .bar { display: flex; gap: 6px; padding: 8px 10px; border-bottom: 1.5px solid var(--ink); align-items: center; }
+.browser .bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.browser .bar span { font: 11px var(--f-mono); color: var(--ink-soft); margin-left: 8px; }
+.slab { padding: 10px 12px; border-bottom: 1px dashed var(--line); font-size: 13px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.slab:last-child { border-bottom: 0; }
+.slab.fixed { background: var(--blue-soft); }
+.slab.head { background: var(--accent-soft); min-height: 64px; }
+.slab.block { min-height: 44px; }
+.slab small { color: var(--ink-soft); font-size: 11px; }
+.anatomy ol { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+
+/* გვერდები → ბლოკები */
+.pages { display: grid; gap: 0; }
+.prow { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); align-items: start; }
+.prow:last-child { border-bottom: 0; }
+@media (max-width: 640px) { .prow { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+.prow .name { font-weight: 700; }
+.prow .name small { display: block; font: 12px var(--f-mono); color: var(--ink-soft); font-weight: 400; }
+.chain { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip { font-size: 12.5px; padding: 4px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); white-space: nowrap; }
+.chip.h { border-color: var(--accent); color: var(--accent); }
+.chain .arr { color: var(--ink-soft); font-size: 12px; }
+
+/* ბლოკების კატალოგი */
+.blocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.blk { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 6px; align-content: start; }
+.blk header { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.blk header code { background: none; padding: 0; color: var(--ink-soft); font-size: 11.5px; }
+.blk p { font-size: 13.5px; color: var(--ink-soft); }
+.blk .where { font-size: 12px; color: var(--ink-soft); }
+.blk .where b { color: var(--ink); font-weight: 600; }
+
+/* ნაკადები */
+.flow { display: flex; flex-wrap: wrap; gap: 0; align-items: stretch; }
+.step { flex: 1 1 150px; min-width: 0; background: var(--sheet); border: 1.5px solid var(--ink); border-radius: 8px; padding: 12px; display: grid; gap: 4px; align-content: start; }
+.step .n { font: 600 11px var(--f-mono); color: var(--accent); }
+.step b { font-size: 14px; }
+.step span { font-size: 12.5px; color: var(--ink-soft); }
+.joint { flex: 0 0 26px; display: grid; place-items: center; color: var(--ink-soft); font-size: 18px; }
+@media (max-width: 640px) { .flow { flex-direction: column; } .joint { flex-basis: 22px; transform: rotate(90deg); } }
+
+/* მონაცემები */
+.data { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.store { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 8px; align-content: start; }
+.store h3 { display: flex; justify-content: space-between; gap: 8px; }
+.store h3 em { font: 600 13px var(--f-mono); font-style: normal; color: var(--accent); font-variant-numeric: tabular-nums; }
+.store p { font-size: 13.5px; color: var(--ink-soft); }
+.store .tables { font: 11.5px/1.5 var(--f-mono); color: var(--ink-soft); }
+
+/* ადმინი */
+.admin { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--sheet); }
+.admin div { padding: 12px 14px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); display: grid; gap: 2px; }
+.admin b { font-size: 14px; }
+.admin span { font-size: 13px; color: var(--ink-soft); }
+
+/* ფაილები */
+.tree { font: 13px/1.75 var(--f-mono); margin: 0; white-space: pre; color: var(--ink); }
+.tree .c { color: var(--ink-soft); }
+.tree .k { color: var(--accent); font-weight: 600; }
+
+/* ლექსიკონი */
+dl.gloss { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 10px 20px; margin: 0; }
+@media (max-width: 640px) { dl.gloss { grid-template-columns: minmax(0, 1fr); gap: 2px; } dl.gloss dd { margin-bottom: 10px; } }
+dl.gloss dt { font-weight: 700; }
+dl.gloss dd { margin: 0; color: var(--ink-soft); }
+
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+  <nav class="toc" aria-label="შინაარსი">
+    <b>შინაარსი</b>
+    <a href="#overview">მოკლედ</a>
+    <a href="#sitemap">საიტის რუკა</a>
+    <a href="#anatomy">გვერდის აგებულება</a>
+    <a href="#pages">გვერდები და ბლოკები</a>
+    <a href="#blocks">ბლოკების კატალოგი</a>
+    <a href="#data">კონტენტი და მონაცემები</a>
+    <a href="#request">როგორ იხსნება გვერდი</a>
+    <a href="#order">შეკვეთის ნაკადი</a>
+    <a href="#admin">ადმინ-პანელი</a>
+    <a href="#code">ფაილების სტრუქტურა</a>
+    <a href="#glossary">ლექსიკონი</a>
+  </nav>
+
+  <main>
+    <header id="overview" style="display:grid;gap:14px">
+      <span class="eyebrow">WEBDEV · ვებ დიზაინ სტუდიის საიტი</span>
+      <h1>საიტის რუკა და აგებულება</h1>
+      <p class="lead">WEBDEV არის ვებ დიზაინ სტუდიის ორენოვანი საიტი (ქართული და ინგლისური), რომელიც საკუთარ CMS-ზეა აგებული. საიტზე ყველაფერი ადმინ-პანელიდან იმართება: გვერდები, მათი ბლოკები, მენიუები, სერვისები, პორტფოლიო, ბლოგი, დიზაინები და პარამეტრები. კოდში მხოლოდ ბლოკების ტიპები და ველების აღწერებია.</p>
+      <div class="facts">
+        <div class="fact"><strong>11</strong><span>გვერდი (ka + en)</span></div>
+        <div class="fact"><strong>18</strong><span>ბლოკის ტიპი</span></div>
+        <div class="fact"><strong>5</strong><span>კოლექცია: სერვისები, პორტფოლიო, ბლოგი, გუნდი, შეფასებები</span></div>
+        <div class="fact"><strong>137</strong><span>საიტის დიზაინი შეკვეთისთვის, 18 კატეგორიაში</span></div>
+        <div class="fact"><strong>2</strong><span>ენა: <code>/ka/</code> ძირითადი, <code>/en/</code></span></div>
+      </div>
+    </header>
+
+    <section id="sitemap">
+      <span class="eyebrow">01 · სტრუქტურა</span>
+      <h2>საიტის რუკა</h2>
+      <p>ყველა მისამართი ენით იწყება: <code>/ka/…</code> ან <code>/en/…</code>. ძირი <code>/</code> ძირითად ენაზე გადამისამართდება. ქვემოთ ქართული მისამართებია, ინგლისურს თავისი slug აქვს (მაგ. <code>/en/services</code>).</p>
+      <div class="sheet scroll-x">
+        <div class="sitemap">
+          <div class="sm-root">
+            <div class="node home"><span class="t">მთავარი</span><span class="u">/ka</span></div>
+          </div>
+          <div class="sm-row">
+            <div class="node">
+              <span class="t">სერვისები</span><span class="u">/ka/servisebi</span>
+              <div class="kids">
+                <span class="kid">ვებ დიზაინი</span><span class="kid">ვებ დეველოპმენტი</span>
+                <span class="kid">ბრენდინგი</span><span class="kid">SEO და მარკეტინგი</span>
+              </div>
+              <span class="tag green">კოლექცია · /servisebi/{slug}</span>
+            </div>
+            <div class="node">
+              <span class="t">პორტფოლიო</span><span class="u">/ka/portpolio</span>
+              <div class="kids"><span class="kid">6 პროექტი</span></div>
+              <span class="tag green">კოლექცია · /portpolio/{slug}</span>
+            </div>
+            <div class="node">
+              <span class="t">ფასები</span><span class="u">/ka/fasebi</span>
+            </div>
+            <div class="node">
+              <span class="t">ბლოგი</span><span class="u">/ka/blogi</span>
+              <div class="kids"><span class="kid">3 სტატია</span></div>
+              <span class="tag green">კოლექცია · /blogi/{slug}</span>
+            </div>
+            <div class="node">
+              <span class="t">ჩვენ შესახებ</span><span class="u">/ka/chven-shesakheb</span>
+              <div class="kids"><span class="kid">გუნდი <span class="mono note">/gundi</span></span><span class="kid">შეფასებები <span class="mono note">/shepasebebi</span></span></div>
+              <span class="tag">ქვეგვერდები</span>
+            </div>
+          </div>
+          <div class="sm-row" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+            <div class="node"><span class="t">კონტაქტი</span><span class="u">/ka/kontakti</span><span class="tag pink">ფორმა → Inbox</span></div>
+            <div class="node new"><span class="t">შეკვეთა</span><span class="u">/ka/shekveta</span><span class="tag pink">დიზაინის არჩევა → Inbox + ელ-ფოსტა</span></div>
+            <div class="node"><span class="t">კონფიდენციალურობის პოლიტიკა</span><span class="u">/ka/konfidencialuroba</span><span class="tag amber">მხოლოდ footer-ში</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><span class="tag green">კოლექცია</span> ჩანაწერებს საკუთარი გვერდი აქვს</span>
+        <span><span class="tag pink">ფორმა</span> მომხმარებლის შეტყობინება ადმინს მიდის</span>
+        <span><span class="tag">ქვეგვერდები</span> გვერდების ხეში მშობლის ქვეშ</span>
+      </div>
+      <div class="sheet" style="display:grid;gap:10px">
+        <h3>მენიუები</h3>
+        <p><b>Header:</b> სერვისები ▾ (4 სერვისის ქვემენიუ) · პორტფოლიო · ფასები · ბლოგი · ჩვენ შესახებ · კონტაქტი · შეკვეთა, მარჯვნივ ღილაკი „მოითხოვეთ შეთავაზება“ და ენის გადამრთველი KA / EN.</p>
+        <p><b>Footer:</b> ჩვენ შესახებ · სერვისები · პორტფოლიო · ფასები · ბლოგი · კონტაქტი · კონფიდენციალურობის პოლიტიკა.</p>
+        <p class="note">მენიუები ადმინში იმართება: ადმინი → მენიუები. პუნქტი შეიძლება იყოს გვერდი ან ნებისმიერი ბმული, ორ დონემდე.</p>
+      </div>
+    </section>
+
+    <section id="anatomy">
+      <span class="eyebrow">02 · ერთი გვერდი</span>
+      <h2>გვერდის აგებულება</h2>
+      <p>ყოველი გვერდი აწყობილია ბლოკებისგან, რომლებიც ადმინში დალაგებული რიგით ჩანს. ნავიგაცია და footer ყველა გვერდზე ერთნაირია და პარამეტრებიდან ივსება.</p>
+      <div class="anatomy">
+        <div class="browser" aria-hidden="true">
+          <div class="bar"><i></i><i></i><i></i><span>webdev.ge/ka/fasebi</span></div>
+          <div class="slab fixed"><span>ნავიგაცია · მენიუ · CTA · KA/EN</span><small>ყველა გვერდზე</small></div>
+          <div class="slab head"><span>გვერდის სათაური</span><small>header ბლოკი</small></div>
+          <div class="slab block"><span>ფასები (პაკეტები)</span><small>ბლოკი 2</small></div>
+          <div class="slab block"><span>ხშირი კითხვები</span><small>ბლოკი 3</small></div>
+          <div class="slab block"><span>განაცხადის ფორმა</span><small>ბლოკი 4</small></div>
+          <div class="slab fixed"><span>Footer · კონტაქტები · სოც. ქსელები</span><small>ყველა გვერდზე</small></div>
+        </div>
+        <ol>
+          <li><b>ნავიგაცია:</b> ლოგო, header მენიუ, მთავარი ღილაკი, ენის გადამრთველი. მობილურზე ქვემოთ ჩნდება ზოლი „დარეკვა + CTA“.</li>
+          <li><b>Header ბლოკი</b> (სლაიდერი ან გვერდის სათაური) ყოველთვის პირველია და ნავიგაციის ქვეშ იხატება. თუ გვერდს ასეთი ბლოკი არ აქვს, ავტომატურად ჩაისმება სტანდარტული სათაური.</li>
+          <li><b>შიგთავსის ბლოკები</b> თითო სექციაა. თითოეულს აქვს ველები ორივე ენაზე და შეიძლება დაიმალოს, დაკოპირდეს ან გადაადგილდეს.</li>
+          <li><b>Footer</b> შეიცავს კონტაქტებს, footer მენიუს და copyright-ს. ყველაფერი პარამეტრებიდან ივსება.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="pages">
+      <span class="eyebrow">03 · შემადგენლობა</span>
+      <h2>გვერდები და მათი ბლოკები</h2>
+      <p>რიგი ზუსტად ის არის, რაც საიტზე ჩანს ზემოდან ქვემოთ. ვარდისფერია header ბლოკი.</p>
+      <div class="sheet pages">
+        <div class="prow"><div class="name">მთავარი<small>/ka</small></div><div class="chain"><span class="chip h">სლაიდერი</span><span class="arr">→</span><span class="chip">ციფრები</span><span class="arr">→</span><span class="chip">ჩვენ შესახებ</span><span class="arr">→</span><span class="chip">სერვისები</span><span class="arr">→</span><span class="chip">პორტფოლიო</span><span class="arr">→</span><span class="chip">პროცესი</span><span class="arr">→</span><span class="chip">შეფასებები</span><span class="arr">→</span><span class="chip">ბლოგი</span><span class="arr">→</span><span class="chip">ბანერი + გამოწერა</span></div></div>
+        <div class="prow"><div class="name">სერვისები<small>/ka/servisebi</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">სერვისები</span><span class="arr">→</span><span class="chip">განაცხადის ფორმა</span></div></div>
+        <div class="prow"><div class="name">პორტფოლიო<small>/ka/portpolio</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">პორტფოლიო (ფილტრით)</span></div></div>
+        <div class="prow"><div class="name">ფასები<small>/ka/fasebi</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">ფასები</span><span class="arr">→</span><span class="chip">ხშირი კითხვები</span><span class="arr">→</span><span class="chip">განაცხადის ფორმა</span></div></div>
+        <div class="prow"><div class="name">ბლოგი<small>/ka/blogi</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">ბლოგი</span></div></div>
+        <div class="prow"><div class="name">ჩვენ შესახებ<small>/ka/chven-shesakheb</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">ტექსტი</span><span class="arr">→</span><span class="chip">გუნდი</span><span class="arr">→</span><span class="chip">ბანერი + გამოწერა</span></div></div>
+        <div class="prow"><div class="name">└ გუნდი<small>/ka/gundi</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">გუნდი</span></div></div>
+        <div class="prow"><div class="name">└ შეფასებები<small>/ka/shepasebebi</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">შეფასებები</span></div></div>
+        <div class="prow"><div class="name">კონტაქტი<small>/ka/kontakti</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">კონტაქტი + ფორმა</span><span class="arr">→</span><span class="chip">რუკა</span></div></div>
+        <div class="prow"><div class="name">შეკვეთა<small>/ka/shekveta</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">საიტის შეკვეთის ფორმა</span></div></div>
+        <div class="prow"><div class="name">კონფიდენციალურობა<small>/ka/konfidencialuroba</small></div><div class="chain"><span class="chip h">გვერდის სათაური</span><span class="arr">→</span><span class="chip">ტექსტი</span></div></div>
+        <div class="prow"><div class="name">კოლექციის ჩანაწერი<small>/ka/servisebi/veb-dizaini …</small></div><div class="chain"><span class="chip h">გვერდის სათაური (ჩანაწერის ფოტოთი)</span><span class="arr">→</span><span class="chip">ჩანაწერის შიგთავსი</span><span class="note" style="margin-left:6px">ბლოკებით არ იწყობა: შაბლონი კოლექციის ტიპზეა მიბმული</span></div></div>
+      </div>
+    </section>
+
+    <section id="blocks">
+      <span class="eyebrow">04 · აგურები</span>
+      <h2>ბლოკების კატალოგი</h2>
+      <p>ბლოკი არის გვერდის სექციის ტიპი. თითოეულს აქვს ველები: ტექსტი ორ ენაზე, სურათი, ბმული, სია და სხვა. ადმინის ფორმა ამ ველებიდან ავტომატურად იქმნება. ზოგი ბლოკი შიგთავსს ხელით შეყვანილს აჩვენებს, ზოგი კი კოლექციიდან იღებს.</p>
+      <div class="blocks">
+        <article class="blk"><header><h3>სლაიდერი (Hero)</h3><code>hero_carousel</code></header><p>გვერდის თავი: სლაიდები ფონით, სათაურით და ორი ღილაკით. შეიძლება იყოს სტატიკური.</p><span class="tag pink">header</span><span class="where">სად: <b>მთავარი</b></span></article>
+        <article class="blk"><header><h3>გვერდის სათაური</h3><code>page_header</code></header><p>სათაური ფონის სურათით და ნავიგაციის ჯაჭვით. ყოველ გვერდს თავისი თემის ფოტო აქვს.</p><span class="tag pink">header</span><span class="where">სად: <b>ყველა შიდა გვერდი</b></span></article>
+        <article class="blk"><header><h3>ციფრები</h3><code>stats</code></header><p>ნდობის ზოლი: პროექტების რაოდენობა, გამოცდილების წლები და მსგავსი რიცხვები.</p><span class="where">სად: <b>მთავარი</b></span></article>
+        <article class="blk"><header><h3>ჩვენ შესახებ</h3><code>about</code></header><p>სურათი, ტექსტი, ჩამონათვალი და ღილაკი.</p><span class="where">სად: <b>მთავარი</b></span></article>
+        <article class="blk"><header><h3>სერვისები</h3><code>services</code></header><p>სერვისების ბარათები. წყარო ხელით ან კოლექციიდან „სერვისები“.</p><span class="tag green">კოლექციიდან</span><span class="where">სად: <b>მთავარი, სერვისები</b></span></article>
+        <article class="blk"><header><h3>პორტფოლიო</h3><code>portfolio_grid</code></header><p>პროექტები კატეგორიების ფილტრით. ყოველთვის კოლექციიდან ივსება.</p><span class="tag green">კოლექციიდან</span><span class="where">სად: <b>მთავარი, პორტფოლიო</b></span></article>
+        <article class="blk"><header><h3>პროცესი</h3><code>process</code></header><p>მუშაობის ეტაპები ნომრებით.</p><span class="where">სად: <b>მთავარი</b></span></article>
+        <article class="blk"><header><h3>შეფასებები</h3><code>testimonials</code></header><p>კლიენტების ციტატების კარუსელი.</p><span class="tag green">კოლექციიდან</span><span class="where">სად: <b>მთავარი, შეფასებები</b></span></article>
+        <article class="blk"><header><h3>ბლოგი</h3><code>blog_list</code></header><p>უახლესი სტატიები.</p><span class="tag green">კოლექციიდან</span><span class="where">სად: <b>მთავარი, ბლოგი</b></span></article>
+        <article class="blk"><header><h3>ბანერი + გამოწერა</h3><code>banner_signup</code></header><p>მოწოდება და newsletter-ის გამოწერის ველი (ორმაგი დადასტურებით).</p><span class="where">სად: <b>მთავარი, ჩვენ შესახებ</b></span></article>
+        <article class="blk"><header><h3>გუნდი</h3><code>team_grid</code></header><p>გუნდის წევრები ფოტოთი და პოზიციით.</p><span class="tag green">კოლექციიდან</span><span class="where">სად: <b>ჩვენ შესახებ, გუნდი</b></span></article>
+        <article class="blk"><header><h3>ფასები</h3><code>pricing</code></header><p>ფასების პაკეტები: ფასი, რა შედის, ღილაკი.</p><span class="where">სად: <b>ფასები</b></span></article>
+        <article class="blk"><header><h3>ხშირი კითხვები</h3><code>faq</code></header><p>კითხვა-პასუხი გასაშლელი სიით.</p><span class="where">სად: <b>ფასები</b></span></article>
+        <article class="blk"><header><h3>განაცხადის ფორმა</h3><code>application_form</code></header><p>შეთავაზების მოთხოვნა: სახელი, კონტაქტი, სერვისი, ბიუჯეტი. იგზავნება Inbox-ში.</p><span class="tag pink">ფორმა</span><span class="where">სად: <b>სერვისები, ფასები</b></span></article>
+        <article class="blk"><header><h3>კონტაქტი</h3><code>contact</code></header><p>კონტაქტები პარამეტრებიდან და საკონტაქტო ფორმა.</p><span class="tag pink">ფორმა</span><span class="where">სად: <b>კონტაქტი</b></span></article>
+        <article class="blk"><header><h3>რუკა</h3><code>map</code></header><p>Google Maps-ის ჩასმა.</p><span class="where">სად: <b>კონტაქტი</b></span></article>
+        <article class="blk"><header><h3>საიტის შეკვეთის ფორმა</h3><code>order_form</code></header><p>მომხმარებლის მონაცემები, ბიზნესის კატეგორია, დიზაინის არჩევა preview-ით, ბიზნესის აღწერა და დომენი/ჰოსტინგი.</p><span class="tag pink">ფორმა</span><span class="where">სად: <b>შეკვეთა</b></span></article>
+        <article class="blk"><header><h3>ტექსტი</h3><code>rich_text</code></header><p>თავისუფალი ტექსტი რედაქტორით.</p><span class="where">სად: <b>ჩვენ შესახებ, კონფიდენციალურობა</b></span></article>
+      </div>
+    </section>
+
+    <section id="data">
+      <span class="eyebrow">05 · სად ინახება რა</span>
+      <h2>კონტენტი და მონაცემები</h2>
+      <p>მონაცემები MySQL ბაზაშია. თარგმნადი ტექსტები ინახება ცალკე ცხრილებში, რომელთა სახელიც <code>*_translations</code>-ით მთავრდება, თითო ჩანაწერი ენაზე. ატვირთული ფაილები ინახება <code>public/uploads/</code>-ში.</p>
+      <div class="data">
+        <div class="store"><h3>გვერდები <em>11</em></h3><p>გვერდების ხე (მშობელი → ქვეგვერდი), სტატუსი (გამოქვეყნებული / მონახაზი), SEO ველები. თითო გვერდში ბლოკების სია.</p><div class="tables">pages · page_translations · page_blocks · page_block_translations</div></div>
+        <div class="store"><h3>კოლექციები <em>20</em></h3><p>ერთგვაროვანი ჩანაწერები: სერვისები (4), პორტფოლიო (6), ბლოგი (3), გუნდი (4), შეფასებები (3). ტიპები და ველები აღწერილია <code>config/collections.php</code>-ში.</p><div class="tables">collection_items · collection_item_translations · categories</div></div>
+        <div class="store"><h3>დიზაინები <em>137</em></h3><p>შეკვეთის ფორმის შაბლონები: ZIP ფაილიდან გახსნილი HTML/CSS/JS შაბლონი, ბარათის სურათი და 18 ბიზნეს-კატეგორია (ერთ დიზაინს შეიძლება რამდენიმე ჰქონდეს).</p><div class="tables">designs · design_translations · design_category · uploads/designs/</div></div>
+        <div class="store"><h3>მედია <em>186</em></h3><p>სურათების ბიბლიოთეკა საქაღალდეებით (მაგ. „ჰედერები“, „დიზაინები“). ავტომატურად იქმნება ზომის ვარიანტები და WebP ასლი. alt ტექსტი ორ ენაზეა.</p><div class="tables">media · media_translations · uploads/YYYY/MM/</div></div>
+        <div class="store"><h3>Inbox <em>ფორმები</em></h3><p>კონტაქტის, განაცხადისა და შეკვეთის ფორმების შეტყობინებები, სტატუსით: ახალი / განხილვაში / დასრულებული. შეკვეთაზე ადმინს ელ-ფოსტაც მოდის.</p><div class="tables">form_submissions · rate_limits</div></div>
+        <div class="store"><h3>Newsletter</h3><p>გამომწერები ორმაგი დადასტურებით და კამპანიები, რომლებიც პარტიებად იგზავნება.</p><div class="tables">subscribers · newsletter_campaigns · newsletter_sends</div></div>
+        <div class="store"><h3>პარამეტრები და თარგმანები</h3><p>საიტის სახელი, ლოგო, კონტაქტები, სოც. ქსელები, SEO, SMTP. UI ტექსტები (ღილაკები, შეტყობინებები) ორ ენაზე.</p><div class="tables">settings · translation_keys · translation_values · languages</div></div>
+        <div class="store"><h3>სერვისული</h3><p>მენიუები, გადამისამართებები (301) და 404-ების ჟურნალი, ადმინები, აქტივობის ჟურნალი, დავალებები Dashboard-ზე.</p><div class="tables">menus · menu_items · redirects · not_found_log · admin_users · activity_log · admin_todos</div></div>
+      </div>
+    </section>
+
+    <section id="request">
+      <span class="eyebrow">06 · ქცევა</span>
+      <h2>როგორ იხსნება გვერდი</h2>
+      <p>მაგალითად, სტუმარი ხსნის მისამართს <code>/ka/fasebi</code>:</p>
+      <div class="flow">
+        <div class="step"><span class="n">1 · მისამართი</span><b>Router</b><span><code>/{lang}/{slug}</code>-ს ადარებს მარშრუტებს (<code>app/routes/web.php</code>)</span></div>
+        <div class="joint" aria-hidden="true">→</div>
+        <div class="step"><span class="n">2 · შემოწმებები</span><b>Middleware</b><span>ენა აქტიურია? ტექ. სამუშაოები ხომ არ მიმდინარეობს? გვერდი ქეშში ხომ არ არის?</span></div>
+        <div class="joint" aria-hidden="true">→</div>
+        <div class="step"><span class="n">3 · მონაცემები</span><b>PageController</b><span>პოულობს გვერდს slug-ით და იღებს მის აქტიურ ბლოკებს</span></div>
+        <div class="joint" aria-hidden="true">→</div>
+        <div class="step"><span class="n">4 · ბლოკები</span><b>BlockResolver</b><span>ველებს ამზადებს მიმდინარე ენაზე. თუ თარგმანი აკლია, იღებს ქართულს. კოლექციიდან ჩანაწერებს ავსებს</span></div>
+        <div class="joint" aria-hidden="true">→</div>
+        <div class="step"><span class="n">5 · HTML</span><b>Views</b><span>თითო ბლოკი თავის შაბლონში იხატება (<code>views/front/blocks/</code>), შემდეგ ყველაფერი layout-ში ერთიანდება</span></div>
+      </div>
+      <p class="note">სტუმრებისთვის მზა HTML ქეშდება. ადმინში ნებისმიერი ცვლილება ქეშს წმენდს, ამიტომ განახლებული გვერდი მაშინვე ჩანს. ადმინში შესულ მომხმარებელს მონახაზებიც უჩანს.</p>
+    </section>
+
+    <section id="order">
+      <span class="eyebrow">07 · მთავარი ფუნქცია</span>
+      <h2>შეკვეთის ნაკადი</h2>
+      <p>შეკვეთის გვერდზე კლიენტი თავისი ბიზნესისთვის დიზაინს ირჩევს და შეკვეთას აგზავნის.</p>
+      <div class="flow">
+        <div class="step"><span class="n">1</span><b>კატეგორია</b><span>ღილაკებით: „ყველა“, „რესტორნები და კვება“, „მედიცინა“… ცარიელი კატეგორია არ ჩანს, „სხვა“ ყველა დიზაინს აჩვენებს</span></div>
+        <div class="joint" aria-hidden="true">→</div>
+        <div class="step"><span class="n">2</span><b>დათვალიერება</b><span>ჯერ ჩანს 6 დიზაინი, დანარჩენი „მეტის ჩვენებით“ (+6)</span></div>
+        <div class="joint" aria-hidden="true">→</div>
+        <div class="step"><span class="n">3</span><b>Preview</b><span>ბარათზე დაკლიკება ხსნის შაბლონს მოდალში. შეიძლება კომპიუტერის, პლანშეტისა და მობილურის ზომით ნახვა</span></div>
+        <div class="joint" aria-hidden="true">→</div>
+        <div class="step"><span class="n">4</span><b>არჩევა</b><span>ღილაკი „ამ დიზაინის არჩევა“, შემდეგ ბიზნესის აღწერა და დომენი/ჰოსტინგი</span></div>
+        <div class="joint" aria-hidden="true">→</div>
+        <div class="step"><span class="n">5</span><b>გაგზავნა</b><span>შეკვეთა ინახება Inbox-ში და ადმინს ელ-ფოსტით მოდის. ადმინი ცვლის სტატუსს</span></div>
+      </div>
+      <div class="sheet" style="display:grid;gap:8px">
+        <h3>დიზაინის დამატება ადმინიდან</h3>
+        <p>ადმინი → დიზაინები → „დამატება“: სახელი ორ ენაზე, კატეგორიები და ZIP არქივი (<code>index.html</code>-ით). სისტემა არქივს ხსნის, PHP და დამალულ ფაილებს გამოტოვებს და ბარათის სურათს თავად იღებს: თემის სახელის სურათს (მაგ. <code>Chefer.jpg</code>) ან სკრინშოტს.</p>
+        <p class="note">უსაფრთხოება: შაბლონი იხსნება იზოლირებულ ჩარჩოში (CSP sandbox), ამიტომ მის JavaScript-ს ჩვენი საიტის cookie-ებსა და გვერდზე წვდომა არ აქვს.</p>
+      </div>
+    </section>
+
+    <section id="admin">
+      <span class="eyebrow">08 · მართვა</span>
+      <h2>ადმინ-პანელი</h2>
+      <p>მისამართი: <code>/admin</code>. მარცხენა მენიუს თითო პუნქტი ერთ სფეროს მართავს:</p>
+      <div class="admin">
+        <div><b>Dashboard</b><span>სტატისტიკა, ბოლო შეტყობინებები, დავალებები</span></div>
+        <div><b>გვერდები</b><span>გვერდების ხე, SEO და ბლოკების რედაქტორი გადათრევით</span></div>
+        <div><b>სერვისები · გუნდი · შეფასებები · ბლოგი · პორტფოლიო</b><span>კოლექციები ჩანაწერებით და კატეგორიებით</span></div>
+        <div><b>დიზაინები</b><span>შეკვეთის ფორმის შაბლონები (ZIP) და ბიზნეს-კატეგორიები</span></div>
+        <div><b>Inbox</b><span>ფორმების შეტყობინებები და შეკვეთები, სტატუსით. ბეჯზე წაუკითხავების რაოდენობაა</span></div>
+        <div><b>Newsletter</b><span>გამომწერები და კამპანიების გაგზავნა</span></div>
+        <div><b>მენიუები</b><span>header და footer მენიუ</span></div>
+        <div><b>მედია</b><span>სურათების ბიბლიოთეკა, alt ტექსტები</span></div>
+        <div><b>თარგმანები · ენები</b><span>UI ტექსტები და აქტიური ენები</span></div>
+        <div><b>გადამისამართებები</b><span>301 წესები და ნანახი 404-ები</span></div>
+        <div><b>პარამეტრები</b><span>საიტის სახელი, ლოგო, კონტაქტები, SEO, SMTP, შეკვეთების ელ-ფოსტა, კოდის ჩასმა</span></div>
+        <div><b>მომხმარებლები</b><span>ადმინები</span></div>
+      </div>
+    </section>
+
+    <section id="code">
+      <span class="eyebrow">09 · დეველოპერისთვის</span>
+      <h2>ფაილების სტრუქტურა</h2>
+      <p>კოდი ორ ფენადაა გაყოფილი. <code>core/</code> არის საერთო ფრეიმვორკი, რომელიც სხვა პროექტშიც გამოდგება. <code>app/</code> არის ამ საიტის კოდი. ახალი ბლოკი, კოლექცია ან ფორმა ძირითადად კონფიგში ემატება.</p>
+      <div class="sheet scroll-x">
+<pre class="tree"><span class="k">WEBDEV/</span>
+├─ <span class="k">core/</span>            <span class="c">ფრეიმვორკი: Router, Request/Response, DB, Auth, View, Mailer, Cache, Validator</span>
+├─ <span class="k">app/</span>
+│  ├─ Controllers/    <span class="c">Front/ (გვერდები, ფორმები, შეკვეთა) · Admin/ (ყველა ადმინ-სექცია)</span>
+│  ├─ Models/         <span class="c">Page, PageBlock, Collection, Category, Design, Media, Menu …</span>
+│  ├─ Blocks/         <span class="c">BlockInput (ადმინის ფორმა + ვალიდაცია) · BlockResolver (ფრონტის მონაცემები)</span>
+│  ├─ Middleware/     <span class="c">SetLocale, CheckMaintenance, PageCache, Authenticate …</span>
+│  ├─ Services/       <span class="c">Newsletter, TemplateArchive (დიზაინის ZIP)</span>
+│  └─ routes/         <span class="c">web.php (საიტი) · admin.php (ადმინი)</span>
+├─ <span class="k">config/</span>          <span class="c">blocks.php · collections.php · forms.php · settings.php · admin.php (მენიუ)</span>
+├─ <span class="k">views/</span>
+│  ├─ front/          <span class="c">layouts/main · blocks/ (თითო ბლოკის შაბლონი) · collections/ · partials/</span>
+│  ├─ admin/          <span class="c">DASHMIN თემაზე</span>
+│  └─ emails/         <span class="c">წერილების შაბლონები</span>
+├─ <span class="k">database/</span>        <span class="c">migrations/ (ცხრილები) · seeds/ (საწყისი კონტენტი)</span>
+├─ <span class="k">public/</span>          <span class="c">index.php · assets/ (Poseify თემა, site.css, JS) · uploads/ (მედია, დიზაინები)</span>
+├─ storage/         <span class="c">ქეში და ლოგები</span>
+└─ bin/console      <span class="c">migrate · db:seed · cache:clear · content:reset …</span></pre>
+      </div>
+      <div class="sheet" style="display:grid;gap:8px">
+        <h3>როგორ დავამატო…</h3>
+        <p><b>ახალი ბლოკის ტიპი:</b> ჩანაწერი <code>config/blocks.php</code>-ში (ველები) და შაბლონი <code>views/front/blocks/{type}.php</code>. ადმინის ფორმა ავტომატურად შეიქმნება.</p>
+        <p><b>ახალი კოლექცია:</b> ჩანაწერი <code>config/collections.php</code>-ში. ადმინის მენიუში თავისით გამოჩნდება, მიგრაცია არ სჭირდება.</p>
+        <p><b>ახალი პარამეტრი:</b> ერთი ხაზი <code>config/settings.php</code>-ში. საჭირო ადგილას იკითხება <code>setting('group.key')</code>-ით.</p>
+      </div>
+    </section>
+
+    <section id="glossary">
+      <span class="eyebrow">10 · ტერმინები</span>
+      <h2>ლექსიკონი</h2>
+      <div class="sheet">
+        <dl class="gloss">
+          <dt>ბლოკი</dt><dd>გვერდის ერთი სექცია (სლაიდერი, ფასები, ფორმა…). გვერდი ბლოკების თანმიმდევრობაა.</dd>
+          <dt>Header ბლოკი</dt><dd>გვერდის თავი, ნავიგაციის ქვეშ: სლაიდერი ან გვერდის სათაური.</dd>
+          <dt>კოლექცია</dt><dd>ერთგვაროვანი ჩანაწერების სია (სერვისები, ბლოგი…). ჩანაწერს შეიძლება ჰქონდეს საკუთარი გვერდი და ბლოკებში ავტომატურად ჩანდეს.</dd>
+          <dt>კატეგორია</dt><dd>კოლექციის ან დიზაინების დაჯგუფება, ორ დონემდე.</dd>
+          <dt>დიზაინი</dt><dd>მზა საიტის შაბლონი (ZIP), რომელსაც კლიენტი შეკვეთისას ირჩევს.</dd>
+          <dt>Slug</dt><dd>მისამართის ნაწილი ლათინურად, მაგ. <code>fasebi</code> მისამართში <code>/ka/fasebi</code>. თითო ენას თავისი აქვს.</dd>
+          <dt>Inbox</dt><dd>ადმინში შემოსული შეტყობინებები და შეკვეთები ყველა ფორმიდან.</dd>
+          <dt>თარგმანები</dt><dd>UI-ს მოკლე ტექსტები (ღილაკები, შეცდომები). გვერდების შიგთავსი თავად ბლოკებშია ორ ენაზე.</dd>
+          <dt>მონახაზი</dt><dd>გვერდი, რომელიც მხოლოდ ადმინში შესულ მომხმარებელს უჩანს.</dd>
+          <dt>Poseify / DASHMIN</dt><dd>HTML Codex-ის თემები: Poseify საიტის დიზაინია, DASHMIN ადმინ-პანელის.</dd>
+        </dl>
+      </div>
+    </section>
+  </main>
+</div>
