@@ -17,10 +17,10 @@
             ],
             xaxis: {
                 categories: data.daily.labels,
-                tickAmount: 10,
+                tickAmount: 6,
                 axisBorder: {show: false},
                 axisTicks: {show: false},
-                labels: {style: {colors: colors.textMuted}}
+                labels: {rotate: 0, hideOverlappingLabels: true, style: {colors: colors.textMuted}}
             },
             yaxis: {min: 0, forceNiceScale: true, labels: {formatter: function (v) { return Math.round(v); }, style: {colors: colors.textMuted}}},
             colors: [colors.primary, colors.info],

@@ -301,7 +301,7 @@
 
 .lang-switch {
     display: inline-flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 4px;
     padding: 4px;
     background: var(--bs-gray-100, #eceef1);
@@ -399,6 +399,36 @@ html[data-admin-lang]:not([data-admin-lang="all"]) .row > [data-lang] {
     min-width: 0;
 }
 
+/* Tempus Dominus-ის უჯრებს ფიქსირებული სიგანე აქვს — ბარათის სიგანეზე ერგება */
 #calender .bootstrap-datetimepicker-widget {
     width: 100%;
+    padding: 0;
+}
+
+#calender .bootstrap-datetimepicker-widget table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#calender .bootstrap-datetimepicker-widget table td,
+#calender .bootstrap-datetimepicker-widget table th {
+    width: auto;
+    height: 2.25rem;
+    line-height: 2.25rem;
+    padding: 0;
+    border-radius: var(--bs-border-radius);
+}
+
+#calender .bootstrap-datetimepicker-widget table td.active,
+#calender .bootstrap-datetimepicker-widget table td.active:hover {
+    background-color: var(--bs-primary);
+    color: #fff;
+}
+
+#calender .bootstrap-datetimepicker-widget table td.today::before {
+    border-bottom-color: var(--bs-primary);
+}
+
+#calender .bootstrap-datetimepicker-widget table td.active.today::before {
+    border-bottom-color: #fff;
 }
