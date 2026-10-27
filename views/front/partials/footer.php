@@ -48,7 +48,6 @@ $contacts = array_filter([
                 <?php endif ?>
             <?php endforeach ?>
         </div>
-        <?php // HTML Codex ატრიბუცია მოხსნილია — Credit Removal ლიცენზიით (D11) ?>
         <p class="mb-0"><?= e(str_replace(':year', date('Y'), (string)setting('general.copyright'))) ?></p>
     </div>
 </div>

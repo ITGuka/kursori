@@ -99,7 +99,6 @@ $langCodes = count($languages ?? []) > 1 ? array_column($languages, 'code') : []
 
         <div class="container-fluid pt-4 px-4">
             <div class="bg-light rounded-top p-4">
-                <?php // HTML Codex ატრიბუცია მოხსნილია — Credit Removal ლიცენზიით (D11) ?>
                 <div class="text-center text-sm-start">&copy; <?= date('Y') ?> <?= e(config('app.name')) ?></div>
             </div>
         </div>
