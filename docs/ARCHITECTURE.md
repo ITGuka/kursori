@@ -1,7 +1,7 @@
 # KURSORI — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
-> ბოლო განახლება: 2026-10-25 · **ფაზები 0–9 დასრულდა** · შემდეგი: deploy (როცა საჭირო გახდება) — იხ. §11 „Production-ის ჩამონათვალი“
+> ბოლო განახლება: 2026-10-28 · **ფაზები 0–10 დასრულდა** · საიტი live-ზეა: https://kursori.dev (CI/CD, D55) · დარჩენილი: §11 „Production-ის ჩამონათვალი“
 
 ## 1. მიზანი
 
@@ -16,21 +16,21 @@
 
 | # | თემა | გადაწყვეტილება |
 |---|---|---|
-| D1 | სტეკი | PHP 8.3 + MySQL 8.4 (Laragon), Bootstrap 5 + jQuery (თემფლეითებიდან) |
+| D1 | სტეკი | ლოკალურად PHP 8.3 + MySQL 8.4 (Laragon), production-ში PHP 8.2 + MariaDB (D56); Bootstrap 5 + jQuery (თემფლეითებიდან) |
 | D2 | ფრეიმვორკი | საკუთარი MVC: `core/` პროექტისგან დამოუკიდებელია, `app/` — პროექტის კოდი. Composer მხოლოდ autoload-ისა და რამდენიმე ბიბლიოთეკისთვის |
 | D3 | ენები | `ka` (ძირითადი) და `en`. URL-ს **ყველა ენაზე** აქვს პრეფიქსი: `/ka/...`, `/en/...`; `/` → 302 `/ka/` |
 | D4 | კონტენტის რედაქტირება | ფიქსირებული ბლოკის ტიპები (Kursori-ის სექციები) + WYSIWYG textarea ველებში და ცალკე `rich_text` ბლოკი |
 | D5 | WYSIWYG | Jodit (MIT, jQuery-ს არ საჭიროებს); შენახვისას HTML იწმინდება HTMLPurifier-ით |
 | D6 | როლები | ამ ეტაპზე ერთი როლი (ადმინი). სქემა ისეა, რომ როლები მოგვიანებით დაემატოს |
-| D7 | ფორმები | Contact და განაცხადის ფორმა (ყოფილი Casting) — ფოტოების გარეშე, ინახება მხოლოდ ადმინის Inbox-ში, email არ იგზავნება |
+| D7 | ფორმები | Contact და განაცხადის ფორმა (ყოფილი Casting) — ფოტოების გარეშე, ინახება მხოლოდ ადმინის Inbox-ში, email არ იგზავნება. გამონაკლისი — შეკვეთის ფორმა (D52): Inbox + წერილი `orders.notify_email`-ზე |
 | D8 | Newsletter | გამოწერების შეგროვება + კამპანიის შექმნა და გაგზავნა ადმინიდან (PHPMailer/SMTP, პარტიებად) |
-| D9 | გარემო | ამ ეტაპზე მხოლოდ ლოკალურად (Laragon). Deploy მოგვიანებით |
+| D9 | გარემო | ლოკალი — `http://kursori.test` (Laragon); production — `https://kursori.dev` (Namecheap cPanel, 2026-10-27). განახლება მხოლოდ CI/CD-ით (D55) |
 | D10 | დიზაინის პარამეტრები | ადმინიდან იმართება მხოლოდ კონტენტი; ფერები/ფონტები — CSS-ში |
 | D11 | HTML Codex ატრიბუცია | ✅ მოხსნილია (ფაზა 9) ფრონტის და ადმინის footer-იდან — **მოქმედებს მხოლოდ შეძენილი Credit Removal ლიცენზიით** ორივე თემფლეითზე (Kursori, DASHMIN). საიტის გაშვებამდე ლიცენზიები უნდა იყოს ნაყიდი |
 | D12 | Front controller | ერთი `public/index.php` ფრონტისა და ადმინისთვის; ადმინი — `/admin` route-ების ჯგუფი |
 | D13 | გარემოს პარამეტრები | `.env` (git-ის გარეშე, ასლი `.env.example`) → `config/*.php` → `config('app.name')` |
 | D14 | ლოკალური მისამართი | `http://kursori.test` (vhost → `public/`); სარეზერვო `http://localhost/KURSORI/` root `.htaccess`-ით |
-| D15 | ადმინის ავტორიზაცია | სესია + `password_hash`; მომხმარებელი ყოველ მოთხოვნაზე ბაზიდან იკითხება; პაროლის შეცვლა ან გათიშვა ხურავს მის ყველა სესიას; 2 სთ უმოქმედობის შემდეგ — გამოსვლა. „Remember me“ და პაროლის აღდგენა email-ით — არ არის (აღდგენა: `admin:create`) |
+| D15 | ადმინის ავტორიზაცია | სესია + `password_hash`; მომხმარებელი ყოველ მოთხოვნაზე ბაზიდან იკითხება; პაროლის შეცვლა ან გათიშვა ხურავს მის ყველა სესიას; 2 სთ უმოქმედობის შემდეგ — გამოსვლა. „დამიმახსოვრე“ — 30 დღე, selector/validator token (`admin_remember_tokens`: ინახება მხოლოდ validator-ის sha256 და პაროლის ანაბეჭდი; cookie HttpOnly, SameSite=Lax, HTTPS-ზე Secure; ყოველ გამოყენებაზე token იცვლება, პაროლის შეცვლა ან logout მას აუქმებს; პარამეტრები `config/auth.php`). პაროლის აღდგენა email-ით — არ არის (აღდგენა: `admin:create`) |
 | D16 | Login-ის ლიმიტი | 5 მცდელობა email+IP-ზე და 20 — IP-ზე, 15 წუთში; ზოგადი `rate_limits` ცხრილი (`login_attempts`-ის ნაცვლად), საჯარო ფორმებიც მას გამოიყენებს |
 | D17 | ადმინის ენა | ადმინის ინტერფეისი ქართულადაა (ტექსტები view-ებში); თარგმანების სისტემა (ფაზა 2) ფრონტისთვისაა |
 | D18 | ენების წყარო | `languages` ცხრილი (ადმინიდან); route-ში `{lang}` = `[a-z]{2}`, აქტიურობას `SetLocale` ამოწმებს. კოდი შექმნის შემდეგ არ იცვლება. ძირითადი ენა ყოველთვის ერთია და აქტიური; მისი წაშლა/გათიშვა აკრძალულია. ენის წაშლა შლის მის UI თარგმანებსა და პარამეტრებს |
@@ -39,7 +39,7 @@
 | D21 | ქეში | `Core\Support\Cache` — ფაილური (`storage/cache/data`, PHP ფაილები opcache-ისთვის). ენები, თარგმანები (ენაზე), პარამეტრები ქეშირდება ვადის გარეშე და იშლება ადმინში შენახვისას |
 | D22 | ტექნიკური რეჟიმი | `general.maintenance_mode` — სტუმრებს 503 (`errors/maintenance`), შესულ ადმინს — საიტი |
 | D23 | მედიის შენახვა | `public/uploads/YYYY/MM/{20 hex}.{ext}`; ტიპი — შიგთავსით (finfo), გაფართოება — დაშვებული MIME-ის რუკიდან; სურათი მოწმდება getimagesize-ით, პიქსელების ლიმიტით (40 MP) და GD-ით სრული გახსნით. დაშვებულია JPG, PNG, WebP, GIF, PDF, მაქს. 10 MB. SVG აკრძალულია (JavaScript-ის რისკი) |
-| D24 | სურათის ვარიანტები | ატვირთვისას: `thumb` 400×400 (crop), `medium` 1024 და `large` 1920 (fit), `-{variant}` სუფიქსით. პატარა სურათი არ დიდდება; ორიგინალის ტოლი ვარიანტი არ ინახება; GIF (ანიმაცია) და PDF — ვარიანტების გარეშე. ხელახალი კოდირება EXIF/GPS-ს შლის, JPEG-ის ორიენტაცია სწორდება |
+| D24 | სურათის ვარიანტები | ატვირთვისას: `thumb` 400×400 (crop), `small` 600, `medium` 1024 და `large` 1920 (fit), `-{variant}` სუფიქსით, თითოეულის WebP ასლით (`media.webp`). პატარა სურათი არ დიდდება; ორიგინალის ტოლი ვარიანტი არ ინახება; GIF (ანიმაცია) და PDF — ვარიანტების გარეშე. ხელახალი კოდირება EXIF/GPS-ს შლის, JPEG-ის ორიენტაცია სწორდება. ფრონტში `picture()` → `<picture>` WebP-ით, srcset/sizes, width/height; არსებული მედიის ხელახლა დამუშავება — `media:regenerate` |
 | D25 | მედიაზე მითითება | ყველგან ინახება მედიის **id** (არა ბილიკი): `media_url($id, 'medium')`, `media_alt($id)`. Alt/წარწერა — თითო ენაზე (`media_translations`). გამოყენებული ფაილი არ იშლება (`Media::usages()` — ყოველი ახალი მოდული აქ ემატება) |
 | D26 | ატვირთვა ადმინში | ერთი ფაილი თითო AJAX მოთხოვნაზე (რიგრიგობით, პროგრესით, CSRF header-ით), drag & drop; ერთი საერთო picker-ფანჯარა ყველა ადმინ-გვერდზე (`partials/media-input` + `media.js`) |
 | D27 | გვერდის URL | ბრტყელი: `/{lang}/{slug}` (slug უნიკალურია ენის ფარგლებში; `[a-z0-9-]`, ქართულიდან ავტომატური ტრანსლიტერაციით — `Str::slug`), მთავარი — `/{lang}`. მშობელი გვერდი URL-ზე არ მოქმედებს — მხოლოდ breadcrumb-სა და მენიუზე. თარგმანი ენაზე არ არის → გვერდი იმ ენაზე 404, ენების გადამრთველი → იმ ენის მთავარი |
@@ -61,11 +61,17 @@
 | D45 | 404 ჟურნალი | `not_found_log` (GET, /admin-ის გარეშე): ბილიკი, რაოდენობა, Referer; მაქს. 2000 ჩანაწერი (ძველი იშლება). ადმინში — „გადამისამართების შექმნა“ ერთი დაწკაპებით |
 | D47 | გვერდის ქეში | სრული HTML სტუმრებისთვის, CSRF-ის ჩანაცვლებით; ადმინის ნებისმიერი ცვლილება მთელ ქეშს შლის (ზუსტ ინვალიდაციას სიმარტივე სჯობს — გვერდი, მენიუ, პარამეტრი, თარგმანი ერთმანეთზეა დამოკიდებული). §10 |
 | D48 | უსაფრთხოების header-ები | მსუბუქი CSP (iframe-ში ჩასმა, object, base, ფორმების სხვა დომენზე გაგზავნა) — სკრიპტების CSP-ს ანალიტიკის/CDN კოდი დაარღვევდა. §9 |
-| D49 | საწყისი კონტენტი | ვებ დიზაინ სტუდია (ka/en): 7 გვერდი, 4 სერვისი, 4 წევრი, 3 შეფასება, 6 პროექტი (3 კატეგორია), სტუდიის პარამეტრები — seed-ები 05–08. სურათები ჯერ Kursori-ის დემოა (`demo` საქაღალდე) — ჩასანაცვლებელია. `php bin/console content:reset --force` — გვერდები/მენიუ/კოლექციები საწყის მდგომარეობაში (მედია, ენები, თარგმანები, პარამეტრები, მომხმარებლები, Inbox, newsletter არ იშლება) |
+| D49 | საწყისი კონტენტი | ვებ დიზაინ სტუდია (ka/en): გვერდები (მთავარი, სერვისები, პორტფოლიო, ფასები, ბლოგი, ჩვენ შესახებ, კონტაქტი, კონფიდენციალურობა, შეკვეთა), 4 სერვისი (ფასი, ვადა, FAQ), გუნდი, შეფასებები, 6 ქეისი, 3 სტატია, სტუდიის პარამეტრები — seed-ები 05–10. სურათები — Unsplash stock (`resources/stock` → მედია, საქაღალდე `demo`). **ქეისები, შეფასებები, მეტრიკები და კლიენტები გამოგონილია** — გაშვებამდე ჩასანაცვლებელია (აუდიტი CNT-01). `php bin/console content:reset --force` — გვერდები/მენიუ/კოლექციები საწყის მდგომარეობაში (მედია, ენები, თარგმანები, პარამეტრები, მომხმარებლები, Inbox, newsletter, დიზაინები არ იშლება) |
 | D46 | სტრუქტურირებული მონაცემები | ყოველ გვერდზე JSON-LD `Organization` (სახელი, URL, ლოგო, ელ-ფოსტა, ტელეფონი, სოც. ქსელები — პარამეტრებიდან), `og:url`, `og:locale`, `twitter:card` |
 | D40 | ბლოკი კოლექციიდან | services / team_grid / testimonials: `source` = ხელით (repeater) ან კოლექციიდან (+ კატეგორია, რაოდენობა). `config/blocks.php` → `collection.map` ჩანაწერის ველებს repeater-ის ფორმატზე გადაიყვანს (`@url`, `@read_more`). `show_if` — დამოკიდებული ველები ფორმაში იმალება და არ მოწმდება (მონაცემები ინახება — წყაროს დაბრუნებისას რომ არ დაიკარგოს) |
 | D50 | ენის გადამრთველი ადმინში | ერთი გადამრთველი layout-ის ზედა ზოლში (ენები + „ყველა“), ჩანს მხოლოდ გვერდზე, სადაც `[data-lang="xx"]` ელემენტია. ენაზე დამოკიდებულ ნაწილს (ველის სვეტი, fieldset) აქვს `data-lang`; დამალვა CSS-ით `html[data-admin-lang]`-ზე (repeater-ის ახალ ელემენტებზეც მუშაობს), არჩევანი `localStorage`-ში, ნაგულისხმევი — ძირითადი ენა. ვალიდაციის შეცდომა დამალულ ენაზე → ღილაკზე წითელი ნიშანი და ავტომატური გადართვა. ახალ ფორმაში საკმარისია `data-lang` ატრიბუტი |
-| D33 | ქართული შრიფტი | Kursori-ის შრიფტებში ქართული არ არის — `site.css`-ში Noto Sans Georgian სარეზერვოდ, მობილურზე სათაურების ზომა მცირდება. `style.css` უცვლელია |
+| D33 | შრიფტები | ~~Noto Sans Georgian სარეზერვოდ~~ → self-hosted FiraGO 1.001 (400/600/700, Latin + Mkhedruli subset-ები, ~29 KB) მთელ საიტზე; Google Fonts ფრონტში აღარ არის. სათაურები, მენიუ, ღილაკები და რიცხვითი მნიშვნელობები — „FiraGO Mtavruli“ (Mkhedruli → Mtavruli glyph-ები, ~5 KB) + uppercase: ka-ზე მთავრული, en-ზე დიდი ასოები, DOM-ის ტექსტი უცვლელია (SEO, კოპირება). `.rich-text`-ის სათაურები ჩვეულებრივ რეგისტრშია. `style.css` უცვლელია, ყველა დამატება `site.css`-შია |
+| D51 | საერთო ბლოკები | `'shared' => true` (`config/blocks.php`; ახლა `pricing`, `faq`): შენახვისას settings და თარგმანები კოპირდება ამ ტიპის ყველა ბლოკში, ახალი ბლოკი არსებული შიგთავსით იწყება; ადმინის ფორმა ასახელებს გვერდებს, სადაც ცვლილება აისახება |
+| D52 | შეკვეთა და დიზაინები | ადმინში დიზაინის ZIP (HTML/CSS/JS) → `TemplateArchive` უსაფრთხოდ ხსნის (whitelist, traversal/ზომის/რაოდენობის ლიმიტები) `public/uploads/designs/{id}-{hash}/`-ში და ბარათის სურათს არქივიდან იღებს (მედიაში). დიზაინი ↔ კატეგორიები many-to-many (`design_category`). `order_form` ბლოკი: კატეგორიის chip-ები, ბარათები „მეტის ჩვენებით“, preview sandbox iframe-ში მოწყობილობის სიგანეებით. `POST /{lang}/order` → ვალიდაცია, honeypot, rate limit → Inbox (`status`: new / in_progress / done) + წერილი `orders.notify_email`-ზე (ცარიელი → კონტაქტის ელფოსტა). `/uploads/designs/`-ს აქვს CSP `sandbox` (ატვირთული JS უცხო origin-ზე მუშაობს). დიზაინის წაშლა შლის ჩანაწერს და საქაღალდეს, ბარათის სურათი მედიაში რჩება |
+| D53 | კანონიკური მისამართი | `Core\Http\Middleware\CanonicalUrl`: production-ში 301 `APP_URL`-ის სქემაზე/host-ზე (http → https, www ↔ non-www) + HSTS |
+| D54 | ფერები | ერთი ბლოკი `site.css`-ში: `--bs-primary` #E01677 (ვარდისფერი ფონი, თეთრ ტექსტთან 4.6:1), `--site-accent-text` #F0408F (ვარდისფერი ტექსტი მუქზე, 4.8:1), `--site-text-muted` #8C8C8C — WCAG AA. Bootstrap-ის hard-coded ვარდისფერი წესები ცვლადებზე მიუთითებს |
+| D55 | Deploy (CI/CD) | GitHub (private `ITGuka/kursori`) → `.github/workflows/ci-cd.yml`: ყოველ push-ზე composer validate/install (`--no-dev`) და `php -l` PHP 8.2-ზე; `main`-ზე — build-ის rsync სერვერზე SSH-ით (`--delete`; გამორიცხულია `.env`, `public/uploads/`, `storage/cache`/`logs`, `.well-known`, `cgi-bin`, `docs/`, `.github/`, `resources/`), `resources/`-ის წაშლა სერვერიდან, `migrate`, `cache:clear`, smoke test (`/ka` → 200). ერთადერთი secret — `SSH_KEY`. Deploy = push `main`-ზე; seed-ები ავტომატურად არ ეშვება |
+| D56 | MariaDB-თან თავსებადობა | production-ის ბაზა MariaDB-ა: MySQL-ის სპეციფიკური სინტაქსი არ გამოიყენება (მაგ. `CAST(? AS JSON)` — `JSON_CONTAINS(col, ?)` ტექსტით მუშაობს ორივეზე). Composer: `php >= 8.2` |
 
 ## 3. დირექტორიების სტრუქტურა
 
@@ -76,15 +82,15 @@ KURSORI/
 ├── public/                  ← web root (kursori.test → public/)
 │   ├── index.php            ✅ ერთადერთი front controller (ფრონტი + /admin)
 │   ├── .htaccess            ✅ rewrite → index.php, უსაფრთხოების header-ები
-│   ├── assets/front/        ✅ Kursori css/js/lib/img
-│   ├── assets/admin/        ✅ DASHMIN css/js/lib/img
-│   └── uploads/             ✅ მედია (git-ის გარეშე; სკრიპტები აკრძალულია)
+│   ├── assets/front/        ✅ Kursori css/js/lib/img, fonts/ (FiraGO, D33), js/order-form.js
+│   ├── assets/admin/        ✅ DASHMIN css/js/lib/img, js/dashboard.js
+│   └── uploads/             ✅ მედია (git-ის გარეშე; სკრიპტები აკრძალულია), designs/ — დიზაინების შაბლონები (D52)
 ├── core/                    ← მრავალჯერადი ფრეიმვორკი (namespace Core\)
 │   ├── App.php              ✅ კონტეინერი (autowiring), boot, HTTP დამუშავება, locale
 │   ├── helpers.php          ✅ app, config, env, e, url, route, asset, view, redirect, back, abort,
 │   │                          csrf_token, csrf_field, old, errors, is_route, auth, locale, t, setting
 │   ├── Http/                ✅ Request, Response (with/withErrors/withInput), Router, Route, Middleware,
-│   │                          HttpException, Middleware/VerifyCsrf
+│   │                          HttpException, Middleware/VerifyCsrf, Middleware/CanonicalUrl (D53)
 │   ├── Database/            ✅ DB (PDO), Migration, Migrator, Seeder · ⏳ QueryBuilder (საჭიროებისამებრ)
 │   ├── View/                ✅ View, Template (layout, sections, insert)
 │   ├── Debug/               ✅ ErrorHandler (debug გვერდი / errors/*.php, ლოგი)
@@ -97,30 +103,33 @@ KURSORI/
 │   ├── Media/               ✅ Uploader, ImageResizer (GD), UploadException
 │   └── Mail/                ✅ Mailer (PHPMailer, SMTP keep-alive პარტიებისთვის)
 ├── app/                     ← პროექტის კოდი (namespace App\)
-│   ├── Controllers/Front/   ✅ Page, Collection, Form, Newsletter, Seo (sitemap.xml, robots.txt)
+│   ├── Controllers/Front/   ✅ Page, Collection, Form, Order, Newsletter, Seo (sitemap.xml, robots.txt)
 │   ├── Controllers/Admin/   ✅ Auth, Dashboard, User, Language, Translation, Settings, Media, Page, Block, Menu,
-│   │                          Collection, Category, Inbox, Newsletter, Redirect
+│   │                          Collection, Category, Design, Inbox, Newsletter, Redirect
 │   ├── Middleware/          ✅ PageCache (page_cache), FlushPageCache (flush_page_cache),
 │   │                          SetLocale (locale), CheckMaintenance (maintenance), Authenticate (auth),
 │   │                          RedirectIfAuthenticated (guest)
 │   ├── Models/              ✅ AdminUser, ActivityLog, Language, Translation, Media, Page, PageBlock, Menu,
-│   │                          Collection, Category, FormSubmission, Subscriber, Campaign, Redirect
-│   ├── Services/            ✅ Newsletter (დასტურის წერილი, ტესტი, პარტიის გაგზავნა)
-│   ├── helpers.php          ✅ media(), media_url(), media_alt(), link_attrs(), menu(), link_target()
+│   │                          Collection, Category, Design, FormSubmission, Subscriber, Campaign, Redirect,
+│   │                          Dashboard (სტატისტიკა, დიაგრამები), Todo (ადმინის პირადი სია)
+│   ├── Services/            ✅ Newsletter (დასტურის წერილი, ტესტი, პარტიის გაგზავნა), TemplateArchive (დიზაინის ZIP, D52)
+│   ├── helpers.php          ✅ media(), media_url(), media_alt(), picture(), link_attrs(), menu(), link_target(),
+│   │                          cta_link(), tel_href(), date_human(), reading_minutes()
 │   ├── Console/Commands/    ✅ CreateAdminCommand (admin:create), NewsletterSendCommand (newsletter:send),
-│   │                          ContentResetCommand (content:reset)
+│   │                          ContentResetCommand (content:reset), MediaRegenerateCommand (media:regenerate)
 │   ├── Blocks/              ✅ BlockRegistry (config/blocks.php), BlockInput (ფორმა → ვალიდაცია → JSON),
 │   │                          BlockResolver (JSON → view-ის მონაცემები ენაზე)
 │   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
-│   ├── front/               ✅ layouts/main (Kursori), partials/ (navbar, footer, title), page, blocks/* (12 ტიპი),
-│   │                          collections/detail, message, partials/ (form-field, form-status), blocks/application_form
-│   ├── emails/              ✅ layout, newsletter-confirm, newsletter-campaign
+│   ├── front/               ✅ layouts/main (Kursori), partials/ (navbar, footer, title, faq, form-field, form-choice,
+│   │                          form-consent, form-status), page, blocks/* (19 ტიპი, §4),
+│   │                          collections/ (detail, service, post), message
+│   ├── emails/              ✅ layout, newsletter-confirm, newsletter-campaign, order-admin
 │   ├── admin/               ✅ layouts/*, partials/* (flash, pagination, upload-zone, media-input, media-picker),
 │   │                          auth/login, dashboard, users/*, languages/*, translations/index, settings/*, media/*,
 │   │                          pages/*, blocks/ (form, field — რეკურსიული, link), menus/ (index, item),
-│   │                          collections/ (index, form), categories/ (index, form), inbox/ (index, show),
+│   │                          collections/ (index, form), categories/ (index, form), designs/ (index, form), inbox/ (index, show),
 │   │                          newsletter/ (campaigns, form, subscribers, tabs), redirects/ (index — + 404 ჩანართი, form)
 │   └── errors/              ✅ default.php, 404.php (Kursori), maintenance.php
 ├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar),
@@ -132,18 +141,22 @@ KURSORI/
 │   │                          media + media_translations, pages + page_translations + page_blocks + page_block_translations,
 │   │                          menus + menu_items + menu_item_translations, categories + category_translations,
 │   │                          collection_items + collection_item_translations, form_submissions, subscribers,
-│   │                          newsletter_campaigns + newsletter_sends, redirects, not_found_log
+│   │                          newsletter_campaigns + newsletter_sends, redirects, not_found_log, admin_todos,
+│   │                          media.webp, admin_remember_tokens, designs + design_translations + design_category
 │   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Kursori UI ტექსტები),
-│                              04_demo_media (Kursori-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (სტუდიის 7 გვერდი),
+│                              04_demo_media (resources/stock, საქაღალდე "demo"), 05_demo_pages (სტუდიის გვერდები),
 │                              06_menus (header — გვერდების ხე, footer — ზედა დონე),
-│                              07_demo_collections (სტუდიის სერვისები, გუნდი, შეფასებები, პორტფოლიო),
-│                              08_site_settings (სტუდიის კონტაქტები, SEO — მხოლოდ ცარიელ პარამეტრებში)
-├── resources/templates/     ✅ poseify/, dashmin/ — საწყისი HTML (reference) + zip (git-ის გარეშე)
+│                              07_demo_collections (სერვისები, გუნდი, შეფასებები, პორტფოლიო, ბლოგი),
+│                              08_site_settings (სტუდიის კონტაქტები, SEO — მხოლოდ ცარიელ პარამეტრებში),
+│                              09_privacy_page (კონფიდენციალურობის პოლიტიკა), 10_order_page (შეკვეთის გვერდი, დიზაინის კატეგორიები)
+├── resources/               ✅ მხოლოდ ლოკალურად (production-ზე არ იტვირთება, D55): stock/ (seed 04-ის სურათები),
+│                              templates/ — poseify/, dashmin/ საწყისი HTML (reference) + zip (git-ის გარეშე)
 ├── storage/                 ✅ cache/, logs/ (git-ის გარეშე)
 ├── bin/console              ✅ CLI
 ├── .env / .env.example      ✅
-├── docs/ARCHITECTURE.md
-└── composer.json            ✅ PSR-4: Core\ → core/, App\ → app/; ezyang/htmlpurifier
+├── .github/workflows/       ✅ ci-cd.yml — lint/build + deploy kursori.dev-ზე (D55)
+├── docs/                    ✅ ARCHITECTURE.md, architecture-map.html (ვიზუალური რუკა), audit/ (2026-10-27)
+└── composer.json            ✅ PSR-4: Core\ → core/, App\ → app/; ezyang/htmlpurifier, phpmailer; php >= 8.2
 ```
 
 Laragon-ის PHP CLI-ში `zip` გაფართოება გამორთულია, ამიტომ Composer-ის ინსტალაცია: `php -d extension=zip C:\laragon\bin\composer\composer.phar install`.
@@ -235,6 +248,7 @@ php bin/console admin:create --email=... [--name=...] [--password=...]   # ა�
 php bin/console key:generate [--force]     # APP_KEY (საიდუმლოებების დაშიფვრა)
 php bin/console newsletter:send [id] [--batch=50]   # „იგზავნება“ კამპანიების გაგრძელება (cron)
 php bin/console content:reset --force      # გვერდები/მენიუ/კოლექციები → საწყისი კონტენტი (D49)
+php bin/console media:regenerate [--missing]   # სურათების ვარიანტები და WebP ხელახლა (D24)
 ```
 
 PHP PATH-ში არ არის — Laragon Terminal-იდან ან სრული გზით: `C:\laragon\bin\php\php-8.3.36-Win32-vs16-x64\php.exe bin\console ...`.
@@ -265,10 +279,16 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 | ბლოკი | Kursori-ის წყარო | შინაარსი |
 |---|---|---|
-| ✅ `hero_carousel` | index Header carousel | სლაიდები: სურათი, ქვესათაური, სათაური, ტექსტი, ღილაკი (header) |
+| ✅ `hero_carousel` | index Header carousel | რეჟიმი `static` (პირველი სლაიდი, სიმაღლე შიგთავსით) ან `carousel` (ინტერვალი 2–30 წმ, ისრები); სლაიდები: სურათი, ქვესათაური, სათაური, ტექსტი, 2 ღილაკი (header) |
 | ✅ `page_header` | შიდა გვერდების header | სათაური (ცარიელი → გვერდის სახელი), ფონის სურათი, breadcrumb (header) |
 | ✅ `about` | About | სათაურები, WYSIWYG ტექსტი, ჩამონათვალი, 2 ღილაკი, სურათი, ფონი |
-| ✅ `services` | Service | სერვისები (ზიგზაგ layout): სურათი, სახელი, აღწერა, ღილაკი |
+| ✅ `services` | Service | სერვისები, layout `alternating` (ზიგზაგი) ან `grid` (ორსვეტიანი ბარათები): სურათი, სახელი (ბმულით), აღწერა, ღილაკი |
+| ✅ `stats` | — | trust bar: 1–6 „მნიშვნელობა + წარწერა“, ერთი ბარათი გამყოფებით |
+| ✅ `process` | — | დანომრილი ნაბიჯები (სათაური + ტექსტი) |
+| ✅ `pricing` | — (საერთო, D51) | პაკეტები, გამორჩეულის ნიშნით |
+| ✅ `faq` | — (საერთო, D51) | კითხვა-პასუხი (`details`/`summary`) + FAQPage JSON-LD |
+| ✅ `blog_list` | — | ბლოგის ბარათები (უახლესი პირველი), რაოდენობა, „ყველა სტატია“ ღილაკი |
+| ✅ `order_form` | — | შეკვეთის ფორმა დიზაინის არჩევით (D52) |
 | ✅ `banner_signup` | Banner | სათაური, ტექსტი, newsletter ფორმა (დამუშავება — ფაზა 7) |
 | ✅ `team_grid` | Team | წევრები: ფოტო, სახელი, „დასახელება: მნიშვნელობა“ ხაზები (hover-ზე), ბმული |
 | ✅ `testimonials` | Testimonial | შეფასებები (owl carousel, ფოტო — dot-ში) |
@@ -279,6 +299,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | ✅ `portfolio_grid` | Team-ის ბარათები | პორტფოლიოს კოლექცია (`collection.always`), კატეგორია, რაოდენობა, კატეგორიების ფილტრი გვერდის გადატვირთვის გარეშე |
 
 ახალი ბლოკის დამატება: ჩანაწერი `config/blocks.php`-ში + view `views/front/blocks/{type}.php` — ადმინის ფორმა ავტომატურად ჩნდება.
+
+კოლექციები (`config/collections.php`): `services` (ფასი, ვადა, რა შედის, დაკავშირებული ქეისები, FAQ; შაბლონი `collections/service`), `team`, `testimonials`, `portfolio` (`collections/detail`), `blog` (`/ka/blogi`, `/en/blog`; ამონარიდი, ტექსტი, ავტორი, `order: newest`; შაბლონი `collections/post` — კითხვის დრო, BlogPosting JSON-LD). services / blog / portfolio ჩანაწერებს აქვს `header_image` (გვერდის header-ის ფონი; ცარიელი → თემის ნაგულისხმევი).
 
 ბლოკის მონაცემები: D28. ერთი ბლოკის view-ის შეცდომა production-ში მთელ გვერდს არ აგდებს (ლოგში იწერება, ბლოკი გამოტოვდება).
 
@@ -296,10 +318,11 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | მენიუ | ✅ `menus` (location unique) + `menu_items` (menu_id → CASCADE, parent_id → CASCADE, type page/url, page_id → CASCADE, url, new_tab, is_active, sort) + `menu_item_translations` (item_id → CASCADE, lang, label, url). ⏳ შემდგომ: პუნქტი-ტიპი კოლექციის ჩანაწერი (ახლა — ბმულით) |
 | კატეგორიები | ✅ `categories` (collection, parent_id → SET NULL, sort, is_active) + `category_translations` (category_id → CASCADE, lang, name, slug) |
 | კოლექციები | ✅ `collection_items` (collection, category_id → SET NULL, image_id → media SET NULL, sort, is_active, settings JSON, media_ids JSON) + `collection_item_translations` (item_id → CASCADE, lang, title, slug, content JSON) |
-| მედია | ✅ `media` (path, original_name, mime, extension, size, width, height, variants JSON, folder, uploaded_by) + `media_translations` (media_id → CASCADE, lang, alt, caption) |
-| ფორმები | ✅ `form_submissions` (form, lang, data JSON, page_url, ip, user_agent, is_read, created_at) |
+| მედია | ✅ `media` (path, original_name, mime, extension, size, width, height, variants JSON, webp, folder, uploaded_by) + `media_translations` (media_id → CASCADE, lang, alt, caption) |
+| ფორმები | ✅ `form_submissions` (form, lang, data JSON, page_url, ip, user_agent, is_read, status new/in_progress/done, created_at) |
+| დიზაინები | ✅ `designs` (image_id → media SET NULL, folder, entry, files, size, sort, is_active) + `design_translations` (design_id → CASCADE, lang, title) + `design_category` (design_id, category_id → CASCADE) — D52 |
 | Newsletter | ✅ `subscribers` (email unique, lang, status pending/active/unsubscribed, token unique, ip, confirmed_at, unsubscribed_at) · `newsletter_campaigns` (subject, body, lang '' = ყველა, status draft/sending/sent, created_by, started_at, sent_at) · `newsletter_sends` (campaign_id + subscriber_id → CASCADE, status pending/sent/failed, error, sent_at) |
-| სისტემა | ✅ `admin_users` (name, email, password_hash, is_active, last_login_at, last_login_ip) · ✅ `rate_limits` (limiter_key sha256, hits, reset_at) · ✅ `activity_log` (user_id → SET NULL, action, entity, entity_id, data JSON, ip) · ✅ `redirects` (from_path unique, to_url, code 301/302, is_active, is_auto, hits, last_hit_at) · ✅ `not_found_log` (path unique, hits, referer, first/last_seen_at) · ✅ `migrations` |
+| სისტემა | ✅ `admin_users` (name, email, password_hash, is_active, last_login_at, last_login_ip) · ✅ `admin_remember_tokens` (user_id → CASCADE, selector unique, validator_hash, fingerprint, expires_at) · ✅ `admin_todos` (user_id → CASCADE, text, is_done) · ✅ `rate_limits` (limiter_key sha256, hits, reset_at) · ✅ `activity_log` (user_id → SET NULL, action, entity, entity_id, data JSON, ip) · ✅ `redirects` (from_path unique, to_url, code 301/302, is_active, is_auto, hits, last_hit_at) · ✅ `not_found_log` (path unique, hits, referer, first/last_seen_at) · ✅ `migrations` |
 
 კოლექციები ერთ ზოგად ცხრილშია: ახალი კოლექციის ტიპი (მაგ. `portfolio`) ემატება `app/` კონფიგში, მიგრაციის გარეშე. `attributes` ინახავს ტიპის სპეციფიკურ ველებს (მაგ. team-ისთვის პოზიცია, სოციალური ბმულები).
 
@@ -314,14 +337,16 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 ## 7. ადმინი
 
-- მისამართი `/admin`, DASHMIN layout. Sidebar: Dashboard, გვერდები, მენიუ, კატეგორიები, კოლექციები (თითოეული ცალკე), მედია, Inbox, Newsletter, თარგმანები, ენები, პარამეტრები, მომხმარებლები.
-- თარგმნად ფორმებში შესავსები ენის გადამრთველი ზედა ზოლში (KA / EN / ყველა) — D50.
+- მისამართი `/admin`, DASHMIN layout. Sidebar: Dashboard, გვერდები, მენიუ, კატეგორიები, კოლექციები (თითოეული ცალკე), დიზაინები, მედია, Inbox, Newsletter, თარგმანები, ენები, პარამეტრები, მომხმარებლები.
+- თარგმნად ფორმებში ენის გადამრთველი (დროშებით, KA / EN / ყველა) თითოეული ფორმის თავში — D50 (`partials/lang-switch`).
 - სორტირება drag-drop-ით (SortableJS), სურათის არჩევა მედია ბიბლიოთეკიდან (modal).
-- Dashboard: წაუკითხავი შეტყობინებები, გამომწერები, ბოლო ცვლილებები.
+- Dashboard: სტატისტიკის ბარათები (გვერდები, წაუკითხავი, გამომწერები, მედია, თითო კოლექცია), Chart.js დიაგრამები (შეტყობინებები და გამომწერები 30 დღეში, კონტენტი კოლექციებით), ბოლო ჩანაწერები, ბოლო ცვლილებები, Inbox, კალენდარი, აქტივობა, ადმინის პირადი to-do სია (`admin_todos`, AJAX).
+- Inbox: შეკვეთებს აქვს სტატუსი (ახალი / მიმდინარე / დასრულებული).
 
 ## 8. ფორმები და Newsletter ✅
 
-**ფორმები** (`config/forms.php`: contact, application) → `POST /{lang}/forms/{form}` → `form_submissions` → ადმინის Inbox (წაუკითხავის მრიცხველი sidebar-ში და Dashboard-ზე). Email არ იგზავნება (D7).
+**ფორმები** (`config/forms.php`: contact, application) → `POST /{lang}/forms/{form}` → `form_submissions` → ადმინის Inbox (წაუკითხავის მრიცხველი sidebar-ში და Dashboard-ზე). Email არ იგზავნება (D7). შეკვეთის ფორმა (`order`) — ცალკე, `POST /{lang}/order`, D52.
+- ველის ტიპი `options` → ღილაკებით არჩევა (`partials/form-choice`, სერვერზე `in:` წესი); `one_of` — საკმარისია ერთი (მაგ. email ან ტელეფონი). ფორმის ქვეშ — თანხმობის ტექსტი კონფიდენციალურობის გვერდის ბმულით (`legal.privacy_page`).
 - ვალიდაცია სერვერზე, შეტყობინებები ენაზე (UI თარგმანები `validation.*`); შეცდომისას — იმავე გვერდზე, `#form-{form}` ღუზით, მხოლოდ იმ ფორმაში (flash `_form`), წინა მნიშვნელობებით.
 - ანტი-სპამი: honeypot ველი (`website`, შევსებისას — ჩუმი „წარმატება“), 5 გაგზავნა / 10 წთ ერთ IP-ზე (`rate_limits`).
 - დაბრუნება მხოლოდ იმავე host-ის Referer-ზე (open redirect-ის გარეშე).
@@ -374,21 +399,29 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | 7 | ფორმები + Inbox, newsletter | ✅ 2026-10-25 |
 | 8 | SEO: sitemap, robots, hreflang, redirects, 404 | ✅ 2026-10-25 |
 | 9 | ქეში, ოპტიმიზაცია, ატრიბუციის მოხსნა, ვებ დიზაინ სტუდიის კონტენტი | ✅ 2026-10-25 |
-| — | Deploy (მოგვიანებით, D9) — იხ. „Production-ის ჩამონათვალი“ ქვემოთ | ⏳ |
+| 10 | Pre-launch და ახალი ფუნქციები: WebP/`picture()`, კონფიდენციალურობა, CanonicalUrl, ბლოგი, ფასები/FAQ, FiraGO, „დამიმახსოვრე“, Dashboard, საერთო ბლოკები, შეკვეთა და დიზაინები, აუდიტი | ✅ 2026-10-27 |
+| — | Deploy: kursori.dev, GitHub Actions CI/CD (D9, D55) | ✅ 2026-10-28 |
 
-### Production-ის ჩამონათვალი (deploy-ის დროს)
+### Production-ის ჩამონათვალი
 
-1. Credit Removal ლიცენზიები (Kursori + DASHMIN) ნაყიდია (D11).
-2. Web root → `public/`; `core/`, `app/`, `config/`, `storage/`, `.env` — მის გარეთ.
-3. `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://დომენი`, ბაზის მონაცემები, `php bin/console key:generate` (ან ლოკალური APP_KEY-ის გადატანა — სხვაგვარად SMTP პაროლი თავიდან შესაყვანია).
-4. `composer install --no-dev --optimize-autoloader`; `php bin/console migrate`; საჭიროების მიხედვით `db:seed`.
-5. `storage/` და `public/uploads/` ჩაწერადი; `php bin/console cache:clear` ყოველი განახლების შემდეგ.
-6. პარამეტრები → ელ-ფოსტა: რეალური SMTP (TLS/SSL), გამგზავნი დომენის SPF/DKIM.
-7. ადმინის პაროლი ძლიერი (`admin:create` ან პროფილი); `.env`-იდან `ADMIN_PASSWORD` წაშლა.
-8. HTTPS (სესიის cookie `secure` ავტომატურად ირთვება), cron: `php bin/console newsletter:send` (სურვილისამებრ).
-9. დემო სურათები (`demo` საქაღალდე) ჩანაცვლებული; „საძიებოსთვის ღია“ ჩართული; Google Search Console-ში `sitemap.xml`.
+✅ — შესრულებულია kursori.dev-ზე, ⏳ — დარჩენილი.
+
+1. ⏳ Credit Removal ლიცენზიები (Kursori + DASHMIN) ნაყიდია (D11).
+2. ✅ Web root → `public/`; `core/`, `app/`, `config/`, `storage/`, `.env` — მის გარეთ.
+3. ✅ `.env`: `APP_ENV=production`, `APP_DEBUG=false` (აუდიტი SEC-01), `APP_URL=https://kursori.dev`, ბაზის მონაცემები, APP_KEY (ლოკალურის შეცვლისას SMTP პაროლი თავიდან შესაყვანია).
+4. ✅ `composer install --no-dev --optimize-autoloader`, `migrate`, `cache:clear` — CI/CD-ით ყოველ deploy-ზე (D55).
+5. ✅ `storage/` და `public/uploads/` ჩაწერადი.
+6. ⏳ პარამეტრები → ელ-ფოსტა: რეალური SMTP (TLS/SSL), გამგზავნი დომენის SPF/DKIM; `orders.notify_email` ✅ შევსებულია.
+7. ⏳ ადმინის პაროლი ძლიერი (ბაზა ლოკალურის ასლია — თავდაპირველად ლოკალური პაროლით). ✅ production-ის `.env`-ში `ADMIN_PASSWORD` არ არის.
+8. ✅ HTTPS (SSL.com, Namecheap) + CanonicalUrl/HSTS (D53). ⏳ cron: `php bin/console newsletter:send` (სურვილისამებრ).
+9. ⏳ გამოგონილი კონტენტი და stock სურათები ჩანაცვლებული (D49, აუდიტი CNT-01); ანალიტიკისთვის consent (ANL-01); Google Search Console-ში `sitemap.xml`. ✅ „საძიებოსთვის ღია“ ჩართულია.
 
 ## 12. ცვლილებების ისტორია
+
+- **2026-10-28** — WEBDEV → KURSORI (კოდი, seed-ები, cookie-ები, ბაზა `kursori_db`); Poseify-ის ხსენებები კომენტარებსა და დოკუმენტაციაში → Kursori (`resources/templates` უცვლელია). Deploy kursori.dev-ზე: GitHub Actions CI/CD (lint/build, rsync, migrate, cache:clear, smoke test); `resources/` production-ზე აღარ იტვირთება. გასწორდა: `Media::usages()` MariaDB-ზე სინტაქსის შეცდომით ეცემოდა (`CAST(? AS JSON)`) და production-ში მედია ვერ იშლებოდა. ციფრული აუდიტი — `docs/audit/AUDIT-2026-10-27.md`. დაემატა D55–D56; განახლდა D1, D9.
+- **2026-10-27** — შეკვეთის გვერდი დიზაინის არჩევით: დიზაინები ადმინში (ZIP → `TemplateArchive`, კატეგორიები, რიგი), `order_form` ბლოკი sandbox preview-ით, `POST /{lang}/order` → Inbox სტატუსით + წერილი, seed 10. საერთო ბლოკები (pricing, FAQ). კოლექციის ჩანაწერის header-ის ფონი. ფერის ცვლადები და WCAG AA კონტრასტი. Composer: PHP 8.2. `docs/architecture-map.html`. დაემატა D51, D52, D54.
+- **2026-10-26** — „დამიმახსოვრე“ ადმინის login-ზე (D15). ფრონტი: FiraGO მთელ საიტზე, მთავრული სათაურებსა და მენიუში (D33); hero slider static hero-ს დიზაინით, ინტერვალი და ისრები ადმინიდან; stats ბარათი; about ბლოკის ახალი layout; სერვისის სათაური ბმულით; მენიუს dropdown, ენის გადამრთველი (ერთი pill), CTA და ენის ღილაკების ერთნაირი სიმაღლე; ბლოკებს შორის ნაკლები დაშორება. ადმინის პარამეტრებში ნაგულისხმევი მნიშვნელობა თითო ენის ველის ქვეშ.
+- **2026-10-25 (საღამო)** — ბლოგი (კოლექცია, სტატიის გვერდი, `blog_list`); სერვისის გვერდი (ფასი, ვადა, FAQ, ქეისები), ფასების გვერდი, ბლოკები `pricing`, `faq`, `stats`, `process`, hero `static` რეჟიმი, services `grid`; ფორმები: `options`, `one_of`, ახალი ველები, თანხმობა; mobile CTA ზოლი; footer-ის კონტაქტები. Pre-launch: WebP + `small` ვარიანტი, `picture()`, `media:regenerate`, CanonicalUrl + HSTS, meta description-ები, favicon, კონფიდენციალურობის გვერდი (seed 09). Unsplash stock სურათები (`resources/stock`), WOW.js → IntersectionObserver reveal, ერთი H1 გვერდზე, spinner ამოღებულია. Dashboard (დიაგრამები, to-do). ადმინის ენის გადამრთველი ფორმებში, დროშებით. აუდიტის გასწორებები: მასივის input-ზე 500, ზედმეტი ქეშის გასუფთავება, `rate_limits`-ის გასუფთავება. დაემატა D53; განახლდა D24.
 
 - **2026-10-25** — ადმინის ფორმებში შესავსები ენის გადამრთველი (KA / EN / ყველა) ზედა ზოლში: გვერდები, ბლოკები, კოლექციები, კატეგორიები, მენიუს პუნქტები, მედია, პარამეტრები. გვერდის ფორმის ენის ჩანართები ჩანაცვლდა. დაემატა D50.
 
