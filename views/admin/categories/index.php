@@ -3,49 +3,51 @@
 $this->layout('admin/layouts/app');
 ?>
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb mb-0">
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="<?= e($definition['index']) ?>"><?= e($definition['label']) ?></a></li>
         <li class="breadcrumb-item active" aria-current="page">კატეგორიები</li>
     </ol>
 </nav>
 
-<div class="bg-light rounded p-4">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h6 class="mb-0"><?= e($title) ?></h6>
-        <a href="<?= e(route('admin.categories.create', ['type' => $type])) ?>" class="btn btn-sm btn-primary"><i class="fa fa-plus me-1"></i>დამატება</a>
+<div class="card">
+    <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <h5 class="card-title mb-0"><?= e($title) ?> <span class="text-body-secondary fw-normal">(<?= count($rows) ?>)</span></h5>
+        <a href="<?= e(route('admin.categories.create', ['type' => $type])) ?>" class="btn btn-primary"><i class="icon-base bx bx-plus me-1"></i>დამატება</a>
     </div>
     <?php if ($rows === []): ?>
-        <p class="text-muted mb-0">კატეგორიები ჯერ არ არის.</p>
+        <div class="card-body pt-0"><p class="text-body-secondary mb-0">კატეგორიები ჯერ არ არის.</p></div>
     <?php else: ?>
-        <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
+        <div class="table-responsive text-nowrap">
+            <table class="table table-hover">
                 <thead>
-                <tr class="text-dark"><th>სახელი</th><th>ენები</th><th>ჩანაწერები</th><th>რიგი</th><th class="text-end">მოქმედება</th></tr>
+                <tr><th>სახელი</th><th>ენები</th><th>ჩანაწერები</th><th>რიგი</th><th class="text-end">მოქმედება</th></tr>
                 </thead>
-                <tbody>
+                <tbody class="table-border-bottom-0">
                 <?php foreach ($rows as $row): ?>
                     <tr>
                         <td>
-                            <span class="text-muted"><?= str_repeat('— ', $row['depth']) ?></span>
-                            <a href="<?= e(route('admin.categories.edit', ['id' => $row['id']])) ?>"><?= e($row['name']) ?></a>
-                            <?php if (!$row['is_active']): ?><span class="badge bg-secondary ms-1">გათიშული</span><?php endif ?>
+                            <?php if ($row['depth'] > 0): ?><span class="text-body-secondary" style="padding-left: <?= (int)$row['depth'] * 1.25 ?>rem">↳ </span><?php endif ?>
+                            <a href="<?= e(route('admin.categories.edit', ['id' => $row['id']])) ?>" class="fw-medium text-heading"><?= e($row['name']) ?></a>
+                            <?php if (!$row['is_active']): ?><span class="badge bg-label-secondary ms-1">გათიშული</span><?php endif ?>
                         </td>
                         <td>
                             <?php foreach ($languages as $language): ?>
-                                <span class="badge <?= in_array($language['code'], $row['langs'], true) ? 'bg-success' : 'bg-light text-muted border' ?> text-uppercase"><?= e($language['code']) ?></span>
+                                <span class="badge <?= in_array($language['code'], $row['langs'], true) ? 'bg-label-success' : 'bg-label-secondary opacity-50' ?> text-uppercase"><?= e($language['code']) ?></span>
                             <?php endforeach ?>
                         </td>
-                        <td><a href="<?= e($definition['index'] . '?category=' . $row['id']) ?>"><?= e($row['items']) ?></a></td>
+                        <td><a href="<?= e($definition['index'] . '?category=' . $row['id']) ?>" class="badge bg-label-primary"><?= e($row['items']) ?></a></td>
                         <td><?= e($row['sort']) ?></td>
-                        <td class="text-end text-nowrap">
-                            <a href="<?= e(route('admin.categories.edit', ['id' => $row['id']])) ?>" class="btn btn-sm btn-outline-primary"><i class="fa fa-pen"></i><span class="visually-hidden">რედაქტირება</span></a>
-                            <form method="post" action="<?= e(route('admin.categories.destroy', ['id' => $row['id']])) ?>" class="d-inline"
-                                  data-confirm="წავშალოთ კატეგორია „<?= e($row['name']) ?>“? მისი ჩანაწერები (<?= e($row['items']) ?>) კატეგორიის გარეშე დარჩება.">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i><span class="visually-hidden">წაშლა</span></button>
-                            </form>
+                        <td class="text-end">
+                            <div class="table-actions">
+                                <a href="<?= e(route('admin.categories.edit', ['id' => $row['id']])) ?>" class="btn btn-sm btn-icon btn-outline-primary" title="რედაქტირება" aria-label="რედაქტირება"><i class="icon-base bx bx-edit-alt"></i></a>
+                                <form method="post" action="<?= e(route('admin.categories.destroy', ['id' => $row['id']])) ?>"
+                                      data-confirm="წავშალოთ კატეგორია „<?= e($row['name']) ?>“? მისი ჩანაწერები (<?= e($row['items']) ?>) კატეგორიის გარეშე დარჩება.">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button class="btn btn-sm btn-icon btn-outline-danger" title="წაშლა" aria-label="წაშლა"><i class="icon-base bx bx-trash"></i></button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 <?php endforeach ?>
