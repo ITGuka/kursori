@@ -39,13 +39,13 @@ jobs:
 
       - name: Pack build
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        run: tar -czf build.tar.gz --exclude=.git --exclude=build.tar.gz .
+        run: tar -czf "$RUNNER_TEMP/build.tar.gz" --exclude=.git .
 
       - uses: actions/upload-artifact@v4
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           name: build
-          path: build.tar.gz
+          path: ${{ runner.temp }}/build.tar.gz
           retention-days: 7
 
   deploy:
