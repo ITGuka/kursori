@@ -17,24 +17,24 @@ return new class extends Seeder {
             'Web design studio in Tbilisi: modern websites, online stores, branding and SEO that turn visitors into clients.',
         ],
         'about' => [
-            'გაიცანით WEBDEV — დიზაინერებისა და დეველოპერების გუნდი, რომელიც ბიზნესებისთვის სწრაფ და მოსახერხებელ საიტებს ქმნის.',
-            'Meet WEBDEV — a team of designers and developers building fast, user-friendly websites for businesses.',
+            'გაიცანით KURSORI — დიზაინერებისა და დეველოპერების გუნდი, რომელიც ბიზნესებისთვის სწრაფ და მოსახერხებელ საიტებს ქმნის.',
+            'Meet KURSORI — a team of designers and developers building fast, user-friendly websites for businesses.',
         ],
         'services' => [
             'ვებ დიზაინი, ვებ დეველოპმენტი, ბრენდინგი და SEO — სრული ციკლი იდეიდან გაშვებამდე და შემდგომ მხარდაჭერამდე.',
             'Web design, web development, branding and SEO — the full cycle from idea to launch and ongoing support.',
         ],
         'portfolio' => [
-            'WEBDEV-ის პროექტები: კორპორატიული საიტები, ონლაინ მაღაზიები და ბრენდინგი სხვადასხვა ინდუსტრიისთვის.',
-            'WEBDEV projects: corporate websites, online stores and branding for different industries.',
+            'KURSORI-ის პროექტები: კორპორატიული საიტები, ონლაინ მაღაზიები და ბრენდინგი სხვადასხვა ინდუსტრიისთვის.',
+            'KURSORI projects: corporate websites, online stores and branding for different industries.',
         ],
         'team' => [
-            'WEBDEV-ის გუნდი: არტ-დირექტორი, UI/UX დიზაინერი, ფრონტენდ დეველოპერი და პროექტის მენეჯერი.',
-            'The WEBDEV team: art director, UI/UX designer, frontend developer and project manager.',
+            'KURSORI-ის გუნდი: არტ-დირექტორი, UI/UX დიზაინერი, ფრონტენდ დეველოპერი და პროექტის მენეჯერი.',
+            'The KURSORI team: art director, UI/UX designer, frontend developer and project manager.',
         ],
         'testimonials' => [
-            'რას ამბობენ კლიენტები WEBDEV-თან თანამშრომლობაზე — შეფასებები საიტებისა და ბრენდინგის პროექტებზე.',
-            'What clients say about working with WEBDEV — reviews of our website and branding projects.',
+            'რას ამბობენ კლიენტები KURSORI-თან თანამშრომლობაზე — შეფასებები საიტებისა და ბრენდინგის პროექტებზე.',
+            'What clients say about working with KURSORI — reviews of our website and branding projects.',
         ],
         'contact' => [
             'დაგვიკავშირდით ახალი საიტის, ონლაინ მაღაზიის ან ბრენდინგის პროექტისთვის — პირველი კონსულტაცია უფასოა.',
@@ -172,9 +172,9 @@ return new class extends Seeder {
             'subtitle' => ['ჩვენი ისტორია', 'Our Story'],
             'title'    => ['ციფრული სტუდია თბილისიდან', 'A Digital Studio from Tbilisi'],
             'body'     => [
-                '<p>WEBDEV პატარა, მაგრამ გამოცდილი გუნდია: დიზაინერები, დეველოპერები და მარკეტოლოგები, რომლებიც ერთად ვქმნით საიტებს, ონლაინ მაღაზიებს და ბრენდებს.</p>'
+                '<p>KURSORI პატარა, მაგრამ გამოცდილი გუნდია: დიზაინერები, დეველოპერები და მარკეტოლოგები, რომლებიც ერთად ვქმნით საიტებს, ონლაინ მაღაზიებს და ბრენდებს.</p>'
                 . '<p>ყოველი პროექტი იწყება თქვენი ბიზნესის გაგებით და მთავრდება შედეგით, რომელიც იზომება — მეტი ზარი, მეტი შეკვეთა, ძლიერი ბრენდი.</p>',
-                '<p>WEBDEV is a small but experienced team of designers, developers and marketers creating websites, online stores and brands together.</p>'
+                '<p>KURSORI is a small but experienced team of designers, developers and marketers creating websites, online stores and brands together.</p>'
                 . '<p>Every project starts with understanding your business and ends with measurable results — more calls, more orders, a stronger brand.</p>',
             ],
         ]);

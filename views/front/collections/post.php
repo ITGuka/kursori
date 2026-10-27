@@ -18,7 +18,7 @@ $meta = array_filter([
     $item['author'] !== '' ? e($item['author']) : '',
 ]);
 $image = media_url($item['image'], 'large');
-// url()/media_url() base path-ით (მაგ. /WEBDEV/...) → სრული URL APP_URL-ით, როგორც layout-ში
+// url()/media_url() base path-ით (მაგ. /KURSORI/...) → სრული URL APP_URL-ით, როგორც layout-ში
 $basePath = app()->baseUrlPath();
 $absolute = function (string $url) use ($basePath): string {
     $path = (string)parse_url($url, PHP_URL_PATH);

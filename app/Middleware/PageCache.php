@@ -38,7 +38,7 @@ final class PageCache implements Middleware
             return $next($request)->header('X-Page-Cache', 'BYPASS');
         }
 
-        // base path-ი გასაღებშია — localhost/WEBDEV და webdev.test სხვადასხვა ბმულებს შეიცავს
+        // base path-ი გასაღებშია — localhost/KURSORI და kursori.test სხვადასხვა ბმულებს შეიცავს
         $key = self::PREFIX . md5(app()->baseUrlPath() . '|' . $request->path());
         $cached = $this->cache->get($key);
         if (is_array($cached) && isset($cached['html'])) {

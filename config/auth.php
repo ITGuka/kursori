@@ -10,7 +10,7 @@ return [
     // „დამიმახსოვრე“ — ვადის განმავლობაში სესიის გარეშეც შედის (ბრაუზერის დახურვის/უმოქმედობის შემდეგ)
     'remember' => [
         'table'    => 'admin_remember_tokens',
-        'cookie'   => 'webdev_remember',
+        'cookie'   => 'kursori_remember',
         'lifetime' => 30 * 24 * 60 * 60,
     ],
 

@@ -24,9 +24,9 @@ return new class extends Seeder {
 
         $pageId = app(Page::class)->save(null, ['parent_id' => null, 'status' => 'published', 'is_home' => false, 'sort' => 90, 'og_image_id' => null], [
             'ka' => ['title' => 'კონფიდენციალურობის პოლიტიკა', 'slug' => self::SLUGS[0], 'meta_title' => '',
-                     'meta_description' => 'როგორ აგროვებს, იყენებს და იცავს WEBDEV ფორმებიდან და გამოწერიდან მიღებულ პერსონალურ მონაცემებს.'],
+                     'meta_description' => 'როგორ აგროვებს, იყენებს და იცავს KURSORI ფორმებიდან და გამოწერიდან მიღებულ პერსონალურ მონაცემებს.'],
             'en' => ['title' => 'Privacy Policy', 'slug' => self::SLUGS[1], 'meta_title' => '',
-                     'meta_description' => 'How WEBDEV collects, uses and protects the personal data received through its forms and newsletter.'],
+                     'meta_description' => 'How KURSORI collects, uses and protects the personal data received through its forms and newsletter.'],
         ]);
 
         $blocks = app(PageBlock::class);
@@ -55,7 +55,7 @@ return new class extends Seeder {
     {
         return <<<'HTML'
 <p><em>ბოლო განახლება: 2026 წლის 25 ოქტომბერი</em></p>
-<p>ეს პოლიტიკა აღწერს, როგორ აგროვებს, იყენებს და იცავს WEBDEV (შემდგომში — „ჩვენ“) პერსონალურ მონაცემებს, რომლებსაც საიტის მეშვეობით გვიზიარებთ. მონაცემებს ვამუშავებთ საქართველოს კანონის „პერსონალურ მონაცემთა დაცვის შესახებ“ შესაბამისად, ხოლო ევროკავშირის მომხმარებლების შემთხვევაში — GDPR-ის მოთხოვნების გათვალისწინებით.</p>
+<p>ეს პოლიტიკა აღწერს, როგორ აგროვებს, იყენებს და იცავს KURSORI (შემდგომში — „ჩვენ“) პერსონალურ მონაცემებს, რომლებსაც საიტის მეშვეობით გვიზიარებთ. მონაცემებს ვამუშავებთ საქართველოს კანონის „პერსონალურ მონაცემთა დაცვის შესახებ“ შესაბამისად, ხოლო ევროკავშირის მომხმარებლების შემთხვევაში — GDPR-ის მოთხოვნების გათვალისწინებით.</p>
 <h3>რა მონაცემებს ვაგროვებთ</h3>
 <ul>
 <li><strong>საკონტაქტო ფორმა:</strong> სახელი, ელ-ფოსტა და/ან ტელეფონი, თქვენთვის საინტერესო სერვისი და შეტყობინების ტექსტი.</li>
@@ -93,7 +93,7 @@ HTML;
     {
         return <<<'HTML'
 <p><em>Last updated: 25 October 2026</em></p>
-<p>This policy explains how WEBDEV ("we") collects, uses and protects the personal data you share with us through this website. We process data in accordance with the Law of Georgia on Personal Data Protection and, for users in the European Union, the GDPR.</p>
+<p>This policy explains how KURSORI ("we") collects, uses and protects the personal data you share with us through this website. We process data in accordance with the Law of Georgia on Personal Data Protection and, for users in the European Union, the GDPR.</p>
 <h3>What we collect</h3>
 <ul>
 <li><strong>Contact form:</strong> name, email and/or phone number, the service you are interested in and your message.</li>

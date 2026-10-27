@@ -10,7 +10,7 @@ $pageTitle = $meta['title'] ?? $siteName;
 $description = $meta['description'] ?? (string)setting('seo.meta_description');
 $ogImage = $meta['image'] ?? media_url(setting('seo.og_image'), 'large');
 $indexing = setting('seo.indexing') === true && empty($meta['noindex']);
-// url()-ის შედეგი (base path-ით, მაგ. /WEBDEV/ka) → სრული URL APP_URL-ით (canonical, hreflang, OG)
+// url()-ის შედეგი (base path-ით, მაგ. /KURSORI/ka) → სრული URL APP_URL-ით (canonical, hreflang, OG)
 $basePath = app()->baseUrlPath();
 $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $path)
     ? $path

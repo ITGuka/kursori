@@ -50,7 +50,7 @@ function public_path(string $path = ''): string
     return base_path('public' . ($path === '' ? '' : '/' . ltrim($path, '/')));
 }
 
-/** საიტის შიდა URL base path-ით: url('ka/about') → "/WEBDEV/ka/about" */
+/** საიტის შიდა URL base path-ით: url('ka/about') → "/KURSORI/ka/about" */
 function url(string $path = ''): string
 {
     return App::getInstance()->baseUrlPath() . '/' . ltrim($path, '/');

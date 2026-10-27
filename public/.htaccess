@@ -12,7 +12,7 @@ DirectoryIndex index.php
 <IfModule mod_headers.c>
     # CSP: სკრიპტებს/სტილებს არ ზღუდავს (CDN-ები, ანალიტიკის კოდი პარამეტრებიდან), მაგრამ კრძალავს
     # საიტის სხვის iframe-ში ჩასმას, <object>/<embed>-ს, <base>-ის შეცვლას და ფორმების სხვა დომენზე გაგზავნას.
-    # ასევე ჩაანაცვლებს მშობელი C:\laragon\www\.htaccess-ის (სხვა პროექტის) CSP-ს localhost/WEBDEV/-ზე.
+    # ასევე ჩაანაცვლებს მშობელი C:\laragon\www\.htaccess-ის (სხვა პროექტის) CSP-ს localhost/KURSORI/-ზე.
     Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"

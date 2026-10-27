@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 return [
-    'name'     => env('APP_NAME', 'WEBDEV'),
+    'name'     => env('APP_NAME', 'KURSORI'),
     'env'      => env('APP_ENV', 'production'),
     'debug'    => (bool)env('APP_DEBUG', false),
     'url'      => env('APP_URL', 'http://localhost'),
@@ -24,6 +24,6 @@ return [
     ],
 
     'session' => [
-        'name' => 'webdev_session',
+        'name' => 'kursori_session',
     ],
 ];

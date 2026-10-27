@@ -1,6 +1,6 @@
 {
-    "name": "webdev/site",
-    "description": "WEBDEV — მრავალენოვანი CMS საკუთარ PHP ფრეიმვორკზე",
+    "name": "kursori/site",
+    "description": "KURSORI — მრავალენოვანი CMS საკუთარ PHP ფრეიმვორკზე",
     "type": "project",
     "license": "proprietary",
     "require": {

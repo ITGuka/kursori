@@ -183,7 +183,7 @@ final class App
         return $this->request;
     }
 
-    /** საიტის base path (მაგ. "/WEBDEV" ან ""), რომ URL-ები ქვესაქაღალდეშიც მუშაობდეს */
+    /** საიტის base path (მაგ. "/KURSORI" ან ""), რომ URL-ები ქვესაქაღალდეშიც მუშაობდეს */
     public function baseUrlPath(): string
     {
         if ($this->request !== null) {

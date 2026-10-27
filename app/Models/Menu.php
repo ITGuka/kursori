@@ -71,7 +71,7 @@ final class Menu
      */
     public function tree(string $location, string $lang, string $fallbackLang): array
     {
-        // href-ში base path-ია (localhost/WEBDEV vs webdev.test), ამიტომ ის გასაღების ნაწილია
+        // href-ში base path-ია (localhost/KURSORI vs kursori.test), ამიტომ ის გასაღების ნაწილია
         $key = self::CACHE_PREFIX . $location . '.' . $lang . '.' . substr(md5(app()->baseUrlPath()), 0, 6);
         return $this->cache->remember($key, 0, function () use ($location, $lang, $fallbackLang): array {
             $menuId = $this->db->value('SELECT id FROM menus WHERE location = ?', [$location]);

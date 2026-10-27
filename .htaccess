@@ -1,6 +1,6 @@
-# სარეზერვო გზა http://localhost/WEBDEV/-ისთვის: ყველაფერი public/-ში გადადის,
+# სარეზერვო გზა http://localhost/KURSORI/-ისთვის: ყველაფერი public/-ში გადადის,
 # ასე core/, app/, config/, storage/, .env ბრაუზერიდან მიუწვდომელია.
-# ძირითადი მისამართი: http://webdev.test (vhost → public/)
+# ძირითადი მისამართი: http://kursori.test (vhost → public/)
 Options -Indexes
 
 <IfModule mod_rewrite.c>

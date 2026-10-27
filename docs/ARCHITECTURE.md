@@ -1,4 +1,4 @@
-# WEBDEV — არქიტექტურა
+# KURSORI — არქიტექტურა
 
 > ცოცხალი დოკუმენტი: ახლდება ყოველი ფაზის ან არქიტექტურული გადაწყვეტილების შემდეგ.
 > ბოლო განახლება: 2026-10-25 · **ფაზები 0–9 დასრულდა** · შემდეგი: deploy (როცა საჭირო გახდება) — იხ. §11 „Production-ის ჩამონათვალი“
@@ -29,7 +29,7 @@
 | D11 | HTML Codex ატრიბუცია | ✅ მოხსნილია (ფაზა 9) ფრონტის და ადმინის footer-იდან — **მოქმედებს მხოლოდ შეძენილი Credit Removal ლიცენზიით** ორივე თემფლეითზე (Poseify, DASHMIN). საიტის გაშვებამდე ლიცენზიები უნდა იყოს ნაყიდი |
 | D12 | Front controller | ერთი `public/index.php` ფრონტისა და ადმინისთვის; ადმინი — `/admin` route-ების ჯგუფი |
 | D13 | გარემოს პარამეტრები | `.env` (git-ის გარეშე, ასლი `.env.example`) → `config/*.php` → `config('app.name')` |
-| D14 | ლოკალური მისამართი | `http://webdev.test` (vhost → `public/`); სარეზერვო `http://localhost/WEBDEV/` root `.htaccess`-ით |
+| D14 | ლოკალური მისამართი | `http://kursori.test` (vhost → `public/`); სარეზერვო `http://localhost/KURSORI/` root `.htaccess`-ით |
 | D15 | ადმინის ავტორიზაცია | სესია + `password_hash`; მომხმარებელი ყოველ მოთხოვნაზე ბაზიდან იკითხება; პაროლის შეცვლა ან გათიშვა ხურავს მის ყველა სესიას; 2 სთ უმოქმედობის შემდეგ — გამოსვლა. „Remember me“ და პაროლის აღდგენა email-ით — არ არის (აღდგენა: `admin:create`) |
 | D16 | Login-ის ლიმიტი | 5 მცდელობა email+IP-ზე და 20 — IP-ზე, 15 წუთში; ზოგადი `rate_limits` ცხრილი (`login_attempts`-ის ნაცვლად), საჯარო ფორმებიც მას გამოიყენებს |
 | D17 | ადმინის ენა | ადმინის ინტერფეისი ქართულადაა (ტექსტები view-ებში); თარგმანების სისტემა (ფაზა 2) ფრონტისთვისაა |
@@ -72,8 +72,8 @@
 ✅ — უკვე არსებობს, ⏳ — დაგეგმილია.
 
 ```
-WEBDEV/
-├── public/                  ← web root (webdev.test → public/)
+KURSORI/
+├── public/                  ← web root (kursori.test → public/)
 │   ├── index.php            ✅ ერთადერთი front controller (ფრონტი + /admin)
 │   ├── .htaccess            ✅ rewrite → index.php, უსაფრთხოების header-ები
 │   ├── assets/front/        ✅ Poseify css/js/lib/img
@@ -343,7 +343,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 - ადმინის პასუხებს: `Cache-Control: no-store`, `X-Robots-Tag: noindex`; logout — მხოლოდ POST + CSRF; login/logout-ისას იცვლება სესიის ID და CSRF token.
 - ადმინს არ შეუძლია საკუთარი ანგარიშის წაშლა/გათიშვა და ბოლო აქტიური ადმინის წაშლა/გათიშვა; საკუთარი პაროლის შეცვლას სჭირდება მიმდინარე პაროლი.
 - ატვირთვა: D23; `uploads/.htaccess` — სკრიპტები 403, `php_flag engine off`, `nosniff`.
-- `public/.htaccess` (D48): CSP `frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'` (სკრიპტებს არ ზღუდავს — CDN-ები და ანალიტიკის კოდი პარამეტრებიდან), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`. ჩაანაცვლებს მშობელი `C:\laragon\www\.htaccess`-ის CSP-ს `localhost/WEBDEV/`-ზე.
+- `public/.htaccess` (D48): CSP `frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'` (სკრიპტებს არ ზღუდავს — CDN-ები და ანალიტიკის კოდი პარამეტრებიდან), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`. ჩაანაცვლებს მშობელი `C:\laragon\www\.htaccess`-ის CSP-ს `localhost/KURSORI/`-ზე.
 - საჯარო ფორმებზე honeypot + rate limit.
 - `core/`, `app/`, `config/`, `storage/` web root-ის გარეთაა.
 
@@ -393,13 +393,13 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 - **2026-10-25** — ადმინის ფორმებში შესავსები ენის გადამრთველი (KA / EN / ყველა) ზედა ზოლში: გვერდები, ბლოკები, კოლექციები, კატეგორიები, მენიუს პუნქტები, მედია, პარამეტრები. გვერდის ფორმის ენის ჩანართები ჩანაცვლდა. დაემატა D50.
 
 - **2026-10-25** — ფაზა 9: გვერდის HTML ქეში სტუმრებისთვის (CSRF-ის ჩანაცვლებით, ადმინის ცვლილებაზე გასუფთავებით), კოლექციის სიების N+1-ის მოხსნა, სტატიკური ფაილების ქეში და gzip, CSP და უსაფრთხოების header-ები, HTML Codex ატრიბუციის მოხსნა (ლიცენზიით), ახალი ბლოკი `portfolio_grid`, განაცხადის ფორმის წარწერები ბლოკიდან, ვებ სტუდიის საწყისი კონტენტი (seed-ები 05–08) და `content:reset`. ქართული სლაიდერის სათაური დიდ ეკრანზეც მცირდება. Production-ის ჩამონათვალი. დაემატა D47–D49.
-- **2026-10-25** — ფაზა 8: `/sitemap.xml` (hreflang alternates), `/robots.txt` (პარამეტრებიდან), გადამისამართებები ადმინიდან (301/302, მხოლოდ 404-ზე, query-ის გადაცემით), ავტომატური 301 slug-ის შეცვლისას (ჯაჭვების გარეშე), 404 ჟურნალი, JSON-LD Organization, og:url/og:locale/twitter:card. `core/`: `App::onNotFound()`. გასწორდა: canonical/OG URL-ში `localhost/WEBDEV`-ზე base path რჩებოდა. დაემატა D43–D46.
+- **2026-10-25** — ფაზა 8: `/sitemap.xml` (hreflang alternates), `/robots.txt` (პარამეტრებიდან), გადამისამართებები ადმინიდან (301/302, მხოლოდ 404-ზე, query-ის გადაცემით), ავტომატური 301 slug-ის შეცვლისას (ჯაჭვების გარეშე), 404 ჟურნალი, JSON-LD Organization, og:url/og:locale/twitter:card. `core/`: `App::onNotFound()`. გასწორდა: canonical/OG URL-ში `localhost/KURSORI`-ზე base path რჩებოდა. დაემატა D43–D46.
 - **2026-10-25** — ფაზა 7: საკონტაქტო და განაცხადის ფორმები (ახალი ბლოკი `application_form`) → Inbox (წაუკითხავი/წაკითხული, ფილტრი, ძებნა, პასუხი mailto-თი); newsletter — double opt-in, დასტური/გაუქმება (one-click), კამპანიები ტესტით და პარტიებად გაგზავნით, გამომწერების სია და CSV; SMTP პარამეტრები ადმინში დაშიფრული პაროლით; `core/`: Mailer (PHPMailer), Crypt, Validator-ის შეტყობინებები, CSRF-ის გამონაკლისები, `absolute_url()`; `key:generate`, `newsletter:send`. დაემატა D41–D42.
 - **2026-10-25** — ფაზა 6: კოლექციები (სერვისები, გუნდი, შეფასებები, პორტფოლიო) კონფიგიდან, საკუთარი ველებით; კატეგორიები (2 დონე); ადმინში სია (ძებნა, ფილტრი, გადათრევით რიგი, დამალვა) და ფორმა (ბლოკების ველების ძრავით); საჯარო გვერდები (სერვისი, პროექტი) hreflang-ით; ბლოკები „წყარო: კოლექცია“ (კატეგორია, რაოდენობა); `show_if`; მედიის გამოყენება კოლექციებშიც. დემო გვერდების ბლოკები გადავიდა კოლექციებზე. დაემატა D37–D40.
 - **2026-10-25** — ფაზა 5: მართვადი მენიუები (header — 2 დონე, footer — 1 დონე): გვერდის/ბმულის პუნქტები, წარწერები და ბმულები ენებზე, ჩადგმული drag & drop, დამალვა, ახალ ფანჯარაში გახსნა; ფრონტის navbar და footer მენიუდან, ქეშით. `Core\Support\Url` — ბმულების ერთიანი შემოწმება (ახლა `//host` ბმულიც უარყოფილია). გასწორდა: ენის წაშლისას რჩებოდა მისი გვერდების, ბლოკებისა და მედიის თარგმანები. დაემატა D34–D36.
 - **2026-10-25** — ფაზა 4: გვერდები (ხე, თარგმანები, slug ქართულიდან, SEO, OG სურათი, მონახაზი/წინასწარი ხედი, მთავარი გვერდი) და ბლოკების რედაქტორი (10 ტიპი სქემიდან, repeater, Jodit, link ველი, გადათრევით დალაგება, დამალვა, კოპირება). ფრონტი Poseify-ის layout-ზე: navbar (დროებით გვერდებიდან), ენების გადამრთველი, footer პარამეტრებიდან, hreflang/canonical/OG, Poseify-ის 404. Poseify-ის 6 გვერდი seed-ით. `core/`: Str, HtmlSanitizer; composer: HTMLPurifier. დაემატა D27–D33.
-- **2026-10-25** — ფაზა 3: მედია ბიბლიოთეკა (ბადე, ფილტრები, drag & drop ატვირთვა პროგრესით, საქაღალდეები, alt/წარწერა ენებზე, URL-ის კოპირება, გამოყენების შემოწმება წაშლამდე), საერთო picker-ფანჯარა, პარამეტრების `image` ველები → მედიის id. `core/Media`: Uploader, ImageResizer. Poseify-ის დემო სურათები seed-ით. Uploader სურათს GD-ით სრულად ხსნის (დაზიანებული ფაილი არ მიიღება). გასწორდა: მშობელი პროექტის CSP `localhost/WEBDEV/`-ზე jQuery-ს ბლოკავდა. დაემატა D23–D26.
+- **2026-10-25** — ფაზა 3: მედია ბიბლიოთეკა (ბადე, ფილტრები, drag & drop ატვირთვა პროგრესით, საქაღალდეები, alt/წარწერა ენებზე, URL-ის კოპირება, გამოყენების შემოწმება წაშლამდე), საერთო picker-ფანჯარა, პარამეტრების `image` ველები → მედიის id. `core/Media`: Uploader, ImageResizer. Poseify-ის დემო სურათები seed-ით. Uploader სურათს GD-ით სრულად ხსნის (დაზიანებული ფაილი არ მიიღება). გასწორდა: მშობელი პროექტის CSP `localhost/KURSORI/`-ზე jQuery-ს ბლოკავდა. დაემატა D23–D26.
 - **2026-10-24** — ფაზა 2: ენების CRUD (ძირითადი ენის წესები), UI თარგმანების რედაქტორი (ფილტრი ჯგუფით, ძებნა, „მხოლოდ ნაკლული“, ერთად შენახვა, გასაღების დამატება/წაშლა), პარამეტრები ჩანართებით (ზოგადი, კონტაქტი, სოც. ქსელები, SEO, კოდი), ტექნიკური რეჟიმი. `core/`: Cache, Translator, Settings, Validator `regex`/`url`. გასწორდა: ნამდვილი PUT/PATCH/DELETE-ის form body არ იკითხებოდა. დაემატა D18–D22; `settings`/`translations` სქემა შეიცვალა D19–D20-ის მიხედვით.
 - **2026-10-24** — ფაზა 1: DASHMIN layout (sidebar `config/admin.php`-იდან), login/logout, ადმინ-მომხმარებლების CRUD, Dashboard ბოლო აქტივობით, `Core\Auth\Auth`, `RateLimiter`, `Validator`, flash/old/errors helper-ები, `admin:create`. მიგრაციები: admin_users, rate_limits, activity_log. გასწორდა: Apache-ზე 419 → 500 (ახლა სრული status line იგზავნება); flash მონაცემი იშლებოდა, თუ ზედიზედ ორ მოთხოვნაზე flash-დებოდა. DASHMIN-ის `main.js` ჩანაცვლდა `admin.js`-ით (დემო დიაგრამების გარეშე). დაემატა D15–D17.
-- **2026-10-24** — ფაზა 0: `core/` ფრეიმვორკი (App/კონტეინერი, Router, Request/Response, DB, Migrator, View/Template, Session, Csrf, ErrorHandler, Console), composer autoload, `.env`, languages მიგრაცია + seed, vhost `webdev.test`, თემფლეითები → `resources/templates/`, assets → `public/assets/`. დაემატა D12–D14.
+- **2026-10-24** — ფაზა 0: `core/` ფრეიმვორკი (App/კონტეინერი, Router, Request/Response, DB, Migrator, View/Template, Session, Csrf, ErrorHandler, Console), composer autoload, `.env`, languages მიგრაცია + seed, vhost `kursori.test`, თემფლეითები → `resources/templates/`, assets → `public/assets/`. დაემატა D12–D14.
 - **2026-10-24** — პირველი ვერსია: თემფლეითების ანალიზი, გადაწყვეტილებები D1–D11, სქემა, ფაზები.

@@ -52,7 +52,7 @@ final class Request
     }
 
     /**
-     * public/index.php-ის საქაღალდე URL-ში. vhost-ზე ეს "" არის; localhost/WEBDEV/-ზე
+     * public/index.php-ის საქაღალდე URL-ში. vhost-ზე ეს "" არის; localhost/KURSORI/-ზე
      * root .htaccess გადაამისამართებს public/-ში, ამიტომ URL-ში "/public" აღარ ჩანს.
      */
     private static function detectBasePath(array $server, string $uri): string

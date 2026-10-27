@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-// პროექტის helper-ები (core/helpers.php — ფრეიმვორკის, ეს — WEBDEV-ის მოდულების)
+// პროექტის helper-ები (core/helpers.php — ფრეიმვორკის, ეს — KURSORI-ის მოდულების)
 
 use App\Models\Language;
 use App\Models\Media;

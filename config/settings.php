@@ -18,7 +18,7 @@ return [
     'general' => [
         'label'  => 'ზოგადი',
         'fields' => [
-            'site_name'        => ['label' => 'საიტის სახელი', 'translatable' => true, 'default' => 'WEBDEV', 'max' => 100],
+            'site_name'        => ['label' => 'საიტის სახელი', 'translatable' => true, 'default' => 'KURSORI', 'max' => 100],
             'tagline'          => ['label' => 'სლოგანი', 'translatable' => true, 'max' => 150],
             'cta_label'        => ['label' => 'ჰედერის ღილაკის ტექსტი („მოითხოვეთ შეთავაზება“)', 'translatable' => true, 'max' => 40,
                                    'help' => 'ჰედერში, მენიუს მარჯვნივ ვარდისფერი ღილაკის წარწერა — თითო ენაზე აქ იცვლება (თარგმანებში არ არის).',
@@ -28,7 +28,7 @@ return [
             'logo'             => ['label' => 'ლოგო', 'type' => 'image', 'help' => 'ცარიელის შემთხვევაში ჩანს საიტის სახელი.'],
             'favicon'          => ['label' => 'Favicon', 'type' => 'image', 'help' => 'კვადრატული PNG, მინიმუმ 48×48.'],
             'copyright'        => ['label' => 'Copyright ტექსტი', 'translatable' => true, 'help' => ':year ჩანაცვლდება მიმდინარე წლით.',
-                                   'default' => ['ka' => '© :year WEBDEV. ყველა უფლება დაცულია.', 'en' => '© :year WEBDEV. All rights reserved.']],
+                                   'default' => ['ka' => '© :year KURSORI. ყველა უფლება დაცულია.', 'en' => '© :year KURSORI. All rights reserved.']],
             'maintenance_mode' => ['label' => 'ტექნიკური სამუშაოების რეჟიმი', 'type' => 'toggle', 'default' => false,
                                    'help' => 'ჩართვისას საიტი ჩანს მხოლოდ ადმინში შესულ მომხმარებლებს.'],
             'maintenance_text' => ['label' => 'ტექნიკური სამუშაოების ტექსტი', 'type' => 'textarea', 'translatable' => true,
@@ -102,8 +102,8 @@ return [
             'encryption' => ['label' => 'დაშიფვრა', 'type' => 'select', 'default' => '', 'options' => ['' => 'არ არის', 'tls' => 'TLS (STARTTLS, 587)', 'ssl' => 'SSL (465)']],
             'username'   => ['label' => 'მომხმარებელი', 'max' => 190],
             'password'   => ['label' => 'პაროლი', 'type' => 'password', 'help' => 'ინახება დაშიფრულად. ცარიელი ველი — ძველი პაროლი რჩება.'],
-            'from_email' => ['label' => 'გამგზავნის ელ-ფოსტა', 'type' => 'email', 'default' => 'no-reply@webdev.test', 'max' => 190],
-            'from_name'  => ['label' => 'გამგზავნის სახელი', 'default' => 'WEBDEV', 'max' => 100],
+            'from_email' => ['label' => 'გამგზავნის ელ-ფოსტა', 'type' => 'email', 'default' => 'no-reply@kursori.test', 'max' => 190],
+            'from_name'  => ['label' => 'გამგზავნის სახელი', 'default' => 'KURSORI', 'max' => 100],
         ],
     ],
 
