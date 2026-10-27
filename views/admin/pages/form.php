@@ -17,26 +17,27 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
     <div class="alert alert-danger">ფორმაში შეცდომებია — შეამოწმეთ მონიშნული ველები.</div>
 <?php endif ?>
 
-<div class="row g-4">
+<div class="row g-6">
     <div class="col-xl-5">
-        <form method="post" action="<?= e($action) ?>" class="bg-light rounded p-4" novalidate>
+        <form method="post" action="<?= e($action) ?>" class="card" novalidate>
             <?= csrf_field() ?>
             <?php if ($isEdit): ?><input type="hidden" name="_method" value="PUT"><?php endif ?>
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                <h6 class="mb-0"><?= $isEdit ? 'გვერდის პარამეტრები' : e($title) ?></h6>
+            <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <h5 class="card-title mb-0"><?= $isEdit ? 'გვერდის პარამეტრები' : e($title) ?></h5>
                 <div class="d-flex align-items-center gap-2">
                     <?= $this->insert('admin/partials/lang-switch') ?>
                     <?php if ($viewUrl !== ''): ?>
-                        <a href="<?= e($viewUrl) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary"><i class="fa fa-external-link-alt me-1"></i>ნახვა</a>
+                        <a href="<?= e($viewUrl) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary"><i class="icon-base bx bx-link-external me-1"></i>ნახვა</a>
                     <?php endif ?>
                 </div>
             </div>
+            <div class="card-body">
 
             <div class="mb-3">
                 <?php foreach ($languages as $language): ?>
                     <?php $code = $language['code']; $t = $translations[$code] ?? []; ?>
-                    <fieldset class="border rounded p-3 mb-3" id="lang-<?= e($code) ?>" data-slug-group data-lang="<?= e($code) ?>">
-                        <legend class="float-none w-auto px-2 fs-6 mb-0"><?= e($language['native_name']) ?><?= $code === $defaultLang ? ' *' : '' ?></legend>
+                    <fieldset class="border rounded p-4 mb-4" id="lang-<?= e($code) ?>" data-slug-group data-lang="<?= e($code) ?>">
+                        <legend class="float-none w-auto px-2 fs-6 fw-medium text-heading mb-0"><?= e($language['native_name']) ?><?= $code === $defaultLang ? ' *' : '' ?></legend>
                         <div class="mb-3">
                             <label class="form-label" for="title-<?= e($code) ?>">სათაური</label>
                             <input type="text" class="form-control<?= $invalid("$code.title") ?>" id="title-<?= e($code) ?>" name="t[<?= e($code) ?>][title]"
@@ -101,64 +102,67 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
                 <label class="form-check-label" for="is_home">მთავარი გვერდი (/<?= e($defaultLang) ?>)</label>
             </div>
 
-            <button type="submit" class="btn btn-primary">შენახვა</button>
+            <button type="submit" class="btn btn-primary"><i class="icon-base bx bx-save me-1"></i>შენახვა</button>
             <a href="<?= e(route('admin.pages.index')) ?>" class="btn btn-outline-secondary ms-2">სიაში დაბრუნება</a>
+            </div>
         </form>
     </div>
 
     <div class="col-xl-7">
-        <div class="bg-light rounded p-4">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h6 class="mb-0">ბლოკები</h6>
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-0">ბლოკები</h5>
                 <?php if ($isEdit): ?>
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fa fa-plus me-1"></i>ბლოკის დამატება</button>
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="icon-base bx bx-plus me-1"></i>ბლოკის დამატება</button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <?php foreach ($blockTypes as $type => $definition): ?>
                                 <li><a class="dropdown-item" href="<?= e(route('admin.blocks.create', ['id' => $page['id'], 'type' => $type])) ?>">
-                                    <i class="<?= e($definition['icon'] ?? 'fa fa-square') ?> me-2 text-primary"></i><?= e($definition['label']) ?></a></li>
+                                    <i class="icon-base <?= e($definition['icon'] ?? 'bx bx-square') ?> me-2 text-primary"></i><?= e($definition['label']) ?></a></li>
                             <?php endforeach ?>
                         </ul>
                     </div>
                 <?php endif ?>
             </div>
+            <div class="card-body">
 
             <?php if (!$isEdit): ?>
-                <p class="text-muted mb-0">ბლოკების დასამატებლად ჯერ შეინახეთ გვერდი.</p>
+                <p class="text-body-secondary mb-0">ბლოკების დასამატებლად ჯერ შეინახეთ გვერდი.</p>
             <?php elseif ($blocks === []): ?>
-                <p class="text-muted mb-0">გვერდზე ბლოკები ჯერ არ არის. დაიწყეთ „სლაიდერით“ ან „გვერდის სათაურით“ — ისინი navbar-ის ქვეშ ჯდება.</p>
+                <p class="text-body-secondary mb-0">გვერდზე ბლოკები ჯერ არ არის. დაიწყეთ „სლაიდერით“ ან „გვერდის სათაურით“ — ისინი navbar-ის ქვეშ ჯდება.</p>
             <?php else: ?>
                 <ul class="list-unstyled block-list mb-0" data-block-sort="<?= e(route('admin.blocks.reorder', ['id' => $page['id']])) ?>">
                     <?php foreach ($blocks as $block): ?>
                         <li class="block-row<?= $block['is_active'] ? '' : ' is-hidden' ?>" id="block-<?= e($block['id']) ?>" data-id="<?= e($block['id']) ?>">
-                            <span class="block-handle" title="გადაადგილება"><i class="fa fa-grip-vertical"></i></span>
-                            <i class="<?= e($block['icon']) ?> text-primary"></i>
+                            <span class="block-handle" title="გადაადგილება"><i class="icon-base bx bx-grid-vertical"></i></span>
+                            <span class="avatar avatar-sm flex-shrink-0"><span class="avatar-initial rounded bg-label-primary"><i class="icon-base <?= e($block['icon']) ?>"></i></span></span>
                             <div class="block-info">
-                                <a href="<?= e(route('admin.blocks.edit', ['id' => $block['id']])) ?>" class="fw-semibold"><?= e($block['label']) ?></a>
-                                <?php if (!$block['is_active']): ?><span class="badge bg-secondary ms-1">დამალული</span><?php endif ?>
-                                <?php if ($block['summary'] !== ''): ?><div class="small text-muted text-truncate"><?= e($block['summary']) ?></div><?php endif ?>
+                                <a href="<?= e(route('admin.blocks.edit', ['id' => $block['id']])) ?>" class="fw-medium text-heading"><?= e($block['label']) ?></a>
+                                <?php if (!$block['is_active']): ?><span class="badge bg-label-secondary ms-1">დამალული</span><?php endif ?>
+                                <?php if ($block['summary'] !== ''): ?><div class="small text-body-secondary text-truncate"><?= e($block['summary']) ?></div><?php endif ?>
                             </div>
                             <div class="block-actions">
                                 <form method="post" action="<?= e(route('admin.blocks.toggle', ['id' => $block['id']])) ?>">
                                     <?= csrf_field() ?>
-                                    <button class="btn btn-sm btn-outline-secondary" title="<?= $block['is_active'] ? 'დამალვა' : 'გამოჩენა' ?>"><i class="fa <?= $block['is_active'] ? 'fa-eye' : 'fa-eye-slash' ?>"></i></button>
+                                    <button class="btn btn-sm btn-icon btn-outline-secondary" title="<?= $block['is_active'] ? 'დამალვა' : 'გამოჩენა' ?>" aria-label="<?= $block['is_active'] ? 'დამალვა' : 'გამოჩენა' ?>"><i class="icon-base bx <?= $block['is_active'] ? 'bx-show' : 'bx-hide' ?>"></i></button>
                                 </form>
                                 <form method="post" action="<?= e(route('admin.blocks.duplicate', ['id' => $block['id']])) ?>">
                                     <?= csrf_field() ?>
-                                    <button class="btn btn-sm btn-outline-secondary" title="კოპირება"><i class="fa fa-clone"></i></button>
+                                    <button class="btn btn-sm btn-icon btn-outline-secondary" title="კოპირება" aria-label="კოპირება"><i class="icon-base bx bx-duplicate"></i></button>
                                 </form>
-                                <a href="<?= e(route('admin.blocks.edit', ['id' => $block['id']])) ?>" class="btn btn-sm btn-outline-primary" title="რედაქტირება"><i class="fa fa-pen"></i></a>
+                                <a href="<?= e(route('admin.blocks.edit', ['id' => $block['id']])) ?>" class="btn btn-sm btn-icon btn-outline-primary" title="რედაქტირება" aria-label="რედაქტირება"><i class="icon-base bx bx-edit-alt"></i></a>
                                 <form method="post" action="<?= e(route('admin.blocks.destroy', ['id' => $block['id']])) ?>" data-confirm="წავშალოთ ბლოკი „<?= e($block['label']) ?>“?">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="_method" value="DELETE">
-                                    <button class="btn btn-sm btn-outline-danger" title="წაშლა"><i class="fa fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-icon btn-outline-danger" title="წაშლა" aria-label="წაშლა"><i class="icon-base bx bx-trash"></i></button>
                                 </form>
                             </div>
                         </li>
                     <?php endforeach ?>
                 </ul>
-                <p class="small text-muted mt-3 mb-0">რიგის შესაცვლელად გადაათრიეთ <i class="fa fa-grip-vertical"></i>-ით. პირველი ბლოკი თუ სლაიდერი ან გვერდის სათაური არ არის, საიტზე ავტომატურად დაემატება გვერდის სათაური.</p>
+                <p class="small text-body-secondary mt-4 mb-0">რიგის შესაცვლელად გადაათრიეთ <i class="icon-base bx bx-grid-vertical"></i>-ით. პირველი ბლოკი თუ სლაიდერი ან გვერდის სათაური არ არის, საიტზე ავტომატურად დაემატება გვერდის სათაური.</p>
             <?php endif ?>
+            </div>
         </div>
     </div>
 </div>

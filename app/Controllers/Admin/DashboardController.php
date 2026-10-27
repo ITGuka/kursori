@@ -33,7 +33,7 @@ final class DashboardController
         foreach (Collection::types() as $type => $definition) {
             $collections[$type] = [
                 'label'  => $definition['label'] ?? $type,
-                'icon'   => $definition['icon'] ?? 'fa fa-th-list',
+                'icon'   => $definition['icon'] ?? 'bx bx-collection',
                 'counts' => $collectionCounts[$type] ?? ['total' => 0, 'active' => 0],
                 'latest' => $this->dashboard->latestItems($type, $lang),
             ];

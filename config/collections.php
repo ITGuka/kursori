@@ -17,7 +17,7 @@ return [
     'services' => [
         'label'       => 'სერვისები',
         'singular'    => 'სერვისი',
-        'icon'        => 'fa fa-concierge-bell',
+        'icon'        => 'bx bx-cube',
         'title_label' => 'სახელი',
         'categories'  => true,
         'public'      => true,
@@ -41,7 +41,7 @@ return [
     'team' => [
         'label'       => 'გუნდი',
         'singular'    => 'გუნდის წევრი',
-        'icon'        => 'fa fa-user-friends',
+        'icon'        => 'bx bx-group',
         'title_label' => 'სახელი',
         'categories'  => true,
         'public'      => false,
@@ -56,7 +56,7 @@ return [
     'testimonials' => [
         'label'       => 'შეფასებები',
         'singular'    => 'შეფასება',
-        'icon'        => 'fa fa-quote-right',
+        'icon'        => 'bx bxs-quote-alt-left',
         'title_label' => 'ავტორი',
         'categories'  => false,
         'public'      => false,
@@ -69,7 +69,7 @@ return [
     'blog' => [
         'label'       => 'ბლოგი',
         'singular'    => 'სტატია',
-        'icon'        => 'fa fa-newspaper',
+        'icon'        => 'bx bx-news',
         'title_label' => 'სათაური',
         'categories'  => true,
         'public'      => true,
@@ -87,7 +87,7 @@ return [
     'portfolio' => [
         'label'       => 'პორტფოლიო',
         'singular'    => 'პროექტი',
-        'icon'        => 'fa fa-briefcase',
+        'icon'        => 'bx bx-briefcase',
         'title_label' => 'პროექტის სახელი',
         'categories'  => true,
         'public'      => true,

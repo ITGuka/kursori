@@ -40,7 +40,7 @@ $manual = ['show_if' => ['source' => 'manual']];
 return [
     'hero_carousel' => [
         'label'  => 'სლაიდერი (Hero)',
-        'icon'   => 'fa fa-images',
+        'icon'   => 'bx bx-images',
         'view'   => 'front/blocks/hero_carousel',
         'header' => true,
         'fields' => [
@@ -65,7 +65,7 @@ return [
 
     'page_header' => [
         'label'  => 'გვერდის სათაური',
-        'icon'   => 'fa fa-heading',
+        'icon'   => 'bx bx-heading',
         'view'   => 'front/blocks/page_header',
         'header' => true,
         'fields' => [
@@ -77,7 +77,7 @@ return [
 
     'about' => [
         'label'  => 'ჩვენ შესახებ',
-        'icon'   => 'fa fa-info-circle',
+        'icon'   => 'bx bx-info-circle',
         'view'   => 'front/blocks/about',
         'fields' => $title + [
             'text'          => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
@@ -95,7 +95,7 @@ return [
 
     'services' => [
         'label'  => 'სერვისები',
-        'icon'   => 'fa fa-concierge-bell',
+        'icon'   => 'bx bx-cube',
         'view'   => 'front/blocks/services',
         'collection' => ['type' => 'services', 'target' => 'items', 'map' => [
             'image' => 'image', 'title' => 'title', 'text' => 'excerpt', 'button_label' => '@read_more', 'button_link' => '@url',
@@ -115,7 +115,7 @@ return [
 
     'stats' => [
         'label'  => 'ციფრები (ნდობის ზოლი)',
-        'icon'   => 'fa fa-chart-bar',
+        'icon'   => 'bx bx-bar-chart-alt-2',
         'view'   => 'front/blocks/stats',
         'fields' => [
             'items'      => ['type' => 'repeater', 'label' => 'ციფრები', 'min_items' => 1, 'max_items' => 6, 'fields' => [
@@ -128,7 +128,7 @@ return [
 
     'process' => [
         'label'  => 'პროცესი (ეტაპები)',
-        'icon'   => 'fa fa-list-ol',
+        'icon'   => 'bx bx-list-ol',
         'view'   => 'front/blocks/process',
         'fields' => $title + [
             'steps'      => ['type' => 'repeater', 'label' => 'ეტაპები', 'min_items' => 2, 'max_items' => 8, 'fields' => [
@@ -141,7 +141,7 @@ return [
 
     'blog_list' => [
         'label'  => 'ბლოგი (სტატიების სია)',
-        'icon'   => 'fa fa-newspaper',
+        'icon'   => 'bx bx-news',
         'view'   => 'front/blocks/blog_list',
         // ყოველთვის კოლექციიდან, უახლესი პირველი (collections.php → blog.order)
         'collection' => ['type' => 'blog', 'target' => 'posts', 'always' => true, 'map' => [
@@ -158,7 +158,7 @@ return [
 
     'faq' => [
         'label'  => 'ხშირი კითხვები (FAQ)',
-        'icon'   => 'fa fa-question-circle',
+        'icon'   => 'bx bx-help-circle',
         'view'   => 'front/blocks/faq',
         'shared' => true,
         'fields' => $title + [
@@ -172,7 +172,7 @@ return [
 
     'pricing' => [
         'label'  => 'ფასები (პაკეტები)',
-        'icon'   => 'fa fa-tags',
+        'icon'   => 'bx bx-purchase-tag',
         'view'   => 'front/blocks/pricing',
         'shared' => true,
         'fields' => $title + [
@@ -192,7 +192,7 @@ return [
 
     'banner_signup' => [
         'label'  => 'ბანერი + გამოწერა',
-        'icon'   => 'fa fa-envelope-open-text',
+        'icon'   => 'bx bx-envelope-open',
         'view'   => 'front/blocks/banner_signup',
         'fields' => $title + [
             'text'       => ['type' => 'textarea', 'label' => 'ტექსტი', 'translatable' => true, 'max' => 500],
@@ -202,7 +202,7 @@ return [
 
     'team_grid' => [
         'label'  => 'გუნდი',
-        'icon'   => 'fa fa-users',
+        'icon'   => 'bx bx-group',
         'view'   => 'front/blocks/team_grid',
         'collection' => ['type' => 'team', 'target' => 'members', 'map' => [
             'image' => 'image', 'name' => 'title', 'position' => 'position', 'attributes' => 'attributes', 'link' => 'link',
@@ -221,7 +221,7 @@ return [
 
     'testimonials' => [
         'label'  => 'შეფასებები',
-        'icon'   => 'fa fa-quote-right',
+        'icon'   => 'bx bxs-quote-alt-left',
         'view'   => 'front/blocks/testimonials',
         'collection' => ['type' => 'testimonials', 'target' => 'items', 'map' => [
             'image' => 'image', 'quote' => 'quote', 'name' => 'title', 'profession' => 'profession',
@@ -239,7 +239,7 @@ return [
 
     'contact' => [
         'label'  => 'კონტაქტი',
-        'icon'   => 'fa fa-address-card',
+        'icon'   => 'bx bx-id-card',
         'view'   => 'front/blocks/contact',
         'fields' => $title + [
             'text'      => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
@@ -250,7 +250,7 @@ return [
 
     'portfolio_grid' => [
         'label'  => 'პორტფოლიო',
-        'icon'   => 'fa fa-briefcase',
+        'icon'   => 'bx bx-briefcase',
         'view'   => 'front/blocks/portfolio_grid',
         // ყოველთვის კოლექციიდან (always) — ხელით შევსება ამ ბლოკს არ აქვს
         'collection' => ['type' => 'portfolio', 'target' => 'items', 'always' => true, 'map' => [
@@ -266,7 +266,7 @@ return [
 
     'application_form' => [
         'label'  => 'განაცხადის ფორმა',
-        'icon'   => 'fa fa-file-signature',
+        'icon'   => 'bx bx-detail',
         'view'   => 'front/blocks/application_form',
         'fields' => $title + [
             'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
@@ -279,7 +279,7 @@ return [
     // დიზაინები და კატეგორიები — ადმინი → დიზაინები; გაგზავნა: POST /{lang}/order → Inbox + წერილი
     'order_form' => [
         'label'  => 'საიტის შეკვეთის ფორმა',
-        'icon'   => 'fa fa-shopping-cart',
+        'icon'   => 'bx bx-cart',
         'view'   => 'front/blocks/order_form',
         'fields' => $title + [
             'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
@@ -290,7 +290,7 @@ return [
 
     'map' => [
         'label'  => 'რუკა',
-        'icon'   => 'fa fa-map-marked-alt',
+        'icon'   => 'bx bx-map',
         'view'   => 'front/blocks/map',
         'fields' => [
             'embed_url' => ['type' => 'text', 'label' => 'Google Maps embed ბმული', 'max' => 2000,
@@ -301,7 +301,7 @@ return [
 
     'rich_text' => [
         'label'  => 'ტექსტი',
-        'icon'   => 'fa fa-align-left',
+        'icon'   => 'bx bx-align-left',
         'view'   => 'front/blocks/rich_text',
         'fields' => $title + [
             'body'       => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],

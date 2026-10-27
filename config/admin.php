@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-// ადმინის sidebar. route — route-ის სახელი (+ params), active — რომელ route-ებზე მოინიშნოს (is_route pattern),
-// collection — კოლექციის პუნქტი აქტიურია, როცა view-ს $collectionType ემთხვევა; badge — მრიცხველი (inbox — წაუკითხავი).
+// ადმინის sidebar. header — ჯგუფის სათაური; route — route-ის სახელი (+ params), active — რომელ route-ებზე მოინიშნოს
+// (is_route pattern), collection — კოლექციის პუნქტი აქტიურია, როცა view-ს $collectionType ემთხვევა;
+// badge — მრიცხველი (inbox — წაუკითხავი). icon — Boxicons (`bx bx-*`).
 // კოლექციები (config/collections.php) ავტომატურად ემატება გვერდების შემდეგ.
 $collections = [];
 foreach (require __DIR__ . '/collections.php' as $type => $definition) {
     $collections[] = [
         'label'      => $definition['label'],
-        'icon'       => $definition['icon'] ?? 'fa fa-th-list',
+        'icon'       => $definition['icon'] ?? 'bx bx-collection',
         'route'      => 'admin.collections.index',
         'params'     => ['type' => $type],
         'collection' => $type,
@@ -17,19 +18,25 @@ foreach (require __DIR__ . '/collections.php' as $type => $definition) {
 
 return [
     'menu' => [
-        ['label' => 'Dashboard', 'icon' => 'fa fa-tachometer-alt', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
-        ['label' => 'გვერდები', 'icon' => 'fa fa-file-alt', 'route' => 'admin.pages.index', 'active' => ['admin.pages.*', 'admin.blocks.*']],
+        ['label' => 'Dashboard', 'icon' => 'bx bx-home-smile', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
+
+        ['header' => 'კონტენტი'],
+        ['label' => 'გვერდები', 'icon' => 'bx bx-file', 'route' => 'admin.pages.index', 'active' => ['admin.pages.*', 'admin.blocks.*']],
         ...$collections,
         // დიზაინები (შეკვეთის ფორმა); collection — აქტიურია დიზაინებისა და მათი კატეგორიების გვერდებზე
-        ['label' => 'დიზაინები', 'icon' => 'fa fa-palette', 'route' => 'admin.designs.index', 'collection' => 'designs'],
-        ['label' => 'Inbox', 'icon' => 'fa fa-inbox', 'route' => 'admin.inbox.index', 'active' => 'admin.inbox.*', 'badge' => 'inbox'],
-        ['label' => 'Newsletter', 'icon' => 'fa fa-paper-plane', 'route' => 'admin.newsletter.campaigns', 'active' => 'admin.newsletter.*'],
-        ['label' => 'მენიუები', 'icon' => 'fa fa-bars', 'route' => 'admin.menus.index', 'active' => 'admin.menus.*'],
-        ['label' => 'მედია', 'icon' => 'fa fa-images', 'route' => 'admin.media.index', 'active' => 'admin.media.*'],
-        ['label' => 'თარგმანები', 'icon' => 'fa fa-language', 'route' => 'admin.translations.index', 'active' => 'admin.translations.*'],
-        ['label' => 'ენები', 'icon' => 'fa fa-globe', 'route' => 'admin.languages.index', 'active' => 'admin.languages.*'],
-        ['label' => 'გადამისამართებები', 'icon' => 'fa fa-random', 'route' => 'admin.redirects.index', 'active' => 'admin.redirects.*'],
-        ['label' => 'პარამეტრები', 'icon' => 'fa fa-cog', 'route' => 'admin.settings.index', 'active' => 'admin.settings.*'],
-        ['label' => 'მომხმარებლები', 'icon' => 'fa fa-users', 'route' => 'admin.users.index', 'active' => 'admin.users.*'],
+        ['label' => 'დიზაინები', 'icon' => 'bx bx-palette', 'route' => 'admin.designs.index', 'collection' => 'designs'],
+        ['label' => 'მენიუები', 'icon' => 'bx bx-menu', 'route' => 'admin.menus.index', 'active' => 'admin.menus.*'],
+        ['label' => 'მედია', 'icon' => 'bx bx-images', 'route' => 'admin.media.index', 'active' => 'admin.media.*'],
+
+        ['header' => 'კომუნიკაცია'],
+        ['label' => 'Inbox', 'icon' => 'bx bx-envelope', 'route' => 'admin.inbox.index', 'active' => 'admin.inbox.*', 'badge' => 'inbox'],
+        ['label' => 'Newsletter', 'icon' => 'bx bx-paper-plane', 'route' => 'admin.newsletter.campaigns', 'active' => 'admin.newsletter.*'],
+
+        ['header' => 'სისტემა'],
+        ['label' => 'თარგმანები', 'icon' => 'bx bx-font', 'route' => 'admin.translations.index', 'active' => 'admin.translations.*'],
+        ['label' => 'ენები', 'icon' => 'bx bx-globe', 'route' => 'admin.languages.index', 'active' => 'admin.languages.*'],
+        ['label' => 'გადამისამართებები', 'icon' => 'bx bx-shuffle', 'route' => 'admin.redirects.index', 'active' => 'admin.redirects.*'],
+        ['label' => 'პარამეტრები', 'icon' => 'bx bx-cog', 'route' => 'admin.settings.index', 'active' => 'admin.settings.*'],
+        ['label' => 'მომხმარებლები', 'icon' => 'bx bx-user', 'route' => 'admin.users.index', 'active' => 'admin.users.*'],
     ],
 ];

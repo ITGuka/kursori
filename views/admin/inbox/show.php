@@ -14,7 +14,7 @@ $email = (string)($data['email'] ?? '');
 
 <div class="bg-light rounded p-4" style="max-width: 900px">
     <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-4">
-        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'fa fa-envelope') ?> text-primary me-2"></i><?= e($definition['label']) ?></h6>
+        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'bx bx-envelope') ?> text-primary me-2"></i><?= e($definition['label']) ?></h6>
         <div class="d-flex flex-wrap gap-2">
             <form method="post" action="<?= e(route('admin.inbox.status', ['id' => $submission['id']])) ?>" class="d-flex gap-1">
                 <?= csrf_field() ?>

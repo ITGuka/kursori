@@ -43,7 +43,7 @@ $action = $isEdit ? route('admin.blocks.update', ['id' => $block['id']]) : route
     <?php endif ?>
 
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
-        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'fa fa-square') ?> text-primary me-2"></i><?= e($definition['label']) ?></h6>
+        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'bx bx-square') ?> text-primary me-2"></i><?= e($definition['label']) ?></h6>
         <?= $this->insert('admin/partials/lang-switch') ?>
     </div>
 

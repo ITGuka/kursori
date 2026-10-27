@@ -49,7 +49,7 @@ $this->layout('admin/layouts/app');
                     <?php $url = route('admin.inbox.show', ['id' => $row['id']]); ?>
                     <tr class="<?= $row['is_read'] ? '' : 'fw-semibold' ?>">
                         <td class="text-nowrap"><?= e(date('d.m.Y H:i', strtotime($row['created_at']))) ?></td>
-                        <td><i class="<?= e($forms[$row['form']]['icon'] ?? 'fa fa-envelope') ?> text-primary me-1"></i><?= e($forms[$row['form']]['label'] ?? $row['form']) ?>
+                        <td><i class="<?= e($forms[$row['form']]['icon'] ?? 'bx bx-envelope') ?> text-primary me-1"></i><?= e($forms[$row['form']]['label'] ?? $row['form']) ?>
                             <span class="badge bg-light text-muted border text-uppercase"><?= e($row['lang']) ?></span></td>
                         <td>
                             <a href="<?= e($url) ?>"><?= e($row['data']['name'] ?? '—') ?></a>

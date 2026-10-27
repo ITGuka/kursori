@@ -1,10 +1,46 @@
-/* DASHMIN-ის დამატებები */
+/* Sneat-ის დამატებები */
 
-body {
-    font-family: "Heebo", "Noto Sans Georgian", sans-serif;
+/* ქართული — FiraGO (Public Sans-ში ქართული ასოები არ არის; ბრაუზერი ქართულ სიმბოლოებს FiraGO-თი ხატავს) */
+@font-face {
+    font-family: "FiraGO";
+    src: url(../../front/fonts/firago-regular.woff2) format("woff2");
+    font-weight: 300 400;
+    font-display: swap;
 }
 
-/* მომხმარებლის ინიციალი ფოტოს ნაცვლად */
+@font-face {
+    font-family: "FiraGO";
+    src: url(../../front/fonts/firago-semibold.woff2) format("woff2");
+    font-weight: 500 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "FiraGO";
+    src: url(../../front/fonts/firago-bold.woff2) format("woff2");
+    font-weight: 700 800;
+    font-display: swap;
+}
+
+:root {
+    --bs-font-sans-serif: "Public Sans", "FiraGO", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ლოგო: საიტის სახელის პირველი ასო */
+.admin-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bs-primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+/* მომხმარებლის ინიციალი ფოტოს ნაცვლად (ჯერ არგადაყვანილი გვერდებისთვის; Sneat-ში — .avatar-initial) */
 .admin-avatar {
     width: 40px;
     height: 40px;
@@ -13,24 +49,16 @@ body {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: var(--bs-primary, #009CFF);
-    color: #fff;
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
     font-weight: 600;
 }
 
-.admin-avatar-sm {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
-}
-
-/* .btn-lg-square-ის display:flex თემფლეითში display:none-ს ფარავს; ჩნდება admin.js-ით (.show) */
-.btn.back-to-top {
-    display: none;
-}
-
-.btn.back-to-top.show {
-    display: flex;
+/* menu-link-ის ტექსტი გრძელ ქართულ სიტყვებზე არ გადადის */
+.layout-menu .menu-link > div:not(.badge) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* ---- მედია ---- */
@@ -44,8 +72,8 @@ body {
 }
 
 .upload-zone.is-dragover {
-    border-color: var(--bs-primary, #009CFF);
-    background: #eef8ff;
+    border-color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
 }
 
 .upload-item .upload-status {
@@ -74,7 +102,7 @@ body {
 
 .media-card:hover,
 .media-card:focus {
-    border-color: var(--bs-primary, #009CFF);
+    border-color: var(--bs-primary);
     color: inherit;
 }
 
@@ -171,7 +199,7 @@ body {
 }
 
 .block-row.sortable-ghost {
-    background: #eef8ff;
+    background: var(--bs-primary-bg-subtle);
 }
 
 .block-handle,
@@ -276,7 +304,7 @@ body {
     flex-wrap: wrap;
     gap: 4px;
     padding: 4px;
-    background: #e4e9f0;
+    background: var(--bs-gray-100, #eceef1);
     border-radius: 50px;
 }
 
@@ -300,13 +328,13 @@ body {
 }
 
 .lang-switch-btn:focus-visible {
-    outline: 2px solid var(--bs-primary, #009cff);
+    outline: 2px solid var(--bs-primary);
     outline-offset: 1px;
 }
 
 .lang-switch-btn.active {
     background: #fff;
-    color: var(--bs-primary, #009cff);
+    color: var(--bs-primary);
     box-shadow: 0 1px 4px rgba(25, 28, 36, .12);
 }
 
@@ -317,8 +345,8 @@ body {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, .08);
 }
 
-.lang-switch-btn .fa {
-    font-size: 12px;
+.lang-switch-btn .bx {
+    font-size: 15px;
 }
 
 .lang-switch-btn.has-error:not(.active) {
@@ -351,23 +379,20 @@ html[data-admin-lang]:not([data-admin-lang="all"]) .row > [data-lang] {
     transform: translateY(-2px);
 }
 
-.dash-chart {
-    position: relative;
-    height: 300px;
-}
-
 .dash-thumb {
-    width: 40px;
-    height: 40px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
-.dash-thumb-empty {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #e4e9f0;
-    color: #6c7293;
+/* წაუკითხავის ნიშანი */
+.dash-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    vertical-align: middle;
 }
 
 .min-w-0 {

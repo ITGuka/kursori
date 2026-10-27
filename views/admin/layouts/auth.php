@@ -1,19 +1,26 @@
 <?php /** @var Core\View\Template $this */ ?>
 <!doctype html>
-<html lang="ka">
+<html lang="ka" class="layout-wide customizer-hide" data-bs-theme="light" data-skin="default" data-template="vertical-menu-template">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title><?= e(($title ?? 'შესვლა') . ' · ' . config('app.name')) ?></title>
     <?= $this->insert('admin/partials/head') ?>
+    <link href="<?= asset('admin/sneat/css/page-auth.css') ?>" rel="stylesheet">
 </head>
 <body>
-<div class="container-fluid position-relative bg-white d-flex p-0">
-    <div class="container-fluid">
-        <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
-            <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
-                <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3">
+<div class="container-xxl">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+            <div class="card px-sm-6 px-0">
+                <div class="card-body">
+                    <div class="app-brand justify-content-center">
+                        <span class="app-brand-link gap-2">
+                            <span class="app-brand-logo demo admin-logo"><?= e(mb_substr((string)config('app.name'), 0, 1)) ?></span>
+                            <span class="app-brand-text demo text-heading fw-bold"><?= e(config('app.name')) ?></span>
+                        </span>
+                    </div>
                     <?= $this->section('content') ?>
                 </div>
             </div>

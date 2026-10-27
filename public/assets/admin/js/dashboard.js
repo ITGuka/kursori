@@ -1,45 +1,64 @@
-// Dashboard: დიაგრამები (Chart.js), კალენდარი (Tempus Dominus), დავალებების სია
+// Dashboard: დიაგრამები (ApexCharts, Sneat-ის ფერებით), კალენდარი (Tempus Dominus), დავალებების სია
 (function ($) {
     "use strict";
 
     var data = window.DashboardData || {};
-    var primary = function (alpha) { return 'rgba(0, 156, 255, ' + alpha + ')'; };
+    var colors = (window.config && window.config.colors) || {};
+    var font = (window.config && window.config.fontFamily) || 'inherit';
 
     // შეტყობინებები და გამომწერები დღეების მიხედვით
     var daily = document.getElementById('chart-daily');
-    if (daily && data.daily && window.Chart) {
-        new Chart(daily, {
-            type: 'line',
-            data: {
-                labels: data.daily.labels,
-                datasets: [
-                    {label: 'შეტყობინებები', data: data.daily.submissions, backgroundColor: primary(.5), borderColor: primary(1), fill: true, tension: .3, pointRadius: 2},
-                    {label: 'გამომწერები', data: data.daily.subscribers, backgroundColor: primary(.2), borderColor: primary(.5), fill: true, tension: .3, pointRadius: 2}
-                ]
+    if (daily && data.daily && window.ApexCharts) {
+        new ApexCharts(daily, {
+            chart: {type: 'area', height: 300, fontFamily: font, toolbar: {show: false}, zoom: {enabled: false}},
+            series: [
+                {name: 'შეტყობინებები', data: data.daily.submissions},
+                {name: 'გამომწერები', data: data.daily.subscribers}
+            ],
+            xaxis: {
+                categories: data.daily.labels,
+                tickAmount: 10,
+                axisBorder: {show: false},
+                axisTicks: {show: false},
+                labels: {style: {colors: colors.textMuted}}
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {mode: 'index', intersect: false},
-                scales: {y: {beginAtZero: true, ticks: {precision: 0}}}
-            }
-        });
+            yaxis: {min: 0, forceNiceScale: true, labels: {formatter: function (v) { return Math.round(v); }, style: {colors: colors.textMuted}}},
+            colors: [colors.primary, colors.info],
+            stroke: {curve: 'smooth', width: 2},
+            fill: {type: 'gradient', gradient: {shadeIntensity: .6, opacityFrom: .35, opacityTo: .05, stops: [0, 95, 100]}},
+            dataLabels: {enabled: false},
+            grid: {borderColor: colors.borderColor, strokeDashArray: 6, padding: {top: -10}},
+            legend: {position: 'top', horizontalAlign: 'left', labels: {colors: colors.bodyColor}, markers: {offsetX: -3}},
+            tooltip: {shared: true, intersect: false}
+        }).render();
     }
 
     // კონტენტი კოლექციების მიხედვით
     var content = document.getElementById('chart-content');
-    if (content && data.content && window.Chart) {
-        new Chart(content, {
-            type: 'doughnut',
-            data: {
-                labels: data.content.labels,
-                datasets: [{
-                    data: data.content.values,
-                    backgroundColor: data.content.values.map(function (v, i) { return primary(Math.max(.25, .85 - i * .18)); })
-                }]
-            },
-            options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'bottom'}}}
-        });
+    if (content && data.content && window.ApexCharts) {
+        var total = data.content.values.reduce(function (a, b) { return a + b; }, 0);
+        new ApexCharts(content, {
+            chart: {type: 'donut', height: 300, fontFamily: font},
+            series: data.content.values,
+            labels: data.content.labels,
+            colors: [colors.primary, colors.success, colors.info, colors.warning, colors.danger, colors.secondary],
+            stroke: {width: 4, colors: [colors.cardColor]},
+            dataLabels: {enabled: false},
+            legend: {position: 'bottom', labels: {colors: colors.bodyColor}},
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '72%',
+                        labels: {
+                            show: true,
+                            value: {fontSize: '22px', fontWeight: 600, color: colors.headingColor, offsetY: -12},
+                            name: {offsetY: 18, color: colors.textMuted},
+                            total: {show: true, label: 'სულ', color: colors.textMuted, formatter: function () { return total; }}
+                        }
+                    }
+                }
+            }
+        }).render();
     }
 
     // კალენდარი ქართულად

@@ -5,7 +5,7 @@ $this->layout('admin/layouts/app');
 
 <div class="bg-light rounded p-4 mb-4">
     <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
-        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'fa fa-th-list') ?> text-primary me-2"></i><?= e($title) ?> <span class="text-muted fw-normal">(<?= e($total) ?>)</span></h6>
+        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'bx bx-collection') ?> text-primary me-2"></i><?= e($title) ?> <span class="text-muted fw-normal">(<?= e($total) ?>)</span></h6>
         <div class="d-flex gap-2">
             <?php if ($definition['categories']): ?>
                 <a href="<?= e(route('admin.categories.index', ['type' => $type])) ?>" class="btn btn-sm btn-outline-primary"><i class="fa fa-folder me-1"></i>კატეგორიები</a>
@@ -41,7 +41,7 @@ $this->layout('admin/layouts/app');
                 <li class="block-row<?= $row['is_active'] ? '' : ' is-hidden' ?>" id="item-<?= e($row['id']) ?>" data-id="<?= e($row['id']) ?>">
                     <?php if ($sortable): ?><span class="block-handle" title="გადაადგილება"><i class="fa fa-grip-vertical"></i></span><?php endif ?>
                     <span class="collection-thumb">
-                        <?php if ($thumb = media_url($row['image_id'], 'thumb')): ?><img src="<?= e($thumb) ?>" alt="" loading="lazy"><?php else: ?><i class="<?= e($definition['icon'] ?? 'fa fa-th-list') ?> text-muted"></i><?php endif ?>
+                        <?php if ($thumb = media_url($row['image_id'], 'thumb')): ?><img src="<?= e($thumb) ?>" alt="" loading="lazy"><?php else: ?><i class="<?= e($definition['icon'] ?? 'bx bx-collection') ?> text-muted"></i><?php endif ?>
                     </span>
                     <div class="block-info">
                         <a href="<?= e(route('admin.collections.edit', ['id' => $row['id']])) ?>" class="fw-semibold"><?= e($row['title']) ?></a>

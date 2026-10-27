@@ -20,7 +20,7 @@ $service = ['label' => 'form.service', 'options' => [
 return [
     'contact' => [
         'label'  => 'კონტაქტი',
-        'icon'   => 'fa fa-envelope',
+        'icon'   => 'bx bx-envelope',
         'one_of' => ['email', 'phone'],
         'fields' => [
             'name'    => ['rules' => 'required|max:100', 'label' => 'form.name'],
@@ -32,7 +32,7 @@ return [
     ],
     'application' => [
         'label'  => 'შეთავაზების მოთხოვნა',
-        'icon'   => 'fa fa-file-signature',
+        'icon'   => 'bx bx-detail',
         'one_of' => ['email', 'phone'],
         'fields' => [
             'name'    => ['rules' => 'required|max:100', 'label' => 'form.name'],
@@ -54,7 +54,7 @@ return [
     // Inbox-ში ინახება მათი სახელები). handler — ზოგადი /forms/{form} ამ ფორმას არ იღებს.
     'order' => [
         'label'   => 'საიტის შეკვეთა',
-        'icon'    => 'fa fa-shopping-cart',
+        'icon'    => 'bx bx-cart',
         'handler' => 'order',
         'notify'  => true,
         'fields'  => [

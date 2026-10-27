@@ -34,7 +34,7 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
     <?php if ($isEdit): ?><input type="hidden" name="_method" value="PUT"><?php endif ?>
 
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
-        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'fa fa-th-list') ?> text-primary me-2"></i><?= e($isEdit ? $definition['singular'] : 'ახალი: ' . $definition['singular']) ?></h6>
+        <h6 class="mb-0"><i class="<?= e($definition['icon'] ?? 'bx bx-collection') ?> text-primary me-2"></i><?= e($isEdit ? $definition['singular'] : 'ახალი: ' . $definition['singular']) ?></h6>
         <div class="d-flex align-items-center gap-2">
             <?= $this->insert('admin/partials/lang-switch') ?>
             <?php if ($publicUrl !== ''): ?>

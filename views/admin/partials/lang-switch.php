@@ -16,6 +16,6 @@ $flags = ['ka' => 'ge', 'en' => 'gb', 'uk' => 'ua', 'el' => 'gr', 'hy' => 'am', 
                 <span class="fi fis fi-<?= e($flags[$language['code']] ?? $language['code']) ?>"></span><?= e(strtoupper($language['code'])) ?>
             </button>
         <?php endforeach ?>
-        <button type="button" class="lang-switch-btn" data-lang-option="all" title="ყველა ენა ერთად"><i class="fa fa-layer-group"></i>ყველა</button>
+        <button type="button" class="lang-switch-btn" data-lang-option="all" title="ყველა ენა ერთად"><i class="icon-base bx bx-layer"></i>ყველა</button>
     </div>
 <?php endif ?>

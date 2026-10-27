@@ -1,4 +1,6 @@
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= asset('admin/lib/easing/easing.min.js') ?>"></script>
+<script src="<?= asset('admin/sneat/js/jquery.min.js') ?>"></script>
+<script src="<?= asset('admin/sneat/js/bootstrap.bundle.min.js') ?>"></script>
+<script src="<?= asset('admin/sneat/js/perfect-scrollbar.min.js') ?>"></script>
+<script src="<?= asset('admin/sneat/js/menu.js') ?>"></script>
+<script src="<?= asset('admin/sneat/js/main.js') ?>"></script>
 <script src="<?= asset('admin/js/admin.js') ?>"></script>

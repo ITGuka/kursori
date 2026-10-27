@@ -103,7 +103,7 @@ final class PageController
         if ($page !== null) {
             foreach ($this->blocks->forPage((int)$page['id']) as $block) {
                 $block['label'] = $this->registry->label($block['type']);
-                $block['icon'] = $this->registry->get($block['type'])['icon'] ?? 'fa fa-square';
+                $block['icon'] = $this->registry->get($block['type'])['icon'] ?? 'bx bx-square';
                 $block['summary'] = self::summary($block, $default);
                 $blocks[] = $block;
             }

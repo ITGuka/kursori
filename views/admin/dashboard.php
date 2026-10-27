@@ -7,7 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\Media;
 use Core\Support\Str;
 
-$this->layout('admin/layouts/app');
+$this->layout('admin/layouts/app', ['title' => 'Dashboard']);
 
 // „15 წუთის წინ“ — კვირაზე ძველი თარიღი ჩვეულებრივად
 $ago = function (string $datetime): string {
@@ -21,153 +21,184 @@ $ago = function (string $datetime): string {
     };
 };
 $contentTotal = array_sum(array_map(fn ($c) => $c['counts']['total'], $collections));
+$admin = auth()->user();
+// კოლექციების ბარათების ფერები რიგრიგობით
+$tones = ['primary', 'success', 'info', 'warning', 'danger', 'secondary'];
+$stats = [
+    ['url' => route('admin.pages.index'), 'icon' => 'bx bx-file', 'tone' => 'primary', 'label' => 'გვერდები',
+     'value' => $pages['published'], 'note' => '/ ' . $pages['total'] . ' გამოქვეყნებული'],
+    ['url' => route('admin.inbox.index', ['unread' => 1]), 'icon' => 'bx bx-envelope', 'tone' => 'warning', 'label' => 'წაუკითხავი',
+     'value' => $unread, 'note' => $unread > 0 ? 'ახალი შეტყობინება' : 'ყველა წაკითხულია'],
+    ['url' => route('admin.newsletter.subscribers', ['status' => 'active']), 'icon' => 'bx bx-paper-plane', 'tone' => 'info', 'label' => 'გამომწერები',
+     'value' => $subscribers['active'], 'note' => $subscribers['pending'] > 0 ? '+' . $subscribers['pending'] . ' ელოდება' : 'აქტიური'],
+    ['url' => route('admin.media.index'), 'icon' => 'bx bx-images', 'tone' => 'success', 'label' => 'მედია',
+     'value' => $media['count'], 'note' => Media::humanSize($media['size'])],
+];
 ?>
 <?php $this->start('styles') ?>
+<link href="<?= asset('admin/sneat/css/apex-charts.css') ?>" rel="stylesheet">
 <link href="<?= asset('admin/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') ?>" rel="stylesheet">
 <?php $this->stop() ?>
 
-<!-- ძირითადი მაჩვენებლები -->
-<div class="row g-4 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <a href="<?= e(route('admin.pages.index')) ?>" class="bg-light rounded d-flex align-items-center justify-content-between p-4 text-reset dash-stat">
-            <i class="fa fa-file-alt fa-3x text-primary"></i>
-            <div class="ms-3 text-end">
-                <p class="mb-2">გვერდები</p>
-                <h6 class="mb-0"><?= e($pages['published']) ?> <small class="text-muted fw-normal">/ <?= e($pages['total']) ?> გამოქვეყნებული</small></h6>
+<div class="row g-6 mb-6">
+    <!-- მისალმება -->
+    <div class="col-xxl-8">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title text-primary mb-3">გამარჯობა, <?= e($admin['name']) ?>! 👋</h5>
+                <p class="mb-6">
+                    <?php if ($unread > 0): ?>
+                        Inbox-ში <strong><?= e($unread) ?></strong> წაუკითხავი შეტყობინებაა.
+                    <?php else: ?>
+                        ახალი შეტყობინება არ არის.
+                    <?php endif ?>
+                    საიტზე გამოქვეყნებულია <?= e($pages['published']) ?> გვერდი და <?= e($contentTotal) ?> ჩანაწერი.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="<?= e(route('admin.inbox.index', ['unread' => 1])) ?>" class="btn btn-sm btn-outline-primary"><i class="icon-base bx bx-envelope me-1"></i>Inbox</a>
+                    <a href="<?= e(route('admin.pages.create')) ?>" class="btn btn-sm btn-outline-primary"><i class="icon-base bx bx-plus me-1"></i>ახალი გვერდი</a>
+                </div>
             </div>
-        </a>
+        </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <a href="<?= e(route('admin.inbox.index', ['unread' => 1])) ?>" class="bg-light rounded d-flex align-items-center justify-content-between p-4 text-reset dash-stat">
-            <i class="fa fa-inbox fa-3x text-primary"></i>
-            <div class="ms-3 text-end">
-                <p class="mb-2">წაუკითხავი შეტყობინებები</p>
-                <h6 class="mb-0"><?= e($unread) ?><?php if ($unread > 0): ?> <span class="badge bg-primary align-text-top">ახალი</span><?php endif ?></h6>
-            </div>
-        </a>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <a href="<?= e(route('admin.newsletter.subscribers', ['status' => 'active'])) ?>" class="bg-light rounded d-flex align-items-center justify-content-between p-4 text-reset dash-stat">
-            <i class="fa fa-paper-plane fa-3x text-primary"></i>
-            <div class="ms-3 text-end">
-                <p class="mb-2">აქტიური გამომწერები</p>
-                <h6 class="mb-0"><?= e($subscribers['active']) ?><?php if ($subscribers['pending'] > 0): ?> <small class="text-muted fw-normal">+<?= e($subscribers['pending']) ?> ელოდება</small><?php endif ?></h6>
-            </div>
-        </a>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <a href="<?= e(route('admin.media.index')) ?>" class="bg-light rounded d-flex align-items-center justify-content-between p-4 text-reset dash-stat">
-            <i class="fa fa-images fa-3x text-primary"></i>
-            <div class="ms-3 text-end">
-                <p class="mb-2">მედია ფაილები</p>
-                <h6 class="mb-0"><?= e($media['count']) ?> <small class="text-muted fw-normal">· <?= e(Media::humanSize($media['size'])) ?></small></h6>
-            </div>
-        </a>
+
+    <!-- ძირითადი მაჩვენებლები -->
+    <div class="col-xxl-4">
+        <div class="row g-6">
+            <?php foreach ($stats as $stat): ?>
+                <div class="col-6">
+                    <div class="card h-100 dash-stat">
+                        <div class="card-body">
+                            <div class="avatar flex-shrink-0 mb-4">
+                                <span class="avatar-initial rounded bg-label-<?= e($stat['tone']) ?>"><i class="icon-base <?= e($stat['icon']) ?> icon-lg"></i></span>
+                            </div>
+                            <p class="mb-1"><a href="<?= e($stat['url']) ?>" class="stretched-link text-body"><?= e($stat['label']) ?></a></p>
+                            <h4 class="card-title mb-1"><?= e($stat['value']) ?></h4>
+                            <small class="text-body-secondary"><?= e($stat['note']) ?></small>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach ?>
+        </div>
     </div>
 </div>
 
 <!-- კოლექციები -->
-<div class="row g-4 mb-4">
+<div class="row g-6 mb-6">
+    <?php $i = 0 ?>
     <?php foreach ($collections as $type => $collection): ?>
-        <div class="col-sm-6 col-xl-3">
-            <a href="<?= e(route('admin.collections.index', ['type' => $type])) ?>" class="bg-light rounded d-flex align-items-center justify-content-between p-4 text-reset dash-stat">
-                <i class="<?= e($collection['icon']) ?> fa-3x text-primary"></i>
-                <div class="ms-3 text-end">
-                    <p class="mb-2"><?= e($collection['label']) ?></p>
-                    <h6 class="mb-0"><?= e($collection['counts']['total']) ?>
-                        <?php if ($collection['counts']['active'] < $collection['counts']['total']): ?>
-                            <small class="text-muted fw-normal">· <?= e($collection['counts']['total'] - $collection['counts']['active']) ?> დამალული</small>
-                        <?php endif ?>
-                    </h6>
+        <?php $tone = $tones[$i++ % count($tones)]; $hidden = $collection['counts']['total'] - $collection['counts']['active']; ?>
+        <div class="col-sm-6 col-lg-4 col-xxl">
+            <div class="card h-100 dash-stat">
+                <div class="card-body d-flex align-items-center gap-4">
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-<?= e($tone) ?>"><i class="icon-base <?= e($collection['icon']) ?> icon-lg"></i></span>
+                    </div>
+                    <div class="min-w-0">
+                        <a href="<?= e(route('admin.collections.index', ['type' => $type])) ?>" class="stretched-link text-body d-block text-truncate"><?= e($collection['label']) ?></a>
+                        <h5 class="mb-0"><?= e($collection['counts']['total']) ?>
+                            <?php if ($hidden > 0): ?><small class="text-body-secondary fw-normal fs-tiny">· <?= e($hidden) ?> დამალული</small><?php endif ?>
+                        </h5>
+                    </div>
                 </div>
-            </a>
+            </div>
         </div>
     <?php endforeach ?>
 </div>
 
 <!-- დიაგრამები -->
-<div class="row g-4 mb-4">
+<div class="row g-6 mb-6">
     <div class="col-xl-8">
-        <div class="bg-light rounded p-4 h-100">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="mb-0">შეტყობინებები და გამომწერები — 30 დღე</h6>
-                <a href="<?= e(route('admin.inbox.index')) ?>">Inbox</a>
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title m-0">შეტყობინებები და გამომწერები</h5>
+                <small class="text-body-secondary">ბოლო 30 დღე</small>
             </div>
-            <div class="dash-chart"><canvas id="chart-daily"></canvas></div>
+            <div class="card-body pt-0">
+                <div id="chart-daily"></div>
+            </div>
         </div>
     </div>
     <div class="col-xl-4">
-        <div class="bg-light rounded p-4 h-100">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="mb-0">კონტენტი</h6>
-                <span class="text-muted small"><?= e($contentTotal) ?> ჩანაწერი</span>
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title m-0">კონტენტი</h5>
+                <small class="text-body-secondary"><?= e($contentTotal) ?> ჩანაწერი</small>
             </div>
-            <?php if ($contentTotal === 0): ?>
-                <p class="text-muted mb-0">ჩანაწერები ჯერ არ არის.</p>
-            <?php else: ?>
-                <div class="dash-chart"><canvas id="chart-content"></canvas></div>
-            <?php endif ?>
+            <div class="card-body pt-0">
+                <?php if ($contentTotal === 0): ?>
+                    <p class="text-body-secondary mb-0">ჩანაწერები ჯერ არ არის.</p>
+                <?php else: ?>
+                    <div id="chart-content"></div>
+                <?php endif ?>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- ბოლოს დამატებული: თითო კოლექციაზე -->
-<div class="row g-4 mb-4">
+<div class="row g-6 mb-6">
     <?php foreach ($collections as $type => $collection): ?>
-        <div class="col-md-6 col-xxl-3">
-            <div class="h-100 bg-light rounded p-4">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="mb-0"><i class="<?= e($collection['icon']) ?> text-primary me-2"></i><?= e($collection['label']) ?></h6>
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="<?= e(route('admin.collections.create', ['type' => $type])) ?>" class="btn btn-sm btn-primary btn-sm-square" title="დამატება"><i class="fa fa-plus"></i></a>
+        <div class="col-md-6 col-xxl-4">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title m-0 me-2"><i class="icon-base <?= e($collection['icon']) ?> text-primary me-2"></i><?= e($collection['label']) ?></h5>
+                    <div class="d-flex align-items-center gap-3">
+                        <a href="<?= e(route('admin.collections.create', ['type' => $type])) ?>" class="btn btn-sm btn-icon btn-outline-primary" title="დამატება" aria-label="დამატება"><i class="icon-base bx bx-plus"></i></a>
                         <a href="<?= e(route('admin.collections.index', ['type' => $type])) ?>">ყველა</a>
                     </div>
                 </div>
-                <?php if ($collection['latest'] === []): ?>
-                    <p class="text-muted small mb-0 pt-2">ჩანაწერები ჯერ არ არის.</p>
-                <?php endif ?>
-                <?php foreach ($collection['latest'] as $i => $item): ?>
-                    <?php $thumb = media_url($item['image_id'], 'thumb'); ?>
-                    <a href="<?= e(route('admin.collections.edit', ['id' => $item['id']])) ?>"
-                       class="d-flex align-items-center text-reset py-3<?= $i < count($collection['latest']) - 1 ? ' border-bottom' : ' pb-0' ?>">
-                        <?php if ($thumb !== ''): ?>
-                            <img class="rounded-circle flex-shrink-0 dash-thumb" src="<?= e($thumb) ?>" alt="">
-                        <?php else: ?>
-                            <span class="rounded-circle flex-shrink-0 dash-thumb dash-thumb-empty"><i class="<?= e($collection['icon']) ?>"></i></span>
-                        <?php endif ?>
-                        <div class="w-100 ms-3 min-w-0">
-                            <div class="d-flex w-100 justify-content-between gap-2">
-                                <h6 class="mb-0 text-truncate"><?= e($item['title']) ?></h6>
-                                <small class="text-nowrap"><?= e($ago($item['created_at'])) ?></small>
-                            </div>
-                            <span class="small text-muted">
-                                <?= e($item['category_name'] ?? '') ?>
-                                <?php if (!$item['is_active']): ?><span class="badge bg-secondary">დამალული</span><?php endif ?>
-                            </span>
-                        </div>
-                    </a>
-                <?php endforeach ?>
+                <div class="card-body">
+                    <?php if ($collection['latest'] === []): ?>
+                        <p class="text-body-secondary mb-0">ჩანაწერები ჯერ არ არის.</p>
+                    <?php else: ?>
+                        <ul class="p-0 m-0">
+                            <?php foreach ($collection['latest'] as $j => $item): ?>
+                                <?php $thumb = media_url($item['image_id'], 'thumb'); ?>
+                                <li class="d-flex align-items-center<?= $j < count($collection['latest']) - 1 ? ' mb-5' : '' ?>">
+                                    <div class="avatar flex-shrink-0 me-3">
+                                        <?php if ($thumb !== ''): ?>
+                                            <img src="<?= e($thumb) ?>" alt="" class="rounded dash-thumb">
+                                        <?php else: ?>
+                                            <span class="avatar-initial rounded bg-label-secondary"><i class="icon-base <?= e($collection['icon']) ?>"></i></span>
+                                        <?php endif ?>
+                                    </div>
+                                    <div class="d-flex w-100 align-items-center justify-content-between gap-2 min-w-0">
+                                        <div class="min-w-0">
+                                            <a href="<?= e(route('admin.collections.edit', ['id' => $item['id']])) ?>" class="d-block text-heading text-truncate fw-medium"><?= e($item['title']) ?></a>
+                                            <small class="text-body-secondary">
+                                                <?= e($item['category_name'] ?? '') ?>
+                                                <?php if (!$item['is_active']): ?><span class="badge bg-label-secondary ms-1">დამალული</span><?php endif ?>
+                                            </small>
+                                        </div>
+                                        <small class="text-body-secondary text-nowrap"><?= e($ago($item['created_at'])) ?></small>
+                                    </div>
+                                </li>
+                            <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
             </div>
         </div>
     <?php endforeach ?>
 </div>
 
 <!-- ბოლოს შეცვლილი გვერდები -->
-<div class="bg-light rounded p-4 mb-4">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h6 class="mb-0">ბოლოს შეცვლილი გვერდები</h6>
+<div class="card mb-6">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title m-0">ბოლოს შეცვლილი გვერდები</h5>
         <div class="d-flex align-items-center gap-3">
-            <a href="<?= e(route('admin.pages.create')) ?>" class="btn btn-sm btn-primary"><i class="fa fa-plus me-1"></i>ახალი გვერდი</a>
+            <a href="<?= e(route('admin.pages.create')) ?>" class="btn btn-sm btn-primary"><i class="icon-base bx bx-plus me-1"></i>ახალი გვერდი</a>
             <a href="<?= e(route('admin.pages.index')) ?>">ყველა</a>
         </div>
     </div>
     <?php if ($latestPages === []): ?>
-        <p class="text-muted mb-0">გვერდები ჯერ არ არის.</p>
+        <div class="card-body pt-0"><p class="text-body-secondary mb-0">გვერდები ჯერ არ არის.</p></div>
     <?php else: ?>
-        <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
+        <div class="table-responsive text-nowrap">
+            <table class="table table-hover">
                 <thead>
-                <tr class="text-dark">
+                <tr>
                     <th>სათაური</th>
                     <th>სტატუსი</th>
                     <th>ბლოკები</th>
@@ -175,20 +206,25 @@ $contentTotal = array_sum(array_map(fn ($c) => $c['counts']['total'], $collectio
                     <th class="text-end"></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-border-bottom-0">
                 <?php foreach ($latestPages as $row): ?>
                     <tr>
-                        <td><?= e($row['title']) ?><?php if ($row['is_home']): ?> <i class="fa fa-home text-primary ms-1" title="მთავარი გვერდი"></i><?php endif ?></td>
+                        <td>
+                            <span class="fw-medium text-heading"><?= e($row['title']) ?></span>
+                            <?php if ($row['is_home']): ?><i class="icon-base bx bx-home text-primary ms-1" title="მთავარი გვერდი"></i><?php endif ?>
+                        </td>
                         <td>
                             <?php if ($row['status'] === 'published'): ?>
-                                <span class="badge bg-success">გამოქვეყნებული</span>
+                                <span class="badge bg-label-success">გამოქვეყნებული</span>
                             <?php else: ?>
-                                <span class="badge bg-secondary">მონახაზი</span>
+                                <span class="badge bg-label-secondary">მონახაზი</span>
                             <?php endif ?>
                         </td>
                         <td><?= e($row['blocks']) ?></td>
-                        <td class="text-nowrap"><?= e($ago($row['updated_at'])) ?></td>
-                        <td class="text-end"><a class="btn btn-sm btn-primary" href="<?= e(route('admin.pages.edit', ['id' => $row['id']])) ?>">რედაქტირება</a></td>
+                        <td><?= e($ago($row['updated_at'])) ?></td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-icon btn-outline-secondary border-0" href="<?= e(route('admin.pages.edit', ['id' => $row['id']])) ?>" title="რედაქტირება" aria-label="რედაქტირება"><i class="icon-base bx bx-edit-alt"></i></a>
+                        </td>
                     </tr>
                 <?php endforeach ?>
                 </tbody>
@@ -198,78 +234,89 @@ $contentTotal = array_sum(array_map(fn ($c) => $c['counts']['total'], $collectio
 </div>
 
 <!-- ვიჯეტები -->
-<div class="row g-4 mb-4">
+<div class="row g-6 mb-6">
     <div class="col-md-6 col-xl-4">
-        <div class="h-100 bg-light rounded p-4">
-            <div class="d-flex align-items-center justify-content-between mb-2">
-                <h6 class="mb-0">შეტყობინებები</h6>
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title m-0">შეტყობინებები</h5>
                 <a href="<?= e(route('admin.inbox.index')) ?>">ყველა</a>
             </div>
-            <?php if ($messages === []): ?>
-                <p class="text-muted small mb-0 pt-2">შეტყობინებები ჯერ არ არის.</p>
-            <?php endif ?>
-            <?php foreach ($messages as $i => $message): ?>
-                <?php $name = (string)($message['data']['name'] ?? $message['data']['email'] ?? '—'); ?>
-                <a href="<?= e(route('admin.inbox.show', ['id' => $message['id']])) ?>"
-                   class="d-flex align-items-center text-reset py-3<?= $i < count($messages) - 1 ? ' border-bottom' : ' pb-0' ?>">
-                    <span class="admin-avatar flex-shrink-0"><?= e(mb_strtoupper(mb_substr($name, 0, 1))) ?></span>
-                    <div class="w-100 ms-3 min-w-0">
-                        <div class="d-flex w-100 justify-content-between gap-2">
-                            <h6 class="mb-0 text-truncate"><?= e($name) ?><?php if (!$message['is_read']): ?> <span class="badge bg-primary">ახალი</span><?php endif ?></h6>
-                            <small class="text-nowrap"><?= e($ago($message['created_at'])) ?></small>
-                        </div>
-                        <span class="small d-block text-truncate">
-                            <i class="<?= e($forms[$message['form']]['icon'] ?? 'fa fa-envelope') ?> text-primary me-1"></i><?= e(Str::limit(trim((string)($message['data']['subject'] ?? '') . ' ' . (string)($message['data']['message'] ?? '')), 60) ?: ($forms[$message['form']]['label'] ?? $message['form'])) ?>
-                        </span>
-                    </div>
-                </a>
-            <?php endforeach ?>
+            <div class="card-body">
+                <?php if ($messages === []): ?>
+                    <p class="text-body-secondary mb-0">შეტყობინებები ჯერ არ არის.</p>
+                <?php else: ?>
+                    <ul class="p-0 m-0">
+                        <?php foreach ($messages as $j => $message): ?>
+                            <?php $name = (string)($message['data']['name'] ?? $message['data']['email'] ?? '—'); ?>
+                            <li class="d-flex align-items-center<?= $j < count($messages) - 1 ? ' mb-5' : '' ?>">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded-circle bg-label-primary"><?= e(mb_strtoupper(mb_substr($name, 0, 1))) ?></span>
+                                </div>
+                                <div class="w-100 min-w-0">
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <a href="<?= e(route('admin.inbox.show', ['id' => $message['id']])) ?>" class="text-heading fw-medium text-truncate"><?= e($name) ?></a>
+                                        <small class="text-body-secondary text-nowrap"><?= e($ago($message['created_at'])) ?></small>
+                                    </div>
+                                    <small class="d-block text-truncate text-body-secondary">
+                                        <?php if (!$message['is_read']): ?><span class="dash-dot me-1" title="ახალი"></span><?php endif ?>
+                                        <i class="icon-base <?= e($forms[$message['form']]['icon'] ?? 'bx bx-envelope') ?> icon-sm text-primary me-1"></i><?= e(Str::limit(trim((string)($message['data']['subject'] ?? '') . ' ' . (string)($message['data']['message'] ?? '')), 60) ?: ($forms[$message['form']]['label'] ?? $message['form'])) ?>
+                                    </small>
+                                </div>
+                            </li>
+                        <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </div>
         </div>
     </div>
     <div class="col-md-6 col-xl-4">
-        <div class="h-100 bg-light rounded p-4">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="mb-0">კალენდარი</h6>
-                <span class="text-muted small"><?= e(date('d.m.Y')) ?></span>
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title m-0">კალენდარი</h5>
+                <small class="text-body-secondary"><?= e(date('d.m.Y')) ?></small>
             </div>
-            <div id="calender"></div>
+            <div class="card-body">
+                <div id="calender"></div>
+            </div>
         </div>
     </div>
     <div class="col-md-12 col-xl-4">
-        <div class="h-100 bg-light rounded p-4" data-todos data-url="<?= e(route('admin.todos.store')) ?>">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="mb-0">დავალებები</h6>
-                <span class="text-muted small">მხოლოდ თქვენთვის</span>
+        <div class="card h-100" data-todos data-url="<?= e(route('admin.todos.store')) ?>">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title m-0">დავალებები</h5>
+                <small class="text-body-secondary">მხოლოდ თქვენთვის</small>
             </div>
-            <form class="d-flex mb-2" data-todo-form>
-                <input class="form-control bg-transparent" type="text" name="text" maxlength="255" placeholder="ახალი დავალება" aria-label="ახალი დავალება" required>
-                <button type="submit" class="btn btn-primary ms-2">დამატება</button>
-            </form>
-            <div class="text-danger small d-none" data-todo-error></div>
-            <div data-todo-list>
-                <?php foreach ($todos as $todo): ?>
-                    <?= $this->insert('admin/partials/todo-item', ['todo' => $todo]) ?>
-                <?php endforeach ?>
+            <div class="card-body">
+                <form class="d-flex gap-2 mb-2" data-todo-form>
+                    <input class="form-control" type="text" name="text" maxlength="255" placeholder="ახალი დავალება" aria-label="ახალი დავალება" required>
+                    <button type="submit" class="btn btn-primary">დამატება</button>
+                </form>
+                <div class="text-danger small d-none" data-todo-error></div>
+                <div data-todo-list>
+                    <?php foreach ($todos as $todo): ?>
+                        <?= $this->insert('admin/partials/todo-item', ['todo' => $todo]) ?>
+                    <?php endforeach ?>
+                </div>
+                <p class="text-body-secondary small mb-0 pt-2<?= $todos === [] ? '' : ' d-none' ?>" data-todo-empty>დავალებები არ არის.</p>
+                <template data-todo-template><?= $this->insert('admin/partials/todo-item', ['todo' => ['id' => 0, 'text' => '', 'is_done' => 0]]) ?></template>
             </div>
-            <p class="text-muted small mb-0 pt-2<?= $todos === [] ? '' : ' d-none' ?>" data-todo-empty>დავალებები არ არის.</p>
-            <template data-todo-template><?= $this->insert('admin/partials/todo-item', ['todo' => ['id' => 0, 'text' => '', 'is_done' => 0]]) ?></template>
         </div>
     </div>
 </div>
 
 <!-- ბოლო აქტივობა -->
-<div class="bg-light rounded p-4">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h6 class="mb-0">ბოლო აქტივობა</h6>
-        <span class="text-muted small"><i class="fa fa-users me-1"></i><?= e($activeCount) ?> / <?= e($usersCount) ?> აქტიური ადმინი</span>
+<div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title m-0">ბოლო აქტივობა</h5>
+        <small class="text-body-secondary"><i class="icon-base bx bx-group icon-sm me-1"></i><?= e($activeCount) ?> / <?= e($usersCount) ?> აქტიური ადმინი</small>
     </div>
     <?php if ($activity === []): ?>
-        <p class="mb-0 text-muted">ჩანაწერები ჯერ არ არის.</p>
+        <div class="card-body pt-0"><p class="mb-0 text-body-secondary">ჩანაწერები ჯერ არ არის.</p></div>
     <?php else: ?>
         <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
+            <table class="table table-hover">
                 <thead>
-                <tr class="text-dark">
+                <tr>
                     <th>დრო</th>
                     <th>მომხმარებელი</th>
                     <th>ქმედება</th>
@@ -277,14 +324,14 @@ $contentTotal = array_sum(array_map(fn ($c) => $c['counts']['total'], $collectio
                     <th>IP</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-border-bottom-0">
                 <?php foreach ($activity as $row): ?>
                     <tr>
                         <td class="text-nowrap" title="<?= e(date('d.m.Y H:i', strtotime($row['created_at']))) ?>"><?= e($ago($row['created_at'])) ?></td>
-                        <td><?= e($row['user_name'] ?? '—') ?></td>
+                        <td class="text-nowrap"><?= e($row['user_name'] ?? '—') ?></td>
                         <td><?= e(ActivityLog::LABELS[$row['action']] ?? $row['action']) ?></td>
                         <td><?= e(ActivityLog::summary($row['data'])) ?></td>
-                        <td><?= e($row['ip']) ?></td>
+                        <td class="text-nowrap"><?= e($row['ip']) ?></td>
                     </tr>
                 <?php endforeach ?>
                 </tbody>
@@ -303,7 +350,7 @@ $contentTotal = array_sum(array_map(fn ($c) => $c['counts']['total'], $collectio
         ],
     ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>;
 </script>
-<script src="<?= asset('admin/lib/chart/chart.min.js') ?>"></script>
+<script src="<?= asset('admin/sneat/js/apexcharts.min.js') ?>"></script>
 <script src="<?= asset('admin/lib/tempusdominus/js/moment.min.js') ?>"></script>
 <script src="<?= asset('admin/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') ?>"></script>
 <script src="<?= asset('admin/js/dashboard.js') ?>"></script>
