@@ -32,14 +32,14 @@ $input = function (string $inputName, string $inputId, string $current, string $
     return $html;
 };
 ?>
-<div class="mb-4">
+<div class="mb-5">
     <?php if ($type === 'password'): ?>
         <?php $isSet = $value($key) !== ''; ?>
         <label class="form-label" for="<?= e($id) ?>"><?= e($field['label'] ?? $key) ?></label>
         <input type="password" class="form-control" id="<?= e($id) ?>" name="<?= e($name) ?>" autocomplete="new-password" maxlength="255"
                placeholder="<?= $isSet ? '•••••••• (შენახულია)' : '' ?>" style="max-width: 360px">
         <?php if ($isSet): ?>
-            <div class="form-check mt-1">
+            <div class="form-check mt-2">
                 <input class="form-check-input" type="checkbox" id="<?= e($id) ?>-clear" name="settings[<?= e($key) ?>.clear]" value="1">
                 <label class="form-check-label small" for="<?= e($id) ?>-clear">პაროლის წაშლა</label>
             </div>
@@ -65,12 +65,12 @@ $input = function (string $inputName, string $inputId, string $current, string $
             <label class="form-check-label" for="<?= e($id) ?>"><?= e($field['label'] ?? $key) ?></label>
         </div>
     <?php elseif (!empty($field['translatable'])): ?>
-        <label class="form-label d-block"><?= e($field['label'] ?? $key) ?> <span class="badge bg-info text-dark fw-normal">თარგმნადი</span></label>
-        <div class="row g-2">
+        <label class="form-label d-block"><?= e($field['label'] ?? $key) ?> <span class="badge bg-label-info ms-1">თარგმნადი</span></label>
+        <div class="row g-4">
             <?php foreach ($languages as $language): ?>
                 <?php $code = $language['code']; ?>
                 <div class="col-md-6" data-lang="<?= e($code) ?>">
-                    <label class="small text-muted mb-1" for="<?= e("$id-$code") ?>"><?= e($language['native_name']) ?></label>
+                    <label class="form-label small text-body-secondary mb-1" for="<?= e("$id-$code") ?>"><?= e($language['native_name']) ?></label>
                     <?= $input($name . '[' . $code . ']', "$id-$code", $value($key, $code), "$key.$code") ?>
                     <?php // default თითო ენის ველის ქვეშ — ზოგადი მინიშნება ქვემოთ ყველა ენაზე ძირითადი ენის default-ს აჩვენებდა ?>
                     <?php $langDefault = is_array($field['default'] ?? null) ? ($field['default'][$code] ?? null) : ($field['default'] ?? null); ?>

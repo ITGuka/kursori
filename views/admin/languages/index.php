@@ -3,15 +3,15 @@
 $this->layout('admin/layouts/app');
 ?>
 
-<div class="bg-light rounded p-4">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h6 class="mb-0"><?= e($title) ?></h6>
-        <a href="<?= e(route('admin.languages.create')) ?>" class="btn btn-sm btn-primary"><i class="fa fa-plus me-1"></i>დამატება</a>
+<div class="card">
+    <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <h5 class="card-title mb-0"><?= e($title) ?> <span class="text-body-secondary fw-normal">(<?= count($languages) ?>)</span></h5>
+        <a href="<?= e(route('admin.languages.create')) ?>" class="btn btn-primary"><i class="icon-base bx bx-plus me-1"></i>დამატება</a>
     </div>
-    <div class="table-responsive">
-        <table class="table text-start align-middle table-bordered table-hover mb-0">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-hover">
             <thead>
-            <tr class="text-dark">
+            <tr>
                 <th>კოდი</th>
                 <th>სახელი</th>
                 <th>საკუთარ ენაზე</th>
@@ -20,40 +20,44 @@ $this->layout('admin/layouts/app');
                 <th class="text-end">მოქმედება</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody class="table-border-bottom-0">
             <?php foreach ($languages as $language): ?>
                 <tr>
-                    <td><code>/<?= e($language['code']) ?>/</code></td>
-                    <td><?= e($language['name']) ?></td>
+                    <td><span class="badge bg-label-primary">/<?= e($language['code']) ?>/</span></td>
+                    <td class="fw-medium text-heading"><?= e($language['name']) ?></td>
                     <td><?= e($language['native_name']) ?></td>
                     <td>
-                        <?php if ($language['is_default']): ?><span class="badge bg-primary">ძირითადი</span><?php endif ?>
+                        <?php if ($language['is_default']): ?><span class="badge bg-label-primary">ძირითადი</span><?php endif ?>
                         <?php if ($language['is_active']): ?>
-                            <span class="badge bg-success">აქტიური</span>
+                            <span class="badge bg-label-success">აქტიური</span>
                         <?php else: ?>
-                            <span class="badge bg-secondary">გათიშული</span>
+                            <span class="badge bg-label-secondary">გათიშული</span>
                         <?php endif ?>
                     </td>
                     <td><?= e($language['sort']) ?></td>
-                    <td class="text-end text-nowrap">
-                        <a href="<?= e(route('admin.languages.edit', ['id' => $language['id']])) ?>" class="btn btn-sm btn-outline-primary">
-                            <i class="fa fa-pen"></i><span class="visually-hidden">რედაქტირება</span>
-                        </a>
-                        <?php if (!$language['is_default']): ?>
-                            <form method="post" action="<?= e(route('admin.languages.destroy', ['id' => $language['id']])) ?>" class="d-inline"
-                                  data-confirm="წავშალოთ ენა „<?= e($language['native_name']) ?>“? წაიშლება ამ ენის ყველა თარგმანი და პარამეტრი.">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    <i class="fa fa-trash"></i><span class="visually-hidden">წაშლა</span>
-                                </button>
-                            </form>
-                        <?php endif ?>
+                    <td class="text-end">
+                        <div class="table-actions">
+                            <a href="<?= e(route('admin.languages.edit', ['id' => $language['id']])) ?>" class="btn btn-sm btn-icon btn-outline-primary" title="რედაქტირება" aria-label="რედაქტირება">
+                                <i class="icon-base bx bx-edit-alt"></i>
+                            </a>
+                            <?php if (!$language['is_default']): ?>
+                                <form method="post" action="<?= e(route('admin.languages.destroy', ['id' => $language['id']])) ?>"
+                                      data-confirm="წავშალოთ ენა „<?= e($language['native_name']) ?>“? წაიშლება ამ ენის ყველა თარგმანი და პარამეტრი.">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="წაშლა" aria-label="წაშლა">
+                                        <i class="icon-base bx bx-trash"></i>
+                                    </button>
+                                </form>
+                            <?php endif ?>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach ?>
             </tbody>
         </table>
     </div>
-    <p class="small text-muted mt-3 mb-0">გათიშული ენის გვერდები საიტზე არ ჩანს (404), თარგმანები კი ინახება — შეგიძლიათ წინასწარ შეავსოთ.</p>
+    <div class="card-footer border-top">
+        <small class="text-body-secondary">გათიშული ენის გვერდები საიტზე არ ჩანს (404), თარგმანები კი ინახება — შეგიძლიათ წინასწარ შეავსოთ.</small>
+    </div>
 </div>

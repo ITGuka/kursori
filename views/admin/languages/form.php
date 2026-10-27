@@ -13,16 +13,23 @@ $invalid = fn (string $field) => errors($field) ? ' is-invalid' : '';
 $feedback = fn (string $field) => ($error = errors($field)) ? '<div class="invalid-feedback">' . e($error) . '</div>' : '';
 ?>
 
-<div class="bg-light rounded p-4">
-    <h6 class="mb-4"><?= e($title) ?></h6>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="<?= e(route('admin.languages.index')) ?>">ენები</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><?= $isEdit ? 'რედაქტირება' : 'ახალი' ?></li>
+    </ol>
+</nav>
 
-    <form method="post" action="<?= e($action) ?>" novalidate style="max-width: 640px">
-        <?= csrf_field() ?>
-        <?php if ($isEdit): ?>
-            <input type="hidden" name="_method" value="PUT">
-        <?php endif ?>
+<form method="post" action="<?= e($action) ?>" class="card form-narrow" novalidate>
+    <?= csrf_field() ?>
+    <?php if ($isEdit): ?>
+        <input type="hidden" name="_method" value="PUT">
+    <?php endif ?>
 
-        <div class="mb-3">
+    <h5 class="card-header"><?= e($title) ?></h5>
+
+    <div class="card-body">
+        <div class="mb-5">
             <label for="code" class="form-label">კოდი</label>
             <?php if ($isEdit): ?>
                 <input type="text" class="form-control" id="code" value="<?= e($language['code']) ?>" disabled>
@@ -35,7 +42,7 @@ $feedback = fn (string $field) => ($error = errors($field)) ? '<div class="inval
             <?php endif ?>
         </div>
 
-        <div class="row g-3 mb-3">
+        <div class="row g-4 mb-5">
             <div class="col-md-6">
                 <label for="name" class="form-label">სახელი</label>
                 <input type="text" class="form-control<?= $invalid('name') ?>" id="name" name="name" maxlength="50" required
@@ -51,20 +58,20 @@ $feedback = fn (string $field) => ($error = errors($field)) ? '<div class="inval
             </div>
         </div>
 
-        <div class="mb-3" style="max-width: 160px">
+        <div class="mb-5" style="max-width: 160px">
             <label for="sort" class="form-label">რიგი</label>
             <input type="number" class="form-control<?= $invalid('sort') ?>" id="sort" name="sort"
                    value="<?= e(old('sort', $language['sort'] ?? '0')) ?>">
             <?= $feedback('sort') ?>
         </div>
 
-        <div class="form-check form-switch mb-2">
+        <div class="form-check form-switch mb-3">
             <input type="hidden" name="is_active" value="0">
             <input class="form-check-input<?= $invalid('is_active') ?>" type="checkbox" id="is_active" name="is_active" value="1" <?= $active ? 'checked' : '' ?>>
             <label class="form-check-label" for="is_active">აქტიური (ჩანს საიტზე)</label>
             <?= $feedback('is_active') ?>
         </div>
-        <div class="form-check form-switch mb-4">
+        <div class="form-check form-switch mb-0">
             <input type="hidden" name="is_default" value="0">
             <input class="form-check-input" type="checkbox" id="is_default" name="is_default" value="1"
                 <?= $default ? 'checked' : '' ?><?= $isDefault ? ' disabled' : '' ?>>
@@ -73,8 +80,10 @@ $feedback = fn (string $field) => ($error = errors($field)) ? '<div class="inval
                 <?= $isDefault ? 'ეს ძირითადი ენაა. შესაცვლელად სხვა ენა მონიშნეთ ძირითადად.' : 'ჩაირთვება „/“-დან გადამისამართება და ნაკლული თარგმანების ჩანაცვლება ამ ენით.' ?>
             </div>
         </div>
+    </div>
 
-        <button type="submit" class="btn btn-primary">შენახვა</button>
-        <a href="<?= e(route('admin.languages.index')) ?>" class="btn btn-outline-secondary ms-2">გაუქმება</a>
-    </form>
-</div>
+    <div class="card-footer border-top d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-primary"><i class="icon-base bx bx-save me-1"></i>შენახვა</button>
+        <a href="<?= e(route('admin.languages.index')) ?>" class="btn btn-outline-secondary">გაუქმება</a>
+    </div>
+</form>

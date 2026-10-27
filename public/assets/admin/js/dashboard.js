@@ -73,7 +73,11 @@
             longDateFormat: {LT: 'HH:mm', LTS: 'HH:mm:ss', L: 'DD.MM.YYYY', LL: 'D MMMM YYYY', LLL: 'D MMMM YYYY HH:mm', LLLL: 'dddd, D MMMM YYYY HH:mm'},
             week: {dow: 1, doy: 7}
         });
-        $('#calender').datetimepicker({inline: true, format: 'L', locale: 'ka'});
+        // ისრები Boxicons-ით (ნაგულისხმევად Font Awesome-ს ელოდება)
+        $('#calender').datetimepicker({
+            inline: true, format: 'L', locale: 'ka',
+            icons: {previous: 'icon-base bx bx-chevron-left', next: 'icon-base bx bx-chevron-right', today: 'icon-base bx bx-calendar-check', clear: 'icon-base bx bx-trash', close: 'icon-base bx bx-x'}
+        });
     }
 
     // დავალებები (AJAX; CSRF header — admin.js)

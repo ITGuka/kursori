@@ -40,20 +40,6 @@
     font-size: 18px;
 }
 
-/* მომხმარებლის ინიციალი ფოტოს ნაცვლად (ჯერ არგადაყვანილი გვერდებისთვის; Sneat-ში — .avatar-initial) */
-.admin-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background: var(--bs-primary-bg-subtle);
-    color: var(--bs-primary);
-    font-weight: 600;
-}
-
 /* menu-link-ის ტექსტი გრძელ ქართულ სიტყვებზე არ გადადის */
 .layout-menu .menu-link > div:not(.badge) {
     overflow: hidden;
