@@ -155,7 +155,7 @@ final class Media
         }
         $rows = $this->db->select(
             "SELECT b.type, $title AS page FROM page_blocks b JOIN pages p ON p.id = b.page_id
-             WHERE JSON_CONTAINS(b.media_ids, CAST(? AS JSON))",
+             WHERE JSON_CONTAINS(b.media_ids, ?)",
             [$lang, (string)$id],
         );
         $blocks = (array)config('blocks', []);
@@ -165,7 +165,7 @@ final class Media
 
         $rows = $this->db->select(
             "SELECT i.collection, (SELECT title FROM collection_item_translations t WHERE t.item_id = i.id ORDER BY t.lang = ? DESC LIMIT 1) AS title
-             FROM collection_items i WHERE JSON_CONTAINS(i.media_ids, CAST(? AS JSON))",
+             FROM collection_items i WHERE JSON_CONTAINS(i.media_ids, ?)",
             [$lang, (string)$id],
         );
         $collections = (array)config('collections', []);
