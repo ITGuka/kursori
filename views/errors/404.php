@@ -1,6 +1,6 @@
 <?php
 /**
- * Poseify-ის 404 გვერდი. ენის route-ის გარეთ (მაგ. /admin/...) ან ენების ცხრილის გარეშე — მარტივი ვერსია.
+ * Kursori-ის 404 გვერდი. ენის route-ის გარეთ (მაგ. /admin/...) ან ენების ცხრილის გარეშე — მარტივი ვერსია.
  * @var Core\View\Template $this
  */
 use App\Models\Language;

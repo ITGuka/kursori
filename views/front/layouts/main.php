@@ -1,6 +1,6 @@
 <?php
 /**
- * Poseify-ის მთავარი layout.
+ * Kursori-ის მთავარი layout.
  * @var Core\View\Template $this
  * @var array $meta title, description, image (URL), canonical, alternates [lang => url], robots
  */
@@ -79,7 +79,7 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
     <?= setting('scripts.head_code') ?>
 </head>
 <body>
-<?php // Poseify-ის ჩატვირთვის spinner ამოღებულია — გვერდს ფარავდა მაშინაც, როცა უკვე ჩატვირთული იყო ?>
+<?php // Kursori-ის ჩატვირთვის spinner ამოღებულია — გვერდს ფარავდა მაშინაც, როცა უკვე ჩატვირთული იყო ?>
 
 <?php if (!empty($preview)): ?>
     <div class="preview-bar"><?= e($preview) ?></div>

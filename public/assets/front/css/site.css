@@ -1,4 +1,4 @@
-/* Poseify-ის დამატებები (style.css უცვლელია) */
+/* Kursori-ის დამატებები (style.css უცვლელია) */
 
 /*
  * შრიფტები (fonts/FiraGO-LICENSE.txt, OFL):
@@ -254,7 +254,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /*
- * ბლოკებს შორის დაშორება: Poseify-ის ორმაგი py-5 (გარე + შიდა = 96px თითო მხარეს, ბლოკებს შორის 192px) →
+ * ბლოკებს შორის დაშორება: Kursori-ის ორმაგი py-5 (გარე + შიდა = 96px თითო მხარეს, ბლოკებს შორის 192px) →
  * desktop 64px (ბლოკებს შორის 128px), მობილური 48px (96px). bootstrap-ის py-5 !important-ითაა, ამიტომ აქაც.
  */
 .container-fluid.py-5 > .container.py-5 {

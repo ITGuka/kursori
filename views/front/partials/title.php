@@ -1,6 +1,6 @@
 <?php
 /**
- * Poseify-ის სათაური (ქვესათაური ხაზებით + სათაური).
+ * Kursori-ის სათაური (ქვესათაური ხაზებით + სათაური).
  * @var string $subtitle
  * @var string $heading
  * @var string $align left | center

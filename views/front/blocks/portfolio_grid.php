@@ -1,6 +1,6 @@
 <?php
 /**
- * პორტფოლიოს ბადე (კოლექცია „პორტფოლიო“) კატეგორიების ფილტრით. ბარათი — Poseify-ის team-item სტილით.
+ * პორტფოლიოს ბადე (კოლექცია „პორტფოლიო“) კატეგორიების ფილტრით. ბარათი — Kursori-ის team-item სტილით.
  * @var Core\View\Template $this @var array $data @var array $block
  */
 $items = array_values(array_filter($data['items'], fn ($item) => $item['title'] !== ''));

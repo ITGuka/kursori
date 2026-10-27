@@ -7,7 +7,7 @@
 
 მრავალენოვანი საიტი, რომლის ფრონტში **ყველაფერი ადმინიდან იმართება**: გვერდები, ბლოკები, მენიუ, კატეგორიები, თარგმანები, საიტის პარამეტრები, მედია, ფორმები, newsletter.
 
-- **ფრონტი:** Poseify (HTML Codex) — სტილები და markup უცვლელად რჩება, იცვლება მხოლოდ კონტენტი.
+- **ფრონტი:** Kursori (HTML Codex) — სტილები და markup უცვლელად რჩება, იცვლება მხოლოდ კონტენტი.
 - **ადმინი:** DASHMIN — Bootstrap Admin Template Free (HTML Codex).
 - **კონტენტი:** ვებ დიზაინ სტუდია (ფაზა 9, D49). კოლექციები და ფორმები **ზოგადია** — სხვა საიტისთვისაც გამოდგება.
 - **ფრეიმვორკი:** საკუთარი, მსუბუქი, მრავალჯერადი — სამომავლოდ სხვა პროექტებზეც გამოიყენება.
@@ -19,14 +19,14 @@
 | D1 | სტეკი | PHP 8.3 + MySQL 8.4 (Laragon), Bootstrap 5 + jQuery (თემფლეითებიდან) |
 | D2 | ფრეიმვორკი | საკუთარი MVC: `core/` პროექტისგან დამოუკიდებელია, `app/` — პროექტის კოდი. Composer მხოლოდ autoload-ისა და რამდენიმე ბიბლიოთეკისთვის |
 | D3 | ენები | `ka` (ძირითადი) და `en`. URL-ს **ყველა ენაზე** აქვს პრეფიქსი: `/ka/...`, `/en/...`; `/` → 302 `/ka/` |
-| D4 | კონტენტის რედაქტირება | ფიქსირებული ბლოკის ტიპები (Poseify-ის სექციები) + WYSIWYG textarea ველებში და ცალკე `rich_text` ბლოკი |
+| D4 | კონტენტის რედაქტირება | ფიქსირებული ბლოკის ტიპები (Kursori-ის სექციები) + WYSIWYG textarea ველებში და ცალკე `rich_text` ბლოკი |
 | D5 | WYSIWYG | Jodit (MIT, jQuery-ს არ საჭიროებს); შენახვისას HTML იწმინდება HTMLPurifier-ით |
 | D6 | როლები | ამ ეტაპზე ერთი როლი (ადმინი). სქემა ისეა, რომ როლები მოგვიანებით დაემატოს |
 | D7 | ფორმები | Contact და განაცხადის ფორმა (ყოფილი Casting) — ფოტოების გარეშე, ინახება მხოლოდ ადმინის Inbox-ში, email არ იგზავნება |
 | D8 | Newsletter | გამოწერების შეგროვება + კამპანიის შექმნა და გაგზავნა ადმინიდან (PHPMailer/SMTP, პარტიებად) |
 | D9 | გარემო | ამ ეტაპზე მხოლოდ ლოკალურად (Laragon). Deploy მოგვიანებით |
 | D10 | დიზაინის პარამეტრები | ადმინიდან იმართება მხოლოდ კონტენტი; ფერები/ფონტები — CSS-ში |
-| D11 | HTML Codex ატრიბუცია | ✅ მოხსნილია (ფაზა 9) ფრონტის და ადმინის footer-იდან — **მოქმედებს მხოლოდ შეძენილი Credit Removal ლიცენზიით** ორივე თემფლეითზე (Poseify, DASHMIN). საიტის გაშვებამდე ლიცენზიები უნდა იყოს ნაყიდი |
+| D11 | HTML Codex ატრიბუცია | ✅ მოხსნილია (ფაზა 9) ფრონტის და ადმინის footer-იდან — **მოქმედებს მხოლოდ შეძენილი Credit Removal ლიცენზიით** ორივე თემფლეითზე (Kursori, DASHMIN). საიტის გაშვებამდე ლიცენზიები უნდა იყოს ნაყიდი |
 | D12 | Front controller | ერთი `public/index.php` ფრონტისა და ადმინისთვის; ადმინი — `/admin` route-ების ჯგუფი |
 | D13 | გარემოს პარამეტრები | `.env` (git-ის გარეშე, ასლი `.env.example`) → `config/*.php` → `config('app.name')` |
 | D14 | ლოკალური მისამართი | `http://kursori.test` (vhost → `public/`); სარეზერვო `http://localhost/KURSORI/` root `.htaccess`-ით |
@@ -44,7 +44,7 @@
 | D26 | ატვირთვა ადმინში | ერთი ფაილი თითო AJAX მოთხოვნაზე (რიგრიგობით, პროგრესით, CSRF header-ით), drag & drop; ერთი საერთო picker-ფანჯარა ყველა ადმინ-გვერდზე (`partials/media-input` + `media.js`) |
 | D27 | გვერდის URL | ბრტყელი: `/{lang}/{slug}` (slug უნიკალურია ენის ფარგლებში; `[a-z0-9-]`, ქართულიდან ავტომატური ტრანსლიტერაციით — `Str::slug`), მთავარი — `/{lang}`. მშობელი გვერდი URL-ზე არ მოქმედებს — მხოლოდ breadcrumb-სა და მენიუზე. თარგმანი ენაზე არ არის → გვერდი იმ ენაზე 404, ენების გადამრთველი → იმ ენის მთავარი |
 | D28 | ბლოკის შენახვა | `page_blocks.settings` — არათარგმნადი ველები და repeater-ის სტრუქტურა (`_id`-ით), `page_block_translations.content` — თარგმნადი ველები ენაზე (repeater: `content[field][_id][sub]`), `media_ids` — გამოყენებული მედია (`JSON_CONTAINS` — წაშლისგან დაცვა). ცარიელი თარგმნადი ველი → ძირითადი ენა → default |
-| D29 | Header ბლოკი | Poseify-ის navbar absolute-ია, ამიტომ პირველი ბლოკი თუ `header` ტიპი არ არის (სლაიდერი / გვერდის სათაური), ავტომატურად ემატება გვერდის სათაური |
+| D29 | Header ბლოკი | Kursori-ის navbar absolute-ია, ამიტომ პირველი ბლოკი თუ `header` ტიპი არ არის (სლაიდერი / გვერდის სათაური), ავტომატურად ემატება გვერდის სათაური |
 | D30 | Link ველი | `page` (id → URL მიმდინარე ენაზე ავტომატურად) ან `url` (მხოლოდ http(s), `/...`, `#...`, `mailto:`, `tel:`); ახალ ფანჯარაში → `rel="noopener"` |
 | D31 | მონახაზი | `draft` გვერდი სტუმრისთვის 404, შესული ადმინისთვის — წინასწარი ხედი ზოლით და `noindex`-ით. დამალული ბლოკი არ იხატება |
 | D32 | ნავიგაცია მენიუს გარეშე | ~~ფაზა 5-მდე~~ ახლა მხოლოდ სარეზერვო: header მენიუში არცერთი პუნქტი არ არის (ახალი საიტი) → ზედა დონის გამოქვეყნებული გვერდები (`Page::navigation`). ჩანაცვლდა D34-ით |
@@ -61,11 +61,11 @@
 | D45 | 404 ჟურნალი | `not_found_log` (GET, /admin-ის გარეშე): ბილიკი, რაოდენობა, Referer; მაქს. 2000 ჩანაწერი (ძველი იშლება). ადმინში — „გადამისამართების შექმნა“ ერთი დაწკაპებით |
 | D47 | გვერდის ქეში | სრული HTML სტუმრებისთვის, CSRF-ის ჩანაცვლებით; ადმინის ნებისმიერი ცვლილება მთელ ქეშს შლის (ზუსტ ინვალიდაციას სიმარტივე სჯობს — გვერდი, მენიუ, პარამეტრი, თარგმანი ერთმანეთზეა დამოკიდებული). §10 |
 | D48 | უსაფრთხოების header-ები | მსუბუქი CSP (iframe-ში ჩასმა, object, base, ფორმების სხვა დომენზე გაგზავნა) — სკრიპტების CSP-ს ანალიტიკის/CDN კოდი დაარღვევდა. §9 |
-| D49 | საწყისი კონტენტი | ვებ დიზაინ სტუდია (ka/en): 7 გვერდი, 4 სერვისი, 4 წევრი, 3 შეფასება, 6 პროექტი (3 კატეგორია), სტუდიის პარამეტრები — seed-ები 05–08. სურათები ჯერ Poseify-ის დემოა (`demo` საქაღალდე) — ჩასანაცვლებელია. `php bin/console content:reset --force` — გვერდები/მენიუ/კოლექციები საწყის მდგომარეობაში (მედია, ენები, თარგმანები, პარამეტრები, მომხმარებლები, Inbox, newsletter არ იშლება) |
+| D49 | საწყისი კონტენტი | ვებ დიზაინ სტუდია (ka/en): 7 გვერდი, 4 სერვისი, 4 წევრი, 3 შეფასება, 6 პროექტი (3 კატეგორია), სტუდიის პარამეტრები — seed-ები 05–08. სურათები ჯერ Kursori-ის დემოა (`demo` საქაღალდე) — ჩასანაცვლებელია. `php bin/console content:reset --force` — გვერდები/მენიუ/კოლექციები საწყის მდგომარეობაში (მედია, ენები, თარგმანები, პარამეტრები, მომხმარებლები, Inbox, newsletter არ იშლება) |
 | D46 | სტრუქტურირებული მონაცემები | ყოველ გვერდზე JSON-LD `Organization` (სახელი, URL, ლოგო, ელ-ფოსტა, ტელეფონი, სოც. ქსელები — პარამეტრებიდან), `og:url`, `og:locale`, `twitter:card` |
 | D40 | ბლოკი კოლექციიდან | services / team_grid / testimonials: `source` = ხელით (repeater) ან კოლექციიდან (+ კატეგორია, რაოდენობა). `config/blocks.php` → `collection.map` ჩანაწერის ველებს repeater-ის ფორმატზე გადაიყვანს (`@url`, `@read_more`). `show_if` — დამოკიდებული ველები ფორმაში იმალება და არ მოწმდება (მონაცემები ინახება — წყაროს დაბრუნებისას რომ არ დაიკარგოს) |
 | D50 | ენის გადამრთველი ადმინში | ერთი გადამრთველი layout-ის ზედა ზოლში (ენები + „ყველა“), ჩანს მხოლოდ გვერდზე, სადაც `[data-lang="xx"]` ელემენტია. ენაზე დამოკიდებულ ნაწილს (ველის სვეტი, fieldset) აქვს `data-lang`; დამალვა CSS-ით `html[data-admin-lang]`-ზე (repeater-ის ახალ ელემენტებზეც მუშაობს), არჩევანი `localStorage`-ში, ნაგულისხმევი — ძირითადი ენა. ვალიდაციის შეცდომა დამალულ ენაზე → ღილაკზე წითელი ნიშანი და ავტომატური გადართვა. ახალ ფორმაში საკმარისია `data-lang` ატრიბუტი |
-| D33 | ქართული შრიფტი | Poseify-ის შრიფტებში ქართული არ არის — `site.css`-ში Noto Sans Georgian სარეზერვოდ, მობილურზე სათაურების ზომა მცირდება. `style.css` უცვლელია |
+| D33 | ქართული შრიფტი | Kursori-ის შრიფტებში ქართული არ არის — `site.css`-ში Noto Sans Georgian სარეზერვოდ, მობილურზე სათაურების ზომა მცირდება. `style.css` უცვლელია |
 
 ## 3. დირექტორიების სტრუქტურა
 
@@ -76,7 +76,7 @@ KURSORI/
 ├── public/                  ← web root (kursori.test → public/)
 │   ├── index.php            ✅ ერთადერთი front controller (ფრონტი + /admin)
 │   ├── .htaccess            ✅ rewrite → index.php, უსაფრთხოების header-ები
-│   ├── assets/front/        ✅ Poseify css/js/lib/img
+│   ├── assets/front/        ✅ Kursori css/js/lib/img
 │   ├── assets/admin/        ✅ DASHMIN css/js/lib/img
 │   └── uploads/             ✅ მედია (git-ის გარეშე; სკრიპტები აკრძალულია)
 ├── core/                    ← მრავალჯერადი ფრეიმვორკი (namespace Core\)
@@ -114,7 +114,7 @@ KURSORI/
 │   └── routes/              ✅ admin.php (/admin), web.php (/{lang})
 ├── bootstrap/app.php        ✅ App-ის აწყობა: middleware, route-ები
 ├── views/
-│   ├── front/               ✅ layouts/main (Poseify), partials/ (navbar, footer, title), page, blocks/* (12 ტიპი),
+│   ├── front/               ✅ layouts/main (Kursori), partials/ (navbar, footer, title), page, blocks/* (12 ტიპი),
 │   │                          collections/detail, message, partials/ (form-field, form-status), blocks/application_form
 │   ├── emails/              ✅ layout, newsletter-confirm, newsletter-campaign
 │   ├── admin/               ✅ layouts/*, partials/* (flash, pagination, upload-zone, media-input, media-picker),
@@ -122,7 +122,7 @@ KURSORI/
 │   │                          pages/*, blocks/ (form, field — რეკურსიული, link), menus/ (index, item),
 │   │                          collections/ (index, form), categories/ (index, form), inbox/ (index, show),
 │   │                          newsletter/ (campaigns, form, subscribers, tabs), redirects/ (index — + 404 ჩანართი, form)
-│   └── errors/              ✅ default.php, 404.php (Poseify), maintenance.php
+│   └── errors/              ✅ default.php, 404.php (Kursori), maintenance.php
 ├── config/                  ✅ app, database (.env-იდან), auth, validation (ქართული შეტყობინებები), admin (sidebar),
 │                              settings (პარამეტრების განსაზღვრებები), media (ტიპები, ლიმიტები, ვარიანტები),
 │                              blocks (ბლოკების ტიპები და ველები), menus (მენიუს ადგილები და სიღრმე),
@@ -133,8 +133,8 @@ KURSORI/
 │   │                          menus + menu_items + menu_item_translations, categories + category_translations,
 │   │                          collection_items + collection_item_translations, form_submissions, subscribers,
 │   │                          newsletter_campaigns + newsletter_sends, redirects, not_found_log
-│   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Poseify UI ტექსტები),
-│                              04_demo_media (Poseify-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (სტუდიის 7 გვერდი),
+│   └── seeds/               ✅ 01_languages (ka, en), 02_admin_user (.env ADMIN_*), 03_translations (Kursori UI ტექსტები),
+│                              04_demo_media (Kursori-ის 19 სურათი, საქაღალდე "demo"), 05_demo_pages (სტუდიის 7 გვერდი),
 │                              06_menus (header — გვერდების ხე, footer — ზედა დონე),
 │                              07_demo_collections (სტუდიის სერვისები, გუნდი, შეფასებები, პორტფოლიო),
 │                              08_site_settings (სტუდიის კონტაქტები, SEO — მხოლოდ ცარიელ პარამეტრებში)
@@ -157,7 +157,7 @@ public/index.php → Core\App → Router → Middleware (VerifyCsrf, locale | au
                               Cache (გვერდის HTML, ინვალიდაცია შენახვისას)
 ```
 
-**`core/` წესი:** არ იცის არაფერი კონკრეტულ პროექტზე (ცხრილები, ბლოკები, Poseify). ყველაფერი პროექტ-სპეციფიკური `app/`-შია. ასე `core/` სხვა პროექტში გადააქვს ან მოგვიანებით ცალკე Composer პაკეტად გამოიყოფა.
+**`core/` წესი:** არ იცის არაფერი კონკრეტულ პროექტზე (ცხრილები, ბლოკები, Kursori). ყველაფერი პროექტ-სპეციფიკური `app/`-შია. ასე `core/` სხვა პროექტში გადააქვს ან მოგვიანებით ცალკე Composer პაკეტად გამოიყოფა.
 
 ### ბირთვის გამოყენება (მოკლე ცნობარი)
 
@@ -263,7 +263,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 ველის ტიპები: `text`, `textarea`, `wysiwyg` (Jodit → HTMLPurifier), `image` (მედიის id), `link` (D30), `select`, `number`, `toggle`, `repeater` (ერთი დონე; გადათრევით დალაგება). ვარიანტები: `translatable`, `required` (მხოლოდ ძირითად ენაზე), `default`, `max`, `min`/`max` (number), `min_items`/`max_items`, `help`.
 ✅ `category` ველი და `show_if`; services/team/testimonials ბლოკები კოლექციიდანაც (D40).
 
-| ბლოკი | Poseify-ის წყარო | შინაარსი |
+| ბლოკი | Kursori-ის წყარო | შინაარსი |
 |---|---|---|
 | ✅ `hero_carousel` | index Header carousel | სლაიდები: სურათი, ქვესათაური, სათაური, ტექსტი, ღილაკი (header) |
 | ✅ `page_header` | შიდა გვერდების header | სათაური (ცარიელი → გვერდის სახელი), ფონის სურათი, breadcrumb (header) |
@@ -368,7 +368,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 | 1 | ადმინის გარსი: DASHMIN layout, login/logout, ადმინ-მომხმარებლები | ✅ 2026-10-24 |
 | 2 | ენები, UI თარგმანები, საიტის პარამეტრები | ✅ 2026-10-24 |
 | 3 | მედია ბიბლიოთეკა (+ ლოგო/favicon/OG ველების გადაყვანა მედიის არჩევაზე) | ✅ 2026-10-25 |
-| 4 | გვერდები + ბლოკები, Poseify-ის სექციების გადატანა | ✅ 2026-10-25 |
+| 4 | გვერდები + ბლოკები, Kursori-ის სექციების გადატანა | ✅ 2026-10-25 |
 | 5 | მენიუები | ✅ 2026-10-25 |
 | 6 | კატეგორიები და კოლექციები | ✅ 2026-10-25 |
 | 7 | ფორმები + Inbox, newsletter | ✅ 2026-10-25 |
@@ -378,7 +378,7 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 
 ### Production-ის ჩამონათვალი (deploy-ის დროს)
 
-1. Credit Removal ლიცენზიები (Poseify + DASHMIN) ნაყიდია (D11).
+1. Credit Removal ლიცენზიები (Kursori + DASHMIN) ნაყიდია (D11).
 2. Web root → `public/`; `core/`, `app/`, `config/`, `storage/`, `.env` — მის გარეთ.
 3. `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://დომენი`, ბაზის მონაცემები, `php bin/console key:generate` (ან ლოკალური APP_KEY-ის გადატანა — სხვაგვარად SMTP პაროლი თავიდან შესაყვანია).
 4. `composer install --no-dev --optimize-autoloader`; `php bin/console migrate`; საჭიროების მიხედვით `db:seed`.
@@ -397,8 +397,8 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 - **2026-10-25** — ფაზა 7: საკონტაქტო და განაცხადის ფორმები (ახალი ბლოკი `application_form`) → Inbox (წაუკითხავი/წაკითხული, ფილტრი, ძებნა, პასუხი mailto-თი); newsletter — double opt-in, დასტური/გაუქმება (one-click), კამპანიები ტესტით და პარტიებად გაგზავნით, გამომწერების სია და CSV; SMTP პარამეტრები ადმინში დაშიფრული პაროლით; `core/`: Mailer (PHPMailer), Crypt, Validator-ის შეტყობინებები, CSRF-ის გამონაკლისები, `absolute_url()`; `key:generate`, `newsletter:send`. დაემატა D41–D42.
 - **2026-10-25** — ფაზა 6: კოლექციები (სერვისები, გუნდი, შეფასებები, პორტფოლიო) კონფიგიდან, საკუთარი ველებით; კატეგორიები (2 დონე); ადმინში სია (ძებნა, ფილტრი, გადათრევით რიგი, დამალვა) და ფორმა (ბლოკების ველების ძრავით); საჯარო გვერდები (სერვისი, პროექტი) hreflang-ით; ბლოკები „წყარო: კოლექცია“ (კატეგორია, რაოდენობა); `show_if`; მედიის გამოყენება კოლექციებშიც. დემო გვერდების ბლოკები გადავიდა კოლექციებზე. დაემატა D37–D40.
 - **2026-10-25** — ფაზა 5: მართვადი მენიუები (header — 2 დონე, footer — 1 დონე): გვერდის/ბმულის პუნქტები, წარწერები და ბმულები ენებზე, ჩადგმული drag & drop, დამალვა, ახალ ფანჯარაში გახსნა; ფრონტის navbar და footer მენიუდან, ქეშით. `Core\Support\Url` — ბმულების ერთიანი შემოწმება (ახლა `//host` ბმულიც უარყოფილია). გასწორდა: ენის წაშლისას რჩებოდა მისი გვერდების, ბლოკებისა და მედიის თარგმანები. დაემატა D34–D36.
-- **2026-10-25** — ფაზა 4: გვერდები (ხე, თარგმანები, slug ქართულიდან, SEO, OG სურათი, მონახაზი/წინასწარი ხედი, მთავარი გვერდი) და ბლოკების რედაქტორი (10 ტიპი სქემიდან, repeater, Jodit, link ველი, გადათრევით დალაგება, დამალვა, კოპირება). ფრონტი Poseify-ის layout-ზე: navbar (დროებით გვერდებიდან), ენების გადამრთველი, footer პარამეტრებიდან, hreflang/canonical/OG, Poseify-ის 404. Poseify-ის 6 გვერდი seed-ით. `core/`: Str, HtmlSanitizer; composer: HTMLPurifier. დაემატა D27–D33.
-- **2026-10-25** — ფაზა 3: მედია ბიბლიოთეკა (ბადე, ფილტრები, drag & drop ატვირთვა პროგრესით, საქაღალდეები, alt/წარწერა ენებზე, URL-ის კოპირება, გამოყენების შემოწმება წაშლამდე), საერთო picker-ფანჯარა, პარამეტრების `image` ველები → მედიის id. `core/Media`: Uploader, ImageResizer. Poseify-ის დემო სურათები seed-ით. Uploader სურათს GD-ით სრულად ხსნის (დაზიანებული ფაილი არ მიიღება). გასწორდა: მშობელი პროექტის CSP `localhost/KURSORI/`-ზე jQuery-ს ბლოკავდა. დაემატა D23–D26.
+- **2026-10-25** — ფაზა 4: გვერდები (ხე, თარგმანები, slug ქართულიდან, SEO, OG სურათი, მონახაზი/წინასწარი ხედი, მთავარი გვერდი) და ბლოკების რედაქტორი (10 ტიპი სქემიდან, repeater, Jodit, link ველი, გადათრევით დალაგება, დამალვა, კოპირება). ფრონტი Kursori-ის layout-ზე: navbar (დროებით გვერდებიდან), ენების გადამრთველი, footer პარამეტრებიდან, hreflang/canonical/OG, Kursori-ის 404. Kursori-ის 6 გვერდი seed-ით. `core/`: Str, HtmlSanitizer; composer: HTMLPurifier. დაემატა D27–D33.
+- **2026-10-25** — ფაზა 3: მედია ბიბლიოთეკა (ბადე, ფილტრები, drag & drop ატვირთვა პროგრესით, საქაღალდეები, alt/წარწერა ენებზე, URL-ის კოპირება, გამოყენების შემოწმება წაშლამდე), საერთო picker-ფანჯარა, პარამეტრების `image` ველები → მედიის id. `core/Media`: Uploader, ImageResizer. Kursori-ის დემო სურათები seed-ით. Uploader სურათს GD-ით სრულად ხსნის (დაზიანებული ფაილი არ მიიღება). გასწორდა: მშობელი პროექტის CSP `localhost/KURSORI/`-ზე jQuery-ს ბლოკავდა. დაემატა D23–D26.
 - **2026-10-24** — ფაზა 2: ენების CRUD (ძირითადი ენის წესები), UI თარგმანების რედაქტორი (ფილტრი ჯგუფით, ძებნა, „მხოლოდ ნაკლული“, ერთად შენახვა, გასაღების დამატება/წაშლა), პარამეტრები ჩანართებით (ზოგადი, კონტაქტი, სოც. ქსელები, SEO, კოდი), ტექნიკური რეჟიმი. `core/`: Cache, Translator, Settings, Validator `regex`/`url`. გასწორდა: ნამდვილი PUT/PATCH/DELETE-ის form body არ იკითხებოდა. დაემატა D18–D22; `settings`/`translations` სქემა შეიცვალა D19–D20-ის მიხედვით.
 - **2026-10-24** — ფაზა 1: DASHMIN layout (sidebar `config/admin.php`-იდან), login/logout, ადმინ-მომხმარებლების CRUD, Dashboard ბოლო აქტივობით, `Core\Auth\Auth`, `RateLimiter`, `Validator`, flash/old/errors helper-ები, `admin:create`. მიგრაციები: admin_users, rate_limits, activity_log. გასწორდა: Apache-ზე 419 → 500 (ახლა სრული status line იგზავნება); flash მონაცემი იშლებოდა, თუ ზედიზედ ორ მოთხოვნაზე flash-დებოდა. DASHMIN-ის `main.js` ჩანაცვლდა `admin.js`-ით (დემო დიაგრამების გარეშე). დაემატა D15–D17.
 - **2026-10-24** — ფაზა 0: `core/` ფრეიმვორკი (App/კონტეინერი, Router, Request/Response, DB, Migrator, View/Template, Session, Csrf, ErrorHandler, Console), composer autoload, `.env`, languages მიგრაცია + seed, vhost `kursori.test`, თემფლეითები → `resources/templates/`, assets → `public/assets/`. დაემატა D12–D14.

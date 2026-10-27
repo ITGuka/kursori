@@ -1,6 +1,6 @@
 <?php
 /**
- * კოლექციის ჩანაწერის გვერდი (Poseify-ის სტილში). საკუთარი შაბლონი: config/collections.php → view.
+ * კოლექციის ჩანაწერის გვერდი (Kursori-ის სტილში). საკუთარი შაბლონი: config/collections.php → view.
  * @var Core\View\Template $this
  * @var array $item resolve-ის ფორმატი (title, image, category, url + config-ის ველები)
  * @var array $definition

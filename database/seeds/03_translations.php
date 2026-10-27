@@ -5,7 +5,7 @@ use App\Models\Translation;
 use Core\Database\DB;
 use Core\Database\Seeder;
 
-// საწყისი UI ტექსტები (Poseify-დან). განმეორებით გაშვებადია და ადმინში შეცვლილ მნიშვნელობებს არ ეხება.
+// საწყისი UI ტექსტები (Kursori-დან). განმეორებით გაშვებადია და ადმინში შეცვლილ მნიშვნელობებს არ ეხება.
 return new class extends Seeder {
     private const LINES = [
         'nav' => [

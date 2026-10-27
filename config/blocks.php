@@ -5,7 +5,7 @@ declare(strict_types=1);
  * გვერდის ბლოკების ტიპები. ადმინის ფორმა და ვალიდაცია აქედან გენერირდება (App\Blocks\BlockInput),
  * ფრონტზე ბლოკს ხატავს view (მონაცემები — $data, უკვე მიმდინარე ენაზე).
  *
- * ბლოკი: label, icon, view, header (true — გვერდის თავში, navbar-ის ქვეშ; Poseify-ის navbar absolute-ია),
+ * ბლოკი: label, icon, view, header (true — გვერდის თავში, navbar-ის ქვეშ; Kursori-ის navbar absolute-ია),
  *        shared (true — ერთი შიგთავსი ყველა გვერდზე: შენახვისას ამ ტიპის ყველა ბლოკი ერთნაირდება), fields
  * ველი:  type         — text | textarea | wysiwyg | image | link | select | number | toggle | repeater | category
  *        label, help, translatable, required, default, options (select), max (სიგრძე), min/max (number),

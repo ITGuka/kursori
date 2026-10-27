@@ -72,7 +72,7 @@ final class PageController
             }
         }
 
-        // Poseify-ის navbar absolute-ია: header ბლოკის გარეშე შიგთავსი მის ქვეშ მოექცეოდა
+        // Kursori-ის navbar absolute-ია: header ბლოკის გარეშე შიგთავსი მის ქვეშ მოექცეოდა
         if ($header === '') {
             $header = $this->view->render('front/blocks/page_header', [
                 'data' => ['title' => '', 'image' => null, 'breadcrumb' => !$page['is_home']],

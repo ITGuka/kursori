@@ -1,6 +1,6 @@
 <?php
 /**
- * Poseify-ის სტილის ველი (form-floating). წინა მნიშვნელობა და შეცდომა — მხოლოდ თუ ბოლოს ეს ფორმა გაიგზავნა.
+ * Kursori-ის სტილის ველი (form-floating). წინა მნიშვნელობა და შეცდომა — მხოლოდ თუ ბოლოს ეს ფორმა გაიგზავნა.
  * @var string $form ფორმის სახელი (config/forms.php)
  * @var string $name
  * @var string $label
