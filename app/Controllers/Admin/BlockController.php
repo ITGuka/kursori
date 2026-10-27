@@ -31,7 +31,9 @@ final class BlockController
         if (!$this->registry->has($type)) {
             abort(404);
         }
-        return $this->form($page, null, $type, [], [], [], 200);
+        // საერთო ბლოკი — სხვა გვერდზე არსებული შიგთავსით
+        $shared = !empty($this->registry->get($type)['shared']) ? $this->blocks->firstOfType($type) : null;
+        return $this->form($page, null, $type, $shared['settings'] ?? [], $shared['content'] ?? [], [], 200);
     }
 
     public function store(Request $request, int $id): Response
@@ -46,6 +48,9 @@ final class BlockController
         }
 
         $blockId = $this->blocks->save(null, $id, $type, $result['settings'], $result['content'], $result['media']);
+        if (!empty($definition['shared'])) {
+            $this->blocks->syncShared($blockId);
+        }
         $this->log->log('block.created', 'page', $id, ['block' => $this->registry->label($type)]);
         return redirect(route('admin.pages.edit', ['id' => $id]) . '#block-' . $blockId)->with('success', 'ბლოკი დაემატა.');
     }
@@ -69,6 +74,9 @@ final class BlockController
         }
 
         $this->blocks->save($id, (int)$page['id'], $block['type'], $result['settings'], $result['content'], $result['media']);
+        if (!empty($definition['shared'])) {
+            $this->blocks->syncShared($id);
+        }
         $this->log->log('block.updated', 'page', (int)$page['id'], ['block' => $this->registry->label($block['type'])]);
 
         if ($request->input('stay') === '1') {
@@ -126,7 +134,15 @@ final class BlockController
     {
         $default = $this->languages->defaultCode();
         $pageTitle = $this->pages->translations((int)$page['id'])[$default]['title'] ?? '#' . $page['id'];
+        // საერთო ბლოკი: ყველა გვერდი, სადაც ცვლილება აისახება (ახალი ბლოკისას — მიმდინარეც)
+        $sharedPages = [];
+        if (!empty($this->registry->get($type)['shared'])) {
+            foreach (array_unique([...$this->blocks->pageIdsOfType($type), (int)$page['id']]) as $pageId) {
+                $sharedPages[] = $this->pages->translations($pageId)[$default]['title'] ?? '#' . $pageId;
+            }
+        }
         return view('admin/blocks/form', [
+            'sharedPages' => $sharedPages,
             'title'       => $this->registry->label($type) . ' · ' . $pageTitle,
             'page'        => $page,
             'pageTitle'   => $pageTitle,

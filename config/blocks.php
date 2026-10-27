@@ -6,7 +6,7 @@ declare(strict_types=1);
  * ფრონტზე ბლოკს ხატავს view (მონაცემები — $data, უკვე მიმდინარე ენაზე).
  *
  * ბლოკი: label, icon, view, header (true — გვერდის თავში, navbar-ის ქვეშ; Poseify-ის navbar absolute-ია),
- *        fields
+ *        shared (true — ერთი შიგთავსი ყველა გვერდზე: შენახვისას ამ ტიპის ყველა ბლოკი ერთნაირდება), fields
  * ველი:  type         — text | textarea | wysiwyg | image | link | select | number | toggle | repeater | category
  *        label, help, translatable, required, default, options (select), max (სიგრძე), min/max (number),
  *        fields (repeater-ის ქვე-ველები), min_items/max_items (repeater), collection (category),
@@ -160,6 +160,7 @@ return [
         'label'  => 'ხშირი კითხვები (FAQ)',
         'icon'   => 'fa fa-question-circle',
         'view'   => 'front/blocks/faq',
+        'shared' => true,
         'fields' => $title + [
             'items'      => ['type' => 'repeater', 'label' => 'კითხვები', 'min_items' => 1, 'max_items' => 20, 'fields' => [
                 'question' => ['type' => 'text', 'label' => 'კითხვა', 'translatable' => true, 'max' => 190],
@@ -173,6 +174,7 @@ return [
         'label'  => 'ფასები (პაკეტები)',
         'icon'   => 'fa fa-tags',
         'view'   => 'front/blocks/pricing',
+        'shared' => true,
         'fields' => $title + [
             'text'       => ['type' => 'textarea', 'label' => 'ტექსტი', 'translatable' => true, 'max' => 500],
             'packages'   => ['type' => 'repeater', 'label' => 'პაკეტები', 'min_items' => 1, 'max_items' => 6, 'fields' => [

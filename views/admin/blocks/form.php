@@ -6,6 +6,7 @@
  * @var array $settings
  * @var array<string, array> $content
  * @var array<string, string> $formErrors
+ * @var list<string> $sharedPages საერთო ბლოკის გვერდები (config/blocks.php → shared)
  */
 $this->layout('admin/layouts/app');
 $isEdit = $block !== null;
@@ -23,6 +24,12 @@ $action = $isEdit ? route('admin.blocks.update', ['id' => $block['id']]) : route
     </ol>
 </nav>
 
+<?php if ($sharedPages !== []): ?>
+    <div class="alert alert-info">
+        <i class="fa fa-link me-1"></i>საერთო ბლოკი — ერთი და იგივეა ყველა გვერდზე, ცვლილება აისახება:
+        <strong><?= e(implode(', ', $sharedPages)) ?></strong>.
+    </div>
+<?php endif ?>
 <?php if ($formErrors !== []): ?>
     <div class="alert alert-danger">ფორმაში შეცდომებია — შეამოწმეთ მონიშნული ველები.</div>
 <?php endif ?>

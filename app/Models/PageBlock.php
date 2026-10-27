@@ -83,6 +83,35 @@ final class PageBlock
         });
     }
 
+    /** საერთო ბლოკი (config/blocks.php → shared): ამ ტიპის ნებისმიერი ბლოკი შიგთავსით, ან null */
+    public function firstOfType(string $type): ?array
+    {
+        $id = $this->db->value('SELECT id FROM page_blocks WHERE type = ? ORDER BY id LIMIT 1', [$type]);
+        return $id === null ? null : $this->find((int)$id);
+    }
+
+    /** @return list<int> გვერდები, სადაც ამ ტიპის ბლოკია */
+    public function pageIdsOfType(string $type): array
+    {
+        return array_map('intval', $this->db->column('SELECT DISTINCT page_id FROM page_blocks WHERE type = ? ORDER BY page_id', [$type]));
+    }
+
+    /** საერთო ბლოკი: $id-ის settings, media და შიგთავსი ამავე ტიპის ყველა სხვა ბლოკზე (რიგი და აქტიურობა — თავისი) */
+    public function syncShared(int $id): void
+    {
+        $source = $this->find($id);
+        $this->db->transaction(function (DB $db) use ($source): void {
+            $targets = $db->column('SELECT id FROM page_blocks WHERE type = ? AND id <> ?', [$source['type'], $source['id']]);
+            foreach ($targets as $target) {
+                $db->update('page_blocks', ['settings' => self::encode($source['settings']), 'media_ids' => $source['media_ids']], 'id = ?', [$target]);
+                $db->delete('page_block_translations', 'block_id = ?', [$target]);
+                foreach ($source['content'] as $lang => $content) {
+                    $db->insert('page_block_translations', ['block_id' => $target, 'lang' => $lang, 'content' => self::encode($content)]);
+                }
+            }
+        });
+    }
+
     public function setActive(int $id, bool $active): void
     {
         $this->db->update('page_blocks', ['is_active' => (int)$active], 'id = ?', [$id]);
