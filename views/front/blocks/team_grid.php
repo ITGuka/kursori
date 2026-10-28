@@ -20,24 +20,42 @@ $agents = config('blocks.team_grid.fields.members.fields.agent.options', []);
                 $image = media_url($member['image'], 'medium');
                 $agent = (string)($member['agent'] ?? '');
                 $icon = (string)($member['icon'] ?? '');
+                $badge = isset($agents[$agent]) && $agent !== '' ? $agents[$agent] : '';
+                // ფოტოს გარეშე ატრიბუტები ბარათზევე ჩანს ტერმინალის სახით — ჰოვერი აღარ სჭირდება
+                $terminal = $image === '' && $attributes !== [];
                 ?>
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="<?= e(0.1 + ($i % 4) * 0.2) ?>s">
                     <div class="team-item">
                         <div class="team-body">
-                            <?php if ($attributes !== []): ?>
-                                <div class="team-before"><?php foreach ($attributes as [$label]): ?><span><?= e($label) ?></span><?php endforeach ?></div>
-                            <?php endif ?>
-                            <?php if ($image !== ''): ?>
-                                <?= picture($member['image'], 'medium', ['class' => 'img-fluid', 'alt' => media_alt($member['image']) ?: $member['name']], '(min-width: 992px) 25vw, (min-width: 576px) 50vw, 100vw') ?>
-                            <?php elseif ($icon !== ''): ?>
-                                <!-- ფოტოს ნაცვლად როლის აიკონი (მაგ. AI აგენტი) -->
-                                <div class="team-icon" aria-hidden="true"><i class="<?= e($icon) ?>"></i></div>
-                            <?php endif ?>
-                            <?php if (isset($agents[$agent]) && $agent !== ''): ?>
-                                <span class="team-agent team-agent-<?= e($agent) ?>"><?= e($agents[$agent]) ?></span>
-                            <?php endif ?>
-                            <?php if ($attributes !== []): ?>
-                                <div class="team-after"><?php foreach ($attributes as [, $value]): ?><span><?= e($value) ?></span><?php endforeach ?></div>
+                            <?php if ($terminal): ?>
+                                <div class="team-terminal<?= $badge !== '' ? ' team-terminal-' . e($agent) : '' ?>">
+                                    <div class="team-terminal-bar">
+                                        <span class="team-terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                                        <?php if ($badge !== ''): ?><span class="team-agent team-agent-<?= e($agent) ?>"><?= e($badge) ?></span><?php endif ?>
+                                    </div>
+                                    <dl class="team-terminal-body">
+                                        <?php foreach ($attributes as [$label, $value]): ?>
+                                            <dt><?= e($label) ?></dt>
+                                            <dd><?= e($value) ?></dd>
+                                        <?php endforeach ?>
+                                    </dl>
+                                </div>
+                            <?php else: ?>
+                                <?php if ($attributes !== []): ?>
+                                    <div class="team-before"><?php foreach ($attributes as [$label]): ?><span><?= e($label) ?></span><?php endforeach ?></div>
+                                <?php endif ?>
+                                <?php if ($image !== ''): ?>
+                                    <?= picture($member['image'], 'medium', ['class' => 'img-fluid', 'alt' => media_alt($member['image']) ?: $member['name']], '(min-width: 992px) 25vw, (min-width: 576px) 50vw, 100vw') ?>
+                                <?php elseif ($icon !== ''): ?>
+                                    <!-- ფოტოს ნაცვლად როლის აიკონი -->
+                                    <div class="team-icon" aria-hidden="true"><i class="<?= e($icon) ?>"></i></div>
+                                <?php endif ?>
+                                <?php if ($badge !== ''): ?>
+                                    <span class="team-agent team-agent-<?= e($agent) ?>"><?= e($badge) ?></span>
+                                <?php endif ?>
+                                <?php if ($attributes !== []): ?>
+                                    <div class="team-after"><?php foreach ($attributes as [, $value]): ?><span><?= e($value) ?></span><?php endforeach ?></div>
+                                <?php endif ?>
                             <?php endif ?>
                         </div>
                         <a class="team-name<?= ($member['position'] ?? '') !== '' ? ' flex-column' : '' ?>"<?= link_attrs($member['link']) ?>>

@@ -1303,6 +1303,128 @@ img[width][height] {
     }
 }
 
+/* ფოტოს ბარათის hover: მუქი ფონი, დასახელება პატარა აქცენტით, მნიშვნელობა თეთრი და მსხვილი */
+.team-item .team-body .team-before,
+.team-item .team-body .team-after {
+    z-index: 3;
+    background: rgba(0, 0, 0, .88);
+}
+
+.team-item .team-body .team-before span {
+    color: var(--site-accent-text);
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.team-item .team-body .team-after span {
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+/* ფოტოს გარეშე როლი — ტერმინალის ფანჯარა: დასახელება ბრძანებაა, მნიშვნელობა მისი პასუხი */
+.team-terminal {
+    --agent-color: var(--site-accent-text);
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 3 / 4;
+    padding-bottom: 60px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .03), transparent 40%), #0d0d10;
+    border: 1px solid rgba(255, 255, 255, .1);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    transition: border-color .3s, box-shadow .3s;
+}
+
+.team-item:hover .team-terminal {
+    border-color: var(--agent-color);
+    box-shadow: 0 0 24px -8px var(--agent-color);
+}
+
+.team-terminal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    background: rgba(255, 255, 255, .04);
+}
+
+.team-terminal-bar .team-agent {
+    position: static;
+}
+
+.team-terminal-dots {
+    display: inline-flex;
+    gap: 6px;
+}
+
+.team-terminal-dots i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .18);
+}
+
+.team-terminal-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    margin: 0;
+    padding: 16px 18px;
+    font-size: .85rem;
+    line-height: 1.45;
+}
+
+.team-terminal-body dt {
+    color: rgba(255, 255, 255, .55);
+    font-weight: 400;
+}
+
+.team-terminal-body dt::before {
+    content: "$ ";
+    color: var(--agent-color);
+    font-weight: 700;
+}
+
+.team-terminal-body dd {
+    margin: 0 0 10px;
+    padding-left: 1.2ch;
+    color: var(--bs-white);
+    font-weight: 600;
+}
+
+/* ბოლო პასუხს მოციმციმე კურსორი */
+.team-terminal-body dd:last-child::after {
+    content: "";
+    display: inline-block;
+    width: .55em;
+    height: 1.05em;
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    background: var(--agent-color);
+    animation: team-cursor 1.1s steps(1) infinite;
+}
+
+@keyframes team-cursor {
+    50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .team-terminal-body dd:last-child::after { animation: none; }
+}
+
+/* მობილურზე ბარათი მთელ სიგანეზეა — სიმაღლე შიგთავსით */
+@media (max-width: 767.98px) {
+    .team-terminal {
+        aspect-ratio: auto;
+        min-height: 260px;
+    }
+}
+
 /* AI აგენტის ბეჯი: აგენტის ფერის ჩარჩო და მანათობელი წერტილი (ლოგოს გარეშე — მხოლოდ სახელი) */
 .team-agent {
     --agent-color: var(--bs-white);
@@ -1335,9 +1457,9 @@ img[width][height] {
     box-shadow: 0 0 8px var(--agent-color);
 }
 
-.team-agent-claude { --agent-color: #D97757; }
-.team-agent-gemini { --agent-color: #4C8DF6; }
-.team-agent-codex  { --agent-color: #10A37F; }
+.team-agent-claude, .team-terminal-claude { --agent-color: #D97757; }
+.team-agent-gemini, .team-terminal-gemini { --agent-color: #4C8DF6; }
+.team-agent-codex,  .team-terminal-codex  { --agent-color: #10A37F; }
 
 /* ადმინისთვის მონახაზის წინასწარი ხედი */
 .preview-bar {
