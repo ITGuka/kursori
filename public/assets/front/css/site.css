@@ -1303,35 +1303,41 @@ img[width][height] {
     }
 }
 
-/* AI აგენტის ბეჯი: მუქი ფონი + აგენტის ფერის წერტილი */
+/* AI აგენტის ბეჯი: აგენტის ფერის ჩარჩო და მანათობელი წერტილი (ლოგოს გარეშე — მხოლოდ სახელი) */
 .team-agent {
+    --agent-color: var(--bs-white);
     position: absolute;
     top: 12px;
     left: 12px;
     z-index: 2;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
+    gap: 8px;
+    padding: 6px 14px 6px 12px;
+    border: 1px solid var(--agent-color);
     border-radius: 50px;
-    background: rgba(0, 0, 0, .75);
+    background: rgba(0, 0, 0, .85);
+    box-shadow: 0 0 14px -2px var(--agent-color);
+    backdrop-filter: blur(4px);
     color: var(--bs-white);
-    font-size: .75rem;
-    font-weight: 600;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .03em;
     line-height: 1.4;
 }
 
 .team-agent::before {
     content: "";
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: currentColor;
+    background: var(--agent-color);
+    box-shadow: 0 0 8px var(--agent-color);
 }
 
-.team-agent-claude::before { background: #D97757; }
-.team-agent-gemini::before { background: #4C8DF6; }
-.team-agent-codex::before  { background: #10A37F; }
+.team-agent-claude { --agent-color: #D97757; }
+.team-agent-gemini { --agent-color: #4C8DF6; }
+.team-agent-codex  { --agent-color: #10A37F; }
 
 /* ადმინისთვის მონახაზის წინასწარი ხედი */
 .preview-bar {

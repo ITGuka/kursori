@@ -29,8 +29,8 @@ return new class extends Seeder {
             'KURSORI projects: corporate websites, online stores and branding for different industries.',
         ],
         'team' => [
-            'KURSORI-ის AI გუნდი: Claude Code, Gemini და GPT Codex — ვინ რას აკეთებს და როგორ ვმუშაობთ იდეიდან გაშვებამდე.',
-            'The KURSORI AI team: Claude Code, Gemini and GPT Codex — who does what and how we work from idea to launch.',
+            'KURSORI-ის AI გუნდი: Claude Code, Gemini და Codex — ვინ რას აკეთებს და როგორ ვმუშაობთ იდეიდან გაშვებამდე.',
+            'The KURSORI AI team: Claude Code, Gemini and Codex — who does what and how we work from idea to launch.',
         ],
         'testimonials' => [
             'რას ამბობენ კლიენტები KURSORI-თან თანამშრომლობაზე — შეფასებები საიტებისა და ბრენდინგის პროექტებზე.',

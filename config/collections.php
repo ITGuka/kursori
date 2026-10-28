@@ -48,7 +48,7 @@ return [
         'fields'      => [
             'position'   => ['type' => 'text', 'label' => 'პოზიცია', 'translatable' => true, 'max' => 100],
             'agent'      => ['type' => 'select', 'label' => 'AI აგენტი', 'default' => '',
-                             'options' => ['' => '— არცერთი', 'claude' => 'Claude Code', 'gemini' => 'Gemini', 'codex' => 'GPT Codex'],
+                             'options' => ['' => '— არცერთი', 'claude' => 'Claude Code', 'gemini' => 'Gemini', 'codex' => 'Codex'],
                              'help' => 'ბარათზე ჩანს აგენტის ბეჯი.'],
             'icon'       => ['type' => 'text', 'label' => 'აიკონი', 'max' => 60,
                              'help' => 'Font Awesome კლასი, მაგ. „fa-solid fa-code“ — ჩანს ფოტოს ნაცვლად, თუ ფოტო არ არის.'],
