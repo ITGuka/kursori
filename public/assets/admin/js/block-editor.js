@@ -18,10 +18,13 @@
     };
 
     function initEditors(root) {
+        // თემა — Sneat-ის data-bs-theme-დან (dark → Jodit-ის dark თემა)
+        var theme = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'default';
         $(root).find('textarea[data-wysiwyg]').each(function () {
             if (!this.dataset.ready) {
                 this.dataset.ready = '1';
-                Jodit.make(this, joditOptions);
+                var editor = Jodit.make(this, $.extend({}, joditOptions, {theme: theme}));
+                $(editor.container).toggleClass('is-invalid', $(this).hasClass('is-invalid'));
             }
         });
     }
