@@ -461,12 +461,14 @@ return new class extends Seeder {
         ]);
     }
 
+    /** სიახლეების გამოწერა დამალულია — ბლოკი იქმნება გამორთული (ადმინიდან ჩაირთვება) */
     private function banner(int $pageId): void
     {
-        $this->block($pageId, 'banner_signup', ['background' => 'secondary'], [
+        $id = $this->block($pageId, 'banner_signup', ['background' => 'secondary'], [
             'subtitle' => ['სიახლეები', 'Newsletter'],
             'title'    => ['იყავით საქმის კურსში', 'Stay in the Loop'],
             'text'     => ['თვეში ერთხელ — რჩევები ვებ დიზაინზე, ახალი პროექტები და სტუდიის სიახლეები.', 'Once a month — web design tips, new projects and studio news.'],
         ]);
+        $this->blocks->setActive($id, false);
     }
 };
