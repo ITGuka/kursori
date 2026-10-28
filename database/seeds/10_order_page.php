@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 use App\Models\Category;
 use App\Models\Design;
-use App\Models\Menu;
 use App\Models\Page;
 use App\Models\PageBlock;
 use Core\Database\DB;
 use Core\Database\Seeder;
+use Core\Settings\Settings;
 
-// საიტის შეკვეთის გვერდი (ka: shekveta, en: order) order_form ბლოკით + header მენიუს პუნქტი;
+// საიტის შეკვეთის გვერდი (ka: shekveta, en: order) order_form ბლოკით + ჰედერის ღილაკი („შეკვეთა“);
 // საწყისი ბიზნესის კატეგორიები (თუ ჯერ არ არის). გვერდი უკვე არსებობს → გვერდს არ ეხება.
 return new class extends Seeder {
     private const SLUGS = ['shekveta', 'order'];
@@ -58,8 +58,11 @@ return new class extends Seeder {
                      'text' => '<p>Pick your business category, browse the designs and choose the one you like — we will take care of the rest.</p>'],
         ], []);
 
-        $menus = app(Menu::class);
-        $menus->saveItem(null, $menus->idFor('header'), ['type' => 'page', 'page_id' => $pageId, 'url' => '', 'parent_id' => null, 'new_tab' => false, 'is_active' => true], []);
+        // მენიუს პუნქტის ნაცვლად — ჰედერის ღილაკი (08_site_settings-ში კონტაქტზეა) → შეკვეთა
+        app(Settings::class)->save([
+            'general.cta_page'  => (string)$pageId,
+            'general.cta_label' => ['ka' => 'შეკვეთა', 'en' => 'Order'],
+        ]);
 
         $this->heroButton($db, $blocks, $pageId);
     }
