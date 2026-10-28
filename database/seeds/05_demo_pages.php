@@ -126,6 +126,9 @@ return new class extends Seeder {
           'We launch the site, set up analytics and show your team how to use the admin panel.']],
     ];
 
+    /** AI გუნდის პროცესის [ქვესათაური, სათაური] — [ka, en]; მთავარის „იდეიდან გაშვებამდე“ (კლიენტის ეტაპები) რომ არ გაიმეოროს */
+    public const TEAM_PROCESS_HEADING = [['AI გუნდის პროცესი', 'AI Team Workflow'], ['ვინ რას აკეთებს ეტაპებად', 'Who Does What, Step by Step']];
+
     /** AI გუნდის სამუშაო პროცესი (გუნდის გვერდი): [სათაური, ტექსტი] — [ka, en] */
     public const TEAM_PROCESS = [
         [['კვლევა', 'Research'],
@@ -409,7 +412,7 @@ return new class extends Seeder {
         }
         [$steps, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['title' => $row[0], 'text' => $row[1]]], self::TEAM_PROCESS));
         $this->block((int)$pageId, 'process', ['steps' => $steps, 'background' => 'secondary'],
-            ['subtitle' => ['სამუშაო პროცესი', 'How We Work'], 'title' => ['იდეიდან გაშვებამდე', 'From Idea to Launch'], 'steps' => [$ka, $en]]);
+            ['subtitle' => self::TEAM_PROCESS_HEADING[0], 'title' => self::TEAM_PROCESS_HEADING[1], 'steps' => [$ka, $en]]);
     }
 
     /** თანამშრომლობის ეტაპები */
