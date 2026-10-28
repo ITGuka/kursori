@@ -811,6 +811,54 @@ h1, h2, h3, h4, h5, h6,
     margin-bottom: 1rem;
 }
 
+/* სტატიის სურათები, კოდი და ცხრილები (იმპორტირებული სიახლეები, WYSIWYG) */
+.post-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.post-body pre {
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background: var(--bs-secondary);
+    border-radius: 8px;
+    font-size: .875rem;
+    line-height: 1.6;
+    overflow-x: auto;
+}
+
+.post-body :not(pre) > code {
+    padding: .1em .35em;
+    background: var(--bs-secondary);
+    border-radius: 4px;
+    font-size: .875em;
+    color: inherit;
+}
+
+.post-body table {
+    display: block;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.post-body th,
+.post-body td {
+    padding: .5rem .75rem;
+    border: 1px solid rgba(255, 255, 255, .15);
+}
+
+.post-source {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, .15);
+    color: var(--site-text-muted);
+    font-size: .875rem;
+}
+
 .post-cta {
     margin-top: 3rem;
     padding: 2rem;

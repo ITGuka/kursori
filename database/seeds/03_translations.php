@@ -7,7 +7,7 @@ use Core\Database\Seeder;
 
 // საწყისი UI ტექსტები (Kursori-დან). განმეორებით გაშვებადია და ადმინში შეცვლილ მნიშვნელობებს არ ეხება.
 return new class extends Seeder {
-    private const LINES = [
+    public const LINES = [
         'nav' => [
             'home'     => ['მთავარი', 'Home'],
             'about'    => ['ჩვენ შესახებ', 'About'],
@@ -115,6 +115,8 @@ return new class extends Seeder {
         'blog' => [
             'min_read'            => [':min წთ საკითხავი', ':min min read'],
             'all_posts'           => ['ყველა სტატია', 'All articles'],
+            'source'              => ['ორიგინალი', 'Originally published on'],
+            'source_author'       => ['ავტორი: :name', 'by :name'],
             'cta_text'            => ['ახალ საიტზე ან მაღაზიაზე ფიქრობთ? მოგვიყევით იდეაზე — პირველი კონსულტაცია უფასოა.', 'Thinking about a new site or store? Tell us about your idea — the first consultation is free.'],
             'newsletter_subtitle' => ['სიახლეები', 'Newsletter'],
             'newsletter_title'    => ['მიიღეთ ახალი სტატიები', 'Get New Articles'],

@@ -86,6 +86,10 @@ return [
             'excerpt' => ['type' => 'textarea', 'label' => 'მოკლე აღწერა', 'translatable' => true, 'max' => 500, 'help' => 'ჩანს სიაში და Google-ის შედეგებში.'],
             'body'    => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
             'author'  => ['type' => 'text', 'label' => 'ავტორი', 'translatable' => true, 'max' => 100],
+            'source_name' => ['type' => 'text', 'label' => 'წყარო (სიახლეებისთვის)', 'max' => 100,
+                              'help' => 'იმპორტირებული სიახლის წყარო, მაგ. „DEV Community“. ცარიელი — საკუთარი სტატია.'],
+            'source_url'  => ['type' => 'text', 'label' => 'ორიგინალის ბმული', 'max' => 500,
+                              'help' => 'ჩანს სტატიის ბოლოს. ინგლისურ ვერსიაზე canonical ამ მისამართზე მიუთითებს (დუბლიკატი Google-ში არ ითვლება).'],
         ],
     ],
 

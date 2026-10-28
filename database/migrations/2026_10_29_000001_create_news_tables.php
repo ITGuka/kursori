@@ -51,10 +51,12 @@ return new class extends Migration {
             source_published_at DATETIME NULL,
             status ENUM('new', 'approved', 'published', 'rejected', 'failed') NOT NULL DEFAULT 'new',
             collection_item_id INT UNSIGNED NULL,
+            published_at DATETIME NULL,
             error VARCHAR(1000) NULL,
             " . self::TIMESTAMPS . ",
             UNIQUE KEY uq_news_items_source (source, external_id),
             INDEX idx_news_items_status (status, created_at),
+            INDEX idx_news_items_published (published_at),
             CONSTRAINT fk_news_items_feed FOREIGN KEY (feed_id) REFERENCES news_feeds (id) ON DELETE SET NULL,
             CONSTRAINT fk_news_items_collection_item FOREIGN KEY (collection_item_id) REFERENCES collection_items (id) ON DELETE SET NULL
         ) " . self::TABLE_OPTIONS);

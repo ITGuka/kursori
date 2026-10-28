@@ -99,6 +99,8 @@ final class NewsFetcher
             'reactions'           => (int)($a['public_reactions_count'] ?? 0),
             'reading_minutes'     => (int)($a['reading_time_minutes'] ?? 0),
             'source_published_at' => self::localTime($a['published_at'] ?? null),
+            // auto feed → პირდაპირ გამოქვეყნების რიგში (news:publish), review → მოდერაციაში
+            'status'              => $feed['publish_mode'] === 'auto' ? 'approved' : 'new',
         ];
     }
 

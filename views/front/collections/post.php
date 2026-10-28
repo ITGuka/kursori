@@ -18,6 +18,8 @@ $meta = array_filter([
     $item['author'] !== '' ? e($item['author']) : '',
 ]);
 $image = media_url($item['image'], 'large');
+// იმპორტირებული სიახლე (news:publish): წყარო და ორიგინალის ბმული
+$source = Core\Support\Url::isSafeHref((string)($item['source_url'] ?? '')) && str_starts_with((string)$item['source_url'], 'http') ? (string)$item['source_url'] : '';
 // url()/media_url() base path-ით (მაგ. /KURSORI/...) → სრული URL APP_URL-ით, როგორც layout-ში
 $basePath = app()->baseUrlPath();
 $absolute = function (string $url) use ($basePath): string {
@@ -34,6 +36,7 @@ $schema = array_filter([
     'author'        => $item['author'] !== '' ? ['@type' => 'Person', 'name' => $item['author']] : ['@type' => 'Organization', 'name' => (string)setting('general.site_name')],
     'publisher'     => ['@type' => 'Organization', 'name' => (string)setting('general.site_name')],
     'mainEntityOfPage' => $item['url'] !== '' ? $absolute($item['url']) : null,
+    'isBasedOn'     => $source !== '' ? $source : null,
 ]);
 ?>
 <article class="container-fluid py-5">
@@ -46,6 +49,13 @@ $schema = array_filter([
                     <?= picture($item['image'], 'large', ['class' => 'img-fluid w-100 rounded mb-5', 'alt' => media_alt($item['image']) ?: $item['title'], 'loading' => 'eager'], '(min-width: 992px) 66vw, 100vw') ?>
                 <?php endif ?>
                 <div class="rich-text post-body"><?= $item['body'] ?></div>
+                <?php if ($source !== ''): ?>
+                    <p class="post-source">
+                        <?= e(t('blog.source')) ?>:
+                        <a href="<?= e($source) ?>" target="_blank" rel="noopener nofollow"><?= e(($item['source_name'] ?? '') ?: (string)parse_url($source, PHP_URL_HOST)) ?></a><?php if ($item['author'] !== ''): ?>
+                        · <?= e(t('blog.source_author', ['name' => $item['author']])) ?><?php endif ?>
+                    </p>
+                <?php endif ?>
                 <?php if (($cta = cta_link()) !== null): ?>
                     <aside class="post-cta">
                         <p class="mb-3"><?= e(t('blog.cta_text')) ?></p>

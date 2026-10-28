@@ -6,9 +6,11 @@ namespace App\Controllers\Front;
 use App\Models\Collection;
 use App\Models\Language;
 use App\Models\Page;
+use App\Services\News\NewsPublisher;
 use Core\Http\HttpException;
 use Core\Http\Response;
 use Core\Support\Str;
+use Core\Support\Url;
 
 /**
  * კოლექციის ჩანაწერის საჯარო გვერდი: /{lang}/{route}/{slug} (მხოლოდ public კოლექციები).
@@ -41,6 +43,11 @@ final class CollectionController
             $languageLinks[$code] = $alternates[$code] ?? url($code);
         }
         $description = Str::limit((string)($item['excerpt'] ?? strip_tags((string)($item['body'] ?? ''))), 300);
+        // იმპორტირებული სიახლე: ორიგინალის ენაზე canonical წყაროზე მიუთითებს (თარგმანი — საკუთარი შიგთავსია)
+        $source = (string)($item['source_url'] ?? '');
+        $canonical = $source !== '' && $lang === NewsPublisher::LANG && Url::isSafeHref($source) && str_starts_with($source, 'http')
+            ? $source
+            : $item['url'];
 
         return view($definition['view'] ?? 'front/collections/detail', [
             'item'        => $item,
@@ -51,7 +58,7 @@ final class CollectionController
                 'title'          => $item['title'] . ' · ' . setting('general.site_name'),
                 'description'    => $description !== '' ? $description : null,
                 'image'          => media_url($item['image'], 'large') ?: null,
-                'canonical'      => $item['url'],
+                'canonical'      => $canonical,
                 'alternates'     => $alternates + (isset($alternates[$default]) ? ['x-default' => $alternates[$default]] : []),
                 'language_links' => $languageLinks,
             ],

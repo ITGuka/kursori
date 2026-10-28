@@ -112,6 +112,8 @@ return [
         'fields' => [
             'devto_api_key' => ['label' => 'dev.to API გასაღები', 'type' => 'password',
                                 'help' => 'არასავალდებულო — გასაღებით მოთხოვნების ლიმიტი მაღალია. dev.to → Settings → Extensions → DEV Community API Keys. ინახება დაშიფრულად.'],
+            'daily_limit'   => ['label' => 'დღეში მაქსიმუმ გამოქვეყნება', 'type' => 'number', 'default' => '10',
+                                'help' => 'ავტომატური და დამტკიცებული სიახლეები ბლოგში დღეში არაუმეტეს ამდენი. 0 — შეზღუდვის გარეშე.'],
         ],
     ],
 

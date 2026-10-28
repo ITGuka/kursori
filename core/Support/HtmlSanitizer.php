@@ -7,12 +7,13 @@ use HTMLPurifier;
 use HTMLPurifier_Config;
 
 /**
- * WYSIWYG-დან მიღებული HTML-ის გაწმენდა HTMLPurifier-ით: რჩება მხოლოდ ტექსტის ფორმატირება და ბმულები.
- * სკრიპტები, ატრიბუტი on*, style, javascript: ბმულები და სხვ. იშლება.
+ * WYSIWYG-დან და იმპორტიდან მიღებული HTML-ის გაწმენდა HTMLPurifier-ით: რჩება ტექსტის ფორმატირება, ბმულები,
+ * სურათები, კოდი და ცხრილები. სკრიპტები, ატრიბუტი on*, style, javascript: ბმულები და სხვ. იშლება.
  */
 final class HtmlSanitizer
 {
-    private const ALLOWED = 'p,br,strong,b,em,i,u,s,a[href|target|rel|title],ul,ol,li,h2,h3,h4,blockquote,span,hr';
+    private const ALLOWED = 'p,br,strong,b,em,i,u,s,sub,sup,a[href|target|rel|title],ul,ol,li,h2,h3,h4,blockquote,span,hr,'
+        . 'img[src|alt|title|width|height],pre,code,table,thead,tbody,tr,th,td';
 
     private ?HTMLPurifier $purifier = null;
 
