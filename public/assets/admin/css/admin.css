@@ -241,6 +241,41 @@
     border-bottom: 1px solid var(--bs-border-color);
 }
 
+/* WYSIWYG (Jodit) — Sneat-ის ველების ჩარჩო, შრიფტი (FiraGO ქართულისთვის) და შეცდომის მდგომარეობა */
+.jodit-container.jodit:not(.jodit_inline) {
+    border-color: var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    overflow: hidden;
+}
+
+.jodit-container.jodit:not(.jodit_inline):focus-within {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0.25rem 0.05rem rgba(var(--bs-primary-rgb), 0.1);
+}
+
+.jodit-container.jodit:not(.jodit_inline).is-invalid {
+    border-color: var(--bs-danger);
+}
+
+.jodit-container .jodit-wysiwyg {
+    font-family: var(--bs-font-sans-serif);
+    font-size: var(--bs-body-font-size);
+    line-height: 1.6;
+    color: var(--bs-heading-color, var(--bs-body-color));
+}
+
+.jodit-container .jodit-wysiwyg h2,
+.jodit-container .jodit-wysiwyg h3,
+.jodit-container .jodit-wysiwyg h4 {
+    margin: 0.75rem 0 0.5rem;
+}
+
+.jodit-container .jodit-wysiwyg blockquote {
+    border-left: 3px solid var(--bs-border-color);
+    padding-left: 1rem;
+    color: var(--bs-secondary-color);
+}
+
 .link-input.is-invalid {
     outline: 1px solid var(--bs-danger);
     outline-offset: 4px;
