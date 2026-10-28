@@ -10,6 +10,9 @@ $isActive = fn (string $href) => $href !== '' && !preg_match('~^[a-z]+:~i', $hre
 $logo = setting('general.logo');
 $siteName = (string)setting('general.site_name');
 $cta = cta_link();
+// ენის გადამრთველი: წარწერა და დროშა (img/flags); სიაში არმყოფი ენა — კოდი, დროშის გარეშე
+$langLabels = ['ka' => 'GEO', 'en' => 'ENG'];
+$langFlags = ['ka' => 'ge', 'en' => 'gb'];
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark px-lg-5">
     <a href="<?= e(url($lang)) ?>" class="navbar-brand ms-4 ms-lg-0">
@@ -25,7 +28,8 @@ $cta = cta_link();
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
-        <div class="navbar-nav mx-auto p-4 p-lg-0">
+        <?php // მენიუ ლოგოს გვერდით (მარცხნივ); CTA და ენები — მარჯვნივ ?>
+        <div class="navbar-nav me-auto ms-lg-4 p-4 p-lg-0">
             <?php foreach ($nav as $item): ?>
                 <?php if ($item['children'] === []): ?>
                     <a href="<?= e($item['href']) ?>"<?= link_target($item) ?> class="nav-item nav-link<?= $isActive($item['href']) ? ' active' : '' ?>"
@@ -56,7 +60,12 @@ $cta = cta_link();
                     <?php foreach ($languages ?? [] as $language): ?>
                         <?php if (isset($languageLinks[$language['code']])): ?>
                             <a href="<?= e($languageLinks[$language['code']]) ?>" hreflang="<?= e($language['code']) ?>" lang="<?= e($language['code']) ?>"
-                               class="lang-switch-item<?= $language['code'] === $lang ? ' is-active' : '' ?>"<?= $language['code'] === $lang ? ' aria-current="true"' : '' ?>><?= e($language['code']) ?></a>
+                               class="lang-switch-item<?= $language['code'] === $lang ? ' is-active' : '' ?>"<?= $language['code'] === $lang ? ' aria-current="true"' : '' ?>>
+                                <?php if (isset($langFlags[$language['code']])): ?>
+                                    <img src="<?= asset('front/img/flags/' . $langFlags[$language['code']] . '.svg') ?>" alt="" class="lang-switch-flag" width="20" height="14">
+                                <?php endif ?>
+                                <?= e($langLabels[$language['code']] ?? $language['code']) ?>
+                            </a>
                         <?php endif ?>
                     <?php endforeach ?>
                 </div>

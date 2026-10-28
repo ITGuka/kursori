@@ -964,6 +964,7 @@ h1, h2, h3, h4, h5, h6,
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: .4rem;
     min-width: 38px;
     padding: 0 .65rem;
     border-radius: 50px;
@@ -975,6 +976,15 @@ h1, h2, h3, h4, h5, h6,
     text-transform: uppercase;
     text-decoration: none;
     transition: color .2s, background-color .2s;
+}
+
+/* დროშა წარწერის წინ: ორივე ერთ ზომაზე (ge 3:2, gb 2:1 — cover) */
+.lang-switch-flag {
+    width: 20px;
+    height: 14px;
+    border-radius: 2px;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .15);
 }
 
 .lang-switch-item:hover {
