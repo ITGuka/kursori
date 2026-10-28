@@ -60,6 +60,20 @@ return new class extends Seeder {
 
         $menus = app(Menu::class);
         $menus->saveItem(null, $menus->idFor('header'), ['type' => 'page', 'page_id' => $pageId, 'url' => '', 'parent_id' => null, 'new_tab' => false, 'is_active' => true], []);
+
+        $this->heroButton($db, $blocks, $pageId);
+    }
+
+    /** მთავარის ჰეროს პირველი სლაიდი: მთავარი ღილაკი („შეუკვეთეთ საიტი“, 05_demo_pages) → შეკვეთის გვერდი */
+    private function heroButton(DB $db, PageBlock $blocks, int $pageId): void
+    {
+        $id = $db->value("SELECT b.id FROM page_blocks b JOIN pages p ON p.id = b.page_id WHERE p.is_home = 1 AND b.type = 'hero_carousel' ORDER BY b.sort LIMIT 1");
+        $block = $id !== null ? $blocks->find((int)$id) : null;
+        if ($block === null || !isset($block['settings']['slides'][0])) {
+            return;
+        }
+        $block['settings']['slides'][0]['button_link'] = ['type' => 'page', 'page_id' => $pageId, 'url' => '', 'new_tab' => false];
+        $blocks->save((int)$id, (int)$block['page_id'], 'hero_carousel', $block['settings'], $block['content'], json_decode((string)$block['media_ids'], true) ?: []);
     }
 
     private function categories(DB $db): void

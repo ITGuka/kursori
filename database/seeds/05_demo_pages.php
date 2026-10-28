@@ -49,12 +49,18 @@ return new class extends Seeder {
         'Web design, online stores, branding and SEO under one roof — with an admin panel where you update the content yourself.',
     ];
 
-    /** ნდობის ზოლი: [მნიშვნელობა, წარწერა] — [ka, en] */
+    /**
+     * ნდობის ზოლი: [მნიშვნელობა, წარწერა, ჩამონათვალი] — [ka, en]; როლები/აგენტები = 07_demo_collections::AI_TEAM.
+     * 7 ციფრი: პირველი დიდ უჯრაში, დანარჩენი 2 რიგად — გუნდი, შემდეგ სისწრაფე.
+     */
     public const STATS = [
-        [['10+', '10+'], ['წელი ბაზარზე', 'Years in business']],
-        [['150+', '150+'], ['დასრულებული პროექტი', 'Projects delivered']],
-        [['4', '4'], ['მიმართულება ერთ გუნდში', 'Services under one roof']],
-        [['1 დღე', '1 day'], ['პასუხი ყოველ მოთხოვნაზე', 'Reply to every request']],
+        [['300+', '300+'], ['დასრულებული პროექტი', 'Projects delivered'], ['საიტები · ონლაინ მაღაზიები · ბრენდინგი', 'Websites · Online stores · Branding']],
+        [['15', '15'], ['AI როლი გუნდში', 'AI roles on the team'], ['მართვა · არქიტექტურა · დეველოპმენტი · QA', 'Management · Architecture · Development · QA']],
+        [['3', '3'], ['AI აგენტი', 'AI agents'], ['Claude Code · Gemini · Codex', 'Claude Code · Gemini · Codex']],
+        [['4', '4'], ['მიმართულება ერთ გუნდში', 'Services under one roof'], ['დიზაინი · დეველოპმენტი · ბრენდინგი · SEO', 'Design · Development · Branding · SEO']],
+        [['1 კვირა', '1 week'], ['საშუალო ვადა შეკვეთიდან ჩაბარებამდე', 'Average time from order to delivery'], ['AI როლები ამოცანებზე პარალელურად მუშაობს', 'AI roles work on tasks in parallel']],
+        [['1 დღე', '1 day'], ['AI აანალიზებს მოთხოვნას, შემდეგ ადამიანი დაგიკავშირდებათ', 'AI reviews your request, then a person gets in touch'], ['', '']],
+        [['24/7', '24/7'], ['გუნდი მუშაობს', 'Team at work'], ['შაბათ-კვირასაც და ღამითაც', 'Nights and weekends too']],
     ];
 
     /** ფასების პაკეტები (სადემონსტრაციო ფასები — გაშვებამდე ჩაანაცვლეთ): ველი => [ka, en] */
@@ -62,7 +68,7 @@ return new class extends Seeder {
         [
             'name'         => ['სტარტი', 'Start'],
             'price'        => ['1 500 ₾-დან', 'From 1,500 GEL'],
-            'note'         => ['ვადა: 3–4 კვირა', 'Timeline: 3–4 weeks'],
+            'note'         => ['ვადა: 3–5 დღე', 'Timeline: 3–5 days'],
             'features'     => ["სავიზიტო საიტი 5 გვერდამდე\nმობილურზე მორგებული დიზაინი\nმართვის პანელი\nსაკონტაქტო ფორმა და რუკა\nსაბაზისო SEO",
                                "Business card site, up to 5 pages\nMobile-ready design\nAdmin panel\nContact form and map\nBasic SEO"],
             'badge'        => ['', ''],
@@ -71,7 +77,7 @@ return new class extends Seeder {
         [
             'name'         => ['ბიზნესი', 'Business'],
             'price'        => ['3 500 ₾-დან', 'From 3,500 GEL'],
-            'note'         => ['ვადა: 5–7 კვირა', 'Timeline: 5–7 weeks'],
+            'note'         => ['ვადა: 1–2 კვირა', 'Timeline: 1–2 weeks'],
             'features'     => ["15 გვერდამდე, უნიკალური დიზაინი\nორი ან მეტი ენა\nსიახლეები ან ბლოგი\nპორტფოლიო ან კატალოგი\nტექნიკური SEO და ანალიტიკა\n1 თვე უფასო მხარდაჭერა",
                                "Up to 15 pages, custom design\nTwo or more languages\nNews or blog\nPortfolio or catalogue\nTechnical SEO and analytics\n1 month of free support"],
             'badge'        => ['პოპულარული', 'Most popular'],
@@ -80,7 +86,7 @@ return new class extends Seeder {
         [
             'name'         => ['ონლაინ მაღაზია', 'Online Store'],
             'price'        => ['6 000 ₾-დან', 'From 6,000 GEL'],
-            'note'         => ['ვადა: 7–10 კვირა', 'Timeline: 7–10 weeks'],
+            'note'         => ['ვადა: 2–3 კვირა', 'Timeline: 2–3 weeks'],
             'features'     => ["კატალოგი ფილტრებით\nბარათით გადახდა\nმარაგისა და შეკვეთების მართვა\nმიწოდების ღირებულების გამოთვლა\nპროდუქტების SEO\n1 თვე უფასო მხარდაჭერა",
                                "Catalogue with filters\nCard payments\nStock and order management\nDelivery cost calculation\nProduct SEO\n1 month of free support"],
             'badge'        => ['', ''],
@@ -91,8 +97,8 @@ return new class extends Seeder {
     /** ზოგადი ხშირი კითხვები (ფასების გვერდი): [კითხვა, პასუხი] — [ka, en] */
     public const FAQ = [
         [['რამდენი ხანი სჭირდება საიტის დამზადებას?', 'How long does a website take?'],
-         ['სავიზიტო საიტს 3–4 კვირა, ბიზნეს საიტს 5–7, ონლაინ მაღაზიას 7–10 კვირა. ზუსტ ვადას ბრიფის შემდეგ გეტყვით.',
-          'A business card site takes 3–4 weeks, a business site 5–7 and an online store 7–10. We confirm the exact timeline after the brief.']],
+         ['სავიზიტო საიტს 3–5 დღე, ბიზნეს საიტს 1–2 კვირა, ონლაინ მაღაზიას 2–3 კვირა — AI როლები ამოცანებზე პარალელურად მუშაობს. ზუსტ ვადას ბრიფის შემდეგ გეტყვით.',
+          'A business card site takes 3–5 days, a business site 1–2 weeks and an online store 2–3 weeks — our AI roles work on tasks in parallel. We confirm the exact timeline after the brief.']],
         [['როგორ ხდება გადახდა?', 'How does payment work?'],
          ['50% სამუშაოს დაწყებისას და 50% საიტის გაშვებამდე. დიდ პროექტებს ეტაპებად ვყოფთ.',
           '50% when work starts and 50% before launch. Larger projects are split into stages.']],
@@ -175,7 +181,8 @@ return new class extends Seeder {
         $home = $this->page(['მთავარი', 'Home'], ['mtavari', 'home'], 1, true);
         $about = $this->page(['ჩვენ შესახებ', 'About'], ['chven-shesakheb', 'about'], 2);
         $services = $this->page(['სერვისები', 'Services'], ['servisebi', 'services'], 3);
-        $portfolio = $this->page(['პორტფოლიო', 'Portfolio'], ['portpolio', 'portfolio'], 4);
+        // დამალულია (მონახაზი): მენიუებიდან და მასზე მიმავალი ღილაკებიდან (ჰერო, „ჩვენ შესახებ“) თავისით ქრება
+        $portfolio = $this->page(['პორტფოლიო', 'Portfolio'], ['portpolio', 'portfolio'], 4, false, null, 'draft');
         $team = $this->page(['გუნდი', 'Our Team'], ['gundi', 'team'], 1, false, $about);
         $reviews = $this->page(['შეფასებები', 'Testimonials'], ['shepasebebi', 'testimonials'], 2, false, $about);
         $pricing = $this->page(['ფასები', 'Pricing'], ['fasebi', 'pricing'], 5);
@@ -184,7 +191,7 @@ return new class extends Seeder {
         $contact = $this->page(['კონტაქტი', 'Contact'], ['kontakti', 'contact'], 7);
 
         // მთავარი
-        $this->hero($home, $portfolio, $contact);
+        $this->hero($home, $contact);
         $this->stats($home);
         $this->about($home, $portfolio, $contact, 'secondary');
         $this->collectionBlock($home, 'services', ['ჩვენი სერვისები', 'Our Services'], ['რას ვაკეთებთ', 'What We Do'], ['limit' => 4, 'layout' => 'grid']);
@@ -242,17 +249,17 @@ return new class extends Seeder {
         $this->block($contact, 'map', ['embed_url' => self::MAP, 'height' => 450], []);
     }
 
-    private function page(array $titles, array $slugs, int $sort, bool $home = false, ?int $parent = null): int
+    private function page(array $titles, array $slugs, int $sort, bool $home = false, ?int $parent = null, string $status = 'published'): int
     {
         $descriptions = self::DESCRIPTIONS[$slugs[1]] ?? ['', ''];
-        return $this->pages->save(null, ['parent_id' => $parent, 'status' => 'published', 'is_home' => $home, 'sort' => $sort, 'og_image_id' => null], [
+        return $this->pages->save(null, ['parent_id' => $parent, 'status' => $status, 'is_home' => $home, 'sort' => $sort, 'og_image_id' => null], [
             'ka' => ['title' => $titles[0], 'slug' => $slugs[0], 'meta_title' => '', 'meta_description' => $descriptions[0]],
             'en' => ['title' => $titles[1], 'slug' => $slugs[1], 'meta_title' => '', 'meta_description' => $descriptions[1]],
         ]);
     }
 
     /** @param array<string, array{0: mixed, 1: mixed}> $translated field => [ka, en] */
-    private function block(int $pageId, string $type, array $settings, array $translated): void
+    private function block(int $pageId, string $type, array $settings, array $translated): int
     {
         $content = ['ka' => [], 'en' => []];
         foreach ($translated as $field => [$ka, $en]) {
@@ -265,7 +272,7 @@ return new class extends Seeder {
                 $media[] = $value;
             }
         });
-        $this->blocks->save(null, $pageId, $type, $settings, $content, array_values(array_unique($media)));
+        return $this->blocks->save(null, $pageId, $type, $settings, $content, array_values(array_unique($media)));
     }
 
     /** @return array{0: list<array>, 1: array, 2: array} repeater: settings, ka, en */
@@ -304,23 +311,26 @@ return new class extends Seeder {
         $this->block($pageId, $type, $settings + ['source' => 'collection', 'category' => null, 'limit' => 0], ['subtitle' => $subtitle, 'title' => $title]);
     }
 
+    /** პორტფოლიო დამალულია — ბლოკი იქმნება გამორთული (ადმინიდან ჩაირთვება) */
     private function portfolio(int $pageId, int $limit, string $background): void
     {
-        $this->block($pageId, 'portfolio_grid', ['category' => null, 'limit' => $limit, 'show_filter' => true, 'background' => $background], [
+        $id = $this->block($pageId, 'portfolio_grid', ['category' => null, 'limit' => $limit, 'show_filter' => true, 'background' => $background], [
             'subtitle' => ['პორტფოლიო', 'Portfolio'],
             'title'    => ['ბოლო პროექტები', 'Recent Work'],
         ]);
+        $this->blocks->setActive($id, false);
     }
 
-    private function hero(int $pageId, int $portfolio, int $contact): void
+    private function hero(int $pageId, int $contact): void
     {
         [$slides, $ka, $en] = $this->items([
-            [['image' => $this->img('carousel-1.jpg'), 'button_link' => $this->link($contact), 'button2_link' => $this->link($portfolio)], [
+            // პირველ ღილაკს შეკვეთის გვერდზე 10_order_page გადაამისამართებს (გვერდი იქ იქმნება); მანამდე — კონტაქტი
+            [['image' => $this->img('carousel-1.jpg'), 'button_link' => $this->link($contact), 'button2_link' => $this->link($contact)], [
                 'subtitle'      => ['ვებ დიზაინ სტუდია', 'Web Design Studio'],
                 'title'         => self::HERO_TITLE,
                 'text'          => self::HERO_TEXT,
-                'button_label'  => ['უფასო კონსულტაცია', 'Free Consultation'],
-                'button2_label' => ['პორტფოლიო', 'Portfolio'],
+                'button_label'  => ['შეუკვეთეთ საიტი', 'Order a Website'],
+                'button2_label' => ['დაგვიკავშირდით', 'Contact Us'],
             ]],
             [['image' => $this->img('carousel-2.jpg'), 'button_link' => $this->link($contact)], [
                 'subtitle'     => ['ბრენდინგი', 'Branding'],
@@ -426,7 +436,7 @@ return new class extends Seeder {
     /** ნდობის ზოლი ჰეროს ქვეშ */
     private function stats(int $pageId): void
     {
-        [$items, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['value' => $row[0], 'label' => $row[1]]], self::STATS));
+        [$items, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['value' => $row[0], 'label' => $row[1], 'note' => $row[2]]], self::STATS));
         $this->block($pageId, 'stats', ['items' => $items, 'background' => 'dark'], ['items' => [$ka, $en]]);
     }
 
@@ -443,8 +453,8 @@ return new class extends Seeder {
         ], [
             'subtitle'      => ['ჩვენ შესახებ', 'About Us'],
             'title'         => ['ციფრული სტუდია', 'Digital Studio'],
-            'text'          => ['<p>10 წელზე მეტია ვეხმარებით ბიზნესებს ონლაინ ზრდაში: ვაპროექტებთ, ვქმნით და ვავითარებთ საიტებს, ონლაინ მაღაზიებს და ბრენდებს.</p>',
-                                '<p>For over 10 years we have helped businesses grow online: we plan, design and develop websites, online stores and brands.</p>'],
+            'text'          => ['<p>AI გუნდთან ერთად ვეხმარებით ბიზნესებს ონლაინ ზრდაში: ვაპროექტებთ, ვქმნით და ვავითარებთ საიტებს, ონლაინ მაღაზიებს და ბრენდებს — უკვე ასობით პროექტი გვაქვს გაკეთებული.</p>',
+                                '<p>Together with our AI team we help businesses grow online: we plan, design and develop websites, online stores and brands — hundreds of projects delivered so far.</p>'],
             'items'         => [$ka, $en],
             'button1_label' => ['პორტფოლიო', 'Portfolio'],
             'button2_label' => ['დაგვიკავშირდით', 'Contact Us'],

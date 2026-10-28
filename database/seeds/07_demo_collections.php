@@ -76,10 +76,10 @@ return new class extends Seeder {
                           'A website for a Georgian fashion house with a collection lookbook, showroom booking and a bilingual catalogue.'],
             'body'    => ['<h3>ამოცანა</h3><p>მოდის სახლი კოლექციებს მხოლოდ Instagram-ზე აჩვენებდა, შოურუმში ვიზიტებს კი ტელეფონით წერდა. უცხოელ მყიდველებს ინფორმაცია ინგლისურად არ ჰქონდათ.</p>'
                           . '<h3>გადაწყვეტა</h3><ul><li>ლუკბუქი სეზონური კოლექციებით და დიდი ფოტოებით</li><li>შოურუმში ვიზიტის ონლაინ ჩაწერა თავისუფალი საათებით</li><li>ქართული და ინგლისური ვერსია, კოლექციებს გუნდი ადმინიდან ამატებს</li></ul>'
-                          . '<h3>შედეგი</h3><ul><li>შოურუმის ვიზიტების 60% ახლა საიტიდან იწერება</li><li>უცხოური შეკვეთები გაშვებიდან 6 თვეში 3-ჯერ გაიზარდა</li><li>გაშვება — 7 კვირაში</li></ul>',
+                          . '<h3>შედეგი</h3><ul><li>შოურუმის ვიზიტების 60% ახლა საიტიდან იწერება</li><li>უცხოური შეკვეთები გაშვებიდან 6 თვეში 3-ჯერ გაიზარდა</li><li>გაშვება — 2 კვირაში</li></ul>',
                           '<h3>Challenge</h3><p>The fashion house showed its collections only on Instagram and booked showroom visits by phone. International buyers had no information in English.</p>'
                           . '<h3>Solution</h3><ul><li>A lookbook of seasonal collections with large photography</li><li>Online showroom booking with available time slots</li><li>Georgian and English versions; the team adds collections from the admin panel</li></ul>'
-                          . '<h3>Result</h3><ul><li>60% of showroom visits are now booked through the site</li><li>International orders tripled within 6 months of launch</li><li>Launched in 7 weeks</li></ul>'],
+                          . '<h3>Result</h3><ul><li>60% of showroom visits are now booked through the site</li><li>International orders tripled within 6 months of launch</li><li>Launched in 2 weeks</li></ul>'],
         ],
         'apparel-store' => [
             'client'  => ['„ვერე სთრით“', 'Vere Street'],
@@ -147,7 +147,7 @@ return new class extends Seeder {
             'body'         => ['<h3>რას გიშველით</h3><p>საიტი ლამაზია, მაგრამ ზარებსა და შეკვეთებს ვერ მოაქვს? ხშირად მიზეზი სტრუქტურაა: ვიზიტორი ვერ პოულობს, რაც სჭირდება, ან არ იცის, შემდეგ რა გააკეთოს. დიზაინს ვიწყებთ იმით, რა უნდა გააკეთოს ვიზიტორმა, და ყოველ ეკრანს ამ მიზანს ვუქვემდებარებთ.</p><h3>როგორ ვმუშაობთ</h3><ol><li>ვსწავლობთ თქვენს მომხმარებელს და კონკურენტებს</li><li>ვაწყობთ გვერდების სტრუქტურას და პროტოტიპს</li><li>ვქმნით დიზაინს კომპიუტერისა და მობილურისთვის</li><li>ვასწორებთ თქვენი შენიშვნებით და გადავცემთ დეველოპმენტს</li></ol>',
                                '<h3>What it solves</h3><p>Is your site good-looking but not bringing calls or orders? Often the cause is structure: visitors can’t find what they need or don’t know what to do next. We start design from what the visitor should do and shape every screen around that goal.</p><h3>How we work</h3><ol><li>We study your customers and competitors</li><li>We build the page structure and a prototype</li><li>We design for desktop and mobile</li><li>We refine it with your feedback and hand it over to development</li></ol>'],
             'price_from'   => ['1 500 ₾-დან', 'From 1,500 GEL'],
-            'duration'     => ['3–6 კვირა', '3–6 weeks'],
+            'duration'     => ['3–7 დღე', '3–7 days'],
             'deliverables' => ["UX კვლევა და კონკურენტების ანალიზი\nგვერდების სტრუქტურა და პროტოტიპი\nდიზაინი კომპიუტერისა და მობილურისთვის\nUI კომპონენტების ნაკრები\n2 რაუნდი შესწორება\nდიზაინის ფაილები Figma-ში",
                                "UX research and competitor analysis\nPage structure and prototype\nDesign for desktop and mobile\nUI component kit\n2 rounds of revisions\nDesign files in Figma"],
             'cases'        => 'web-design',
@@ -164,7 +164,7 @@ return new class extends Seeder {
             'body'         => ['<h3>რას გიშველით</h3><p>საიტი, რომლის შესაცვლელად ყოველ ჯერზე დეველოპერი გჭირდებათ, ძვირი და ნელია. ვაწყობთ სწრაფ და უსაფრთხო საიტს მართვის პანელით, რომელშიც გვერდებს, მენიუს, თარგმანებსა და პროდუქტებს თავად ცვლით.</p><h3>როგორ ვმუშაობთ</h3><ol><li>ვთანხმდებით ფუნქციებზე და ინტეგრაციებზე</li><li>ვაწყობთ საიტს დამტკიცებული დიზაინით</li><li>ვამატებთ კონტენტს და ვამოწმებთ ყველა მოწყობილობაზე</li><li>ვუშვებთ, ვაწყობთ ანალიტიკას და გასწავლით პანელის მართვას</li></ol>',
                                '<h3>What it solves</h3><p>A site that needs a developer for every change is slow and expensive. We build a fast, secure site with an admin panel where you edit pages, menus, translations and products yourself.</p><h3>How we work</h3><ol><li>We agree on features and integrations</li><li>We build the site from the approved design</li><li>We add the content and test it on every device</li><li>We launch, set up analytics and show you how to use the panel</li></ol>'],
             'price_from'   => ['2 500 ₾-დან', 'From 2,500 GEL'],
-            'duration'     => ['4–10 კვირა', '4–10 weeks'],
+            'duration'     => ['1–3 კვირა', '1–3 weeks'],
             'deliverables' => ["მართვის პანელი ქართულ ენაზე\nმრავალენოვანი საიტი\nმობილურზე მორგება და სწრაფი ჩატვირთვა\nტექნიკური SEO და ანალიტიკა\nონლაინ გადახდა (მაღაზიისთვის)\n1 თვე უფასო მხარდაჭერა",
                                "Admin panel\nMultilingual website\nMobile-ready and fast loading\nTechnical SEO and analytics\nOnline payments (for stores)\n1 month of free support"],
             'cases'        => 'e-commerce',
@@ -181,7 +181,7 @@ return new class extends Seeder {
             'body'         => ['<h3>რას გიშველით</h3><p>როცა საიტი, სოციალური ქსელები და შეფუთვა სხვადასხვა სტილშია, ბრენდი არ გამახსოვრდებათ. ვქმნით ვიზუალურ ენას, რომელიც ყველგან ერთნაირად მუშაობს და გუნდს ზუსტ წესებს აძლევს.</p><h3>როგორ ვმუშაობთ</h3><ol><li>ვსაუბრობთ ბრენდის ხასიათზე და აუდიტორიაზე</li><li>ვთავაზობთ 2–3 მიმართულებას</li><li>ვამუშავებთ არჩეულს: ლოგო, ფერები, შრიფტები</li><li>ვაწყობთ ბრენდბუქს და შაბლონებს</li></ol>',
                                '<h3>What it solves</h3><p>When your website, social media and packaging all look different, nobody remembers the brand. We create a visual language that works the same everywhere and gives your team clear rules.</p><h3>How we work</h3><ol><li>We talk about the brand’s personality and audience</li><li>We propose 2–3 directions</li><li>We develop the chosen one: logo, colours, typography</li><li>We put together the brand book and templates</li></ol>'],
             'price_from'   => ['2 000 ₾-დან', 'From 2,000 GEL'],
-            'duration'     => ['3–5 კვირა', '3–5 weeks'],
+            'duration'     => ['1–2 კვირა', '1–2 weeks'],
             'deliverables' => ["ლოგო და მისი ვერსიები\nფერების პალიტრა და შრიფტები\nბრენდბუქი (PDF)\nსავიზიტო ბარათი და ბლანკი\nსოციალური ქსელების შაბლონები\nყველა ფაილი ბეჭდვისა და ვებისთვის",
                                "Logo and its variations\nColour palette and typography\nBrand book (PDF)\nBusiness card and letterhead\nSocial media templates\nAll files for print and web"],
             'cases'        => 'branding',
@@ -471,7 +471,8 @@ return new class extends Seeder {
             $content['ka'][$field] = $ka;
             $content['en'][$field] = $en;
         }
-        return $this->items->save(null, $type, ['category_id' => $category, 'image_id' => $this->media[$image] ?? null, 'is_active' => true], $settings, [
+        // პორტფოლიო დამალულია: ქეისები იქმნება გამორთული (გვერდები 404, სერვისებზე „ქეისები“ არ ჩანს)
+        return $this->items->save(null, $type, ['category_id' => $category, 'image_id' => $this->media[$image] ?? null, 'is_active' => $type !== 'portfolio'], $settings, [
             'ka' => ['title' => $title[0], 'slug' => $slug[0]],
             'en' => ['title' => $title[1], 'slug' => $slug[1]],
         ], $content, []);

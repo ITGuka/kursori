@@ -820,14 +820,19 @@ h1, h2, h3, h4, h5, h6,
     border-radius: 12px;
 }
 
+/* justify-content: flex-start — ციფრები ერთ რიგში ერთ ხაზზე, წარწერების სხვადასხვა სიგრძე მათ არ ცვლის; დიდი უჯრა შუაშია */
 .stats-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 1.75rem 1rem;
     background: var(--bs-secondary);
     text-align: center;
+}
+
+.stats-panel-featured .stats-item:first-child {
+    justify-content: center;
 }
 
 .stats.bg-secondary .stats-item {
@@ -835,43 +840,98 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* მობილურზე კენტი რაოდენობისას ბოლო ელემენტი მთელ რიგზე — ცარიელი უჯრა არ ჩანს */
-.stats-item:last-child:nth-child(odd) {
+.stats-panel:not(.stats-panel-featured) .stats-item:last-child:nth-child(odd),
+.stats-panel-featured .stats-item:first-child {
     grid-column: 1 / -1;
 }
 
-@media (min-width: 992px) {
-    .stats-panel {
-        grid-template-columns: repeat(var(--stats-cols, 4), 1fr);
-    }
-
-    .stats-item:last-child:nth-child(odd) {
-        grid-column: auto;
-    }
-
-    .stats-item {
-        padding: 2.25rem 1.5rem;
-    }
-}
-
 .stats-value {
-    font-size: calc(1.8rem + 1.2vw);
+    font-size: calc(1.6rem + 1vw);
     font-weight: 700;
     line-height: 1.1;
+    white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
 
 .stats-label {
-    margin-top: .6rem;
-    max-width: 16rem;
+    margin-top: .5rem;
+    max-width: 14rem;
     color: var(--bs-white);
-    font-size: 1.05rem;
-    line-height: 1.4;
+    font-size: .95rem;
+    line-height: 1.45;
+    text-wrap: balance;
     opacity: .75;
+}
+
+/* ჩამონათვალი წარწერის ქვეშ: მცირე, მკრთალი, ელემენტები „·“-ით */
+.stats-note {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .1rem .4rem;
+    max-width: 15rem;
+    margin-top: .6rem;
+    padding: 0;
+    color: rgba(255, 255, 255, .55);
+    font-size: .85rem;
+    line-height: 1.45;
+}
+
+/* ჩამონათვლის ელემენტი არ წყდება; ერთი ელემენტი (ჩვეულებრივი წინადადება) — წყდება */
+.stats-note li {
+    white-space: nowrap;
+}
+
+.stats-note li:only-child {
+    white-space: normal;
+}
+
+/* გამყოფი ელემენტის ბოლოს — ხაზზე გადატანისას ახალი ხაზი წერტილით არ იწყება */
+.stats-note li:not(:last-child)::after {
+    content: "·";
+    margin-left: .4rem;
+    color: var(--bs-primary);
+}
+
+/* დიდი უჯრა (კენტი რაოდენობა, stats.php) — მთავარი ციფრი */
+.stats-panel-featured .stats-item:first-child .stats-value {
+    font-size: calc(2.4rem + 1.6vw);
+}
+
+.stats-panel-featured .stats-item:first-child .stats-label {
+    font-size: 1.05rem;
+}
+
+@media (min-width: 992px) {
+    .stats-panel {
+        grid-template-columns: repeat(var(--stats-cols, 4), minmax(0, 1fr));
+    }
+
+    .stats-panel-featured {
+        grid-template-columns: minmax(0, 1.25fr) repeat(var(--stats-cols, 3), minmax(0, 1fr));
+    }
+
+    .stats-panel:not(.stats-panel-featured) .stats-item:last-child:nth-child(odd) {
+        grid-column: auto;
+    }
+
+    .stats-panel-featured .stats-item:first-child {
+        grid-column: auto;
+        grid-row: span 2;
+    }
+
+    .stats-item {
+        padding: 2rem 1.25rem;
+    }
 }
 
 @media (min-width: 1200px) {
     .stats-value {
-        font-size: 3rem;
+        font-size: 2.5rem;
+    }
+
+    .stats-panel-featured .stats-item:first-child .stats-value {
+        font-size: 4rem;
     }
 }
 

@@ -118,9 +118,10 @@ return [
         'icon'   => 'bx bx-bar-chart-alt-2',
         'view'   => 'front/blocks/stats',
         'fields' => [
-            'items'      => ['type' => 'repeater', 'label' => 'ციფრები', 'min_items' => 1, 'max_items' => 6, 'fields' => [
+            'items'      => ['type' => 'repeater', 'label' => 'ციფრები', 'min_items' => 1, 'max_items' => 8, 'fields' => [
                 'value' => ['type' => 'text', 'label' => 'მნიშვნელობა', 'translatable' => true, 'max' => 20, 'help' => 'მაგ. „10+“, „150+“, „24 სთ“.'],
                 'label' => ['type' => 'text', 'label' => 'წარწერა', 'translatable' => true, 'max' => 100],
+                'note'  => ['type' => 'text', 'label' => 'ჩამონათვალი', 'translatable' => true, 'max' => 120, 'help' => 'არასავალდებულო; ელემენტები „ · “-ით, მაგ. „Claude Code · Gemini · Codex“.'],
             ]],
             'background' => ['default' => 'secondary'] + $background,
         ],
