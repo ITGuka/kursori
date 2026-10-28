@@ -32,7 +32,8 @@ $langFlags = ['ka' => 'ge', 'en' => 'gb'];
         <div class="navbar-nav me-auto ms-lg-4 p-4 p-lg-0">
             <?php foreach ($nav as $item): ?>
                 <?php if ($item['children'] === []): ?>
-                    <a href="<?= e($item['href']) ?>"<?= link_target($item) ?> class="nav-item nav-link<?= $isActive($item['href']) ? ' active' : '' ?>"
+                    <?php // nav-link-home — მთავარი, დაბალ რეზოლუციაზე იმალება (ლოგოც მთავარზე გადადის) ?>
+                    <a href="<?= e($item['href']) ?>"<?= link_target($item) ?> class="nav-item nav-link<?= $item['href'] === url($lang) ? ' nav-link-home' : '' ?><?= $isActive($item['href']) ? ' active' : '' ?>"
                         <?= $isActive($item['href']) ? ' aria-current="page"' : '' ?>><?= e($item['label']) ?></a>
                 <?php else: ?>
                     <?php $childActive = array_filter($item['children'], fn ($child) => $isActive($child['href'])); ?>

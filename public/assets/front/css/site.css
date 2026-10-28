@@ -267,6 +267,13 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
+/* 992–1399px: „მთავარი“ მენიუდან იმალება (ადგილი არ ჰყოფნის; ლოგოც მთავარზე გადადის). მობილურის სიაში ჩანს */
+@media (min-width: 992px) and (max-width: 1399.98px) {
+    .navbar .navbar-nav .nav-link-home {
+        display: none;
+    }
+}
+
 /* 992–1099px: ქართული (მთავრული) 18px-ზე ეკრანს ცდებოდა — აქ 16px */
 @media (min-width: 992px) and (max-width: 1099.98px) {
     html[lang="ka"] .navbar .navbar-nav .nav-link {
