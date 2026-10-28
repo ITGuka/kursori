@@ -107,6 +107,14 @@ return [
         ],
     ],
 
+    'news' => [
+        'label'  => 'სიახლეები (dev.to)',
+        'fields' => [
+            'devto_api_key' => ['label' => 'dev.to API გასაღები', 'type' => 'password',
+                                'help' => 'არასავალდებულო — გასაღებით მოთხოვნების ლიმიტი მაღალია. dev.to → Settings → Extensions → DEV Community API Keys. ინახება დაშიფრულად.'],
+        ],
+    ],
+
     'scripts' => [
         'label'  => 'კოდი',
         'fields' => [

@@ -24,6 +24,7 @@ $console->register(
     AppCommands\NewsletterSendCommand::class,
     AppCommands\ContentResetCommand::class,
     AppCommands\MediaRegenerateCommand::class,
+    AppCommands\NewsFetchCommand::class,
 );
 
 exit($console->run($argv));
