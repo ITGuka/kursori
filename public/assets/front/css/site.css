@@ -222,9 +222,9 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
-/* მენიუს ბმულები ორივე ენაზე 17px: header ka/en-ზე ერთნაირი სიმაღლისაა, მთავრულიც ეტევა */
+/* მენიუს ბმულები ორივე ენაზე 20px: header ka/en-ზე ერთნაირი სიმაღლისაა, მთავრულიც ეტევა */
 .navbar .navbar-nav .nav-link {
-    font-size: 17px;
+    font-size: 20px;
 }
 
 /* 6 პუნქტი + CTA + ენები ერთ ხაზზე: პუნქტი არ იყოფა, დაშორება ეკრანის სიგანეს მიჰყვება */
@@ -245,7 +245,7 @@ h1, h2, h3, h4, h5, h6,
     .navbar .navbar-nav .nav-link,
     html[lang="ka"] .navbar .navbar-nav .nav-link {
         margin-right: 6px;
-        font-size: 15px;
+        font-size: 18px;
     }
 
     .navbar .navbar-brand h2 {
@@ -267,6 +267,13 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
+/* 992–1099px: ქართული (მთავრული) 18px-ზე ეკრანს ცდებოდა — აქ 16px */
+@media (min-width: 992px) and (max-width: 1099.98px) {
+    html[lang="ka"] .navbar .navbar-nav .nav-link {
+        font-size: 16px;
+    }
+}
+
 /* 1200–1399px: px-lg-5 და 1.6vw დაშორებით ქართული მენიუ 1200px-ზე 85px-ით ცდებოდა ეკრანს */
 @media (min-width: 1200px) and (max-width: 1399.98px) {
     .navbar {
@@ -279,7 +286,7 @@ h1, h2, h3, h4, h5, h6,
     }
 
     html[lang="ka"] .navbar .navbar-nav .nav-link {
-        font-size: 16px;
+        font-size: 19px;
     }
 }
 
