@@ -19,9 +19,8 @@ return new class extends Seeder {
                                        'en' => 'Web design, website development, online stores, branding and SEO in Tbilisi.'],
     ];
 
-    /** სურათის პარამეტრები — 04_demo_media-ს ფაილები (resources/stock) */
+    /** სურათის პარამეტრები — 04_demo_media-ს ფაილები (resources/stock). favicon არ ივსება: ცარიელზე KURSORI-ის ხატულა ჩანს (layouts/main.php) */
     private const IMAGES = [
-        'general.favicon' => 'favicon.png',
         'seo.og_image'    => 'carousel-1.jpg',
     ];
 

@@ -251,6 +251,36 @@ h1, h2, h3, h4, h5, h6,
     .navbar .navbar-brand h2 {
         font-size: 1.5rem;
     }
+
+    /* მთავრული ლათინურზე ~15%-ით განიერია — 992px-ზე 24px აკლდა */
+    html[lang="ka"] .navbar {
+        padding-left: .75rem !important;
+        padding-right: .75rem !important;
+    }
+
+    html[lang="ka"] .navbar .navbar-nav .nav-link {
+        margin-right: 4px;
+    }
+
+    html[lang="ka"] .navbar-cta {
+        padding: 0 .75rem;
+    }
+}
+
+/* 1200–1399px: px-lg-5 და 1.6vw დაშორებით ქართული მენიუ 1200px-ზე 85px-ით ცდებოდა ეკრანს */
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+    .navbar {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+
+    .navbar .navbar-nav .nav-link {
+        margin-right: 1.2vw;
+    }
+
+    html[lang="ka"] .navbar .navbar-nav .nav-link {
+        font-size: 14px;
+    }
 }
 
 /*
@@ -820,6 +850,25 @@ h1, h2, h3, h4, h5, h6,
 .site-logo {
     max-height: 56px;
     width: auto;
+}
+
+/* სიტყვიერი SVG ლოგო განიერია — 56px სიმაღლეზე navbar-ს გადატვირთავდა.
+   სელექტორი img[width][height]-ზე (height: auto) ძლიერი უნდა იყოს.
+   1280px-ზე მენიუს ადგილი ~175px-ია (ქართული ლოგო 28px სიმაღლეზე = 175px) */
+.navbar .navbar-brand .site-logo-svg {
+    height: 28px;
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .navbar .navbar-brand .site-logo-svg {
+        height: 22px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .navbar .navbar-brand .site-logo-svg {
+        height: 34px;
+    }
 }
 
 /* picture() — <picture> განლაგებაში არ მონაწილეობს, სტილი <img>-ზეა */

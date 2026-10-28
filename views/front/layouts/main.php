@@ -10,6 +10,7 @@ $pageTitle = $meta['title'] ?? $siteName;
 $description = $meta['description'] ?? (string)setting('seo.meta_description');
 $ogImage = $meta['image'] ?? media_url(setting('seo.og_image'), 'large');
 $indexing = setting('seo.indexing') === true && empty($meta['noindex']);
+$iconLang = locale() === 'ka' ? 'ka' : 'en'; // KURSORI-ის ხატულა: ka — Კ, სხვა ენები — K
 // url()-ის შედეგი (base path-ით, მაგ. /KURSORI/ka) → სრული URL APP_URL-ით (canonical, hreflang, OG)
 $basePath = app()->baseUrlPath();
 $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $path)
@@ -47,16 +48,22 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
         'address'  => $address !== '' ? ['@type' => 'PostalAddress', 'streetAddress' => $address, 'addressCountry' => 'GE'] : null,
         'name'     => $siteName,
         'url'      => absolute_url(locale()),
-        'logo'     => ($logo = media_url(setting('general.logo'))) !== '' ? $absolute($logo) : null,
+        // Google-ის Organization logo — რასტრული (PNG), მინ. 112×112; ადმინის ლოგო თუ არ არის — KURSORI-ის 512px ხატულა
+        'logo'     => $absolute(($logo = media_url(setting('general.logo'))) !== '' ? $logo : asset("front/img/logo/kursori-icon-$iconLang-512.png")),
         'email'    => setting('contact.email') ?: null,
         'telephone'=> setting('contact.phone') ?: null,
         'sameAs'   => array_values(array_filter(array_map(fn ($n) => setting("social.$n"), ['facebook', 'instagram', 'x', 'linkedin', 'youtube', 'behance', 'dribbble']))) ?: null,
     ]);
     ?>
     <script type="application/ld+json"><?= json_encode($organization, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
-    <?php if ($favicon = media_url(setting('general.favicon'))): ?>
+    <?php if ($favicon = media_url(setting('general.favicon'))): // ადმინში ატვირთული favicon ჭარბობს ?>
         <link rel="icon" href="<?= e($favicon) ?>">
         <link rel="apple-touch-icon" href="<?= e(media_url(setting('general.favicon'), 'thumb')) ?>">
+    <?php else: // KURSORI-ის ხატულა: SVG + PNG იმ ბრაუზერებისთვის/სერვისებისთვის, რომლებიც SVG-ს ვერ კითხულობენ ?>
+        <link rel="icon" type="image/svg+xml" href="<?= asset("front/img/logo/kursori-icon-$iconLang.svg") ?>">
+        <link rel="icon" type="image/png" sizes="48x48" href="<?= asset("front/img/logo/kursori-icon-$iconLang-48.png") ?>">
+        <link rel="icon" type="image/png" sizes="192x192" href="<?= asset("front/img/logo/kursori-icon-$iconLang-192.png") ?>">
+        <link rel="apple-touch-icon" sizes="180x180" href="<?= asset("front/img/logo/kursori-icon-$iconLang-180.png") ?>">
     <?php endif ?>
     <?php if ($verification = (string)setting('seo.google_verification')): ?><meta name="google-site-verification" content="<?= e($verification) ?>"><?php endif ?>
 

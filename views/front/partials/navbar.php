@@ -15,8 +15,10 @@ $cta = cta_link();
     <a href="<?= e(url($lang)) ?>" class="navbar-brand ms-4 ms-lg-0">
         <?php if ($logoUrl = media_url($logo, 'medium')): ?>
             <img src="<?= e($logoUrl) ?>" alt="<?= e(media_alt($logo) ?: $siteName) ?>" class="site-logo">
-        <?php else: ?>
-            <h2 class="mb-0 text-primary text-uppercase"><i class="fa-regular fa-face-smile me-1"></i><?= e($siteName) ?></h2>
+        <?php else: // ადმინში ლოგო არ არის → ენის მიხედვით SVG (ka — ქართული, სხვა — ლათინური) ?>
+            <?php $logoLang = $lang === 'ka' ? 'ka' : 'en' ?>
+            <img src="<?= asset("front/img/logo/kursori-logo-$logoLang-light.svg") ?>" alt="<?= e($siteName) ?>" class="site-logo site-logo-svg"
+                width="<?= $logoLang === 'ka' ? 521 : 437 ?>" height="83">
         <?php endif ?>
     </a>
     <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-label="<?= e(t('nav.menu')) ?>">
