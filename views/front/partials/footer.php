@@ -20,8 +20,14 @@ $contacts = array_filter([
 ?>
 <div class="container-fluid bg-dark text-light footer py-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="container text-center py-5">
-        <a href="<?= e(url(locale())) ?>">
-            <span class="d-block h1 display-4 mb-3 text-white text-uppercase"><i class="fa-regular fa-face-smile me-1"></i><?= e($siteName) ?></span>
+        <a href="<?= e(url(locale())) ?>" class="d-inline-block mb-4">
+            <?php if ($logoUrl = media_url($logo = setting('general.logo'), 'medium')): ?>
+                <img src="<?= e($logoUrl) ?>" alt="<?= e(media_alt($logo) ?: $siteName) ?>" class="footer-logo" loading="lazy">
+            <?php else: // იგივე, რაც navbar-ში: ka — ქართული, სხვა — ლათინური ?>
+                <?php $logoLang = locale() === 'ka' ? 'ka' : 'en' ?>
+                <img src="<?= asset("front/img/logo/kursori-logo-$logoLang-light.svg") ?>" alt="<?= e($siteName) ?>" class="footer-logo"
+                    width="<?= $logoLang === 'ka' ? 521 : 437 ?>" height="83" loading="lazy">
+            <?php endif ?>
         </a>
         <?php if ($tagline = setting('general.tagline')): ?><p class="mb-4"><?= e($tagline) ?></p><?php endif ?>
         <?php if ($contacts !== []): ?>

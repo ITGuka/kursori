@@ -871,6 +871,18 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
+/* ფუტერის ლოგო — img[width][height]-ის height: auto-ზე ძლიერი სელექტორით */
+.footer a img.footer-logo {
+    height: 44px;
+    width: auto;
+}
+
+@media (min-width: 768px) {
+    .footer a img.footer-logo {
+        height: 56px;
+    }
+}
+
 /* picture() — <picture> განლაგებაში არ მონაწილეობს, სტილი <img>-ზეა */
 picture {
     display: contents;
