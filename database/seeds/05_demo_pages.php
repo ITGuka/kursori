@@ -129,32 +129,32 @@ return new class extends Seeder {
     /** AI გუნდის პროცესის [ქვესათაური, სათაური] — [ka, en]; მთავარის „იდეიდან გაშვებამდე“ (კლიენტის ეტაპები) რომ არ გაიმეოროს */
     public const TEAM_PROCESS_HEADING = [['AI გუნდის პროცესი', 'AI Team Workflow'], ['ვინ რას აკეთებს ეტაპებად', 'Who Does What, Step by Step']];
 
-    /** AI გუნდის სამუშაო პროცესი (გუნდის გვერდი): [სათაური, ტექსტი] — [ka, en] */
+    /** AI გუნდის სამუშაო პროცესი (გუნდის გვერდი, pipeline ხედი): [სათაური, ტექსტი] — [ka, en], აგენტები */
     public const TEAM_PROCESS = [
         [['კვლევა', 'Research'],
          ['Gemini იკვლევს მოთხოვნებს და კონკურენტებს და წერს სპეციფიკაციას.',
-          'Gemini researches the requirements and competitors and writes the spec.']],
+          'Gemini researches the requirements and competitors and writes the spec.'], 'gemini'],
         [['არქიტექტურა', 'Architecture'],
          ['Claude Code ადგენს ტექნიკურ გეგმას და სამუშაოს ტიკეტებად ყოფს.',
-          'Claude Code drafts the technical plan and splits the work into tickets.']],
+          'Claude Code drafts the technical plan and splits the work into tickets.'], 'claude'],
         [['იმპლემენტაცია', 'Build'],
          ['Codex ტიკეტებს პარალელურად ასრულებს, რთულ ნაწილებს კი Claude Code წერს.',
-          'Codex works through tickets in parallel while Claude Code handles the complex parts.']],
+          'Codex works through tickets in parallel while Claude Code handles the complex parts.'], 'codex, claude'],
         [['ჯვარედინი რევიუ', 'Cross-review'],
          ['Claude-ის კოდს Codex ამოწმებს, Codex-ისას — Claude. ავტორი საკუთარ კოდს არ ამოწმებს.',
-          'Codex reviews Claude’s code and Claude reviews Codex’s. No one reviews their own work.']],
+          'Codex reviews Claude’s code and Claude reviews Codex’s. No one reviews their own work.'], 'codex, claude'],
         [['ტესტირება', 'Testing'],
          ['Unit ტესტები — Codex, E2E — Claude Code, ვიზუალური შემოწმება — Gemini.',
-          'Unit tests by Codex, E2E by Claude Code, visual checks by Gemini.']],
+          'Unit tests by Codex, E2E by Claude Code, visual checks by Gemini.'], 'codex, claude, gemini'],
         [['დასტური და გაშვება', 'Approval & Deploy'],
          ['ცვლილებას ადამიანი ამტკიცებს, შემდეგ Claude Code საიტს უშვებს.',
-          'A person approves the change, then Claude Code deploys it.']],
+          'A person approves the change, then Claude Code deploys it.'], 'claude'],
         [['დოკუმენტაცია', 'Documentation'],
          ['Gemini ანახლებს README-ს და API-ის დოკუმენტაციას.',
-          'Gemini updates the README and API documentation.']],
+          'Gemini updates the README and API documentation.'], 'gemini'],
     ];
 
-    private const MAP ='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
+    private const MAP = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
 
     private Page $pages;
     private PageBlock $blocks;
@@ -410,8 +410,8 @@ return new class extends Seeder {
             $this->block((int)$pageId, 'team_grid', ['source' => 'collection', 'category' => $departments[$key] ?? null, 'limit' => 0, 'button_link' => $this->link(null)],
                 ['subtitle' => $subtitle, 'title' => $title, 'button_label' => ['', '']]);
         }
-        [$steps, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['title' => $row[0], 'text' => $row[1]]], self::TEAM_PROCESS));
-        $this->block((int)$pageId, 'process', ['steps' => $steps, 'background' => 'secondary'],
+        [$steps, $ka, $en] = $this->items(array_map(fn (array $row) => [['agents' => $row[2]], ['title' => $row[0], 'text' => $row[1]]], self::TEAM_PROCESS));
+        $this->block((int)$pageId, 'process', ['layout' => 'pipeline', 'steps' => $steps, 'background' => 'dark'],
             ['subtitle' => self::TEAM_PROCESS_HEADING[0], 'title' => self::TEAM_PROCESS_HEADING[1], 'steps' => [$ka, $en]]);
     }
 

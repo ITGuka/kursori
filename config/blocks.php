@@ -131,9 +131,13 @@ return [
         'icon'   => 'bx bx-list-ol',
         'view'   => 'front/blocks/process',
         'fields' => $title + [
+            'layout'     => ['type' => 'select', 'label' => 'ხედი', 'default' => 'grid',
+                             'options' => ['grid' => 'ბადე (ეტაპები ერთ ხაზად)', 'pipeline' => 'ვერტიკალური ხაზი (AI აგენტებით)']],
             'steps'      => ['type' => 'repeater', 'label' => 'ეტაპები', 'min_items' => 2, 'max_items' => 8, 'fields' => [
-                'title' => ['type' => 'text', 'label' => 'ეტაპი', 'translatable' => true, 'max' => 100],
-                'text'  => ['type' => 'textarea', 'label' => 'აღწერა', 'translatable' => true, 'max' => 300],
+                'title'  => ['type' => 'text', 'label' => 'ეტაპი', 'translatable' => true, 'max' => 100],
+                'text'   => ['type' => 'textarea', 'label' => 'აღწერა', 'translatable' => true, 'max' => 300],
+                'agents' => ['type' => 'text', 'label' => 'AI აგენტები', 'max' => 60,
+                             'help' => 'მხოლოდ „ვერტიკალური ხაზი“ ხედში. მძიმით: claude, gemini, codex — ეტაპზე ჩანს აგენტების ბეჯები.'],
             ]],
             'background' => $background,
         ],
