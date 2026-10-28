@@ -1170,7 +1170,68 @@ img[width][height] {
 /* გუნდის ბარათზე ბმული მთლიან სახელზე */
 .team-item .team-name {
     color: var(--bs-white);
+    /* გრძელი როლი (მაგ. „ტექ-ლიდი / ორკესტრატორი“) ორ ხაზზე — ზოლი იზრდება */
+    height: auto;
+    min-height: 60px;
+    padding: 8px 12px;
+    text-align: center;
 }
+
+.team-item .team-name h5 {
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+/* ფოტოს ნაცვლად როლის აიკონი — ფოტოს პროპორციით (600×800) */
+.team-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3 / 4;
+    padding-bottom: 60px;
+    background: radial-gradient(circle at 50% 40%, rgba(224, 22, 119, .22), transparent 65%), var(--bs-secondary);
+    border: 1px solid rgba(255, 255, 255, .08);
+    color: var(--site-accent-text);
+    font-size: 4.5rem;
+}
+
+/* მობილურზე ბარათი მთელ სიგანეზეა — აიკონის ბარათი დაბალი, რომ 15 როლი გრძელ სიად არ იქცეს */
+@media (max-width: 767.98px) {
+    .team-icon {
+        aspect-ratio: 16 / 10;
+        font-size: 3.5rem;
+    }
+}
+
+/* AI აგენტის ბეჯი: მუქი ფონი + აგენტის ფერის წერტილი */
+.team-agent {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 50px;
+    background: rgba(0, 0, 0, .75);
+    color: var(--bs-white);
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.team-agent::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.team-agent-claude::before { background: #D97757; }
+.team-agent-gemini::before { background: #4C8DF6; }
+.team-agent-codex::before  { background: #10A37F; }
 
 /* ადმინისთვის მონახაზის წინასწარი ხედი */
 .preview-bar {

@@ -11,6 +11,63 @@ use Core\Database\Seeder;
 // სურათები — 04_demo_media (resources/stock), ჩაანაცვლეთ რეალურით. გაეშვება მხოლოდ მაშინ, როცა კოლექციებში ჯერ არაფერია.
 // ქეისები და შეფასებები რეალისტური, მაგრამ გამოგონილია (კლიენტები, ციფრები) — გაშვებამდე ჩაანაცვლეთ ნამდვილით.
 return new class extends Seeder {
+    /** AI გუნდის განყოფილებები (გუნდის კატეგორიები): გასაღები => [სახელი [ka, en], slug [ka, en]] */
+    public const DEPARTMENTS = [
+        'management'   => [['მართვა', 'Management'], ['martva', 'management']],
+        'architecture' => [['არქიტექტურა და ანალიზი', 'Architecture & Analysis'], ['arqiteqtura', 'architecture']],
+        'development'  => [['დეველოპმენტი', 'Development'], ['developmenti', 'development']],
+        'quality'      => [['ხარისხის კონტროლი', 'Quality Assurance'], ['khariskhis-kontroli', 'quality-assurance']],
+    ];
+
+    /** AI გუნდი: [განყოფილება, slug, აიკონი, აგენტი, როლი [ka, en], პოზიცია [ka, en], მახასიათებლები [ka, en]] */
+    public const AI_TEAM = [
+        ['management', 'product-owner', 'fa-solid fa-bullseye', 'gemini',
+            ['პროდუქტის მფლობელი', 'Product Owner'], ['კვლევა და პრიორიტეტები', 'Research & priorities'],
+            ["ძლიერი მხარე: დიდი კონტექსტი\nამოცანა: მოთხოვნები", "Strength: Large context\nTask: Requirements"]],
+        ['management', 'tech-lead', 'fa-solid fa-sitemap', 'claude',
+            ['ტექ-ლიდი / ორკესტრატორი', 'Tech Lead / Orchestrator'], ['დაგეგმვა და კოორდინაცია', 'Planning & coordination'],
+            ["ძლიერი მხარე: ღრმა მსჯელობა\nამოცანა: სამუშაოს განაწილება", "Strength: Deep reasoning\nTask: Assigning work"]],
+        ['architecture', 'solution-architect', 'fa-solid fa-compass-drafting', 'claude',
+            ['არქიტექტორი', 'Solution Architect'], ['ტექნიკური გეგმა და ADR', 'Technical plan & ADRs'],
+            ["ძლიერი მხარე: სისტემური ხედვა\nამოცანა: ამოცანის დაშლა", "Strength: Systems thinking\nTask: Breaking down work"]],
+        ['architecture', 'business-analyst', 'fa-solid fa-magnifying-glass-chart', 'gemini',
+            ['ბიზნეს-ანალიტიკოსი', 'Business Analyst'], ['კვლევა და სპეციფიკაცია', 'Research & specs'],
+            ["ძლიერი მხარე: Google ძიება\nამოცანა: ბაზრის კვლევა", "Strength: Search grounding\nTask: Market research"]],
+        ['architecture', 'tech-writer', 'fa-solid fa-book-open', 'gemini',
+            ['ტექნიკური მწერალი', 'Tech Writer'], ['დოკუმენტაცია', 'Documentation'],
+            ["ძლიერი მხარე: მთელი კოდი კონტექსტში\nამოცანა: README და API", "Strength: Whole codebase in context\nTask: README & API docs"]],
+        ['development', 'backend-lead', 'fa-solid fa-server', 'claude',
+            ['ბექენდ ლიდი', 'Backend Lead'], ['ლოგიკა, API, ბაზა', 'Logic, API, database'],
+            ["ძლიერი მხარე: მრავალფაილიანი ცვლილებები\nამოცანა: მიგრაციები", "Strength: Multi-file changes\nTask: Migrations"]],
+        ['development', 'frontend-lead', 'fa-solid fa-code', 'claude',
+            ['ფრონტენდ ლიდი', 'Frontend Lead'], ['კომპონენტები და ინტეგრაცია', 'Components & integration'],
+            ["ძლიერი მხარე: რეფაქტორინგი\nამოცანა: UI არქიტექტურა", "Strength: Refactoring\nTask: UI architecture"]],
+        ['development', 'ui-prototyper', 'fa-solid fa-pen-ruler', 'gemini',
+            ['UI პროტოტიპერი', 'UI Prototyper'], ['მაკეტიდან კომპონენტამდე', 'From mockup to component'],
+            ["ძლიერი მხარე: მულტიმოდალურობა\nამოცანა: სკრინშოტიდან კოდი", "Strength: Multimodal\nTask: Screenshot to code"]],
+        ['development', 'feature-developers', 'fa-solid fa-layer-group', 'codex',
+            ['ფიჩერ-დეველოპერები', 'Feature Developers'], ['პარალელური ტიკეტები', 'Parallel tickets'],
+            ["ძლიერი მხარე: ღრუბლოვანი sandbox\nამოცანა: ბაგფიქსი და CRUD", "Strength: Async cloud sandbox\nTask: Bug fixes & CRUD"]],
+        ['development', 'devops', 'fa-solid fa-gears', 'claude',
+            ['DevOps ინჟინერი', 'DevOps Engineer'], ['CI/CD და დეპლოი', 'CI/CD & deploys'],
+            ["ძლიერი მხარე: ტერმინალი\nამოცანა: Docker და pipelines", "Strength: Terminal-native\nTask: Docker & pipelines"]],
+        ['quality', 'code-reviewer', 'fa-solid fa-code-compare', 'codex',
+            ['კოდის რევიუერი', 'Code Reviewer'], ['ჯვარედინი რევიუ', 'Cross-review'],
+            ["წესი: ავტორი ≠ რევიუერი\nამოცანა: Claude-ის PR-ები", "Rule: Author ≠ reviewer\nTask: Reviewing Claude PRs"]],
+        ['quality', 'qa-unit', 'fa-solid fa-vial', 'codex',
+            ['QA: Unit ტესტები', 'QA: Unit Tests'], ['Unit და ინტეგრაციული ტესტები', 'Unit & integration tests'],
+            ["ძლიერი მხარე: პარალელური სამუშაო\nამოცანა: ტესტებით დაფარვა", "Strength: Parallel work\nTask: Test coverage"]],
+        ['quality', 'qa-e2e', 'fa-solid fa-computer-mouse', 'claude',
+            ['QA: E2E ტესტები', 'QA: E2E Tests'], ['მომხმარებლის სცენარები', 'User journeys'],
+            ["ძლიერი მხარე: ბრაუზერის მართვა\nამოცანა: რეალური სცენარები", "Strength: Browser automation\nTask: Real user flows"]],
+        ['quality', 'visual-qa', 'fa-solid fa-eye', 'gemini',
+            ['ვიზუალური QA', 'Visual QA'], ['UI რეგრესიები', 'UI regressions'],
+            ["ძლიერი მხარე: სურათის ანალიზი\nამოცანა: მაკეტთან შედარება", "Strength: Image analysis\nTask: Matching the mockup"]],
+        ['quality', 'security-auditor', 'fa-solid fa-shield-halved', 'claude',
+            ['უსაფრთხოების აუდიტორი', 'Security Auditor'], ['უსაფრთხოების რევიუ', 'Security review'],
+            ["ძლიერი მხარე: ღრმა ანალიზი\nამოცანა: მოწყვლადობები", "Strength: Deep analysis\nTask: Vulnerabilities"]],
+    ];
+
     /** პორტფოლიოს ქეისები — ინგლისური slug => client, excerpt, body [ka, en] */
     public const CASES = [
         'fashion-house-website' => [
@@ -329,18 +386,8 @@ return new class extends Seeder {
             ]);
         }
 
-        // ---- გუნდი ----
-        $studio = $this->category('team', ['სტუდია', 'Studio'], ['studia', 'studio']);
-        $team = [
-            ['team-1.jpg', ['ნინო ბერიძე', 'Nino Beridze'], ['არტ-დირექტორი', 'Art Director'], ["გამოცდილება: 12 წელი\nპროექტები: 150+", "Experience: 12 years\nProjects: 150+"]],
-            ['team-2.jpg', ['ანა მელაძე', 'Ana Meladze'], ['UI/UX დიზაინერი', 'UI/UX Designer'], ["გამოცდილება: 7 წელი\nპროექტები: 90+", "Experience: 7 years\nProjects: 90+"]],
-            ['team-3.jpg', ['მარიამ კაპანაძე', 'Mariam Kapanadze'], ['ფრონტენდ დეველოპერი', 'Frontend Developer'], ["გამოცდილება: 6 წელი\nპროექტები: 70+", "Experience: 6 years\nProjects: 70+"]],
-            ['team-4.jpg', ['თამარ ჯაფარიძე', 'Tamar Japaridze'], ['პროექტის მენეჯერი', 'Project Manager'], ["გამოცდილება: 9 წელი\nპროექტები: 120+", "Experience: 9 years\nProjects: 120+"]],
-        ];
-        foreach ($team as $i => [$image, $name, $position, $attributes]) {
-            $this->item('team', $studio, $image, $name, ['member-' . ($i + 1), 'member-' . ($i + 1)],
-                ['link' => ['type' => '', 'page_id' => null, 'url' => '', 'new_tab' => false]], ['position' => $position, 'attributes' => $attributes]);
-        }
+        // ---- გუნდი (AI აგენტები) + გუნდის გვერდის ბლოკები (05_demo_pages ჩანაწერებამდე ეშვება) ----
+        (require __DIR__ . '/05_demo_pages.php')->teamPage($db, $this->aiTeam());
 
         // ---- შეფასებები ----
         $i = 0;
@@ -367,6 +414,26 @@ return new class extends Seeder {
 
         // header-ის „სერვისები ▾“ ქვემენიუ (06_menus სერვისებამდე ეშვება)
         (require __DIR__ . '/06_menus.php')::serviceChildren($db, app(Menu::class));
+    }
+
+    /**
+     * AI გუნდი: განყოფილებები (კატეგორიები) და როლები (public — არსებული საიტის მიგრაციისთვისაც).
+     * @return array<string, int> განყოფილების გასაღები => კატეგორიის id
+     */
+    public function aiTeam(): array
+    {
+        $this->items ??= app(Collection::class);
+        $this->categories ??= app(Category::class);
+        $departments = [];
+        foreach (self::DEPARTMENTS as $key => [$names, $slugs]) {
+            $departments[$key] = $this->category('team', $names, $slugs);
+        }
+        foreach (self::AI_TEAM as [$department, $slug, $icon, $agent, $name, $position, $attributes]) {
+            $this->item('team', $departments[$department], '', $name, [$slug, $slug],
+                ['agent' => $agent, 'icon' => $icon, 'link' => ['type' => '', 'page_id' => null, 'url' => '', 'new_tab' => false]],
+                ['position' => $position, 'attributes' => $attributes]);
+        }
+        return $departments;
     }
 
     /**

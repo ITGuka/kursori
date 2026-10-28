@@ -29,8 +29,8 @@ return new class extends Seeder {
             'KURSORI projects: corporate websites, online stores and branding for different industries.',
         ],
         'team' => [
-            'KURSORI-ის გუნდი: არტ-დირექტორი, UI/UX დიზაინერი, ფრონტენდ დეველოპერი და პროექტის მენეჯერი.',
-            'The KURSORI team: art director, UI/UX designer, frontend developer and project manager.',
+            'KURSORI-ის AI გუნდი: Claude Code, Gemini და GPT Codex — ვინ რას აკეთებს და როგორ ვმუშაობთ იდეიდან გაშვებამდე.',
+            'The KURSORI AI team: Claude Code, Gemini and GPT Codex — who does what and how we work from idea to launch.',
         ],
         'testimonials' => [
             'რას ამბობენ კლიენტები KURSORI-თან თანამშრომლობაზე — შეფასებები საიტებისა და ბრენდინგის პროექტებზე.',
@@ -126,7 +126,32 @@ return new class extends Seeder {
           'We launch the site, set up analytics and show your team how to use the admin panel.']],
     ];
 
-    private const MAP = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
+    /** AI გუნდის სამუშაო პროცესი (გუნდის გვერდი): [სათაური, ტექსტი] — [ka, en] */
+    public const TEAM_PROCESS = [
+        [['კვლევა', 'Research'],
+         ['Gemini იკვლევს მოთხოვნებს და კონკურენტებს და წერს სპეციფიკაციას.',
+          'Gemini researches the requirements and competitors and writes the spec.']],
+        [['არქიტექტურა', 'Architecture'],
+         ['Claude Code ადგენს ტექნიკურ გეგმას და სამუშაოს ტიკეტებად ყოფს.',
+          'Claude Code drafts the technical plan and splits the work into tickets.']],
+        [['იმპლემენტაცია', 'Build'],
+         ['Codex ტიკეტებს პარალელურად ასრულებს, რთულ ნაწილებს კი Claude Code წერს.',
+          'Codex works through tickets in parallel while Claude Code handles the complex parts.']],
+        [['ჯვარედინი რევიუ', 'Cross-review'],
+         ['Claude-ის კოდს Codex ამოწმებს, Codex-ისას — Claude. ავტორი საკუთარ კოდს არ ამოწმებს.',
+          'Codex reviews Claude’s code and Claude reviews Codex’s. No one reviews their own work.']],
+        [['ტესტირება', 'Testing'],
+         ['Unit ტესტები — Codex, E2E — Claude Code, ვიზუალური შემოწმება — Gemini.',
+          'Unit tests by Codex, E2E by Claude Code, visual checks by Gemini.']],
+        [['დასტური და გაშვება', 'Approval & Deploy'],
+         ['ცვლილებას ადამიანი ამტკიცებს, შემდეგ Claude Code საიტს უშვებს.',
+          'A person approves the change, then Claude Code deploys it.']],
+        [['დოკუმენტაცია', 'Documentation'],
+         ['Gemini ანახლებს README-ს და API-ის დოკუმენტაციას.',
+          'Gemini updates the README and API documentation.']],
+    ];
+
+    private const MAP ='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47657.23!2d44.7646!3d41.7151!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7e64f626b%3A0x61d084ede2576ea3!2sTbilisi!5e0!3m2!1sen!2sge!4v1700000000000!5m2!1sen!2sge';
 
     private Page $pages;
     private PageBlock $blocks;
@@ -178,7 +203,7 @@ return new class extends Seeder {
                 . '<p>Every project starts with understanding your business and ends with measurable results — more calls, more orders, a stronger brand.</p>',
             ],
         ]);
-        $this->collectionBlock($about, 'team_grid', ['გუნდი', 'Team'], ['ვინ ვართ', 'Who We Are'], ['limit' => 4]);
+        $this->aboutTeam($about, $team);
         $this->banner($about);
 
         // სერვისები
@@ -196,8 +221,8 @@ return new class extends Seeder {
         $this->header($portfolio);
         $this->portfolio($portfolio, 0, 'dark');
 
+        // გუნდის გვერდის ბლოკები — teamPage(), 07_demo_collections-დან (განყოფილებების კატეგორიები იქ იქმნება)
         $this->header($team);
-        $this->collectionBlock($team, 'team_grid', ['გუნდი', 'Team'], ['ჩვენი გუნდი', 'Meet the Team'], []);
 
         $this->header($reviews);
         $this->collectionBlock($reviews, 'testimonials', ['შეფასებები', 'Testimonials'], ['რას ამბობენ კლიენტები', 'What Clients Say'], ['background' => 'dark']);
@@ -348,6 +373,43 @@ return new class extends Seeder {
         $this->block($pageId, 'blog_list', ['category' => null, 'limit' => 3, 'button_link' => $this->link($blog), 'background' => 'secondary'], [
             'subtitle' => ['ბლოგი', 'Blog'], 'title' => ['ბოლო სტატიები', 'Latest Articles'], 'button_label' => ['ყველა სტატია', 'All Articles'],
         ]);
+    }
+
+    /** „ჩვენ შესახებ“: AI გუნდის მოკლე ვერსია (პირველი 4 როლი) + ბმული გუნდის გვერდზე (public — ერთჯერადი განახლებისთვისაც) */
+    public function aboutTeam(int $pageId, int $team): void
+    {
+        $this->blocks ??= app(PageBlock::class);
+        $this->block($pageId, 'team_grid', ['source' => 'collection', 'category' => null, 'limit' => 4, 'button_link' => $this->link($team)], [
+            'subtitle'     => ['AI გუნდი', 'AI Team'],
+            'title'        => ['ვინ მუშაობს თქვენს პროექტზე', 'Who Builds Your Project'],
+            'button_label' => ['მთელი გუნდი', 'Meet the Whole Team'],
+        ]);
+    }
+
+    /**
+     * გუნდის გვერდი: ორგანიზაციული სქემა (ბლოკი თითო განყოფილებაზე) + სამუშაო პროცესი.
+     * @param array<string, int> $departments განყოფილების გასაღები => კატეგორიის id (07_demo_collections::aiTeam)
+     */
+    public function teamPage(DB $db, array $departments): void
+    {
+        $this->blocks ??= app(PageBlock::class);
+        $pageId = $db->value("SELECT page_id FROM page_translations WHERE lang = 'en' AND slug = 'team'");
+        if ($pageId === null) {
+            return;
+        }
+        $subtitles = [
+            'management'   => [['მართვა', 'Management'], ['ვინ წარმართავს პროექტს', 'Who Leads the Project']],
+            'architecture' => [['არქიტექტურა და ანალიზი', 'Architecture & Analysis'], ['ვინ გეგმავს', 'Who Plans']],
+            'development'  => [['დეველოპმენტი', 'Development'], ['ვინ აწყობს', 'Who Builds']],
+            'quality'      => [['ხარისხის კონტროლი', 'Quality Assurance'], ['ვინ ამოწმებს', 'Who Checks']],
+        ];
+        foreach ($subtitles as $key => [$subtitle, $title]) {
+            $this->block((int)$pageId, 'team_grid', ['source' => 'collection', 'category' => $departments[$key] ?? null, 'limit' => 0, 'button_link' => $this->link(null)],
+                ['subtitle' => $subtitle, 'title' => $title, 'button_label' => ['', '']]);
+        }
+        [$steps, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['title' => $row[0], 'text' => $row[1]]], self::TEAM_PROCESS));
+        $this->block((int)$pageId, 'process', ['steps' => $steps, 'background' => 'secondary'],
+            ['subtitle' => ['სამუშაო პროცესი', 'How We Work'], 'title' => ['იდეიდან გაშვებამდე', 'From Idea to Launch'], 'steps' => [$ka, $en]]);
     }
 
     /** თანამშრომლობის ეტაპები */

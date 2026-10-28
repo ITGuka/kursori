@@ -205,17 +205,22 @@ return [
         'icon'   => 'bx bx-group',
         'view'   => 'front/blocks/team_grid',
         'collection' => ['type' => 'team', 'target' => 'members', 'map' => [
-            'image' => 'image', 'name' => 'title', 'position' => 'position', 'attributes' => 'attributes', 'link' => 'link',
+            'image' => 'image', 'name' => 'title', 'position' => 'position', 'agent' => 'agent', 'icon' => 'icon', 'attributes' => 'attributes', 'link' => 'link',
         ]],
         'fields' => $title + $source('team') + [
             'members' => $manual + ['type' => 'repeater', 'label' => 'წევრები', 'max_items' => 40, 'fields' => [
                 'image'      => ['type' => 'image', 'label' => 'ფოტო', 'help' => 'ვერტიკალური, მაგ. 600×800'],
                 'name'       => ['type' => 'text', 'label' => 'სახელი', 'translatable' => true, 'max' => 100],
                 'position'   => ['type' => 'text', 'label' => 'პოზიცია', 'translatable' => true, 'max' => 100],
+                'agent'      => ['type' => 'select', 'label' => 'AI აგენტი', 'default' => '',
+                                 'options' => ['' => '— არცერთი', 'claude' => 'Claude Code', 'gemini' => 'Gemini', 'codex' => 'GPT Codex']],
+                'icon'       => ['type' => 'text', 'label' => 'აიკონი', 'max' => 60, 'help' => 'Font Awesome კლასი, მაგ. „fa-solid fa-code“ — ფოტოს ნაცვლად.'],
                 'attributes' => ['type' => 'textarea', 'label' => 'მახასიათებლები', 'translatable' => true, 'max' => 500,
                                  'help' => 'თითო ხაზზე „დასახელება: მნიშვნელობა“ — ჩანს ფოტოზე მიტანისას. მაგ. „პოზიცია: დიზაინერი“.'],
                 'link'       => ['type' => 'link', 'label' => 'ბმული'],
             ]],
+            'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'მაგ. „მთელი გუნდი“. ცარიელი — ღილაკი არ ჩანს.'],
+            'button_link'  => ['type' => 'link', 'label' => 'ღილაკის ბმული'],
         ],
     ],
 
