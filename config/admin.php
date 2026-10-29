@@ -23,6 +23,8 @@ return [
         ['header' => 'კონტენტი'],
         ['label' => 'გვერდები', 'icon' => 'bx bx-file', 'route' => 'admin.pages.index', 'active' => ['admin.pages.*', 'admin.blocks.*']],
         ...$collections,
+        // სიახლეების იმპორტი (D57); badge — მოდერაციაში მყოფი
+        ['label' => 'სიახლეები', 'icon' => 'bx bx-rss', 'route' => 'admin.news.index', 'active' => 'admin.news.*', 'badge' => 'news'],
         // დიზაინები (შეკვეთის ფორმა); collection — აქტიურია დიზაინებისა და მათი კატეგორიების გვერდებზე
         ['label' => 'დიზაინები', 'icon' => 'bx bx-palette', 'route' => 'admin.designs.index', 'collection' => 'designs'],
         ['label' => 'მენიუები', 'icon' => 'bx bx-menu', 'route' => 'admin.menus.index', 'active' => 'admin.menus.*'],
@@ -36,6 +38,7 @@ return [
         ['label' => 'თარგმანები', 'icon' => 'bx bx-font', 'route' => 'admin.translations.index', 'active' => 'admin.translations.*'],
         ['label' => 'ენები', 'icon' => 'bx bx-globe', 'route' => 'admin.languages.index', 'active' => 'admin.languages.*'],
         ['label' => 'გადამისამართებები', 'icon' => 'bx bx-shuffle', 'route' => 'admin.redirects.index', 'active' => 'admin.redirects.*'],
+        ['label' => 'გრაფიკი (cron)', 'icon' => 'bx bx-time-five', 'route' => 'admin.jobs.index', 'active' => 'admin.jobs.*'],
         ['label' => 'პარამეტრები', 'icon' => 'bx bx-cog', 'route' => 'admin.settings.index', 'active' => 'admin.settings.*'],
         ['label' => 'მომხმარებლები', 'icon' => 'bx bx-user', 'route' => 'admin.users.index', 'active' => 'admin.users.*'],
     ],

@@ -17,8 +17,9 @@ $value = function (string $key, string $lang = '') use ($old, $settings): string
     return $settings->raw($key, $lang);
 };
 
-// პირველი ჯგუფი, რომელშიც შეცდომაა — ის ჩანართი გაიხსნება
-$activeGroup = array_key_first($groups);
+// პირველი ჯგუფი, რომელშიც შეცდომაა — ის ჩანართი გაიხსნება; ?tab=news — ბმულით კონკრეტულ ჩანართზე (მაგ. სიახლეებიდან)
+$requestedTab = (string)app()->request()?->query('tab', '');
+$activeGroup = isset($groups[$requestedTab]) ? $requestedTab : array_key_first($groups);
 foreach (array_keys(errors()) as $errorKey) {
     $activeGroup = explode('.', $errorKey)[0];
     break;
@@ -26,7 +27,7 @@ foreach (array_keys(errors()) as $errorKey) {
 
 // ჯგუფის აიკონი ჩანართზე (config/settings.php-ში აიკონი არ წერია)
 $icons = ['general' => 'bx-cog', 'contact' => 'bx-phone', 'social' => 'bx-share-alt', 'seo' => 'bx-search-alt',
-          'legal' => 'bx-shield', 'orders' => 'bx-cart', 'mail' => 'bx-envelope', 'scripts' => 'bx-code-alt'];
+          'legal' => 'bx-shield', 'orders' => 'bx-cart', 'mail' => 'bx-envelope', 'news' => 'bx-rss', 'scripts' => 'bx-code-alt'];
 ?>
 
 <form method="post" action="<?= e(route('admin.settings.update')) ?>" novalidate>

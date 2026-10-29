@@ -25,6 +25,39 @@ final class ScheduledJob
         return $this->db->select('SELECT * FROM scheduled_jobs ORDER BY id');
     }
 
+    public function update(int $id, string $args, int $intervalMinutes, bool $active): void
+    {
+        $this->db->update('scheduled_jobs', ['args' => $args, 'interval_minutes' => $intervalMinutes, 'is_active' => (int)$active], 'id = ?', [$id]);
+    }
+
+    /**
+     * „ახლავე გაშვება“: ჯობი cron-ის შემდეგ ტიკზე (≤ 5 წთ) გაეშვება. ვებ-მოთხოვნიდან პროცესი არ იწყება —
+     * გრძელი ჯობი (თარგმანი) PHP-ის ვებ ლიმიტს გადააჭარბებდა.
+     */
+    public function queueNow(int $id): void
+    {
+        $this->db->update('scheduled_jobs', ['next_run_at' => date('Y-m-d H:i:s')], 'id = ?', [$id]);
+    }
+
+    /** @return int|null პირველი ჯობის id ამ ბრძანებით (მაგ. „გამოქვეყნება ახლავე“ რიგიდან) */
+    public function idByCommand(string $command): ?int
+    {
+        $id = $this->db->value('SELECT id FROM scheduled_jobs WHERE command = ? ORDER BY is_active DESC, id LIMIT 1', [$command]);
+        return $id === null ? null : (int)$id;
+    }
+
+    /** ბოლო გაშვების დრო ნებისმიერ ჯობზე — cron მუშაობს თუ არა */
+    public function lastActivity(): ?string
+    {
+        $value = $this->db->value('SELECT MAX(started_at) FROM job_runs');
+        return $value === null ? null : (string)$value;
+    }
+
+    public function findRun(int $id): ?array
+    {
+        return $this->db->first('SELECT * FROM job_runs WHERE id = ?', [$id]);
+    }
+
     /** @return list<array> აქტიური ჯობები, რომელთა დროც მოვიდა (next_run_at ცარიელი — დაუყოვნებლივ) */
     public function due(string $now): array
     {

@@ -20,6 +20,48 @@ final class NewsFeed
         return $feed === null ? null : self::cast($feed);
     }
 
+    /** @return list<array> ყველა feed ადმინისთვის: + კატეგორიის სახელი და სიახლეების რაოდენობა სტატუსით */
+    public function all(string $lang): array
+    {
+        $rows = $this->db->select(
+            "SELECT f.*,
+                    (SELECT name FROM category_translations t WHERE t.category_id = f.category_id ORDER BY t.lang = ? DESC LIMIT 1) AS category_name,
+                    (SELECT COUNT(*) FROM news_items i WHERE i.feed_id = f.id) AS items_total,
+                    (SELECT COUNT(*) FROM news_items i WHERE i.feed_id = f.id AND i.status = 'new') AS items_new,
+                    (SELECT COUNT(*) FROM news_items i WHERE i.feed_id = f.id AND i.status = 'published') AS items_published
+             FROM news_feeds f ORDER BY f.sort, f.id",
+            [$lang],
+        );
+        return array_map([self::class, 'cast'], $rows);
+    }
+
+    /** @return array<int, string> id => სახელი (ფილტრისთვის) */
+    public function options(): array
+    {
+        $options = [];
+        foreach ($this->db->select('SELECT id, name FROM news_feeds ORDER BY sort, id') as $row) {
+            $options[(int)$row['id']] = $row['name'];
+        }
+        return $options;
+    }
+
+    /** @param array<string, mixed> $data news_feeds-ის სვეტები */
+    public function save(?int $id, array $data): int
+    {
+        if ($id === null) {
+            $data['sort'] ??= (int)$this->db->value('SELECT COALESCE(MAX(sort), 0) + 1 FROM news_feeds');
+            return $this->db->insert('news_feeds', $data);
+        }
+        $this->db->update('news_feeds', $data, 'id = ?', [$id]);
+        return $id;
+    }
+
+    /** სიახლეები რჩება (feed_id → NULL), გამოქვეყნებული სტატიები ბლოგში — უცვლელად */
+    public function delete(int $id): void
+    {
+        $this->db->delete('news_feeds', 'id = ?', [$id]);
+    }
+
     /** @return list<array> აქტიური feed-ები რიგით (ერთ სტატიას პირველი შესაბამისი feed იღებს) */
     public function active(): array
     {

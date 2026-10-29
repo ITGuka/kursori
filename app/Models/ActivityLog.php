@@ -55,6 +55,13 @@ final class ActivityLog
         'redirect.created'    => 'დაამატა გადამისამართება',
         'redirect.updated'    => 'შეცვალა გადამისამართება',
         'redirect.deleted'    => 'წაშალა გადამისამართება',
+        'news_feed.created'   => 'დაამატა სიახლეების feed',
+        'news_feed.updated'   => 'შეცვალა სიახლეების feed',
+        'news_feed.deleted'   => 'წაშალა სიახლეების feed',
+        'news.approved'       => 'დაამტკიცა სიახლეები',
+        'news.rejected'       => 'უარყო სიახლეები',
+        'job.updated'         => 'შეცვალა ჯობის გრაფიკი',
+        'job.queued'          => 'გაუშვა ჯობი',
     ];
 
     /** Dashboard-ის „დეტალები“ სვეტისთვის: data-დან ყველაზე აღწერითი მნიშვნელობა */

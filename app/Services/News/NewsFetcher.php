@@ -30,17 +30,7 @@ final class NewsFetcher
         $saved = 0;
         $error = null;
         try {
-            foreach ($feed['tag_list'] as $tag) {
-                foreach ($this->client()->articles($tag, $feed['top_days']) as $article) {
-                    if ($this->accepts($feed, $article)) {
-                        $candidates[(string)$article['id']] = $article;
-                    }
-                }
-            }
-            foreach ($this->items->existing(self::SOURCE, array_map('strval', array_keys($candidates))) as $id) {
-                unset($candidates[$id]);
-            }
-            uasort($candidates, fn ($a, $b) => (int)$b['public_reactions_count'] <=> (int)$a['public_reactions_count']);
+            $candidates = $this->candidates($feed);
             $picked = array_slice($candidates, 0, $feed['per_run'], true);
 
             foreach ($picked as $article) {
@@ -56,6 +46,28 @@ final class NewsFetcher
             $this->feeds->markFetched($feed['id'], $error);
         }
         return ['candidates' => count($candidates), 'saved' => $saved, 'error' => $error];
+    }
+
+    /**
+     * feed-ის კანდიდატები ფილტრის შემდეგ, ჯერ არ შენახული, პოპულარობით (პირველი per_run — შემდეგ წამოღებაზე).
+     * ადმინის „ტესტი“ ამას აჩვენებს — არაფერს ინახავს.
+     * @return array<string, array> external id => dev.to-ს სიის ჩანაწერი
+     */
+    public function candidates(array $feed): array
+    {
+        $candidates = [];
+        foreach ($feed['tag_list'] as $tag) {
+            foreach ($this->client()->articles($tag, $feed['top_days']) as $article) {
+                if ($this->accepts($feed, $article)) {
+                    $candidates[(string)$article['id']] = $article;
+                }
+            }
+        }
+        foreach ($this->items->existing(self::SOURCE, array_map('strval', array_keys($candidates))) as $id) {
+            unset($candidates[$id]);
+        }
+        uasort($candidates, fn ($a, $b) => (int)$b['public_reactions_count'] <=> (int)$a['public_reactions_count']);
+        return $candidates;
     }
 
     private function accepts(array $feed, array $article): bool

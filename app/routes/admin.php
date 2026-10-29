@@ -10,6 +10,9 @@ use App\Controllers\Admin\RedirectController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\DesignController;
 use App\Controllers\Admin\InboxController;
+use App\Controllers\Admin\JobController;
+use App\Controllers\Admin\NewsController;
+use App\Controllers\Admin\NewsFeedController;
 use App\Controllers\Admin\NewsletterController;
 use App\Controllers\Admin\LanguageController;
 use App\Controllers\Admin\MediaController;
@@ -137,6 +140,24 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->get('/media/{id}/edit', [MediaController::class, 'edit'])->name('media.edit');
         $router->put('/media/{id}', [MediaController::class, 'update'])->name('media.update');
         $router->delete('/media/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+        $router->get('/news', [NewsController::class, 'index'])->name('news.index');
+        $router->post('/news/moderate', [NewsController::class, 'moderate'])->name('news.moderate');
+        $router->post('/news/fetch-now', [NewsController::class, 'fetchNow'])->name('news.fetch_now');
+        $router->get('/news/feeds', [NewsFeedController::class, 'index'])->name('news.feeds.index');
+        $router->get('/news/feeds/create', [NewsFeedController::class, 'create'])->name('news.feeds.create');
+        $router->post('/news/feeds', [NewsFeedController::class, 'store'])->name('news.feeds.store');
+        $router->get('/news/feeds/{id}/edit', [NewsFeedController::class, 'edit'])->name('news.feeds.edit');
+        $router->get('/news/feeds/{id}/test', [NewsFeedController::class, 'test'])->name('news.feeds.test');
+        $router->put('/news/feeds/{id}', [NewsFeedController::class, 'update'])->name('news.feeds.update');
+        $router->delete('/news/feeds/{id}', [NewsFeedController::class, 'destroy'])->name('news.feeds.destroy');
+        $router->get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
+
+        $router->get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+        $router->get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
+        $router->put('/jobs/{id}', [JobController::class, 'update'])->name('jobs.update');
+        $router->post('/jobs/{id}/run', [JobController::class, 'run'])->name('jobs.run');
+        $router->get('/job-runs/{id}', [JobController::class, 'runLog'])->name('jobs.run_log');
 
         $router->get('/settings', [SettingsController::class, 'index'])->name('settings.index');
         $router->put('/settings', [SettingsController::class, 'update'])->name('settings.update');
