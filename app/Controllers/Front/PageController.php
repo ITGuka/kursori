@@ -56,12 +56,19 @@ final class PageController
 
         $header = '';
         $content = '';
+        $listPage = 1; // პაგინირებული სიის (blog_list → per_page) მიმდინარე გვერდი
         foreach ($this->blocks->forPage($pageId, true) as $index => $block) {
             $definition = $this->registry->get($block['type']);
             if ($definition === null) {
                 continue;
             }
             $data = $this->resolver->resolveBlock($definition, $block['settings'], $block['content'][$lang] ?? [], $block['content'][$default] ?? [], $lang, $default);
+            if (isset($data['pagination'])) {
+                if ($data['pagination']['requested'] > $data['pagination']['pages']) {
+                    throw new HttpException(404);
+                }
+                $listPage = $data['pagination']['page'];
+            }
             $html = $this->renderBlock($definition['view'], ['data' => $data, 'block' => $block, 'page' => $translation, 'breadcrumbs' => $breadcrumbs]);
 
             // header ბლოკი (სლაიდერი / გვერდის სათაური) navbar-თან ერთ კონტეინერში, მხოლოდ პირველი
@@ -83,18 +90,26 @@ final class PageController
 
         $siteName = (string)setting('general.site_name');
         $alternates = $this->alternates($pageId);
+        $title = $translation['meta_title'] !== '' ? $translation['meta_title']
+            : ($page['is_home'] ? (setting('seo.meta_title') ?: $siteName) : $translation['title'] . ' · ' . $siteName);
+        $canonical = $this->pages->url($pageId, $lang, true);
+        // სიის მე-2+ გვერდი: საკუთარი canonical და სათაური; hreflang მხოლოდ პირველ გვერდზე (ენებზე სხვადასხვა სტატიებია)
+        if ($listPage > 1) {
+            $title = t('blog.page', ['n' => $listPage]) . ' · ' . $title;
+            $canonical .= '?page=' . $listPage;
+            $alternates = [];
+        }
 
         return view('front/page', [
             'header'  => $header,
             'content' => $content,
             'preview' => $page['status'] !== 'published' ? 'მონახაზი — ჩანს მხოლოდ ადმინისთვის' : null,
             'meta'    => [
-                'title'          => $translation['meta_title'] !== '' ? $translation['meta_title']
-                                    : ($page['is_home'] ? (setting('seo.meta_title') ?: $siteName) : $translation['title'] . ' · ' . $siteName),
+                'title'          => $title,
                 'description'    => $translation['meta_description'] !== '' ? $translation['meta_description'] : Str::limit((string)setting('seo.meta_description'), 300),
                 'image'          => media_url($page['og_image_id'], 'large') ?: null,
-                'canonical'      => $this->pages->url($pageId, $lang, true),
-                'alternates'     => $page['status'] === 'published' ? $alternates + (isset($alternates[$default]) ? ['x-default' => $alternates[$default]] : []) : [],
+                'canonical'      => $canonical,
+                'alternates'     => $page['status'] === 'published' && $alternates !== [] ? $alternates + (isset($alternates[$default]) ? ['x-default' => $alternates[$default]] : []) : [],
                 'language_links' => $this->languageLinks($alternates),
                 'noindex'        => $page['status'] !== 'published',
             ],

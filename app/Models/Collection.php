@@ -198,7 +198,30 @@ final class Collection
      * აქტიური ჩანაწერები ბლოკისთვის/სიისთვის მიმდინარე ენაზე (თარგმანი ენაზე არ აქვს → არ ჩანს).
      * @return list<array> resolve-ის ფორმატით
      */
-    public function list(string $type, ?int $categoryId, int $limit, string $lang, string $defaultLang): array
+    public function list(string $type, ?int $categoryId, int $limit, string $lang, string $defaultLang, int $offset = 0): array
+    {
+        [$where, $bindings] = $this->listWhere($type, $categoryId, $lang);
+        $order = (self::type($type)['order'] ?? '') === 'newest' ? 'i.created_at DESC, i.id DESC' : 'i.sort, i.id';
+        $ids = $this->db->column(
+            "SELECT i.id FROM collection_items i JOIN collection_item_translations t ON t.item_id = i.id AND t.lang = ?
+             WHERE $where ORDER BY $order" . ($limit > 0 ? ' LIMIT ' . $limit . ($offset > 0 ? ' OFFSET ' . $offset : '') : ''),
+            $bindings,
+        );
+        return array_map(fn (array $item) => $this->resolve($item, $lang, $defaultLang), $this->findMany(array_map('intval', $ids)));
+    }
+
+    /** list()-ის ჩანაწერების რაოდენობა (პაგინაციისთვის) */
+    public function count(string $type, ?int $categoryId, string $lang): int
+    {
+        [$where, $bindings] = $this->listWhere($type, $categoryId, $lang);
+        return (int)$this->db->value(
+            "SELECT COUNT(*) FROM collection_items i JOIN collection_item_translations t ON t.item_id = i.id AND t.lang = ? WHERE $where",
+            $bindings,
+        );
+    }
+
+    /** @return array{0: string, 1: list<mixed>} აქტიური ჩანაწერები ენაზე (+ კატეგორია ქვეკატეგორიებით); პირველი binding — ენა */
+    private function listWhere(string $type, ?int $categoryId, string $lang): array
     {
         $where = 'i.collection = ? AND i.is_active = 1';
         $bindings = [$lang, $type];
@@ -207,13 +230,7 @@ final class Collection
             $where .= ' AND i.category_id IN (' . implode(', ', array_fill(0, count($ids), '?')) . ')';
             array_push($bindings, ...$ids);
         }
-        $order = (self::type($type)['order'] ?? '') === 'newest' ? 'i.created_at DESC, i.id DESC' : 'i.sort, i.id';
-        $ids = $this->db->column(
-            "SELECT i.id FROM collection_items i JOIN collection_item_translations t ON t.item_id = i.id AND t.lang = ?
-             WHERE $where ORDER BY $order" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
-            $bindings,
-        );
-        return array_map(fn (array $item) => $this->resolve($item, $lang, $defaultLang), $this->findMany(array_map('intval', $ids)));
+        return [$where, $bindings];
     }
 
     /**

@@ -156,6 +156,8 @@ return [
         'fields' => $title + [
             'category'     => ['type' => 'category', 'label' => 'კატეგორია', 'collection' => 'blog', 'help' => 'ცარიელი — ყველა სტატია.'],
             'limit'        => ['type' => 'number', 'label' => 'რაოდენობა', 'min' => 0, 'max' => 100, 'default' => 0, 'help' => '0 — ყველა. მთავარ გვერდზე, მაგ., 3.'],
+            'per_page'     => ['type' => 'number', 'label' => 'გვერდზე (პაგინაცია)', 'min' => 0, 'max' => 60, 'default' => 0,
+                               'help' => 'ბლოგის გვერდზე, მაგ., 12 — სტატიები გვერდებად (?page=2). 0 — პაგინაციის გარეშე („რაოდენობა“ მოქმედებს). ერთ გვერდზე მხოლოდ ერთ ბლოკს.'],
             'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'მაგ. „ყველა სტატია“ — ბლოგის გვერდზე ბმულით.'],
             'button_link'  => ['type' => 'link', 'label' => 'ღილაკის ბმული'],
             'background'   => $background,

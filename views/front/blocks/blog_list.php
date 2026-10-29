@@ -31,6 +31,28 @@ if ($posts === []) {
                 </div>
             <?php endforeach ?>
         </div>
+        <?php if (($data['pagination']['pages'] ?? 1) > 1): ?>
+            <?php
+            ['page' => $current, 'pages' => $pages] = $data['pagination'];
+            $base = url(ltrim((string)app()->request()?->path(), '/'));
+            $href = fn (int $n) => e($n > 1 ? $base . '?page=' . $n : $base);
+            ?>
+            <nav class="blog-pagination mt-5" aria-label="<?= e(t('blog.pages')) ?>">
+                <ul class="pagination justify-content-center flex-wrap mb-0">
+                    <?php if ($current > 1): ?>
+                        <li class="page-item"><a class="page-link" href="<?= $href($current - 1) ?>" rel="prev" aria-label="<?= e(t('blog.prev')) ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i></a></li>
+                    <?php endif ?>
+                    <?php for ($n = max(1, $current - 2); $n <= min($pages, $current + 2); $n++): ?>
+                        <li class="page-item<?= $n === $current ? ' active' : '' ?>">
+                            <a class="page-link" href="<?= $href($n) ?>"<?= $n === $current ? ' aria-current="page"' : '' ?> aria-label="<?= e(t('blog.page', ['n' => $n])) ?>"><?= $n ?></a>
+                        </li>
+                    <?php endfor ?>
+                    <?php if ($current < $pages): ?>
+                        <li class="page-item"><a class="page-link" href="<?= $href($current + 1) ?>" rel="next" aria-label="<?= e(t('blog.next')) ?>"><i class="fa fa-arrow-right" aria-hidden="true"></i></a></li>
+                    <?php endif ?>
+                </ul>
+            </nav>
+        <?php endif ?>
         <?php if ($data['button_label'] !== '' && $data['button_link']): ?>
             <div class="text-center mt-5">
                 <a<?= link_attrs($data['button_link']) ?> class="btn btn-outline-primary border-2 py-3 px-5"><?= e($data['button_label']) ?></a>

@@ -26,8 +26,20 @@ final class BlockResolver
 
         $collection = $definition['collection'] ?? null;
         if ($collection !== null && (!empty($collection['always']) || ($data['source'] ?? 'manual') === 'collection')) {
-            $items = app(Collection::class)->list($collection['type'], ($data['category'] ?? null) ?: null, (int)($data['limit'] ?? 0), $lang, $defaultLang);
-            $data[$collection['target']] = array_map(fn (array $item) => $this->mapItem($item, $collection['map']), $items);
+            $items = app(Collection::class);
+            $category = ($data['category'] ?? null) ?: null;
+            $perPage = (int)($data['per_page'] ?? 0);
+            if ($perPage > 0) {
+                // ?page=N; pagination.requested > pages → გვერდის controller-ი 404-ს აბრუნებს
+                $requested = max(1, (int)(app()->request()?->query('page', 1) ?? 1));
+                $pages = max(1, (int)ceil($items->count($collection['type'], $category, $lang) / $perPage));
+                $page = min($requested, $pages);
+                $data['pagination'] = ['page' => $page, 'pages' => $pages, 'requested' => $requested];
+                $list = $items->list($collection['type'], $category, $perPage, $lang, $defaultLang, ($page - 1) * $perPage);
+            } else {
+                $list = $items->list($collection['type'], $category, (int)($data['limit'] ?? 0), $lang, $defaultLang);
+            }
+            $data[$collection['target']] = array_map(fn (array $item) => $this->mapItem($item, $collection['map']), $list);
         }
         return $data;
     }
