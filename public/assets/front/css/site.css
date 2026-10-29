@@ -1684,12 +1684,6 @@ img[width][height] {
     padding-bottom: 3rem;
 }
 
-.footer-tagline {
-    max-width: 340px;
-    margin-bottom: 1.5rem;
-    color: var(--bs-light);
-    line-height: 1.6;
-}
 
 .footer-title {
     margin-bottom: 1.25rem;

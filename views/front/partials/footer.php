@@ -63,7 +63,6 @@ $showCta = $cta !== null && !$isActive($cta['href']);
                     <img src="<?= asset('front/img/logo/kursori-icon-' . (locale() === 'ka' ? 'ka' : 'en') . '.svg') ?>" alt="<?= e($siteName) ?>" class="footer-logo footer-logo-icon"
                         width="100" height="100" loading="lazy">
                 </a>
-                <?php if ($tagline = setting('general.tagline')): ?><p class="footer-tagline"><?= e($tagline) ?></p><?php endif ?>
                 <?php if ($socialLinks !== []): ?>
                     <ul class="footer-social" aria-label="<?= e(t('contact.follow_us')) ?>">
                         <?php foreach ($socialLinks as $network => $href): ?>
