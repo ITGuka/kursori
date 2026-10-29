@@ -7,7 +7,10 @@ $rows = array_filter([
     t('contact.phone')   => setting('contact.phone') ? '<a href="' . e(tel_href((string)setting('contact.phone'))) . '">' . e(setting('contact.phone')) . '</a>' : '',
     t('contact.email')   => setting('contact.email') ? '<a href="mailto:' . e(setting('contact.email')) . '">' . e(setting('contact.email')) . '</a>' : '',
     t('contact.address') => setting('contact.address') ? e(setting('contact.address')) : '',
-    t('contact.hours')   => setting('contact.working_hours') ? e(setting('contact.working_hours')) : '',
+    t('contact.hours')   => implode('<br>', array_filter([
+        setting('contact.working_hours') ? e(t('contact.hours_people')) . ': ' . e(setting('contact.working_hours')) : '',
+        setting('contact.working_hours_ai') ? e(t('contact.hours_ai')) . ': ' . e(setting('contact.working_hours_ai')) : '',
+    ])),
 ]);
 $social = ['x' => 'fab fa-x-twitter', 'facebook' => 'fab fa-facebook-f', 'instagram' => 'fab fa-instagram', 'linkedin' => 'fab fa-linkedin-in',
            'youtube' => 'fab fa-youtube', 'behance' => 'fab fa-behance', 'dribbble' => 'fab fa-dribbble'];

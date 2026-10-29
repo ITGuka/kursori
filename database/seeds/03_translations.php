@@ -25,11 +25,14 @@ return new class extends Seeder {
             'language'     => ['ენა', 'Language'],
         ],
         'contact' => [
-            'phone'      => ['ტელეფონი', 'Phone'],
-            'email'      => ['ელ-ფოსტა', 'E-mail'],
-            'address'    => ['მისამართი', 'Address'],
-            'follow_us'  => ['გამოგვყევით', 'Follow Us'],
-            'hours'      => ['სამუშაო საათები', 'Working Hours'],
+            'phone'        => ['ტელეფონი', 'Phone'],
+            'email'        => ['ელ-ფოსტა', 'E-mail'],
+            'address'      => ['მისამართი', 'Address'],
+            'follow_us'    => ['გამოგვყევით', 'Follow Us'],
+            'hours'        => ['სამუშაო საათები', 'Working Hours'],
+            // სამუშაო საათები: ადამიანები (contact.working_hours) და AI ბოტები (contact.working_hours_ai)
+            'hours_people' => ['გუნდი', 'Team'],
+            'hours_ai'     => ['AI ბოტები', 'AI bots'],
         ],
         'form' => [
             'name'          => ['თქვენი სახელი', 'Your Name'],

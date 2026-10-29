@@ -17,6 +17,7 @@ $phone = (string)setting('contact.phone');
 $email = (string)setting('contact.email');
 $address = (string)setting('contact.address');
 $hours = (string)setting('contact.working_hours');
+$hoursAi = (string)setting('contact.working_hours_ai');
 
 $currentPath = rtrim(app()->baseUrlPath() . (string)app()->request()?->path(), '/');
 $isActive = fn (string $href) => $href !== '' && !preg_match('~^[a-z]+:~i', $href) && rtrim((string)parse_url($href, PHP_URL_PATH), '/') === $currentPath;
@@ -94,7 +95,7 @@ $showCta = $cta !== null && !$isActive($cta['href']);
                 </nav>
             <?php endif ?>
 
-            <?php if ($phone !== '' || $email !== '' || $address !== '' || $hours !== ''): ?>
+            <?php if ($phone !== '' || $email !== '' || $address !== '' || $hours !== '' || $hoursAi !== ''): ?>
                 <div class="col-md-4 col-lg-3">
                     <h2 class="footer-title"><?= e(t('nav.contact')) ?></h2>
                     <address class="footer-contacts">
@@ -107,8 +108,12 @@ $showCta = $cta !== null && !$isActive($cta['href']);
                         <?php if ($address !== ''): ?>
                             <a href="https://www.google.com/maps/search/?api=1&amp;query=<?= e(rawurlencode($address)) ?>" target="_blank" rel="noopener"><i class="fa fa-location-dot" aria-hidden="true"></i><span><?= e($address) ?></span></a>
                         <?php endif ?>
+                        <?php // სამუშაო საათები: გუნდი (ადამიანები) და AI ბოტები ?>
                         <?php if ($hours !== ''): ?>
-                            <span class="footer-contacts-item"><i class="fa fa-clock" aria-hidden="true"></i><span><?= e($hours) ?></span></span>
+                            <span class="footer-contacts-item"><i class="fa fa-user-clock" aria-hidden="true"></i><span><span class="footer-hours-label"><?= e(t('contact.hours_people')) ?></span><?= e($hours) ?></span></span>
+                        <?php endif ?>
+                        <?php if ($hoursAi !== ''): ?>
+                            <span class="footer-contacts-item"><i class="fa fa-robot" aria-hidden="true"></i><span><span class="footer-hours-label"><?= e(t('contact.hours_ai')) ?></span><?= e($hoursAi) ?></span></span>
                         <?php endif ?>
                     </address>
                 </div>
