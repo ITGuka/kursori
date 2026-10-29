@@ -58,14 +58,10 @@ $showCta = $cta !== null && !$isActive($cta['href']);
     <div class="container footer-main">
         <div class="row g-5">
             <div class="col-lg-3">
+                <?php // ლოგოს K ვერსია (ნიშანი კურსორით) — ყველა ენაზე; სრული ლოგო ჰედერშია ?>
                 <a href="<?= e(url(locale())) ?>" class="d-inline-block mb-4" aria-label="<?= e($siteName) ?>">
-                    <?php if ($logoUrl = media_url($logo = setting('general.logo'), 'medium')): ?>
-                        <img src="<?= e($logoUrl) ?>" alt="<?= e(media_alt($logo) ?: $siteName) ?>" class="footer-logo" loading="lazy">
-                    <?php else: // იგივე, რაც navbar-ში: ka — ქართული, სხვა — ლათინური ?>
-                        <?php $logoLang = locale() === 'ka' ? 'ka' : 'en' ?>
-                        <img src="<?= asset("front/img/logo/kursori-logo-$logoLang-light.svg") ?>" alt="<?= e($siteName) ?>" class="footer-logo"
-                            width="<?= $logoLang === 'ka' ? 521 : 437 ?>" height="83" loading="lazy">
-                    <?php endif ?>
+                    <img src="<?= asset('front/img/logo/kursori-icon-en.svg') ?>" alt="<?= e($siteName) ?>" class="footer-logo footer-logo-icon"
+                        width="100" height="100" loading="lazy">
                 </a>
                 <?php if ($tagline = setting('general.tagline')): ?><p class="footer-tagline"><?= e($tagline) ?></p><?php endif ?>
                 <?php if ($socialLinks !== []): ?>

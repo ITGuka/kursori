@@ -1322,6 +1322,13 @@ h1, h2, h3, h4, h5, h6,
     height: auto;
 }
 
+/* K ნიშანი (კვადრატული, მომრგვალებული) — თხელი ჩარჩოთი, რომ footer-ის მუქ ფონზე კიდე გამოჩნდეს */
+.footer a img.footer-logo-icon {
+    width: 64px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 16px;
+}
+
 /* picture() — <picture> განლაგებაში არ მონაწილეობს, სტილი <img>-ზეა */
 picture {
     display: contents;
