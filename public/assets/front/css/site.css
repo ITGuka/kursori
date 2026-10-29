@@ -1283,29 +1283,6 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
-/* ინდივიდუალური შეკვეთა: მობილურის მენიუში — ხატულა + წარწერა; დესკტოპზე 1500px-მდე არ ეტევა (ფასებსა და შეკვეთის
-   ფორმაშია), 1700px-მდე — მხოლოდ ხატულა, მრგვალი */
-@media (min-width: 992px) and (max-width: 1499.98px) {
-    .navbar-cta-custom {
-        display: none;
-    }
-}
-
-.navbar-cta-custom .navbar-cta-label {
-    margin-left: .5rem;
-}
-
-@media (min-width: 992px) and (max-width: 1699.98px) {
-    .navbar-cta-custom {
-        width: 36px;
-        padding: 0;
-    }
-
-    .navbar-cta-custom .navbar-cta-label {
-        display: none;
-    }
-}
-
 /* მთავრული (ka) და UPPERCASE (en) ფართოა — სლაიდერის/ჰეროს სათაური დიდ ეკრანზეც მცირდება, რომ navbar-ს არ შეეხოს */
 @media (min-width: 992px) {
     .header-carousel .display-1 {

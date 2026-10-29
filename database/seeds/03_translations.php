@@ -14,9 +14,7 @@ return new class extends Seeder {
             'services' => ['სერვისები', 'Services'],
             'team'     => ['გუნდი', 'Our Team'],
             'contact'  => ['კონტაქტი', 'Contact'],
-            'menu'     => ['მენიუ', 'Menu'],
-            'custom_order' => ['ინდივიდუალური', 'Custom'],
-        ],
+            'menu'     => ['მენიუ', 'Menu'],        ],
         'common' => [
             'read_more'    => ['ვრცლად', 'Read More'],
             'explore_more' => ['გაიგე მეტი', 'Explore More'],
