@@ -1,6 +1,6 @@
 /**
  * საიტის შეკვეთის ფორმა (front/blocks/order_form): პაკეტი → მისი დარგები (ღილაკები) → დიზაინების ფილტრი, „მეტის ჩვენება“;
- * „ინდივიდუალური“ — იმავე ფორმაში, დარგისა და დიზაინის გარეშე
+ * „ინდივიდუალური“ — იმავე ფორმაში, დარგისა და დიზაინის ნაცვლად 5-ნაბიჯიანი ბრიფით (setupWizard)
  * და შაბლონის preview მოდალში (ბარათზე დაკლიკებით; iframe, მოწყობილობის სიგანის გადამრთველით).
  * დიზაინი აირჩევა მოდალის ღილაკით „ამ დიზაინის არჩევა“.
  */
@@ -16,7 +16,10 @@
         var pending = form.querySelector('[data-order-pending]');
         var custom = form.querySelector('[data-order-custom]');
         var customOption = form.querySelector('[data-order-custom-option]');
-        var description = form.querySelector('[data-order-description]');
+        var customStep = form.querySelector('[data-custom-step]');
+        var commonStep = form.querySelector('[data-order-common-step]');
+        var wizard = form.querySelector('[data-custom-wizard]');
+        var common = form.querySelector('[data-order-common]');
         var industries = form.querySelector('[data-order-industries-step]');
         var designStep = form.querySelector('[data-order-design-step]');
         var chips = Array.prototype.slice.call(form.querySelectorAll('[data-order-category]'));
@@ -67,19 +70,20 @@
             var single = !group || group.querySelectorAll('input').length < 2;
             if (industries) { industries.classList.toggle('d-none', single); }
             if (designStep) { designStep.textContent = single ? '2' : '3'; }
-            // „ინდივიდუალური“ — დარგი და დიზაინი იმალება, აღწერის წარწერა და მინიშნება იცვლება
+            // „ინდივიდუალური“ — დარგის, დიზაინისა და საერთო ველების ნაცვლად ბრიფი (ნაბიჯებად); დამალული ნაკრები disabled — არ იგზავნება
             var isCustom = !!current && current.hasAttribute('data-order-custom-option');
             if (steps) { steps.classList.toggle('is-pending', !current || isCustom); }
             if (pending) { pending.classList.toggle('d-none', !!current); }
-            if (description) {
-                var label = description.querySelector('label');
-                if (label) { label.textContent = description.getAttribute(isCustom ? 'data-label-custom' : 'data-label-order'); }
-                description.querySelector('[data-order-hint]').classList.toggle('d-none', isCustom);
-                description.querySelector('[data-custom-hint]').classList.toggle('d-none', !isCustom);
-            }
+            if (customStep) { customStep.classList.toggle('d-none', !isCustom); }
+            if (commonStep) { commonStep.classList.toggle('d-none', isCustom); }
+            if (wizard) { wizard.disabled = !isCustom; }
+            if (common) { common.disabled = isCustom; }
             filter();
             if (scroll && current && steps && !isCustom) { steps.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+            if (scroll && isCustom && customStep) { customStep.scrollIntoView({behavior: 'smooth', block: 'start'}); }
         }
+
+        if (wizard) { setupWizard(wizard); }
 
         // „ვერ იპოვეთ შესაფერისი?“ → იმავე ფორმაში „ინდივიდუალური“, პაკეტების ნაბიჯზე ასვლით
         if (custom && customOption) {
@@ -132,6 +136,126 @@
         selectPackage(false);
         forms.push({form: form, updateSelected: updateSelected});
     });
+
+    // ინდივიდუალური შეკვეთის ბრიფი (partials/custom-order-wizard): ერთი ნაბიჯი ერთდროულად, „შემდეგი“ — ნაბიჯის ვალიდაციით;
+    // ვალიდაციის შეცდომით დაბრუნებისას იხსნება პირველი ნაბიჯი, რომელშიც შეცდომაა
+    function setupWizard(wizard) {
+        var panels = Array.prototype.slice.call(wizard.querySelectorAll('[data-wizard-panel]'));
+        var tabs = Array.prototype.slice.call(wizard.querySelectorAll('[data-wizard-tab]'));
+        var prev = wizard.querySelector('[data-wizard-prev]');
+        var next = wizard.querySelector('[data-wizard-next]');
+        var submit = wizard.querySelector('[data-wizard-submit]');
+        var counter = wizard.querySelector('[data-wizard-counter]');
+        var progress = wizard.querySelector('[data-wizard-progress]');
+        var methods = Array.prototype.slice.call(wizard.querySelectorAll('input[name=contact_method]'));
+        var phone = wizard.querySelector('[data-wizard-phone] input');
+        var phoneLabel = wizard.querySelector('[data-wizard-phone] label');
+        var phoneText = phoneLabel ? phoneLabel.textContent.replace(/\s*\*$/, '') : '';
+        var current = 0;
+        var reached = 0;
+
+        wizard.classList.add('is-stepped');
+
+        function show(index, focus) {
+            current = index;
+            reached = Math.max(reached, index);
+            panels.forEach(function (panel, i) { panel.classList.toggle('is-active', i === index); });
+            tabs.forEach(function (tab, i) {
+                tab.classList.toggle('is-current', i === index);
+                tab.classList.toggle('is-done', i <= reached && i !== index);
+                var button = tab.querySelector('button');
+                button.disabled = i > reached;
+                if (i === index) { button.setAttribute('aria-current', 'step'); } else { button.removeAttribute('aria-current'); }
+            });
+            var last = index === panels.length - 1;
+            prev.classList.toggle('invisible', index === 0);
+            next.classList.toggle('d-none', last);
+            submit.classList.toggle('d-none', !last);
+            if (counter) {
+                counter.textContent = counter.getAttribute('data-label').replace(':n', String(index + 1)).replace(':total', String(panels.length));
+            }
+            if (progress) { progress.style.width = ((index + 1) / panels.length * 100) + '%'; }
+            if (focus) {
+                var title = panels[index].querySelector('.custom-panel-title');
+                title.setAttribute('tabindex', '-1');
+                title.focus({preventScroll: true});
+                wizard.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        }
+
+        // ნაბიჯის ველები: ბრაუზერის ვალიდაცია (required, email, url) + „მინიმუმ ერთი“ checkbox-ების ჯგუფში
+        function valid(index) {
+            var panel = panels[index];
+            var ok = true;
+            panel.querySelectorAll('[data-wizard-group-required]').forEach(function (group) {
+                var empty = !group.querySelector('input:checked');
+                group.querySelector('[data-wizard-error]').classList.toggle('d-none', !empty);
+                if (empty && ok) {
+                    ok = false;
+                    group.querySelector('input').focus();
+                }
+            });
+            if (!ok) { return false; }
+            var fields = Array.prototype.slice.call(panel.querySelectorAll('input, textarea, select'));
+            for (var i = 0; i < fields.length; i++) {
+                if (!fields[i].checkValidity()) {
+                    fields[i].reportValidity();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // ზარით ან WhatsApp-ით დაკავშირება → ტელეფონი სავალდებულოა
+        function syncPhone() {
+            if (!phone) { return; }
+            var method = methods.filter(function (m) { return m.checked; })[0];
+            var required = !!method && method.value !== 'email';
+            phone.required = required;
+            if (phoneLabel) { phoneLabel.textContent = phoneText + (required ? ' *' : ''); }
+        }
+
+        prev.addEventListener('click', function () { show(Math.max(0, current - 1), true); });
+        next.addEventListener('click', function () {
+            if (valid(current)) { show(current + 1, true); }
+        });
+        tabs.forEach(function (tab, i) {
+            tab.querySelector('button').addEventListener('click', function () {
+                if (i <= current || valid(current)) { show(i, true); }
+            });
+        });
+        wizard.querySelectorAll('[data-wizard-group-required] input').forEach(function (input) {
+            input.addEventListener('change', function () {
+                var group = input.closest('[data-wizard-group-required]');
+                if (group.querySelector('input:checked')) { group.querySelector('[data-wizard-error]').classList.add('d-none'); }
+            });
+        });
+        methods.forEach(function (m) { m.addEventListener('change', syncPhone); });
+        // Enter ტექსტურ ველში — შემდეგ ნაბიჯზე და არა გაგზავნა
+        wizard.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' && event.target.tagName === 'INPUT' && current < panels.length - 1) {
+                event.preventDefault();
+                next.click();
+            }
+        });
+        // გაგზავნამდე ყველა ნაბიჯი მოწმდება: შეცდომიანი ნაბიჯი იხსნება
+        wizard.closest('form').addEventListener('submit', function (event) {
+            if (wizard.disabled) { return; }
+            for (var i = 0; i < panels.length; i++) {
+                show(i, false);
+                if (!valid(i)) {
+                    event.preventDefault();
+                    show(i, true);
+                    return;
+                }
+            }
+        });
+
+        syncPhone();
+        var invalid = panels.findIndex(function (panel) { return panel.querySelector('.is-invalid'); });
+        if (invalid > 0) { reached = panels.length - 1; }
+        show(Math.max(0, invalid), false);
+    }
 
     var modalEl = document.querySelector('[data-order-modal]');
     if (!modalEl) { return; }
