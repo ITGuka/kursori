@@ -709,18 +709,14 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /*
- * ფასების პაკეტები (pricing ბლოკი): ერთი პანელი სვეტებად (stats-panel-ის ენა — 1px გამყოფები ფონით),
- * subgrid — სათაური / სია / ღილაკი ყველა სვეტში ერთ დონეზე. გამორჩეული — ვარდისფერი ზედა ზოლი და მსუბუქი ფონი.
+ * ფასების პაკეტები (pricing ბლოკი): ცალკე ბარათები დაშორებით, subgrid — სათაური / სია / ღილაკი ყველა ბარათში
+ * ერთ დონეზე. გამორჩეული — ვარდისფერი ჩარჩო, სრული ზედა ზოლი და მსუბუქი ფონი.
  */
 .pricing-panel {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-auto-rows: auto;
-    gap: 0 1px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, .08);
-    border: 1px solid rgba(255, 255, 255, .08);
-    border-radius: 12px;
+    gap: 0 1.5rem;
 }
 
 .pricing-plan {
@@ -729,17 +725,20 @@ h1, h2, h3, h4, h5, h6,
     grid-row: span 3;
     grid-template-rows: subgrid;
     row-gap: 0;
+    overflow: hidden;
     padding: 2.25rem 2rem 2rem;
     background: var(--bs-secondary);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
 }
 
 .bg-secondary .pricing-plan {
     background: var(--bs-dark);
 }
 
-/* მობილურზე სვეტები ერთმანეთის ქვეშ — გამყოფი ზემოდან */
+/* მობილურზე ბარათები ერთმანეთის ქვეშ — დაშორებით (row-gap subgrid-ის რიგებს შორისაც ჩაჯდებოდა) */
 .pricing-plan + .pricing-plan {
-    border-top: 1px solid rgba(255, 255, 255, .08);
+    margin-top: 1.5rem;
 }
 
 .pricing-plan::before {
@@ -753,6 +752,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .pricing-plan.is-featured {
+    border-color: rgba(228, 23, 121, .45);
     background-image: linear-gradient(rgba(228, 23, 121, .07), rgba(228, 23, 121, 0) 60%);
 }
 
@@ -850,7 +850,7 @@ h1, h2, h3, h4, h5, h6,
     }
 
     .pricing-plan + .pricing-plan {
-        border-top: 0;
+        margin-top: 0;
     }
 }
 
