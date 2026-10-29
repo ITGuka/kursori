@@ -5,6 +5,7 @@ namespace Core\Database;
 
 use InvalidArgumentException;
 use PDO;
+use PDOException;
 use PDOStatement;
 use Throwable;
 
@@ -48,9 +49,22 @@ final class DB
 
     public function query(string $sql, array $bindings = []): PDOStatement
     {
-        $statement = $this->pdo()->prepare($sql);
-        $statement->execute($bindings);
-        return $statement;
+        try {
+            $statement = $this->pdo()->prepare($sql);
+            $statement->execute($bindings);
+            return $statement;
+        } catch (PDOException $e) {
+            // გრძელი გარე მოთხოვნის (მაგ. AI თარგმანი) შემდეგ სერვერი უმოქმედო კავშირს ხურავს (wait_timeout):
+            // 2006 „server has gone away“, 2013 „lost connection“, 4031 (MySQL 8: უმოქმედობით გათიშვა) —
+            // ხელახლა დაკავშირება და ერთი ცდა (ტრანზაქციის გარეთ)
+            if (!in_array((int)($e->errorInfo[1] ?? 0), [2006, 2013, 4031], true) || $this->pdo?->inTransaction()) {
+                throw $e;
+            }
+            $this->pdo = null;
+            $statement = $this->pdo()->prepare($sql);
+            $statement->execute($bindings);
+            return $statement;
+        }
     }
 
     /** @return list<array<string, mixed>> */
