@@ -150,6 +150,8 @@
         var services = Array.prototype.slice.call(wizard.querySelectorAll('input[name=service]'));
         var dependent = Array.prototype.slice.call(wizard.querySelectorAll('[data-wizard-for]'));
         var serviceName = wizard.querySelector('[data-wizard-service-name]');
+        var projectName = wizard.querySelector('[data-wizard-project-name]');
+        var keys = Array.prototype.slice.call(wizard.querySelectorAll('[data-wizard-key]'));
         var methods = Array.prototype.slice.call(wizard.querySelectorAll('input[name=contact_method]'));
         var phone = wizard.querySelector('[data-wizard-phone] input');
         var phoneLabel = wizard.querySelector('[data-wizard-phone] label');
@@ -210,18 +212,31 @@
             return true;
         }
 
-        // მომსახურება → მისი ველები „პროექტსა“ და „მასალებში“ (data-wizard-for="web design"); დანარჩენი დამალული და disabled
+        function labelOf(input) {
+            var label = input && wizard.querySelector('label[for="' + input.id + '"]');
+            if (!label) { return ''; }
+            var name = label.querySelector('.custom-option-name');
+            return (name || label).textContent.trim();
+        }
+
+        // პროექტი → ნაბიჯები 2–4: ნიშნები — მომსახურება (web) და მომსახურება:ქვეტიპი (web:shop; ქვეტიპი არ არის → web:-);
+        // data-wizard-for-ის რომელიმე ნიშანი ემთხვევა → ჩანს, თორემ დამალული და disabled
         function syncService() {
             var service = services.filter(function (s) { return s.checked; })[0];
             var code = service ? service.value : '';
+            var sub = keys.filter(function (k) { return k.checked && k.getAttribute('data-wizard-key') === code; })[0];
+            var tokens = [code, code + ':' + (sub ? sub.value : '-')];
             dependent.forEach(function (el) {
-                var match = el.getAttribute('data-wizard-for').split(' ').indexOf(code) !== -1;
+                var match = el.getAttribute('data-wizard-for').split(' ').some(function (token) { return tokens.indexOf(token) !== -1; });
                 el.hidden = !match;
                 el.disabled = !match;
             });
-            if (serviceName) {
-                var label = service && wizard.querySelector('label[for="' + service.id + '"] .custom-option-name');
-                serviceName.textContent = label ? label.textContent : '';
+            if (serviceName) { serviceName.textContent = labelOf(service); }
+            if (projectName) { projectName.textContent = [labelOf(service), labelOf(sub)].filter(Boolean).join(' · '); }
+            if (references) {
+                var required = references.getAttribute('data-required-for').split(' ').some(function (token) { return tokens.indexOf(token) !== -1; });
+                references.querySelectorAll('[data-wizard-reference-list] input').forEach(function (input, i) { input.required = required && i === 0; });
+                references.querySelector('[data-wizard-required-mark]').hidden = !required;
             }
         }
 
@@ -240,6 +255,7 @@
                     row.querySelector('[data-wizard-reference-remove]').hidden = rows.length === 1;
                 });
                 add.classList.toggle('d-none', rows.length >= max);
+                syncService(); // სავალდებულოა მხოლოდ პირველი ბმული
             };
             add.addEventListener('click', function () {
                 list.appendChild(template.content.cloneNode(true));
@@ -283,7 +299,7 @@
             });
         });
         methods.forEach(function (m) { m.addEventListener('change', syncPhone); });
-        services.forEach(function (s) { s.addEventListener('change', syncService); });
+        services.concat(keys).forEach(function (s) { s.addEventListener('change', syncService); });
         // Enter ტექსტურ ველში — შემდეგ ნაბიჯზე და არა გაგზავნა
         wizard.addEventListener('keydown', function (event) {
             if (event.key === 'Enter' && event.target.tagName === 'INPUT' && current < panels.length - 1) {

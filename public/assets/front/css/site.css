@@ -2448,11 +2448,11 @@ a.package-option:focus-visible {
     min-width: 0;
 }
 
-.custom-panel-title ~ .custom-group:not(.custom-group-row) {
+.custom-panel-title ~ .custom-group {
     margin-top: 1.5rem;
 }
 
-.custom-group:not(.custom-group-row) > * + * {
+.custom-panel-title ~ .custom-group > * + * {
     margin-top: 1.5rem;
 }
 
