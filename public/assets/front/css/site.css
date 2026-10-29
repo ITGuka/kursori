@@ -708,56 +708,239 @@ h1, h2, h3, h4, h5, h6,
     padding-bottom: 1.25rem;
 }
 
-/* ფასების პაკეტები (pricing ბლოკი) */
-.pricing-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 2.5rem 2rem 2rem;
-    background: var(--bs-secondary);
+/*
+ * ფასების პაკეტები (pricing ბლოკი): ერთი პანელი სვეტებად (stats-panel-ის ენა — 1px გამყოფები ფონით),
+ * subgrid — სათაური / სია / ღილაკი ყველა სვეტში ერთ დონეზე. გამორჩეული — ვარდისფერი ზედა ზოლი და მსუბუქი ფონი.
+ */
+.pricing-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+    gap: 0 1px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, .08);
     border: 1px solid rgba(255, 255, 255, .08);
     border-radius: 12px;
 }
 
-.bg-secondary .pricing-card {
+.pricing-plan {
+    position: relative;
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+    padding: 2.25rem 2rem 2rem;
+    background: var(--bs-secondary);
+}
+
+.bg-secondary .pricing-plan {
     background: var(--bs-dark);
 }
 
-.pricing-card.is-featured {
-    border: 2px solid var(--bs-primary);
+/* მობილურზე სვეტები ერთმანეთის ქვეშ — გამყოფი ზემოდან */
+.pricing-plan + .pricing-plan {
+    border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+.pricing-plan::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 2rem;
+    width: 48px;
+    height: 3px;
+    background: var(--bs-primary);
+}
+
+.pricing-plan.is-featured {
+    background-image: linear-gradient(rgba(228, 23, 121, .07), rgba(228, 23, 121, 0) 60%);
+}
+
+.pricing-plan.is-featured::before {
+    left: 0;
+    width: 100%;
+}
+
+.pricing-plan-head {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.pricing-plan-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.pricing-name {
+    margin: 0;
+    font-size: 1.15rem;
+    letter-spacing: .02em;
 }
 
 .pricing-badge {
-    position: absolute;
-    top: -14px;
-    left: 2rem;
-    padding: 4px 14px;
+    padding: 4px 12px;
     border-radius: 50px;
     background: var(--bs-primary);
     color: var(--bs-white);
-    font-size: .8rem;
+    font-size: .75rem;
     font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
 }
 
 .pricing-price {
+    margin-bottom: .5rem;
     color: var(--site-accent-text);
-    font-size: 2.25rem;
+    font-size: calc(1.5rem + .9vw);
     font-weight: 700;
     line-height: 1.1;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 
 .pricing-note {
+    margin-bottom: 0;
     color: var(--site-text-muted);
     font-size: .9rem;
 }
 
+/* სია — about-list-ის მრგვალი ნიშნებით */
 .pricing-features {
     display: flex;
     flex-direction: column;
-    gap: .6rem;
-    margin: 0 0 2rem;
-    padding: 0;
+    gap: .85rem;
+    margin: 0;
+    padding: 1.5rem 0 2rem;
     list-style: none;
+}
+
+.pricing-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    color: var(--bs-white);
+    line-height: 1.45;
+}
+
+.pricing-check {
+    display: inline-flex;
+    flex: 0 0 22px;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    border-radius: 50%;
+    background: rgba(228, 23, 121, .15); /* --bs-primary, 15% */
+    color: var(--site-accent-text);
+    font-size: .65rem;
+}
+
+.pricing-action {
+    align-self: end;
+}
+
+@media (min-width: 992px) {
+    .pricing-panel {
+        grid-template-columns: repeat(var(--pricing-cols, 3), minmax(0, 1fr));
+    }
+
+    .pricing-plan + .pricing-plan {
+        border-top: 0;
+    }
+}
+
+/* ინდივიდუალური შეკვეთა — პანელის ქვეშ ჰორიზონტალური ზოლი */
+.pricing-custom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 1.75rem;
+    margin-top: 1.5rem;
+    padding: 1.75rem 2rem;
+    background: var(--bs-secondary);
+    border: 1px dashed rgba(255, 255, 255, .18);
+    border-radius: 12px;
+}
+
+.bg-secondary .pricing-custom {
+    background: var(--bs-dark);
+}
+
+.pricing-custom-icon {
+    display: inline-flex;
+    flex: 0 0 52px;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(228, 23, 121, .15);
+    color: var(--site-accent-text);
+    font-size: 1.25rem;
+}
+
+.pricing-custom-body {
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+.pricing-custom-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .25rem .75rem;
+    margin-bottom: .35rem;
+    font-size: 1.15rem;
+}
+
+.pricing-custom-price {
+    color: var(--site-accent-text);
+    font-size: 1rem;
+}
+
+/* „რა შედის“ — ერთ ხაზზე, „·“-ით (stats-note-ის მსგავსად) */
+.pricing-custom-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .15rem .5rem;
+    margin: .6rem 0 0;
+    padding: 0;
+    color: rgba(255, 255, 255, .75);
+    font-size: .9rem;
+    list-style: none;
+}
+
+.pricing-custom-features li:not(:last-child)::after {
+    content: "·";
+    margin-left: .5rem;
+    color: var(--bs-primary);
+}
+
+.pricing-custom-action {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 575.98px) {
+    .pricing-plan {
+        padding: 2rem 1.5rem 1.75rem;
+    }
+
+    .pricing-plan::before {
+        left: 1.5rem;
+    }
+
+    .pricing-custom {
+        padding: 1.5rem;
+    }
+
+    .pricing-custom-action {
+        width: 100%;
+    }
 }
 
 /* ბლოგი: სტატიის ბარათი (blog_list) და სტატიის გვერდი (collections/post) */
@@ -1901,11 +2084,6 @@ a.package-option:focus-visible {
 .order-custom-banner-icon {
     color: var(--bs-primary);
     font-size: 1.5rem;
-}
-
-/* ინდივიდუალური ბარათი ფასების ბლოკში */
-.pricing-card.is-custom {
-    border-style: dashed;
 }
 
 .design-card {
