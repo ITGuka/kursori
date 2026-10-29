@@ -57,7 +57,8 @@ $showCta = $cta !== null && !$isActive($cta['href']);
     <?php endif ?>
 
     <div class="container footer-main">
-        <div class="row g-5">
+        <?php // ჰორიზონტალური gutter lg-მდე 1.5rem — უფრო განიერი row-ს უარყოფით margin-ს კონტეინერიდან გააცდენს და მობილურზე ჰორიზონტალურ სქროლს იძლევა ?>
+        <div class="row gx-4 gy-5 gx-lg-5">
             <div class="col-lg-3">
                 <?php // ლოგოს ნიშანი კურსორით, ენის მიხედვით: ka — „კ“, სხვა — „K“ (სრული ლოგო ჰედერშია) ?>
                 <a href="<?= e(url(locale())) ?>" class="d-inline-block<?= $socialLinks !== [] ? ' mb-4' : '' ?>" aria-label="<?= e($siteName) ?>">

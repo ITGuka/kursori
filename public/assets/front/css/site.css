@@ -343,6 +343,13 @@ h1, h2, h3, h4, h5, h6,
     .page-header .display-4 {
         font-size: calc(1.5rem + 2vw);
     }
+
+    /* ერთი გრძელი სიტყვა („კონფიდენციალურობის“) ვიწრო ეკრანს მაინც აცდება — ბოლო საშუალებად სიტყვის შიგნით გადაიტანოს */
+    .header-carousel .display-1,
+    .page-header .display-4 {
+        overflow-wrap: anywhere;
+        hyphens: auto;
+    }
 }
 
 /* სტატიკური ჰერო (hero_carousel, mode = static): ფოტო ფონად, ტექსტი ნაკადში — სიმაღლე შიგთავსს მიჰყვება */
@@ -1724,6 +1731,12 @@ img[width][height] {
     padding: .3rem 0;
     color: var(--bs-light);
     line-height: 1.5;
+}
+
+/* გრძელი სიტყვა („კონფიდენციალურობის“) ვიწრო სვეტში არ ეტევა — ბოლო საშუალებად სიტყვის შიგნით გადაიტანოს */
+.footer-links a {
+    overflow-wrap: anywhere;
+    hyphens: auto;
 }
 
 .footer-links a:hover,
