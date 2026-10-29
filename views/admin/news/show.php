@@ -7,7 +7,7 @@
  * @var array|null $feed
  */
 $this->layout('admin/layouts/app');
-[$statusLabel, $statusColor] = App\Models\NewsItem::STATUSES[$item['status']];
+[$statusLabel, $statusColor] = App\Models\NewsItem::STATUSES[$item['status']] ?? [$item['status'], 'secondary'];
 $tags = (array)json_decode((string)$item['tags'], true);
 ?>
 <nav aria-label="breadcrumb">
@@ -46,23 +46,11 @@ $tags = (array)json_decode((string)$item['tags'], true);
                 </dl>
                 <?php if ($item['error']): ?><div class="alert alert-danger small mt-4 mb-0 text-break"><?= e($item['error']) ?></div><?php endif ?>
             </div>
-            <div class="card-footer border-top d-flex flex-wrap gap-2">
-                <?php if ($item['collection_item_id']): ?>
+            <?php if ($item['collection_item_id']): ?>
+                <div class="card-footer border-top">
                     <a href="<?= e(route('admin.collections.edit', ['id' => $item['collection_item_id']])) ?>" class="btn btn-primary"><i class="icon-base bx bx-edit-alt me-1"></i>ბლოგის სტატია</a>
-                <?php endif ?>
-                <?php foreach (['publish' => ['გამოქვეყნება', 'btn-primary', 'bx-send', ['new', 'rejected', 'failed']],
-                                'approve' => ['დამტკიცება', 'btn-outline-primary', 'bx-check', ['new', 'rejected', 'failed']],
-                                'reject'  => ['უარყოფა', 'btn-outline-secondary', 'bx-x', ['new', 'approved', 'failed']]] as $action => [$label, $class, $icon, $from]): ?>
-                    <?php if (in_array($item['status'], $from, true)): ?>
-                        <form method="post" action="<?= e(route('admin.news.moderate')) ?>">
-                            <?= csrf_field() ?>
-                            <input type="hidden" name="ids[]" value="<?= e($item['id']) ?>">
-                            <input type="hidden" name="back" value="<?= e(route('admin.news.index')) ?>">
-                            <button class="btn <?= e($class) ?>" name="action" value="<?= e($action) ?>"><i class="icon-base bx <?= e($icon) ?> me-1"></i><?= e($label) ?></button>
-                        </form>
-                    <?php endif ?>
-                <?php endforeach ?>
-            </div>
+                </div>
+            <?php endif ?>
         </div>
     </div>
 </div>

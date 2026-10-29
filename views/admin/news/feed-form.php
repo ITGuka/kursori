@@ -52,33 +52,10 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
             <?= $feedback('category_id') ?>
             <div class="form-text">ახალი კატეგორია — <a href="<?= e(route('admin.categories.index', ['type' => 'blog'])) ?>">ბლოგი → კატეგორიები</a>.</div>
         </div>
-        <div class="mb-5">
-            <label class="form-label d-block">გამოქვეყნება</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="publish_mode" id="mode_review" value="review"<?= $data['publish_mode'] !== 'auto' ? ' checked' : '' ?>>
-                <label class="form-check-label" for="mode_review">მოდერაცია — სიახლე რიგში ჩნდება და ქვეყნდება დამტკიცების შემდეგ</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="publish_mode" id="mode_auto" value="auto"<?= $data['publish_mode'] === 'auto' ? ' checked' : '' ?>>
-                <label class="form-check-label" for="mode_auto">ავტომატური — ქვეყნდება მოდერაციის გარეშე (დღიური ლიმიტით)</label>
-            </div>
-        </div>
-        <div class="row g-4 mb-5">
-            <div class="col-sm-4">
-                <label class="form-label" for="top_days">ბოლო დღეები</label>
-                <input type="number" class="form-control" id="top_days" name="top_days" min="1" max="30" value="<?= e($data['top_days']) ?>">
-                <div class="form-text">პოპულარული ამ პერიოდში.</div>
-            </div>
-            <div class="col-sm-4">
-                <label class="form-label" for="min_reactions">მინ. რეაქციები</label>
-                <input type="number" class="form-control" id="min_reactions" name="min_reactions" min="<?= App\Models\NewsFeed::MIN_REACTIONS ?>" max="10000" value="<?= e($data['min_reactions']) ?>">
-                <div class="form-text">ხარისხის ფილტრი, მინ. <?= App\Models\NewsFeed::MIN_REACTIONS ?>.</div>
-            </div>
-            <div class="col-sm-4">
-                <label class="form-label" for="per_run">თითო წამოღებაზე</label>
-                <input type="number" class="form-control" id="per_run" name="per_run" min="1" max="30" value="<?= e($data['per_run']) ?>">
-                <div class="form-text">ყველაზე პოპულარული.</div>
-            </div>
+        <div class="mb-5" style="max-width: 240px">
+            <label class="form-label" for="top_days">ბოლო დღეები</label>
+            <input type="number" class="form-control" id="top_days" name="top_days" min="1" max="30" value="<?= e($data['top_days']) ?>">
+            <div class="form-text">dev.to-ს ამ პერიოდის პოპულარული სტატიებიდან (<?= e(App\Services\News\NewsFetcher::REACTIONS_ABOVE) ?>-ზე მეტი რეაქცია) აირჩევა უახლესი.</div>
         </div>
         <div class="form-check form-switch mb-3">
             <input type="hidden" name="require_image" value="0">

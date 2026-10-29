@@ -6,17 +6,16 @@ namespace App\Models;
 use Core\Database\DB;
 
 /**
- * წამოღებული სიახლეები (news_items): new → approved → published, ან rejected / failed.
+ * dev.to-დან აღებული სიახლეები (news_items): new (შენახვისთანავე) → published ან failed (news:run, D57).
+ * rejected — მოდერაციის ძველი რიგიდან (აღარ ქვეყნდება, ხელახლა არ წამოვა). approved აღარ გამოიყენება.
  */
 final class NewsItem
 {
-    /** სტატუსი => [წარწერა, Bootstrap ფერი] */
+    /** ადმინში ნაჩვენები სტატუსები => [წარწერა, Bootstrap ფერი] */
     public const STATUSES = [
-        'new'       => ['მოდერაციაში', 'warning'],
-        'approved'  => ['გამოსაქვეყნებელი', 'info'],
         'published' => ['გამოქვეყნებული', 'success'],
-        'rejected'  => ['უარყოფილი', 'secondary'],
         'failed'    => ['შეცდომა', 'danger'],
+        'rejected'  => ['უარყოფილი', 'secondary'],
     ];
 
     public function __construct(private readonly DB $db)
@@ -66,33 +65,11 @@ final class NewsItem
     {
         $counts = array_fill_keys(array_keys(self::STATUSES), 0);
         foreach ($this->db->select('SELECT status, COUNT(*) AS c FROM news_items GROUP BY status') as $row) {
-            $counts[$row['status']] = (int)$row['c'];
+            if (isset($counts[$row['status']])) {
+                $counts[$row['status']] = (int)$row['c'];
+            }
         }
         return $counts;
-    }
-
-    /**
-     * სტატუსის შეცვლა მოდერაციიდან. დასაშვები გადასვლები: new/rejected/failed → approved, new/approved/failed → rejected.
-     * @param list<int> $ids
-     * @return int შეცვლილი ჩანაწერები
-     */
-    public function moderate(array $ids, string $status): int
-    {
-        $from = match ($status) {
-            'approved' => ['new', 'rejected', 'failed'],
-            'rejected' => ['new', 'approved', 'failed'],
-            default    => [],
-        };
-        $ids = array_values(array_filter(array_map('intval', $ids)));
-        if ($ids === [] || $from === []) {
-            return 0;
-        }
-        $in = implode(', ', array_fill(0, count($ids), '?'));
-        $states = implode(', ', array_fill(0, count($from), '?'));
-        return $this->db->query(
-            "UPDATE news_items SET status = ?, error = NULL WHERE id IN ($in) AND status IN ($states)",
-            [$status, ...$ids, ...$from],
-        )->rowCount();
     }
 
     /**
@@ -127,58 +104,14 @@ final class NewsItem
         );
     }
 
-    /**
-     * დამტკიცებული (ან ავტომატური) სიახლეები გამოსაქვეყნებლად — ძველი პირველი; ბლოგის ერთ კატეგორიაში დღეში
-     * არაუმეტეს $perCategory (0 — შეზღუდვის გარეშე; დღევანდელი გამოქვეყნებულიც ითვლება). კატეგორია — feed-იდან.
-     * @return list<int>
-     */
-    public function approvedIds(int $limit, int $perCategory = 0): array
+    /** @return list<int> ბლოგის კატეგორიები, რომლებშიც დღეს სიახლე უკვე გამოქვეყნდა (კატეგორიაში დღეში ერთი) */
+    public function categoriesPublishedToday(): array
     {
-        if ($limit <= 0) {
-            return [];
-        }
-        $rows = $this->db->select(
-            "SELECT i.id, f.category_id FROM news_items i LEFT JOIN news_feeds f ON f.id = i.feed_id
-             WHERE i.status = 'approved' ORDER BY i.created_at, i.id" . ($perCategory > 0 ? '' : ' LIMIT ' . $limit),
-        );
-        $used = $perCategory > 0 ? $this->publishedTodayByCategory() : [];
-        $ids = [];
-        foreach ($rows as $row) {
-            $category = $row['category_id'] !== null ? (int)$row['category_id'] : null;
-            if ($category !== null && $perCategory > 0 && ($used[$category] ?? 0) >= $perCategory) {
-                continue;
-            }
-            if ($category !== null) {
-                $used[$category] = ($used[$category] ?? 0) + 1;
-            }
-            $ids[] = (int)$row['id'];
-            if (count($ids) >= $limit) {
-                break;
-            }
-        }
-        return $ids;
-    }
-
-    /** @return array<int, int> ბლოგის კატეგორია => დღეს გამოქვეყნებული სიახლეები */
-    public function publishedTodayByCategory(): array
-    {
-        $counts = [];
-        foreach ($this->db->select(
-            'SELECT c.category_id, COUNT(*) AS n FROM news_items i JOIN collection_items c ON c.id = i.collection_item_id
-             WHERE i.published_at >= ? AND c.category_id IS NOT NULL GROUP BY c.category_id',
+        return array_map('intval', $this->db->column(
+            'SELECT DISTINCT c.category_id FROM news_items i JOIN collection_items c ON c.id = i.collection_item_id
+             WHERE i.published_at >= ? AND c.category_id IS NOT NULL',
             [date('Y-m-d 00:00:00')],
-        ) as $row) {
-            $counts[(int)$row['category_id']] = (int)$row['n'];
-        }
-        return $counts;
-    }
-
-    public function publishedToday(): int
-    {
-        return (int)$this->db->value(
-            'SELECT COUNT(*) FROM news_items WHERE published_at >= ?',
-            [date('Y-m-d 00:00:00')],
-        );
+        ));
     }
 
     public function markPublished(int $id, int $collectionItemId): void

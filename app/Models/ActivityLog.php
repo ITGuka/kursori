@@ -58,8 +58,6 @@ final class ActivityLog
         'news_feed.created'   => 'დაამატა სიახლეების feed',
         'news_feed.updated'   => 'შეცვალა სიახლეების feed',
         'news_feed.deleted'   => 'წაშალა სიახლეების feed',
-        'news.approved'       => 'დაამტკიცა სიახლეები',
-        'news.rejected'       => 'უარყო სიახლეები',
         'job.updated'         => 'შეცვალა ჯობის გრაფიკი',
         'job.queued'          => 'გაუშვა ჯობი',
     ];

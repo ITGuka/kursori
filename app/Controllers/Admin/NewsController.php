@@ -12,8 +12,8 @@ use Core\Http\Request;
 use Core\Http\Response;
 
 /**
- * სიახლეების რიგი (მოდერაცია): ფილტრი სტატუსით/feed-ით, წინასწარი ნახვა, დამტკიცება/უარყოფა (რამდენიმე ერთად).
- * გამოქვეყნება და თარგმანი ფონზე ხდება (schedule:run) — „ახლავე“ ჯობს რიგში აყენებს.
+ * სიახლეების ჟურნალი: რა გამოქვეყნდა / ჩავარდა (ფილტრი სტატუსით, feed-ით, ძებნა), წინასწარი ნახვა, „ახლავე“.
+ * შერჩევა, თარგმანი და გამოქვეყნება ერთ ჯობშია (news:run, D57).
  */
 final class NewsController
 {
@@ -29,7 +29,7 @@ final class NewsController
 
     public function index(Request $request): Response
     {
-        $status = (string)$request->query('status', 'new');
+        $status = (string)$request->query('status', '');
         $filters = [
             'status' => isset(NewsItem::STATUSES[$status]) ? $status : '',
             'feed'   => (int)$request->query('feed', 0),
@@ -37,6 +37,7 @@ final class NewsController
         ];
         $page = max(1, (int)$request->query('page', 1));
         $result = $this->news->paginate($filters, $page, self::PER_PAGE);
+        $jobId = $this->jobs->idByCommand('news:run');
 
         return view('admin/news/index', [
             'title'      => 'სიახლეები',
@@ -47,6 +48,7 @@ final class NewsController
             'filters'    => $filters,
             'counts'     => $this->news->counts(),
             'feeds'      => $this->feeds->options(),
+            'job'        => $jobId !== null ? $this->jobs->find($jobId) : null,
             'translated' => setting('news.translate') === true && (string)setting('news.claude_api_key') !== '',
         ]);
     }
@@ -62,34 +64,12 @@ final class NewsController
         ]);
     }
 
-    /** ids[] + action: approve | reject | publish (დამტკიცება + გამოქვეყნების ჯობი ახლავე) */
-    public function moderate(Request $request): Response
+    /** სიახლის ჯობი ახლავე (cron-ის შემდეგ ტიკზე) */
+    public function runNow(): Response
     {
-        $ids = array_map('intval', (array)$request->input('ids', []));
-        $action = (string)$request->input('action', '');
-        $back = (string)$request->input('back', '');
-        $back = str_starts_with($back, route('admin.news.index')) ? $back : route('admin.news.index');
-
-        if ($ids === [] || !in_array($action, ['approve', 'reject', 'publish'], true)) {
-            return redirect($back)->with('error', 'მონიშნეთ სიახლეები.');
-        }
-        $changed = $this->news->moderate($ids, $action === 'reject' ? 'rejected' : 'approved');
-        $this->log->log($action === 'reject' ? 'news.rejected' : 'news.approved', 'news', null, ['count' => $changed]);
-
-        $message = $action === 'reject' ? "უარყოფილია: $changed." : "დამტკიცებულია: $changed — გამოქვეყნდება გრაფიკით.";
-        if ($action === 'publish' && $changed > 0 && ($jobId = $this->jobs->idByCommand('news:publish')) !== null) {
-            $this->jobs->queueNow($jobId);
-            $message = "დამტკიცებულია: $changed — გამოქვეყნება დაიწყება 5 წუთში (cron), თარგმანით 1–2 წთ სტატიაზე.";
-        }
-        return redirect($back)->with($changed > 0 ? 'success' : 'error', $changed > 0 ? $message : 'ამ სტატუსის სიახლეები ვერ შეიცვლება.');
-    }
-
-    /** წამოღების ჯობი ახლავე (cron-ის შემდეგ ტიკზე) */
-    public function fetchNow(): Response
-    {
-        $jobId = $this->jobs->idByCommand('news:fetch') ?? abort(404);
+        $jobId = $this->jobs->idByCommand('news:run') ?? abort(404);
         $this->jobs->queueNow($jobId);
-        $this->log->log('job.queued', 'job', $jobId, ['title' => 'news:fetch']);
-        return redirect(route('admin.news.index'))->with('success', 'წამოღება დაიწყება 5 წუთში (cron). შედეგი — „გრაფიკში“.');
+        $this->log->log('job.queued', 'job', $jobId, ['title' => 'news:run']);
+        return redirect(route('admin.news.index'))->with('success', 'სიახლის ჯობი გაეშვება 5 წუთში (cron). შედეგი აქ და „გრაფიკში“ გამოჩნდება.');
     }
 }

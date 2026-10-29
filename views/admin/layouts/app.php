@@ -65,8 +65,6 @@ $langCodes = count($languages ?? []) > 1 ? array_column($languages, 'code') : []
                             <div><?= e($item['label']) ?></div>
                             <?php if (($item['badge'] ?? '') === 'inbox' && ($unreadTotal = array_sum(app(App\Models\FormSubmission::class)->unreadCounts())) > 0): ?>
                                 <div class="badge rounded-pill bg-danger ms-auto"><?= e($unreadTotal) ?></div>
-                            <?php elseif (($item['badge'] ?? '') === 'news' && ($pendingNews = app(App\Models\NewsItem::class)->counts()['new']) > 0): ?>
-                                <div class="badge rounded-pill bg-warning ms-auto" title="მოდერაციაში"><?= e($pendingNews) ?></div>
                             <?php endif ?>
                         </a>
                     </li>

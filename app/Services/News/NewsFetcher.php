@@ -10,12 +10,14 @@ use DateTimeZone;
 use Throwable;
 
 /**
- * feed-ის შევსება: ყოველი ტეგის top სტატიები → ფილტრი (ინგლისური, რეაქციები, ყდის სურათი, ჯერ არ შენახული)
- * → პოპულარობით პირველი per_run → სრული ტექსტი → news_items (status new). გამოქვეყნება — შემდეგი ეტაპი.
+ * სტატიების შერჩევა dev.to-დან: feed-ის ტეგების top სტატიები (ბოლო top_days დღე) → ფილტრი (ინგლისური, > 30 რეაქცია,
+ * ყდის სურათი, გამოსარიცხი ტეგები, ჯერ არ შენახული) → უახლესი პირველი. შენახვა — save() (news_items), გამოქვეყნება — NewsPublisher.
  */
 final class NewsFetcher
 {
     public const SOURCE = 'devto';
+    /** სტატიას უნდა ჰქონდეს ამაზე მეტი რეაქცია */
+    public const REACTIONS_ABOVE = 30;
 
     private ?DevToClient $client = null;
 
@@ -23,73 +25,38 @@ final class NewsFetcher
     {
     }
 
-    /** @return array{candidates: int, saved: int, error: ?string} */
-    public function fetch(array $feed, bool $dryRun = false): array
-    {
-        $candidates = [];
-        $saved = 0;
-        $error = null;
-        try {
-            $candidates = $this->candidates($feed);
-            $picked = array_slice($candidates, 0, $feed['per_run'], true);
-
-            foreach ($picked as $article) {
-                if (!$dryRun) {
-                    $this->items->create($this->row($feed, $this->client()->article((int)$article['id'])));
-                }
-                $saved++;
-            }
-        } catch (Throwable $e) {
-            $error = $e->getMessage();
-        }
-        if (!$dryRun) {
-            $this->feeds->markFetched($feed['id'], $error);
-        }
-        return ['candidates' => count($candidates), 'saved' => $saved, 'error' => $error];
-    }
-
     /**
-     * ყველა feed-იდან ერთად არაუმეტეს $limit სიახლე — ყველაზე პოპულარული (თითო feed-იდან მაქს. per_run კანდიდატი;
-     * ერთი სტატია რამდენიმე feed-ს თუ ემთხვევა, იღებს პირველი რიგით).
+     * ყველა feed-ის კანდიდატები ერთად, უახლესი პირველი; $skipCategories — დღეს უკვე გამოქვეყნებული კატეგორიები.
+     * ერთი სტატია რამდენიმე feed-ს თუ ემთხვევა, იღებს პირველი რიგით. feed-ის შეცდომა (მაგ. API) — last_error-ში.
      * @param list<array> $feeds
-     * @return array{saved: list<array{feed: string, title: string, reactions: int}>, errors: array<string, string>}
+     * @param list<int> $skipCategories
+     * @return list<array{feed: array, article: array}>
      */
-    public function fetchTop(array $feeds, int $limit, bool $dryRun = false): array
+    public function candidatesFromAll(array $feeds, array $skipCategories = [], bool $markFetched = true): array
     {
         $pool = [];
-        $errors = [];
         foreach ($feeds as $feed) {
+            if ($feed['category_id'] !== null && in_array($feed['category_id'], $skipCategories, true)) {
+                continue;
+            }
+            $error = null;
             try {
-                foreach (array_slice($this->candidates($feed), 0, $feed['per_run'], true) as $id => $article) {
+                foreach ($this->candidates($feed) as $id => $article) {
                     $pool[$id] ??= ['feed' => $feed, 'article' => $article];
                 }
-                $error = null;
             } catch (Throwable $e) {
-                $errors[$feed['name']] = $error = $e->getMessage();
+                $error = $e->getMessage();
             }
-            if (!$dryRun) {
+            if ($markFetched) {
                 $this->feeds->markFetched($feed['id'], $error);
             }
         }
-        uasort($pool, fn ($a, $b) => (int)$b['article']['public_reactions_count'] <=> (int)$a['article']['public_reactions_count']);
-
-        $saved = [];
-        foreach (array_slice($pool, 0, max(0, $limit), true) as $entry) {
-            try {
-                if (!$dryRun) {
-                    $this->items->create($this->row($entry['feed'], $this->client()->article((int)$entry['article']['id'])));
-                }
-                $saved[] = ['feed' => $entry['feed']['name'], 'title' => (string)$entry['article']['title'], 'reactions' => (int)$entry['article']['public_reactions_count']];
-            } catch (Throwable $e) {
-                $errors[$entry['feed']['name']] = $e->getMessage();
-            }
-        }
-        return ['saved' => $saved, 'errors' => $errors];
+        uasort($pool, fn ($a, $b) => strcmp((string)($b['article']['published_at'] ?? ''), (string)($a['article']['published_at'] ?? '')));
+        return array_values($pool);
     }
 
     /**
-     * feed-ის კანდიდატები ფილტრის შემდეგ, ჯერ არ შენახული, პოპულარობით (პირველი per_run — შემდეგ წამოღებაზე).
-     * ადმინის „ტესტი“ ამას აჩვენებს — არაფერს ინახავს.
+     * feed-ის კანდიდატები ფილტრის შემდეგ, ჯერ არ შენახული, უახლესი პირველი. ადმინის „ტესტი“ ამას აჩვენებს — არაფერს ინახავს.
      * @return array<string, array> external id => dev.to-ს სიის ჩანაწერი
      */
     public function candidates(array $feed): array
@@ -105,15 +72,21 @@ final class NewsFetcher
         foreach ($this->items->existing(self::SOURCE, array_map('strval', array_keys($candidates))) as $id) {
             unset($candidates[$id]);
         }
-        uasort($candidates, fn ($a, $b) => (int)$b['public_reactions_count'] <=> (int)$a['public_reactions_count']);
+        uasort($candidates, fn ($a, $b) => strcmp((string)($b['published_at'] ?? ''), (string)($a['published_at'] ?? '')));
         return $candidates;
+    }
+
+    /** სრული სტატია dev.to-დან → news_items (status new); @return int ჩანაწერის id */
+    public function save(array $feed, int $articleId): int
+    {
+        return $this->items->create($this->row($feed, $this->client()->article($articleId)));
     }
 
     private function accepts(array $feed, array $article): bool
     {
         return isset($article['id'], $article['title'], $article['url'])
             && ($article['language'] ?? 'en') === 'en'
-            && (int)($article['public_reactions_count'] ?? 0) >= max(NewsFeed::MIN_REACTIONS, $feed['min_reactions'])
+            && (int)($article['public_reactions_count'] ?? 0) > self::REACTIONS_ABOVE
             && (!$feed['require_image'] || !empty($article['cover_image']))
             && array_intersect(self::tags($article), $feed['exclude_list']) === [];
     }
@@ -150,8 +123,6 @@ final class NewsFetcher
             'reactions'           => (int)($a['public_reactions_count'] ?? 0),
             'reading_minutes'     => (int)($a['reading_time_minutes'] ?? 0),
             'source_published_at' => self::localTime($a['published_at'] ?? null),
-            // auto feed → პირდაპირ გამოქვეყნების რიგში (news:publish), review → მოდერაციაში
-            'status'              => $feed['publish_mode'] === 'auto' ? 'approved' : 'new',
         ];
     }
 

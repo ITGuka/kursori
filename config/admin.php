@@ -23,8 +23,8 @@ return [
         ['header' => 'კონტენტი'],
         ['label' => 'გვერდები', 'icon' => 'bx bx-file', 'route' => 'admin.pages.index', 'active' => ['admin.pages.*', 'admin.blocks.*']],
         ...$collections,
-        // სიახლეების იმპორტი (D57); badge — მოდერაციაში მყოფი
-        ['label' => 'სიახლეები', 'icon' => 'bx bx-rss', 'route' => 'admin.news.index', 'active' => 'admin.news.*', 'badge' => 'news'],
+        // სიახლეები dev.to-დან (D57)
+        ['label' => 'სიახლეები', 'icon' => 'bx bx-rss', 'route' => 'admin.news.index', 'active' => 'admin.news.*'],
         // დიზაინები (შეკვეთის ფორმა); collection — აქტიურია დიზაინებისა და მათი კატეგორიების გვერდებზე
         ['label' => 'დიზაინები', 'icon' => 'bx bx-palette', 'route' => 'admin.designs.index', 'collection' => 'designs'],
         ['label' => 'მენიუები', 'icon' => 'bx bx-menu', 'route' => 'admin.menus.index', 'active' => 'admin.menus.*'],

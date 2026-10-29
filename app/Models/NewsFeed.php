@@ -6,13 +6,10 @@ namespace App\Models;
 use Core\Database\DB;
 
 /**
- * სიახლეების feed-ები: წყაროს ტეგები → ბლოგის კატეგორია, გამოქვეყნების რეჟიმი და შერჩევის ფილტრები.
+ * სიახლეების feed-ები: dev.to-ს ტეგები → ბლოგის კატეგორია, გამოსარიცხი ტეგები, პერიოდი, ყდის სურათის მოთხოვნა.
  */
 final class NewsFeed
 {
-    /** სიახლის მინიმალური რეაქციები (dev.to) — ნაკლებს არცერთი feed არ წამოიღებს */
-    public const MIN_REACTIONS = 25;
-
     public function __construct(private readonly DB $db)
     {
     }
@@ -30,8 +27,9 @@ final class NewsFeed
             "SELECT f.*,
                     (SELECT name FROM category_translations t WHERE t.category_id = f.category_id ORDER BY t.lang = ? DESC LIMIT 1) AS category_name,
                     (SELECT COUNT(*) FROM news_items i WHERE i.feed_id = f.id) AS items_total,
-                    (SELECT COUNT(*) FROM news_items i WHERE i.feed_id = f.id AND i.status = 'new') AS items_new,
-                    (SELECT COUNT(*) FROM news_items i WHERE i.feed_id = f.id AND i.status = 'published') AS items_published
+                    (SELECT COUNT(*) FROM news_items i WHERE i.feed_id = f.id AND i.status = 'failed') AS items_failed,
+                    (SELECT COUNT(*) FROM news_items i WHERE i.feed_id = f.id AND i.status = 'published') AS items_published,
+                    (SELECT MAX(i.published_at) FROM news_items i WHERE i.feed_id = f.id) AS last_published_at
              FROM news_feeds f ORDER BY f.sort, f.id",
             [$lang],
         );
@@ -65,6 +63,18 @@ final class NewsFeed
         $this->db->delete('news_feeds', 'id = ?', [$id]);
     }
 
+    /** @return list<int> აქტიური feed-ების ბლოგის კატეგორიები */
+    public function activeCategories(): array
+    {
+        return array_map('intval', $this->db->column('SELECT DISTINCT category_id FROM news_feeds WHERE is_active = 1 AND category_id IS NOT NULL'));
+    }
+
+    /** აქტიური feed კატეგორიის გარეშე (მას დღიური შეზღუდვა არ აქვს) */
+    public function hasActiveWithoutCategory(): bool
+    {
+        return (bool)$this->db->value('SELECT 1 FROM news_feeds WHERE is_active = 1 AND category_id IS NULL LIMIT 1');
+    }
+
     /** @return list<array> აქტიური feed-ები რიგით (ერთ სტატიას პირველი შესაბამისი feed იღებს) */
     public function active(): array
     {
@@ -90,7 +100,7 @@ final class NewsFeed
     {
         $feed['tag_list'] = self::parseTags((string)$feed['tags']);
         $feed['exclude_list'] = self::parseTags((string)$feed['exclude_tags']);
-        foreach (['id', 'per_run', 'top_days', 'min_reactions', 'sort'] as $key) {
+        foreach (['id', 'top_days', 'sort'] as $key) {
             $feed[$key] = (int)$feed[$key];
         }
         $feed['category_id'] = $feed['category_id'] !== null ? (int)$feed['category_id'] : null;

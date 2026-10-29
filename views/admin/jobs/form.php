@@ -27,22 +27,7 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
             <label class="form-label" for="args">ოფციები</label>
             <input type="text" class="form-control<?= $invalid('args') ?>" id="args" name="args" maxlength="190" value="<?= e($data['args']) ?>" placeholder="--limit=3">
             <?= $feedback('args') ?>
-            <div class="form-text">მაგ. <code>--limit=3</code> — ერთ გაშვებაზე მაქსიმუმ 3 სიახლე (თარგმანი ~1–2 წთ სტატიაზე).</div>
-        </div>
-        <div class="mb-5" style="max-width: 420px">
-            <label class="form-label" for="after_job_id">გაშვება</label>
-            <select class="form-select<?= $invalid('after_job_id') ?>" id="after_job_id" name="after_job_id"<?= $parents === [] && $data['after_job_id'] === null ? ' disabled' : '' ?>>
-                <option value="0">ინტერვალით</option>
-                <?php foreach ($parents as $parentId => $parentLabel): ?>
-                    <option value="<?= e($parentId) ?>"<?= (int)$data['after_job_id'] === $parentId ? ' selected' : '' ?>>„<?= e($parentLabel) ?>“-ის შემდეგ</option>
-                <?php endforeach ?>
-            </select>
-            <?= $feedback('after_job_id') ?>
-            <div class="form-text">
-                <?= $parents === [] && $data['after_job_id'] === null
-                    ? 'ამ ჯობის შემდეგ სხვა ჯობები ეშვება — თავად ინტერვალით მუშაობს.'
-                    : 'ჯაჭვში ჯობი ეშვება არჩეულის შემდეგ, იმავე cron-ის ტიკში; ინტერვალი მაშინ არ მოქმედებს.' ?>
-            </div>
+            <div class="form-text">ჩვეულებრივ ცარიელი. მაგ. <code>--dry-run</code> — სიახლის ჯობი მხოლოდ აჩვენებს, რას გამოაქვეყნებდა.</div>
         </div>
         <div class="mb-5" style="max-width: 240px">
             <label class="form-label" for="interval_minutes">ინტერვალი (წუთი)</label>

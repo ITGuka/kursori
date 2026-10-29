@@ -13,7 +13,7 @@ use Core\Http\Response;
 use Throwable;
 
 /**
- * სიახლეების feed-ები: dev.to ტეგები → ბლოგის კატეგორია, რეჟიმი და ფილტრები. „ტესტი“ — კანდიდატები შენახვის გარეშე.
+ * სიახლეების feed-ები: dev.to ტეგები → ბლოგის კატეგორია და ფილტრები. „ტესტი“ — კანდიდატები შენახვის გარეშე.
  */
 final class NewsFeedController
 {
@@ -36,8 +36,7 @@ final class NewsFeedController
     {
         return $this->form(null, [
             'name' => '', 'tags' => '', 'exclude_tags' => 'career,startup,buildinpublic,marketing,business,saas,sponsored',
-            'category_id' => null, 'publish_mode' => 'review', 'per_run' => 3, 'top_days' => 7, 'min_reactions' => NewsFeed::MIN_REACTIONS,
-            'require_image' => true, 'is_active' => true,
+            'category_id' => null, 'top_days' => 7, 'require_image' => true, 'is_active' => true,
         ], []);
     }
 
@@ -107,10 +106,7 @@ final class NewsFeedController
             'tags'          => implode(',', NewsFeed::parseTags($request->string('tags', ''))),
             'exclude_tags'  => implode(',', NewsFeed::parseTags($request->string('exclude_tags', ''))),
             'category_id'   => $categoryId > 0 ? $categoryId : null,
-            'publish_mode'  => $request->input('publish_mode') === 'auto' ? 'auto' : 'review',
-            'per_run'       => $int('per_run', 1, 30, 3),
             'top_days'      => $int('top_days', 1, 30, 7),
-            'min_reactions' => $int('min_reactions', NewsFeed::MIN_REACTIONS, 10000, NewsFeed::MIN_REACTIONS),
             'require_image' => (int)($request->input('require_image') === '1'),
             'is_active'     => (int)($request->input('is_active') === '1'),
         ];

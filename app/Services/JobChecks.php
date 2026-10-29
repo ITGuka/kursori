@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\NewsFeed;
 use App\Models\NewsItem;
-use App\Services\News\NewsPublisher;
 use Core\Database\DB;
 
 /**
@@ -13,7 +13,7 @@ use Core\Database\DB;
  */
 final class JobChecks
 {
-    public function __construct(private readonly DB $db, private readonly NewsItem $news)
+    public function __construct(private readonly DB $db, private readonly NewsFeed $feeds, private readonly NewsItem $news)
     {
     }
 
@@ -23,39 +23,17 @@ final class JobChecks
         return $method !== '' && method_exists($this, $method) ? $this->{$method}() : null;
     }
 
-    private function newsFetch(): ?string
+    /** dev.to-ს არ მივმართავთ, თუ ყველა feed-ის კატეგორიაში დღეს უკვე გამოქვეყნდა (კატეგორიაში დღეში ერთი) */
+    private function newsRun(): ?string
     {
-        if ((int)$this->db->value('SELECT COUNT(*) FROM news_feeds WHERE is_active = 1') === 0) {
+        $categories = $this->feeds->activeCategories();
+        if ($categories === [] && !$this->feeds->hasActiveWithoutCategory()) {
             return 'აქტიური feed არ არის.';
         }
-        // დღეს მეტი აღარ გამოქვეყნდება — ახალს მეორე დღის წამოღება მოიტანს (უფრო ახალს)
-        return $this->dailyLimitReached();
-    }
-
-    private function newsPublish(): ?string
-    {
-        if ($this->news->approvedIds(1) === []) {
-            return 'გამოსაქვეყნებელი (დამტკიცებული) სიახლე არ არის.';
+        if (!$this->feeds->hasActiveWithoutCategory() && array_diff($categories, $this->news->categoriesPublishedToday()) === []) {
+            return 'ყველა კატეგორიაში დღეს სიახლე უკვე გამოქვეყნდა.';
         }
-        if ($this->news->approvedIds(1, (int)setting('news.category_daily_limit')) === []) {
-            $perCategory = (int)setting('news.category_daily_limit');
-            return "დამტკიცებული სიახლეების კატეგორიებში დღიური ლიმიტი ($perCategory) ამოწურულია.";
-        }
-        return $this->dailyLimitReached();
-    }
-
-    private function dailyLimitReached(): ?string
-    {
-        $limit = (int)setting('news.daily_limit');
-        return $limit > 0 && $this->news->publishedToday() >= $limit ? "დღიური ლიმიტი ($limit) ამოწურულია." : null;
-    }
-
-    private function newsTranslate(): ?string
-    {
-        if (setting('news.translate') !== true || (string)setting('news.claude_api_key') === '') {
-            return 'თარგმანი გამორთულია ან Claude API გასაღები არ არის.';
-        }
-        return $this->news->untranslatedIds(NewsPublisher::TRANSLATION_LANG, 1) === [] ? 'უთარგმნელი სიახლე არ არის.' : null;
+        return null;
     }
 
     private function newsletterSend(): ?string

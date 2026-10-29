@@ -142,8 +142,7 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->delete('/media/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
 
         $router->get('/news', [NewsController::class, 'index'])->name('news.index');
-        $router->post('/news/moderate', [NewsController::class, 'moderate'])->name('news.moderate');
-        $router->post('/news/fetch-now', [NewsController::class, 'fetchNow'])->name('news.fetch_now');
+        $router->post('/news/run-now', [NewsController::class, 'runNow'])->name('news.run_now');
         $router->get('/news/feeds', [NewsFeedController::class, 'index'])->name('news.feeds.index');
         $router->get('/news/feeds/create', [NewsFeedController::class, 'create'])->name('news.feeds.create');
         $router->post('/news/feeds', [NewsFeedController::class, 'store'])->name('news.feeds.store');

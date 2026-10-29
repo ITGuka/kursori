@@ -18,7 +18,7 @@ $meta = array_filter([
     $item['author'] !== '' ? e($item['author']) : '',
 ]);
 $image = media_url($item['image'], 'large');
-// იმპორტირებული სიახლე (news:publish): წყარო და ორიგინალის ბმული
+// იმპორტირებული სიახლე (news:run): წყარო და ორიგინალის ბმული
 $source = Core\Support\Url::isSafeHref((string)($item['source_url'] ?? '')) && str_starts_with((string)$item['source_url'], 'http') ? (string)$item['source_url'] : '';
 // url()/media_url() base path-ით (მაგ. /KURSORI/...) → სრული URL APP_URL-ით, როგორც layout-ში
 $basePath = app()->baseUrlPath();

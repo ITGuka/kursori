@@ -9,8 +9,6 @@
 $this->layout('admin/layouts/app');
 $cronOk = $lastActivity !== null && strtotime($lastActivity) > time() - 15 * 60;
 $date = fn (?string $value) => $value ? e(date('d.m.Y H:i', strtotime($value))) : '—';
-$byId = array_column($jobs, null, 'id');
-$jobLabel = fn (array $job) => $labels[$job['command']]['label'] ?? $job['command'];
 ?>
 <div class="alert alert-<?= $cronOk ? 'success' : 'warning' ?>">
     <?php if ($cronOk): ?>
@@ -34,20 +32,8 @@ $jobLabel = fn (array $job) => $labels[$job['command']]['label'] ?? $job['comman
                         <?php if (!$job['is_active']): ?><span class="badge bg-label-secondary ms-1">გათიშული</span><?php endif ?>
                         <div class="small text-body-secondary"><code><?= e(trim($job['command'] . ' ' . $job['args'])) ?></code></div>
                     </td>
-                    <?php $parent = $job['after_job_id'] !== null ? ($byId[$job['after_job_id']] ?? null) : null; ?>
-                    <td class="small">
-                        <?php if ($parent !== null): ?>
-                            <i class="icon-base bx bx-subdirectory-right icon-sm text-body-secondary"></i> „<?= e($jobLabel($parent)) ?>“-ის შემდეგ
-                        <?php else: ?>
-                            <span class="text-nowrap"><?= (int)$job['interval_minutes'] % 60 === 0 ? e((int)$job['interval_minutes'] / 60) . ' სთ' : e($job['interval_minutes']) . ' წთ' ?></span>
-                        <?php endif ?>
-                    </td>
-                    <td class="small text-nowrap">
-                        <?php if (!$job['is_active']): ?>—
-                        <?php elseif ($job['next_run_at'] !== null): ?><?= strtotime($job['next_run_at']) <= time() ? 'ახლა (შემდეგ ტიკზე)' : $date($job['next_run_at']) ?>
-                        <?php elseif ($parent !== null): ?><?= $parent['next_run_at'] !== null ? $date(max($parent['next_run_at'], date('Y-m-d H:i:s'))) : '—' ?>
-                        <?php else: ?>ახლა (შემდეგ ტიკზე)<?php endif ?>
-                    </td>
+                    <td class="text-nowrap"><?= (int)$job['interval_minutes'] % 60 === 0 ? e((int)$job['interval_minutes'] / 60) . ' სთ' : e($job['interval_minutes']) . ' წთ' ?></td>
+                    <td class="small text-nowrap"><?= $job['is_active'] ? ($job['next_run_at'] === null || strtotime($job['next_run_at']) <= time() ? 'ახლა (შემდეგ ტიკზე)' : $date($job['next_run_at'])) : '—' ?></td>
                     <td class="small text-nowrap"><?= $date($job['last_run_at']) ?></td>
                     <td>
                         <?php if ($job['running_since']): ?>
@@ -73,6 +59,6 @@ $jobLabel = fn (array $job) => $labels[$job['command']]['label'] ?? $job['comman
         </table>
     </div>
     <div class="card-footer border-top">
-        <small class="text-body-secondary">გაშვებამდე მოწმდება, არის თუ არა სამუშაო (მაგ. დამტკიცებული სიახლე) — თუ არა, ჯობი გამოტოვდება, ჟურნალის გარეშე. ჯაჭვის ჯობები მშობლის შემდეგ, იმავე ტიკში ეშვება. თითო ჯობი ცალკე პროცესშია, ერთდროულად — ერთხელ; მაქსიმუმ <?= e(config('schedule.timeout_minutes')) ?> წუთი. ჟურნალი ინახება <?= e(config('schedule.keep_runs_days')) ?> დღე.</small>
+        <small class="text-body-secondary">გაშვებამდე მოწმდება, არის თუ არა სამუშაო (მაგ. კატეგორია, რომელშიც დღეს სიახლე ჯერ არ გამოქვეყნებულა) — თუ არა, ჯობი გამოტოვდება, ჟურნალის გარეშე. თითო ჯობი ცალკე პროცესშია, ერთდროულად — ერთხელ; მაქსიმუმ <?= e(config('schedule.timeout_minutes')) ?> წუთი. ჟურნალი ინახება <?= e(config('schedule.keep_runs_days')) ?> დღე.</small>
     </div>
 </div>

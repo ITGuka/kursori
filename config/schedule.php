@@ -16,12 +16,9 @@ return [
     // ოფციების დაშვებული ფორმა: --name=value ან --flag, გამოყოფილი ჰარით (ასევე ციფრული არგუმენტი — მაგ. feed id)
     'args_pattern'    => '/^(\s*(--[a-z][a-z0-9-]*(=[A-Za-z0-9._-]+)?|\d+))*\s*$/',
 
-    // check — App\Services\JobChecks-ის მეთოდი: გაშვებამდე ამოწმებს, არის თუ არა სამუშაო (არა → skipped, პროცესი არ იწყება).
-    // ჯაჭვი (სხვა ჯობის შემდეგ გაშვება) — scheduled_jobs.after_job_id, ადმინიდან (D58)
+    // check — App\Services\JobChecks-ის მეთოდი: გაშვებამდე ამოწმებს, არის თუ არა სამუშაო (არა → skipped, პროცესი არ იწყება)
     'commands' => [
-        'news:fetch'      => ['label' => 'სიახლეების წამოღება (dev.to)', 'check' => 'newsFetch', 'default' => ['interval' => 360, 'args' => '']],
-        'news:publish'    => ['label' => 'სიახლეების გამოქვეყნება (+ თარგმანი)', 'check' => 'newsPublish', 'default' => ['interval' => 30, 'args' => '--limit=3']],
-        'news:translate'  => ['label' => 'უთარგმნელი სიახლეების თარგმანი', 'check' => 'newsTranslate', 'default' => ['interval' => 60, 'args' => '--limit=3']],
+        'news:run'        => ['label' => 'სიახლე dev.to-დან (თარგმანით, ბლოგში)', 'check' => 'newsRun', 'default' => ['interval' => 360, 'args' => '']],
         'newsletter:send' => ['label' => 'Newsletter-ის გაგზავნის გაგრძელება', 'check' => 'newsletterSend', 'default' => ['interval' => 10, 'args' => '']],
     ],
 ];

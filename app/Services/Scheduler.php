@@ -38,9 +38,7 @@ final class Scheduler
     {
         $timeout = max(1, (int)config('schedule.timeout_minutes', 30));
         $now = date('Y-m-d H:i:s');
-        // ჯაჭვის ჯობი შემდეგ ჯერზე მშობელს ელოდება (next_run_at = NULL), ინტერვალიანი — ინტერვალს
-        $chained = $job['after_job_id'] !== null;
-        $next = fn (int $from) => $chained ? null : date('Y-m-d H:i:s', $from + max(1, (int)$job['interval_minutes']) * 60);
+        $next = fn (int $from) => date('Y-m-d H:i:s', $from + max(1, (int)$job['interval_minutes']) * 60);
 
         if (!$force && ($reason = $this->checks->reason((string)$job['command'])) !== null) {
             if ($job['running_since'] !== null && strtotime((string)$job['running_since']) > time() - ($timeout + 5) * 60) {
