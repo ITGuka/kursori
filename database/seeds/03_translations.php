@@ -107,14 +107,10 @@ return new class extends Seeder {
             'custom_design_title' => ['ვერ იპოვეთ შესაფერისი?', 'Can’t find the right one?'],
             'custom_design_text'  => ['შევქმნით ინდივიდუალურ დიზაინს', 'We will create a custom design'],
         ],
-        // ინდივიდუალური შეკვეთა (custom_order_form ბლოკი; დროებითი ფორმა)
+        // ინდივიდუალური შეკვეთა (order_form, პაკეტი „ინდივიდუალური“; დროებითი ველები)
         'custom' => [
-            'package'          => ['პაკეტი', 'Package'],
-            'package_none'     => ['ჯერ არ ვიცი', 'Not sure yet'],
-            'description'      => ['მოგვიყევით პროექტზე', 'Tell us about the project'],
-            'description_hint' => ['მაგ.: რას საქმიანობთ, რა გვერდები და ფუნქციები გჭირდებათ, რა ენებზე, მოგწონთ თუ არა რომელიმე საიტი, სასურველი ვადა და ბიუჯეტი.', 'E.g.: what your business does, which pages and features you need, which languages, any websites you like, your preferred timeline and budget.'],
-            'submit'           => ['მოთხოვნის გაგზავნა', 'Send Request'],
-        ],
+            'description'=> ['მოგვიყევით პროექტზე', 'Tell us about the project'],
+            'description_hint' => ['მაგ.: რას საქმიანობთ, რა გვერდები და ფუნქციები გჭირდებათ, რა ენებზე, მოგწონთ თუ არა რომელიმე საიტი, სასურველი ვადა და ბიუჯეტი.', 'E.g.: what your business does, which pages and features you need, which languages, any websites you like, your preferred timeline and budget.'],        ],
         // სერვისის გვერდი (front/collections/service)
         'service' => [
             'price'             => ['ფასი', 'Price'],

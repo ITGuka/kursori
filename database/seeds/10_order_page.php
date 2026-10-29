@@ -10,11 +10,10 @@ use Core\Database\Seeder;
 use Core\Settings\Settings;
 
 // საიტის შეკვეთის გვერდი (ka: shekveta, en: order) order_form ბლოკით + ჰედერის ღილაკი („შეკვეთა“);
-// პაკეტები (დიზაინების ზედა დონის კატეგორიები) დარგებით; ინდივიდუალური შეკვეთის გვერდი (custom_order_form).
-// გვერდი უკვე არსებობს → გვერდს არ ეხება. packages() და customPage() — მიგრაციიდანაც (2026_10_29_000009).
+// პაკეტები (დიზაინების ზედა დონის კატეგორიები) დარგებით; ინდივიდუალური შეკვეთა — იმავე ფორმაში (?package=custom).
+// გვერდი უკვე არსებობს → გვერდს არ ეხება. packages() — მიგრაციიდანაც (2026_10_29_000009).
 return new class extends Seeder {
     private const SLUGS = ['shekveta', 'order'];
-    private const CUSTOM_SLUGS = ['individualuri', 'custom'];
 
     /**
      * პაკეტი: სახელი და slug [ka, en]; merge — არსებული დარგი (en slug), რომელიც პაკეტად იქცევა (მისი დიზაინები რჩება);
@@ -71,7 +70,6 @@ return new class extends Seeder {
         if ($db->value("SELECT page_id FROM page_translations WHERE lang = 'en' AND slug = ?", [self::SLUGS[1]]) === null) {
             $this->orderPage($db);
         }
-        $this->customPage($db);
     }
 
     private function orderPage(DB $db): void
@@ -99,29 +97,6 @@ return new class extends Seeder {
         ]);
 
         $this->heroButton($db, $blocks, $pageId);
-    }
-
-    /** ინდივიდუალური შეკვეთის გვერდი (custom_order_form ბლოკი); უკვე არსებობს (ბლოკით ან slug-ით) → არაფერი */
-    public function customPage(DB $db): void
-    {
-        $blocks = app(PageBlock::class);
-        if ($blocks->pageIdsOfType('custom_order_form') !== []
-            || $db->value("SELECT page_id FROM page_translations WHERE lang = 'en' AND slug = ?", [self::CUSTOM_SLUGS[1]]) !== null) {
-            return;
-        }
-        $pageId = app(Page::class)->save(null, ['parent_id' => null, 'status' => 'published', 'is_home' => false, 'sort' => 81, 'og_image_id' => null], [
-            'ka' => ['title' => 'ინდივიდუალური შეკვეთა', 'slug' => self::CUSTOM_SLUGS[0], 'meta_title' => '',
-                     'meta_description' => 'ინდივიდუალური საიტი თქვენი იდეით: მოგვიყევით პროექტზე და შეთავაზებას 1 სამუშაო დღეში მიიღებთ.'],
-            'en' => ['title' => 'Custom Order', 'slug' => self::CUSTOM_SLUGS[1], 'meta_title' => '',
-                     'meta_description' => 'A custom website built around your idea: tell us about the project and get a proposal within 1 business day.'],
-        ]);
-        $blocks->save(null, $pageId, 'page_header', ['image' => null, 'breadcrumb' => true], ['ka' => ['title' => ''], 'en' => ['title' => '']], []);
-        $blocks->save(null, $pageId, 'custom_order_form', ['background' => 'dark'], [
-            'ka' => ['subtitle' => 'ინდივიდუალური პროექტი', 'title' => 'მოგვიყევით თქვენს იდეაზე', 'button_label' => '',
-                     'text' => '<p>ვერ იპოვეთ შესაფერისი დიზაინი ან განსაკუთრებული ფუნქციები გჭირდებათ? აღწერეთ პროექტი — შევქმნით უნიკალურ საიტს და ზუსტ ფასს დაგისახელებთ.</p>'],
-            'en' => ['subtitle' => 'Custom Project', 'title' => 'Tell Us About Your Idea', 'button_label' => '',
-                     'text' => '<p>Couldn’t find the right design or need special features? Describe the project — we will build a unique website and give you an exact quote.</p>'],
-        ], []);
     }
 
     /** მთავარის ჰეროს პირველი სლაიდი: მთავარი ღილაკი („შეუკვეთეთ საიტი“, 05_demo_pages) → შეკვეთის გვერდი */

@@ -10,7 +10,7 @@ $isActive = fn (string $href) => $href !== '' && !preg_match('~^[a-z]+:~i', $hre
 $logo = setting('general.logo');
 $siteName = (string)setting('general.site_name');
 $cta = cta_link();
-$customOrder = order_url(null, 'custom_order_form');
+$customOrder = order_url(App\Controllers\Front\OrderController::CUSTOM);
 // ენის გადამრთველი: წარწერა და დროშა (img/flags); სიაში არმყოფი ენა — კოდი, დროშის გარეშე
 $langLabels = ['ka' => 'GEO', 'en' => 'ENG'];
 $langFlags = ['ka' => 'ge', 'en' => 'gb'];
@@ -52,12 +52,12 @@ $langFlags = ['ka' => 'ge', 'en' => 'gb'];
             <?php endforeach ?>
         </div>
         <?php if ($cta !== null || $customOrder !== ''): ?>
-            <?php // CTA (შეკვეთა) + ინდივიდუალური შეკვეთა (custom_order_form-ის გვერდი); მობილურზე — ჩამოსაშლელ მენიუში ?>
+            <?php // CTA (შეკვეთა) + ინდივიდუალური შეკვეთა (შეკვეთის გვერდი ?package=custom); მობილურზე — ჩამოსაშლელ მენიუში ?>
             <div class="d-flex flex-wrap flex-lg-nowrap gap-2 px-4 px-lg-0 pb-3 pb-lg-0 me-lg-3">
                 <?php if ($customOrder !== ''): ?>
                     <?php // დესკტოპზე ვიწრო ეკრანზე — მხოლოდ ხატულა (წარწერა — title / aria-label), რომ მენიუ ერთ ხაზზე დაეტიოს ?>
                     <a href="<?= e($customOrder) ?>" class="btn btn-outline-primary border-2 navbar-cta navbar-cta-custom" title="<?= e(t('nav.custom_order')) ?>"
-                       aria-label="<?= e(t('nav.custom_order')) ?>"<?= $isActive($customOrder) ? ' aria-current="page"' : '' ?>><i class="fa fa-lightbulb" aria-hidden="true"></i><span class="navbar-cta-label"><?= e(t('nav.custom_order')) ?></span></a>
+                       aria-label="<?= e(t('nav.custom_order')) ?>"><i class="fa fa-lightbulb" aria-hidden="true"></i><span class="navbar-cta-label"><?= e(t('nav.custom_order')) ?></span></a>
                 <?php endif ?>
                 <?php if ($cta !== null): ?>
                     <a href="<?= e($cta['href']) ?>" class="btn btn-primary border-2 navbar-cta"<?= $isActive($cta['href']) ? ' aria-current="page"' : '' ?>><?= e($cta['label']) ?></a>

@@ -1,11 +1,13 @@
 <?php
 /**
  * საიტის შეკვეთის ფორმა → POST /{lang}/order → ადმინის Inbox + წერილი.
- * 1) პაკეტი (?package=კოდი — წინასწარ არჩეული, მაგ. ფასების ბლოკიდან) ან ინდივიდუალური შეკვეთა (custom_order_form-ის გვერდი);
+ * 1) პაკეტი (?package=კოდი — წინასწარ არჩეული, მაგ. ფასების ბლოკიდან) ან „ინდივიდუალური“ (?package=custom: დარგი და დიზაინი
+ *    იმალება, Inbox-ში — ფორმა custom);
  * 2) დარგი — პაკეტის ქვეკატეგორიები; 3) დიზაინები — ამ პაკეტისა და დარგის (JS: assets/front/js/order-form.js).
  * შაბლონის preview — მოდალში, sandbox-იან iframe-ში.
  * @var Core\View\Template $this @var array $data @var array $block
  */
+use App\Controllers\Front\OrderController;
 use App\Models\Design;
 use App\Models\Language;
 use App\Models\Package;
@@ -17,7 +19,6 @@ $default = app(Language::class)->defaultCode();
 $designs = app(Design::class)->published(locale(), $default);
 // დარგები დიზაინების გარეშე არ ჩანს
 $packages = app(Package::class)->published(locale(), $default, $designs);
-$customUrl = order_url(null, 'custom_order_form');
 
 $isThis = Session::get('_form') === $form;
 $old = fn (string $name) => $isThis ? (string)old($name, '') : '';
@@ -26,9 +27,10 @@ $field = fn (string $name, string $type, int $max, bool $required = true) => $th
     ['form' => $form, 'name' => $name, 'label' => t("order.$name"), 'type' => $type, 'required' => $required, 'max' => $max, 'uid' => $uid]);
 $query = app()->request()?->query('package', '');
 $selectedPackage = $isThis ? $old('package') : (is_string($query) ? $query : '');
-if (!in_array($selectedPackage, array_column($packages, 'code'), true)) {
+if (!in_array($selectedPackage, [...array_column($packages, 'code'), OrderController::CUSTOM], true)) {
     $selectedPackage = '';
 }
+$isCustom = $selectedPackage === OrderController::CUSTOM;
 $selectedCategory = $old('category');
 $selectedDesign = $old('design');
 ?>
@@ -51,8 +53,7 @@ $selectedDesign = $old('design');
                                 <?php $inputId = "order-package-$uid-{$package['code']}"; ?>
                                 <div class="col-sm-6 col-xl-3">
                                     <input type="radio" class="btn-check" name="package" id="<?= e($inputId) ?>" value="<?= e($package['code']) ?>" autocomplete="off"
-                                           data-order-package data-ids="<?= e(json_encode($package['ids'])) ?>" data-name="<?= e($package['name']) ?>"
-                                           data-custom-url="<?= e(order_url($package['code'], 'custom_order_form')) ?>"<?= $selectedPackage === $package['code'] ? ' checked' : '' ?>>
+                                           data-order-package data-ids="<?= e(json_encode($package['ids'])) ?>" data-name="<?= e($package['name']) ?>"<?= $selectedPackage === $package['code'] ? ' checked' : '' ?>>
                                     <label class="package-option<?= $package['badge'] !== '' ? ' is-featured' : '' ?>" for="<?= e($inputId) ?>">
                                         <?php if ($package['badge'] !== ''): ?><span class="package-option-badge"><?= e($package['badge']) ?></span><?php endif ?>
                                         <span class="package-option-name"><?= e($package['name']) ?></span>
@@ -62,15 +63,17 @@ $selectedDesign = $old('design');
                                     </label>
                                 </div>
                             <?php endforeach ?>
-                            <?php if ($customUrl !== ''): ?>
-                                <div class="col-sm-6 col-xl-3">
-                                    <a href="<?= e($customUrl) ?>" class="package-option is-custom">
-                                        <span class="package-option-name"><i class="fa fa-lightbulb me-2" aria-hidden="true"></i><?= e(t('order.custom_title')) ?></span>
-                                        <span class="package-option-note"><?= e(t('order.custom_text')) ?></span>
-                                        <span class="package-option-link" aria-hidden="true"><i class="fa fa-arrow-right"></i></span>
-                                    </a>
-                                </div>
-                            <?php endif ?>
+                            <?php // ინდივიდუალური — იმავე ფორმაში: დარგი და დიზაინი იმალება, აღწერა — „მოგვიყევით პროექტზე“ ?>
+                            <?php $inputId = "order-package-$uid-" . OrderController::CUSTOM; ?>
+                            <div class="col-sm-6 col-xl-3">
+                                <input type="radio" class="btn-check" name="package" id="<?= e($inputId) ?>" value="<?= e(OrderController::CUSTOM) ?>" autocomplete="off"
+                                       data-order-package data-order-custom-option<?= $selectedPackage === OrderController::CUSTOM ? ' checked' : '' ?>>
+                                <label class="package-option is-custom" for="<?= e($inputId) ?>">
+                                    <span class="package-option-name"><i class="fa fa-lightbulb me-2" aria-hidden="true"></i><?= e(t('order.custom_title')) ?></span>
+                                    <span class="package-option-note"><?= e(t('order.custom_text')) ?></span>
+                                    <span class="package-option-check" aria-hidden="true"><i class="fa fa-check"></i></span>
+                                </label>
+                            </div>
                         </div>
                         <?php if ($error('package')): ?><div class="text-danger small mt-2" id="order-package-error-<?= e($uid) ?>"><?= e($error('package')) ?></div><?php endif ?>
                     </fieldset>
@@ -78,7 +81,7 @@ $selectedDesign = $old('design');
                 </div>
 
                 <?php // 2–3: პაკეტის არჩევამდე დამალულია (JS-ის გარეშე — ჩანს, noscript) ?>
-                <div class="col-12 order-steps<?= $selectedPackage === '' ? ' is-pending' : '' ?>" data-order-steps>
+                <div class="col-12 order-steps<?= $selectedPackage === '' || $isCustom ? ' is-pending' : '' ?>" data-order-steps>
                     <div class="row g-3">
                         <div class="col-12" data-order-industries-step>
                             <?php // დარგი — ღილაკებად (radio), თითო პაკეტს თავისი ჯგუფი; „ყველა“ — პაკეტის ყველა დიზაინი ?>
@@ -143,17 +146,15 @@ $selectedDesign = $old('design');
                                     </p>
                                 <?php endif ?>
                                 <?php if ($error('design')): ?><div class="text-danger small mt-2" id="order-design-error-<?= e($uid) ?>"><?= e($error('design')) ?></div><?php endif ?>
-                                <?php if ($customUrl !== ''): ?>
-                                    <?php // ვერ იპოვა → ინდივიდუალური შეკვეთა არჩეული პაკეტით (href-ს JS ანახლებს) ?>
-                                    <a href="<?= e(order_url($selectedPackage !== '' ? $selectedPackage : null, 'custom_order_form')) ?>" class="order-custom-banner mt-4" data-order-custom>
-                                        <i class="fa fa-lightbulb order-custom-banner-icon" aria-hidden="true"></i>
-                                        <span>
-                                            <strong class="d-block"><?= e(t('order.custom_design_title')) ?></strong>
-                                            <span class="form-hint"><?= e(t('order.custom_design_text')) ?></span>
-                                        </span>
-                                        <i class="fa fa-arrow-right ms-auto" aria-hidden="true"></i>
-                                    </a>
-                                <?php endif ?>
+                                <?php // ვერ იპოვა → იმავე ფორმაში „ინდივიდუალური“ (JS); JS-ის გარეშე — ?package=custom ?>
+                                <a href="<?= e(order_url(OrderController::CUSTOM)) ?>" class="order-custom-banner mt-4" data-order-custom>
+                                    <i class="fa fa-lightbulb order-custom-banner-icon" aria-hidden="true"></i>
+                                    <span>
+                                        <strong class="d-block"><?= e(t('order.custom_design_title')) ?></strong>
+                                        <span class="form-hint"><?= e(t('order.custom_design_text')) ?></span>
+                                    </span>
+                                    <i class="fa fa-arrow-right ms-auto" aria-hidden="true"></i>
+                                </a>
                             </fieldset>
                         </div>
                     </div>
@@ -163,9 +164,12 @@ $selectedDesign = $old('design');
                 <div class="col-md-6"><?= $field('phone', 'tel', 50) ?></div>
                 <div class="col-md-6"><?= $field('email', 'email', 190) ?></div>
 
-                <div class="col-12">
-                    <?= $field('description', 'textarea', 5000) ?>
-                    <p class="form-hint mt-2 mb-0"><i class="fa fa-lightbulb me-1" aria-hidden="true"></i><?= e(t('order.description_hint')) ?></p>
+                <?php // აღწერა: პაკეტი — „ბიზნესის აღწერა“, ინდივიდუალური — „მოგვიყევით პროექტზე“ (JS ცვლის წარწერას და მინიშნებას) ?>
+                <div class="col-12" data-order-description data-label-order="<?= e(t('order.description')) ?> *" data-label-custom="<?= e(t('custom.description')) ?> *">
+                    <?= $this->insert('front/partials/form-field', ['form' => $form, 'name' => 'description', 'type' => 'textarea', 'required' => true, 'max' => 5000, 'uid' => $uid,
+                        'label' => t($isCustom ? 'custom.description' : 'order.description')]) ?>
+                    <p class="form-hint mt-2 mb-0<?= $isCustom ? ' d-none' : '' ?>" data-order-hint><i class="fa fa-lightbulb me-1" aria-hidden="true"></i><?= e(t('order.description_hint')) ?></p>
+                    <p class="form-hint mt-2 mb-0<?= $isCustom ? '' : ' d-none' ?>" data-custom-hint><i class="fa fa-lightbulb me-1" aria-hidden="true"></i><?= e(t('custom.description_hint')) ?></p>
                 </div>
 
                 <div class="col-12">

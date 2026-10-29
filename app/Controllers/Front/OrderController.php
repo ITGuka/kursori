@@ -24,6 +24,8 @@ use Throwable;
 final class OrderController
 {
     private const FORM = 'order';
+    /** package = custom → ინდივიდუალური შეკვეთა (config/forms.php → custom) */
+    public const CUSTOM = 'custom';
 
     public function __construct(
         private readonly FormSubmission $submissions,
@@ -38,7 +40,7 @@ final class OrderController
 
     public function submit(Request $request, string $lang): Response
     {
-        $definition = FormSubmission::forms()[self::FORM] ?? throw new HttpException(404);
+        isset(FormSubmission::forms()[self::FORM]) || throw new HttpException(404);
         $back = FormController::backTo($request, $lang, 'form-' . self::FORM);
 
         if (trim($request->string((string)config('forms.honeypot', 'website'), '')) !== '') {
@@ -52,6 +54,10 @@ final class OrderController
             return redirect($back)->with('_form', self::FORM)->with('_form_error', t('form.too_many'))->withInput($input);
         }
 
+        // ინდივიდუალური (package = custom) — დიზაინის გარეშე, Inbox-ში ცალკე ფორმად („custom“)
+        $custom = $input['package'] === self::CUSTOM;
+        $form = $custom ? self::CUSTOM : self::FORM;
+        $definition = FormSubmission::forms()[$form];
         $fields = $definition['fields'];
         $validator = Validator::make(
             $input,
@@ -63,16 +69,19 @@ final class OrderController
 
         // პაკეტი სავალდებულოა; დარგი — ამ პაკეტისა; დიზაინი — ამ პაკეტში (პაკეტზე ან მის დარგზე მიბმული)
         $default = $this->languages->defaultCode();
-        $package = array_column($this->packages->published($default, $default), null, 'code')[$input['package']] ?? null;
-        $categories = array_column($package['children'] ?? [], null, 'id');
-        $design = array_column($this->designs->published($default, $default), null, 'id')[(int)$input['design']] ?? null;
-        if ($package === null) {
-            $errors['package'] = t('order.package_required');
-        } elseif ($input['category'] !== '' && !isset($categories[(int)$input['category']])) {
-            $errors['category'] = t('validation.in');
-        }
-        if ($design === null || ($package !== null && array_intersect($design['categories'], $package['ids']) === [])) {
-            $errors['design'] = t('order.design_required');
+        $package = $categories = $design = null;
+        if (!$custom) {
+            $package = array_column($this->packages->published($default, $default), null, 'code')[$input['package']] ?? null;
+            $categories = array_column($package['children'] ?? [], null, 'id');
+            $design = array_column($this->designs->published($default, $default), null, 'id')[(int)$input['design']] ?? null;
+            if ($package === null) {
+                $errors['package'] = t('order.package_required');
+            } elseif ($input['category'] !== '' && !isset($categories[(int)$input['category']])) {
+                $errors['category'] = t('validation.in');
+            }
+            if ($design === null || ($package !== null && array_intersect($design['categories'], $package['ids']) === [])) {
+                $errors['design'] = t('order.design_required');
+            }
         }
         foreach (['has_domain', 'has_hosting'] as $name) {
             if ($input[$name] !== 'yes') {
@@ -84,13 +93,13 @@ final class OrderController
         }
 
         $this->limiter->hit($key, (int)$limit['decay']);
-        $data = [
+        $data = $custom ? $input : [
             'package'  => $package['name'] . ($package['price'] !== '' ? ' — ' . $package['price'] : ''),
             'category' => $input['category'] !== '' ? $categories[(int)$input['category']]['name'] : '',
             'design'   => $design['title'] . ' (#' . $design['id'] . ')',
         ] + $input;
         $data = array_merge(array_fill_keys(array_keys($fields), ''), array_intersect_key($data, $fields));
-        $id = $this->submissions->create(self::FORM, $lang, $data, (string)$request->header('Referer', ''), $request->ip(), (string)$request->header('User-Agent', ''));
+        $id = $this->submissions->create($form, $lang, $data, (string)$request->header('Referer', ''), $request->ip(), (string)$request->header('User-Agent', ''));
         $this->notify($id, $data, $lang, $definition);
 
         return redirect($back)->with('_form', self::FORM)->with('_form_success', t('order.sent'));
@@ -124,7 +133,7 @@ final class OrderController
                 'orderLang'  => $lang,
                 'url'        => absolute_url('admin/inbox/' . $id),
             ]);
-            $this->mailer->send($to, 'ახალი შეკვეთა #' . $id . ': ' . $data['name'], $html, '', filter_var($data['email'], FILTER_VALIDATE_EMAIL) ? ['Reply-To' => $data['email']] : []);
+            $this->mailer->send($to, $definition['label'] . ' #' . $id . ': ' . $data['name'], $html, '', filter_var($data['email'], FILTER_VALIDATE_EMAIL) ? ['Reply-To' => $data['email']] : []);
         } catch (Throwable $e) {
             Log::error($e, ['order' => $id]);
         }

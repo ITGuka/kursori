@@ -189,7 +189,7 @@ return [
                                       'help' => 'პაკეტები და ფასები იცვლება: დიზაინები → პაკეტები.'],
             'button_label'        => ['type' => 'text', 'label' => 'პაკეტის ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „შეუკვეთეთ“.'],
             'custom'              => ['type' => 'toggle', 'label' => 'ინდივიდუალური შეკვეთის ბარათი', 'default' => true,
-                                      'help' => 'ბოლო ბარათი → ინდივიდუალური შეკვეთის გვერდი.'],
+                                      'help' => 'პაკეტების ქვეშ ზოლი → შეკვეთის ფორმა, არჩეული „ინდივიდუალურით“.'],
             'custom_name'         => ['type' => 'text', 'label' => 'ინდივიდუალური: სახელი', 'translatable' => true, 'max' => 60],
             'custom_price'        => ['type' => 'text', 'label' => 'ინდივიდუალური: ფასი', 'translatable' => true, 'max' => 60, 'help' => 'მაგ. „ფასი შეთანხმებით“.'],
             'custom_note'         => ['type' => 'text', 'label' => 'ინდივიდუალური: მინიშნება', 'translatable' => true, 'max' => 150],
@@ -298,18 +298,6 @@ return [
         'fields' => $title + [
             'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
             'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „შეკვეთის გაგზავნა“.'],
-            'background'   => $background,
-        ],
-    ],
-
-    // ინდივიდუალური შეკვეთა (დროებითი ფორმა: config/forms.php → custom); ?package=კოდი — წინასწარ არჩეული პაკეტი
-    'custom_order_form' => [
-        'label'  => 'ინდივიდუალური შეკვეთის ფორმა',
-        'icon'   => 'bx bx-bulb',
-        'view'   => 'front/blocks/custom_order_form',
-        'fields' => $title + [
-            'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
-            'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „მოთხოვნის გაგზავნა“.'],
             'background'   => $background,
         ],
     ],

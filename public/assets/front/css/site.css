@@ -2034,8 +2034,7 @@ a.package-option:focus-visible {
     font-weight: 600;
 }
 
-.package-option-check,
-.package-option-link {
+.package-option-check {
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -2046,9 +2045,6 @@ a.package-option:focus-visible {
     justify-content: center;
     border-radius: 50%;
     font-size: .8rem;
-}
-
-.package-option-check {
     border: 2px solid rgba(255, 255, 255, .2);
     color: transparent;
 }
@@ -2057,10 +2053,6 @@ a.package-option:focus-visible {
     border-color: var(--bs-primary);
     background: var(--bs-primary);
     color: var(--bs-white);
-}
-
-.package-option-link {
-    color: var(--bs-primary);
 }
 
 /* „ვერ იპოვეთ შესაფერისი?“ — დიზაინების შემდეგ, ინდივიდუალურ შეკვეთაზე */

@@ -1,5 +1,6 @@
 /**
- * საიტის შეკვეთის ფორმა (front/blocks/order_form): პაკეტი → მისი დარგები (ღილაკები) → დიზაინების ფილტრი, „მეტის ჩვენება“
+ * საიტის შეკვეთის ფორმა (front/blocks/order_form): პაკეტი → მისი დარგები (ღილაკები) → დიზაინების ფილტრი, „მეტის ჩვენება“;
+ * „ინდივიდუალური“ — იმავე ფორმაში, დარგისა და დიზაინის გარეშე
  * და შაბლონის preview მოდალში (ბარათზე დაკლიკებით; iframe, მოწყობილობის სიგანის გადამრთველით).
  * დიზაინი აირჩევა მოდალის ღილაკით „ამ დიზაინის არჩევა“.
  */
@@ -14,6 +15,8 @@
         var steps = form.querySelector('[data-order-steps]');
         var pending = form.querySelector('[data-order-pending]');
         var custom = form.querySelector('[data-order-custom]');
+        var customOption = form.querySelector('[data-order-custom-option]');
+        var description = form.querySelector('[data-order-description]');
         var industries = form.querySelector('[data-order-industries-step]');
         var designStep = form.querySelector('[data-order-design-step]');
         var chips = Array.prototype.slice.call(form.querySelectorAll('[data-order-category]'));
@@ -64,11 +67,28 @@
             var single = !group || group.querySelectorAll('input').length < 2;
             if (industries) { industries.classList.toggle('d-none', single); }
             if (designStep) { designStep.textContent = single ? '2' : '3'; }
-            if (steps) { steps.classList.toggle('is-pending', !current); }
+            // „ინდივიდუალური“ — დარგი და დიზაინი იმალება, აღწერის წარწერა და მინიშნება იცვლება
+            var isCustom = !!current && current.hasAttribute('data-order-custom-option');
+            if (steps) { steps.classList.toggle('is-pending', !current || isCustom); }
             if (pending) { pending.classList.toggle('d-none', !!current); }
-            if (custom && current) { custom.href = current.getAttribute('data-custom-url'); }
+            if (description) {
+                var label = description.querySelector('label');
+                if (label) { label.textContent = description.getAttribute(isCustom ? 'data-label-custom' : 'data-label-order'); }
+                description.querySelector('[data-order-hint]').classList.toggle('d-none', isCustom);
+                description.querySelector('[data-custom-hint]').classList.toggle('d-none', !isCustom);
+            }
             filter();
-            if (scroll && current && steps) { steps.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+            if (scroll && current && steps && !isCustom) { steps.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+        }
+
+        // „ვერ იპოვეთ შესაფერისი?“ → იმავე ფორმაში „ინდივიდუალური“, პაკეტების ნაბიჯზე ასვლით
+        if (custom && customOption) {
+            custom.addEventListener('click', function (event) {
+                event.preventDefault();
+                customOption.checked = true;
+                selectPackage(false);
+                customOption.closest('fieldset').scrollIntoView({behavior: 'smooth', block: 'start'});
+            });
         }
 
         // დარგი → მისი დიზაინები; „ყველა“ → პაკეტისა და მისი დარგების დიზაინები; პაკეტი არ არის → არცერთი

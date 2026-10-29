@@ -53,27 +53,26 @@ function cta_link(): ?array
 }
 
 /**
- * შეკვეთის გვერდის URL — გვერდი, სადაც ბლოკია: order_url() → order_form (+ ?package=კოდი#form-order),
- * order_url('business', 'custom_order_form') → ინდივიდუალური შეკვეთა (?package= — არჩეული პაკეტი). გვერდი არ არის → ''.
+ * შეკვეთის გვერდის URL (გვერდი order_form ბლოკით): order_url() → გვერდი, order_url('business') → ?package=business#form-order,
+ * order_url('custom') → ინდივიდუალური შეკვეთა იმავე ფორმაში. გვერდი არ არის → ''.
  */
-function order_url(?string $package = null, string $block = 'order_form'): string
+function order_url(?string $package = null): string
 {
     static $pages = [];
     $lang = locale();
-    $pages[$block][$lang] ??= (function () use ($block, $lang): string {
-        $pageIds = app(PageBlock::class)->pageIdsOfType($block);
-        foreach ($pageIds as $pageId) {
+    $pages[$lang] ??= (function () use ($lang): string {
+        foreach (app(PageBlock::class)->pageIdsOfType('order_form') as $pageId) {
             if (($href = app(Page::class)->url($pageId, $lang)) !== '') {
                 return $href;
             }
         }
         return '';
     })();
-    $href = $pages[$block][$lang];
+    $href = $pages[$lang];
     if ($href === '' || $package === null || $package === '') {
         return $href;
     }
-    return $href . '?package=' . rawurlencode($package) . ($block === 'order_form' ? '#form-order' : '#form-custom');
+    return $href . '?package=' . rawurlencode($package) . '#form-order';
 }
 
 /** ტელეფონის tel: ბმული ფორმატირებული ნომრიდან ('+995 32 247 18 90' → 'tel:+995322471890') */

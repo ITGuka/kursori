@@ -6,8 +6,8 @@ use Core\Database\DB;
 use Core\Database\Migration;
 
 // ფასების პაკეტები = დიზაინების ზედა დონის კატეგორიები (categories.code: start / business / shop), დარგები — მათი ქვეკატეგორიები.
-// ფასი, მინიშნება, „რა შედის“, ნიშანი — package_translations. ფასების ბლოკის repeater-ის ტექსტები პაკეტებში გადადის,
-// იქმნება ინდივიდუალური შეკვეთის გვერდი (production-ზე seed-ები არ ეშვება — ლოგიკა 10_order_page-შია)
+// ფასი, მინიშნება, „რა შედის“, ნიშანი — package_translations. ფასების ბლოკის repeater-ის ტექსტები პაკეტებში გადადის
+// (production-ზე seed-ები არ ეშვება — ლოგიკა 10_order_page-შია). ინდივიდუალური შეკვეთის გვერდი აქ იქმნებოდა — 2026_10_30_000001.
 return new class extends Migration {
     public function up(DB $db): void
     {
@@ -27,7 +27,6 @@ return new class extends Migration {
         // ცარიელი ბაზა (ახალი ინსტალაცია) → ყველაფერს seed-ები ქმნის
         if ((int)$db->value("SELECT COUNT(*) FROM categories WHERE collection = 'designs'") > 0) {
             $orders->packages($db, false);
-            $orders->customPage($db);
         }
 
         $translations = app(Translation::class);

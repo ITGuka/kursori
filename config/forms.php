@@ -70,17 +70,20 @@ return [
         ],
     ],
 
-    // ინდივიდუალური შეკვეთა (custom_order_form ბლოკი; დროებითი ფორმა — მოგვიანებით შეიცვლება).
-    // package — პაკეტის სახელი ძირითად ენაზე (ბლოკი ბაზიდან აჩვენებს) ან ცარიელი („ჯერ არ ვიცი“)
+    // ინდივიდუალური შეკვეთა — იგივე order_form, პაკეტი „ინდივიდუალური“ (package = custom): დიზაინის გარეშე.
+    // დროებითი ველები — მოგვიანებით შეიცვლება. handler — Front\OrderController (POST /{lang}/order).
     'custom' => [
-        'label'  => 'ინდივიდუალური შეკვეთა',
-        'icon'   => 'bx bx-bulb',
-        'fields' => [
+        'label'   => 'ინდივიდუალური შეკვეთა',
+        'icon'    => 'bx bx-bulb',
+        'handler' => 'order',
+        'notify'  => true,
+        'fields'  => [
             'name'        => ['rules' => 'required|max:100', 'label' => 'order.name'],
             'phone'       => ['rules' => ['required', ...$phone], 'label' => 'order.phone'],
             'email'       => ['rules' => 'required|email|max:190', 'label' => 'order.email'],
-            'package'     => ['rules' => 'max:150', 'label' => 'custom.package'],
             'description' => ['rules' => 'required|max:5000', 'label' => 'custom.description', 'multiline' => true],
+            'has_domain'  => ['rules' => '', 'label' => 'order.has_domain', 'options' => ['yes' => 'order.yes', 'no' => 'order.no']],
+            'has_hosting' => ['rules' => '', 'label' => 'order.has_hosting', 'options' => ['yes' => 'order.yes', 'no' => 'order.no']],
         ],
     ],
 

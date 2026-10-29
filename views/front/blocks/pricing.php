@@ -2,15 +2,16 @@
 /**
  * ფასების პაკეტები ბაზიდან (App\Models\Package) — ერთ პანელში სვეტებად (stats ბლოკის ენით: გამყოფები, ვარდისფერი აქცენტი);
  * გამორჩეული (ნიშნით) — ზედა ვარდისფერი ზოლით და მთავარი ღილაკით. ღილაკი → შეკვეთის გვერდი არჩეული პაკეტით.
- * ინდივიდუალური შეკვეთა (ბლოკის ველები) — პანელის ქვეშ ჰორიზონტალური ზოლი → custom_order_form-ის გვერდი.
+ * ინდივიდუალური შეკვეთა (ბლოკის ველები) — პანელის ქვეშ ჰორიზონტალური ზოლი → შეკვეთის გვერდი ?package=custom.
  * @var Core\View\Template $this @var array $data
  */
+use App\Controllers\Front\OrderController;
 use App\Models\Language;
 use App\Models\Package;
 
 $packages = app(Package::class)->published(locale(), app(Language::class)->defaultCode());
 $button = $data['button_label'] !== '' ? $data['button_label'] : t('order.order_now');
-$customHref = $data['custom'] && $data['custom_name'] !== '' ? order_url(null, 'custom_order_form') : '';
+$customHref = $data['custom'] && $data['custom_name'] !== '' ? order_url(OrderController::CUSTOM) : '';
 $customFeatures = array_values(array_filter(array_map('trim', explode("\n", $data['custom_features']))));
 if ($packages === [] && $customHref === '') {
     return;
