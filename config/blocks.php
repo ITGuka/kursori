@@ -183,18 +183,19 @@ return [
         'icon'   => 'bx bx-purchase-tag',
         'view'   => 'front/blocks/pricing',
         'shared' => true,
+        // პაკეტები (სახელი, ფასი, „რა შედის“) — ადმინი → პაკეტები; ღილაკი → შეკვეთის გვერდი ?package=კოდი (არჩეული პაკეტით)
         'fields' => $title + [
-            'text'       => ['type' => 'textarea', 'label' => 'ტექსტი', 'translatable' => true, 'max' => 500],
-            'packages'   => ['type' => 'repeater', 'label' => 'პაკეტები', 'min_items' => 1, 'max_items' => 6, 'fields' => [
-                'name'         => ['type' => 'text', 'label' => 'სახელი', 'translatable' => true, 'max' => 60],
-                'price'        => ['type' => 'text', 'label' => 'ფასი', 'translatable' => true, 'max' => 40, 'help' => 'მაგ. „1 500 ₾-დან“.'],
-                'note'         => ['type' => 'text', 'label' => 'ფასის მინიშნება', 'translatable' => true, 'max' => 100, 'help' => 'მაგ. „ვადა: 3–4 კვირა“.'],
-                'features'     => ['type' => 'textarea', 'label' => 'რა შედის', 'translatable' => true, 'max' => 1500, 'help' => 'თითო პუნქტი ახალ ხაზზე.'],
-                'badge'        => ['type' => 'text', 'label' => 'ნიშანი', 'translatable' => true, 'max' => 40, 'help' => 'მაგ. „პოპულარული“ — პაკეტი გამოიკვეთება. ცარიელი — ჩვეულებრივი.'],
-                'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60],
-                'button_link'  => ['type' => 'link', 'label' => 'ღილაკის ბმული'],
-            ]],
-            'background' => $background,
+            'text'                => ['type' => 'textarea', 'label' => 'ტექსტი', 'translatable' => true, 'max' => 500,
+                                      'help' => 'პაკეტები და ფასები იცვლება: დიზაინები → პაკეტები.'],
+            'button_label'        => ['type' => 'text', 'label' => 'პაკეტის ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „შეუკვეთეთ“.'],
+            'custom'              => ['type' => 'toggle', 'label' => 'ინდივიდუალური შეკვეთის ბარათი', 'default' => true,
+                                      'help' => 'ბოლო ბარათი → ინდივიდუალური შეკვეთის გვერდი.'],
+            'custom_name'         => ['type' => 'text', 'label' => 'ინდივიდუალური: სახელი', 'translatable' => true, 'max' => 60],
+            'custom_price'        => ['type' => 'text', 'label' => 'ინდივიდუალური: ფასი', 'translatable' => true, 'max' => 60, 'help' => 'მაგ. „ფასი შეთანხმებით“.'],
+            'custom_note'         => ['type' => 'text', 'label' => 'ინდივიდუალური: მინიშნება', 'translatable' => true, 'max' => 150],
+            'custom_features'     => ['type' => 'textarea', 'label' => 'ინდივიდუალური: რა შედის', 'translatable' => true, 'max' => 1500, 'help' => 'თითო პუნქტი ახალ ხაზზე.'],
+            'custom_button_label' => ['type' => 'text', 'label' => 'ინდივიდუალური: ღილაკის ტექსტი', 'translatable' => true, 'max' => 60],
+            'background'          => $background,
         ],
     ],
 
@@ -297,6 +298,18 @@ return [
         'fields' => $title + [
             'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
             'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „შეკვეთის გაგზავნა“.'],
+            'background'   => $background,
+        ],
+    ],
+
+    // ინდივიდუალური შეკვეთა (დროებითი ფორმა: config/forms.php → custom); ?package=კოდი — წინასწარ არჩეული პაკეტი
+    'custom_order_form' => [
+        'label'  => 'ინდივიდუალური შეკვეთის ფორმა',
+        'icon'   => 'bx bx-bulb',
+        'view'   => 'front/blocks/custom_order_form',
+        'fields' => $title + [
+            'text'         => ['type' => 'wysiwyg', 'label' => 'ტექსტი', 'translatable' => true],
+            'button_label' => ['type' => 'text', 'label' => 'ღილაკის ტექსტი', 'translatable' => true, 'max' => 60, 'help' => 'ცარიელი — „მოთხოვნის გაგზავნა“.'],
             'background'   => $background,
         ],
     ],

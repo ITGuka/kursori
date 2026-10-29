@@ -1,5 +1,5 @@
 /**
- * საიტის შეკვეთის ფორმა (front/blocks/order_form): დიზაინების ფილტრი ბიზნესის კატეგორიის ღილაკებით, „მეტის ჩვენება“
+ * საიტის შეკვეთის ფორმა (front/blocks/order_form): პაკეტი → მისი დარგები (ღილაკები) → დიზაინების ფილტრი, „მეტის ჩვენება“
  * და შაბლონის preview მოდალში (ბარათზე დაკლიკებით; iframe, მოწყობილობის სიგანის გადამრთველით).
  * დიზაინი აირჩევა მოდალის ღილაკით „ამ დიზაინის არჩევა“.
  */
@@ -9,6 +9,13 @@
     var forms = [];
 
     document.querySelectorAll('[data-order-form]').forEach(function (form) {
+        var packages = Array.prototype.slice.call(form.querySelectorAll('[data-order-package]'));
+        var groups = Array.prototype.slice.call(form.querySelectorAll('[data-order-industries]'));
+        var steps = form.querySelector('[data-order-steps]');
+        var pending = form.querySelector('[data-order-pending]');
+        var custom = form.querySelector('[data-order-custom]');
+        var industries = form.querySelector('[data-order-industries-step]');
+        var designStep = form.querySelector('[data-order-design-step]');
         var chips = Array.prototype.slice.call(form.querySelectorAll('[data-order-category]'));
         var cards = Array.prototype.slice.call(form.querySelectorAll('[data-order-design]'));
         var empty = form.querySelector('[data-order-empty]');
@@ -33,13 +40,45 @@
             moreCount.textContent = moreCount.getAttribute('data-label').replace(':shown', String(shown)).replace(':total', String(matching.length));
         }
 
-        // კატეგორია → მისი (და ქვეკატეგორიების) დიზაინები; „ყველა დიზაინი“ / „სხვა“ (ids = []) → ყველა
+        function checkedPackage() {
+            return packages.filter(function (p) { return p.checked; })[0] || null;
+        }
+
+        // პაკეტი → მისი დარგების ჯგუფი (სხვა ჯგუფები გათიშულია, რომ არ გაიგზავნოს); დარგი არ არის არჩეული → „ყველა“
+        function selectPackage(scroll) {
+            var current = checkedPackage();
+            var code = current ? current.value : null;
+            groups.forEach(function (group) {
+                var active = group.getAttribute('data-order-industries') === code;
+                group.classList.toggle('d-none', !active);
+                group.querySelectorAll('input').forEach(function (input) {
+                    input.disabled = !active;
+                    if (!active) { input.checked = false; }
+                });
+                if (active && !group.querySelector('input:checked')) {
+                    group.querySelector('input').checked = true;
+                }
+            });
+            // დარგების გარეშე პაკეტი (მხოლოდ „ყველა“) — ნაბიჯი 2 იმალება, დიზაინი ხდება მე-2 ნაბიჯი
+            var group = current ? form.querySelector('[data-order-industries="' + current.value + '"]') : null;
+            var single = !group || group.querySelectorAll('input').length < 2;
+            if (industries) { industries.classList.toggle('d-none', single); }
+            if (designStep) { designStep.textContent = single ? '2' : '3'; }
+            if (steps) { steps.classList.toggle('is-pending', !current); }
+            if (pending) { pending.classList.toggle('d-none', !!current); }
+            if (custom && current) { custom.href = current.getAttribute('data-custom-url'); }
+            filter();
+            if (scroll && current && steps) { steps.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+        }
+
+        // დარგი → მისი დიზაინები; „ყველა“ → პაკეტისა და მისი დარგების დიზაინები; პაკეტი არ არის → არცერთი
         function filter() {
-            var chip = chips.filter(function (c) { return c.checked; })[0];
-            var ids = chip ? JSON.parse(chip.getAttribute('data-ids') || '[]') : [];
+            var chip = chips.filter(function (c) { return c.checked && !c.disabled; })[0];
+            var current = checkedPackage();
+            var ids = chip ? JSON.parse(chip.getAttribute('data-ids') || '[]') : (current ? JSON.parse(current.getAttribute('data-ids') || '[]') : []);
             matching = cards.filter(function (card) {
                 var categories = JSON.parse(card.getAttribute('data-categories') || '[]');
-                var show = ids.length === 0 || categories.some(function (id) { return ids.indexOf(id) !== -1; });
+                var show = categories.some(function (id) { return ids.indexOf(id) !== -1; });
                 var radio = card.querySelector('input[type=radio]');
                 if (!show && radio && radio.checked) { radio.checked = false; }
                 return show;
@@ -68,8 +107,9 @@
             selected.querySelector('[data-order-selected-title]').textContent = radio ? radio.getAttribute('data-title') : '';
         }
 
+        packages.forEach(function (input) { input.addEventListener('change', function () { selectPackage(true); }); });
         chips.forEach(function (chip) { chip.addEventListener('change', filter); });
-        filter();
+        selectPackage(false);
         forms.push({form: form, updateSelected: updateSelected});
     });
 

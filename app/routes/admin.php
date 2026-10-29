@@ -14,6 +14,7 @@ use App\Controllers\Admin\JobController;
 use App\Controllers\Admin\NewsController;
 use App\Controllers\Admin\NewsFeedController;
 use App\Controllers\Admin\NewsletterController;
+use App\Controllers\Admin\PackageController;
 use App\Controllers\Admin\LanguageController;
 use App\Controllers\Admin\MediaController;
 use App\Controllers\Admin\MenuController;
@@ -98,7 +99,14 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
         $router->post('/designs/{id}/toggle', [DesignController::class, 'toggle'])->name('designs.toggle');
         $router->delete('/designs/{id}', [DesignController::class, 'destroy'])->name('designs.destroy');
 
-        $router->get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
+        $router->get('/packages', [PackageController::class, 'index'])->name('packages.index');
+        $router->get('/packages/create', [PackageController::class, 'create'])->name('packages.create');
+        $router->post('/packages', [PackageController::class, 'store'])->name('packages.store');
+        $router->get('/packages/{id}/edit', [PackageController::class, 'edit'])->name('packages.edit');
+        $router->put('/packages/{id}', [PackageController::class, 'update'])->name('packages.update');
+        $router->delete('/packages/{id}', [PackageController::class, 'destroy'])->name('packages.destroy');
+
+        $router->get('/inbox',[InboxController::class, 'index'])->name('inbox.index');
         $router->get('/inbox/{id}', [InboxController::class, 'show'])->name('inbox.show');
         $router->post('/inbox/{id}/unread', [InboxController::class, 'markUnread'])->name('inbox.unread');
         $router->post('/inbox/{id}/status', [InboxController::class, 'status'])->name('inbox.status');

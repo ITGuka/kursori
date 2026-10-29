@@ -27,6 +27,8 @@ return [
         ['label' => 'სიახლეები', 'icon' => 'bx bx-rss', 'route' => 'admin.news.index', 'active' => 'admin.news.*'],
         // დიზაინები (შეკვეთის ფორმა); collection — აქტიურია დიზაინებისა და მათი კატეგორიების გვერდებზე
         ['label' => 'დიზაინები', 'icon' => 'bx bx-palette', 'route' => 'admin.designs.index', 'collection' => 'designs'],
+        // ფასების პაკეტები = დიზაინების ზედა დონის კატეგორიები (ფასი, „რა შედის“)
+        ['label' => 'პაკეტები', 'icon' => 'bx bx-package', 'route' => 'admin.packages.index', 'active' => 'admin.packages.*'],
         ['label' => 'მენიუები', 'icon' => 'bx bx-menu', 'route' => 'admin.menus.index', 'active' => 'admin.menus.*'],
         ['label' => 'მედია', 'icon' => 'bx bx-images', 'route' => 'admin.media.index', 'active' => 'admin.media.*'],
 

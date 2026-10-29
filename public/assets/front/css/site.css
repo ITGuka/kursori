@@ -1100,6 +1100,29 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
+/* ინდივიდუალური შეკვეთა: მობილურის მენიუში — ხატულა + წარწერა; დესკტოპზე 1500px-მდე არ ეტევა (ფასებსა და შეკვეთის
+   ფორმაშია), 1700px-მდე — მხოლოდ ხატულა, მრგვალი */
+@media (min-width: 992px) and (max-width: 1499.98px) {
+    .navbar-cta-custom {
+        display: none;
+    }
+}
+
+.navbar-cta-custom .navbar-cta-label {
+    margin-left: .5rem;
+}
+
+@media (min-width: 992px) and (max-width: 1699.98px) {
+    .navbar-cta-custom {
+        width: 36px;
+        padding: 0;
+    }
+
+    .navbar-cta-custom .navbar-cta-label {
+        display: none;
+    }
+}
+
 /* მთავრული (ka) და UPPERCASE (en) ფართოა — სლაიდერის/ჰეროს სათაური დიდ ეკრანზეც მცირდება, რომ navbar-ს არ შეეხოს */
 @media (min-width: 992px) {
     .header-carousel .display-1 {
@@ -1737,8 +1760,152 @@ img[width][height] {
     color: var(--bs-white);
 }
 
-.order-designs {
+.order-designs,
+.order-packages {
     text-align: left;
+}
+
+/* ნაბიჯის ნომერი legend-ში (1 პაკეტი → 2 დარგი → 3 დიზაინი) */
+.order-step {
+    display: inline-flex;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-right: .6rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    color: var(--bs-white);
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+/* დარგები და დიზაინები — პაკეტის არჩევის შემდეგ (JS); noscript — ყოველთვის */
+.order-steps.is-pending {
+    display: none;
+}
+
+/* პაკეტის ბარათი (radio label) და ინდივიდუალური შეკვეთის ბმული */
+.package-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    height: 100%;
+    margin: 0;
+    padding: 1.25rem 1.25rem 1rem;
+    background: var(--bs-secondary);
+    border: 2px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    color: var(--bs-white);
+    cursor: pointer;
+    transition: border-color .2s;
+}
+
+.bg-secondary .package-option {
+    background: var(--bs-dark);
+}
+
+.package-option:hover,
+.btn-check:focus-visible + .package-option,
+a.package-option:focus-visible {
+    border-color: rgba(228, 23, 121, .5); /* --bs-primary, 50% */
+    color: var(--bs-white);
+}
+
+.btn-check:checked + .package-option {
+    border-color: var(--bs-primary);
+}
+
+.package-option.is-custom {
+    border-style: dashed;
+}
+
+.package-option-name {
+    padding-right: 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.package-option-price {
+    color: var(--site-accent-text);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.package-option-note {
+    color: var(--site-text-muted);
+    font-size: .875rem;
+}
+
+.package-option-badge {
+    position: absolute;
+    top: -11px;
+    left: 1.25rem;
+    padding: 2px 10px;
+    border-radius: 50px;
+    background: var(--bs-primary);
+    color: var(--bs-white);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.package-option-check,
+.package-option-link {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    width: 1.75rem;
+    height: 1.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: .8rem;
+}
+
+.package-option-check {
+    border: 2px solid rgba(255, 255, 255, .2);
+    color: transparent;
+}
+
+.btn-check:checked + .package-option .package-option-check {
+    border-color: var(--bs-primary);
+    background: var(--bs-primary);
+    color: var(--bs-white);
+}
+
+.package-option-link {
+    color: var(--bs-primary);
+}
+
+/* „ვერ იპოვეთ შესაფერისი?“ — დიზაინების შემდეგ, ინდივიდუალურ შეკვეთაზე */
+.order-custom-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 2px dashed rgba(255, 255, 255, .15);
+    border-radius: 12px;
+    color: var(--bs-white);
+    transition: border-color .2s;
+}
+
+.order-custom-banner:hover,
+.order-custom-banner:focus-visible {
+    border-color: var(--bs-primary);
+    color: var(--bs-white);
+}
+
+.order-custom-banner-icon {
+    color: var(--bs-primary);
+    font-size: 1.5rem;
+}
+
+/* ინდივიდუალური ბარათი ფასების ბლოკში */
+.pricing-card.is-custom {
+    border-style: dashed;
 }
 
 .design-card {

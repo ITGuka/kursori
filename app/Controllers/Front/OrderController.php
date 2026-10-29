@@ -6,6 +6,7 @@ namespace App\Controllers\Front;
 use App\Models\Design;
 use App\Models\FormSubmission;
 use App\Models\Language;
+use App\Models\Package;
 use Core\Http\HttpException;
 use Core\Http\Request;
 use Core\Http\Response;
@@ -18,7 +19,7 @@ use Throwable;
 
 /**
  * საიტის შეკვეთა (order_form ბლოკი): POST /{lang}/order → Inbox (ფორმა „order“) + წერილი ადმინს.
- * კატეგორია და დიზაინი მოწმდება ბაზით; Inbox-ში ინახება მათი სახელები ძირითად ენაზე (შეკვეთის მომენტისთვის).
+ * პაკეტი, დარგი და დიზაინი მოწმდება ბაზით; Inbox-ში ინახება მათი სახელები ძირითად ენაზე და პაკეტის ფასი (შეკვეთის მომენტისთვის).
  */
 final class OrderController
 {
@@ -27,6 +28,7 @@ final class OrderController
     public function __construct(
         private readonly FormSubmission $submissions,
         private readonly Design $designs,
+        private readonly Package $packages,
         private readonly Language $languages,
         private readonly RateLimiter $limiter,
         private readonly Mailer $mailer,
@@ -59,13 +61,17 @@ final class OrderController
         );
         $errors = $validator->errors();
 
+        // პაკეტი სავალდებულოა; დარგი — ამ პაკეტისა; დიზაინი — ამ პაკეტში (პაკეტზე ან მის დარგზე მიბმული)
         $default = $this->languages->defaultCode();
-        $categories = array_column($this->designs->categoryOptions($default, $default), null, 'id');
-        $designs = array_column($this->designs->published($default, $default), null, 'id');
-        if ($input['category'] !== '' && !isset($categories[(int)$input['category']])) {
+        $package = array_column($this->packages->published($default, $default), null, 'code')[$input['package']] ?? null;
+        $categories = array_column($package['children'] ?? [], null, 'id');
+        $design = array_column($this->designs->published($default, $default), null, 'id')[(int)$input['design']] ?? null;
+        if ($package === null) {
+            $errors['package'] = t('order.package_required');
+        } elseif ($input['category'] !== '' && !isset($categories[(int)$input['category']])) {
             $errors['category'] = t('validation.in');
         }
-        if (!isset($designs[(int)$input['design']])) {
+        if ($design === null || ($package !== null && array_intersect($design['categories'], $package['ids']) === [])) {
             $errors['design'] = t('order.design_required');
         }
         foreach (['has_domain', 'has_hosting'] as $name) {
@@ -79,8 +85,9 @@ final class OrderController
 
         $this->limiter->hit($key, (int)$limit['decay']);
         $data = [
+            'package'  => $package['name'] . ($package['price'] !== '' ? ' — ' . $package['price'] : ''),
             'category' => $input['category'] !== '' ? $categories[(int)$input['category']]['name'] : '',
-            'design'   => $designs[(int)$input['design']]['title'] . ' (#' . (int)$input['design'] . ')',
+            'design'   => $design['title'] . ' (#' . $design['id'] . ')',
         ] + $input;
         $data = array_merge(array_fill_keys(array_keys($fields), ''), array_intersect_key($data, $fields));
         $id = $this->submissions->create(self::FORM, $lang, $data, (string)$request->header('Referer', ''), $request->ip(), (string)$request->header('User-Agent', ''));
@@ -93,7 +100,7 @@ final class OrderController
     private function input(Request $request): array
     {
         $data = [];
-        foreach (['name', 'phone', 'email', 'category', 'design', 'description', 'has_domain', 'has_hosting'] as $name) {
+        foreach (['name', 'phone', 'email', 'package', 'category', 'design', 'description', 'has_domain', 'has_hosting'] as $name) {
             $value = $request->input($name, '');
             $value = is_string($value) ? str_replace("\r\n", "\n", trim($value)) : '';
             $data[$name] = (string)preg_replace($name === 'description' ? '/[\x00-\x09\x0B-\x1F\x7F]/u' : '/[\x00-\x1F\x7F]/u', '', $value);

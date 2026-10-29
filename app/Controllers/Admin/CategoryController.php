@@ -62,6 +62,10 @@ final class CategoryController
     {
         $category = $this->categories->find($id) ?? abort(404);
         $this->definition($category['collection']);
+        // დიზაინების ზედა დონე = პაკეტი (ფასით) — საკუთარი ფორმა აქვს
+        if ($category['collection'] === Design::CATEGORIES && $category['parent_id'] === null) {
+            return redirect(route('admin.packages.edit', ['id' => $id]));
+        }
         return $this->form($category['collection'], $category, $category, $this->categories->translations($id));
     }
 
@@ -82,6 +86,10 @@ final class CategoryController
     {
         $category = $this->categories->find($id) ?? abort(404);
         $name = $this->categories->translations($id)[$this->languages->defaultCode()]['name'] ?? '#' . $id;
+        if ($category['collection'] === Design::CATEGORIES && $this->categories->hasChildren($id)) {
+            return redirect(route('admin.categories.index', ['type' => Design::CATEGORIES]))
+                ->with('error', "პაკეტს „{$name}“ დარგები აქვს — ჯერ გადაიტანეთ ისინი სხვა პაკეტში.");
+        }
         $this->categories->delete($id);
         $this->log->log('category.deleted', $category['collection'], $id, ['title' => $name]);
         return redirect(route('admin.categories.index', ['type' => $category['collection']]))
@@ -92,7 +100,7 @@ final class CategoryController
     private function definition(string $type): array
     {
         if ($type === Design::CATEGORIES) {
-            return ['label' => 'დიზაინები', 'categories' => true, 'index' => route('admin.designs.index')];
+            return ['label' => 'დიზაინები', 'categories' => true, 'index' => route('admin.designs.index'), 'packages' => route('admin.packages.index')];
         }
         $definition = Collection::type($type) ?? abort(404);
         return $definition['categories'] ? $definition + ['index' => route('admin.collections.index', ['type' => $type])] : abort(404);
@@ -112,6 +120,9 @@ final class CategoryController
             } elseif ($id !== null && $this->categories->hasChildren($id)) {
                 $errors['parent_id'] = 'კატეგორიას ქვეკატეგორიები აქვს — ის მხოლოდ ზედა დონეზე შეიძლება იყოს.';
             }
+        } elseif ($type === Design::CATEGORIES) {
+            // დიზაინების დარგი ყოველთვის პაკეტშია; ახალი პაკეტი — /admin/packages
+            $errors['parent_id'] = 'აირჩიეთ პაკეტი.';
         }
 
         $translations = [];
@@ -154,6 +165,7 @@ final class CategoryController
             'defaultLang'    => $default,
             'parents'        => $this->categories->options($type, $default, true, $category !== null ? (int)$category['id'] : null),
             'hasChildren'    => $category !== null && $this->categories->hasChildren((int)$category['id']),
+            'isDesigns'      => $type === Design::CATEGORIES,
         ], $errors === [] ? 200 : 422);
     }
 }

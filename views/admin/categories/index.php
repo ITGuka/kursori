@@ -13,7 +13,12 @@ $this->layout('admin/layouts/app');
 <div class="card">
     <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
         <h5 class="card-title mb-0"><?= e($title) ?> <span class="text-body-secondary fw-normal">(<?= count($rows) ?>)</span></h5>
-        <a href="<?= e(route('admin.categories.create', ['type' => $type])) ?>" class="btn btn-primary"><i class="icon-base bx bx-plus me-1"></i>დამატება</a>
+        <div class="d-flex flex-wrap gap-2">
+            <?php if (isset($definition['packages'])): // დიზაინები: ზედა დონე = პაკეტი ?>
+                <a href="<?= e($definition['packages']) ?>" class="btn btn-outline-primary"><i class="icon-base bx bx-package me-1"></i>პაკეტები</a>
+            <?php endif ?>
+            <a href="<?= e(route('admin.categories.create', ['type' => $type])) ?>" class="btn btn-primary"><i class="icon-base bx bx-plus me-1"></i>დამატება</a>
+        </div>
     </div>
     <?php if ($rows === []): ?>
         <div class="card-body pt-0"><p class="text-body-secondary mb-0">კატეგორიები ჯერ არ არის.</p></div>
@@ -29,6 +34,7 @@ $this->layout('admin/layouts/app');
                         <td>
                             <?php if ($row['depth'] > 0): ?><span class="text-body-secondary" style="padding-left: <?= (int)$row['depth'] * 1.25 ?>rem">↳ </span><?php endif ?>
                             <a href="<?= e(route('admin.categories.edit', ['id' => $row['id']])) ?>" class="fw-medium text-heading"><?= e($row['name']) ?></a>
+                            <?php if (isset($definition['packages']) && $row['depth'] === 0): ?><span class="badge bg-label-info ms-1">პაკეტი</span><?php endif ?>
                             <?php if (!$row['is_active']): ?><span class="badge bg-label-secondary ms-1">გათიშული</span><?php endif ?>
                         </td>
                         <td>

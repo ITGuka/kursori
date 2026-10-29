@@ -12,11 +12,9 @@ use Core\Database\DB;
  */
 final class Design
 {
-    /** categories.collection — დიზაინების (= ბიზნესის) კატეგორიები */
+    /** categories.collection — დიზაინების კატეგორიები: ზედა დონე = პაკეტი (App\Models\Package), ქვეკატეგორია = დარგი */
     public const CATEGORIES = 'designs';
     public const DIRECTORY = 'uploads/designs';
-    /** კატეგორია „სხვა“ (slug ნებისმიერ ენაზე): ყოველთვის ჩანს და ყველა დიზაინს აჩვენებს */
-    public const OTHER_SLUG = 'other';
 
     public function __construct(private readonly DB $db, private readonly Category $categories)
     {
@@ -165,34 +163,5 @@ final class Design
             ];
         }
         return $designs;
-    }
-
-    /**
-     * ფორმის კატეგორიები: აქტიური, თარგმანით, ქვეკატეგორია — მშობლის შემდეგ.
-     * ყოველს: ids — ამ კატეგორიისა და მისი ქვეკატეგორიების id-ები (ფილტრისთვის); „სხვა“ (slug other) — ids = [], ანუ ყველა დიზაინი.
-     * @param list<array>|null $designs published()-ის შედეგი → ცარიელი კატეგორიები (დიზაინების გარეშე) გამოტოვდება, „სხვა“ — არა
-     * @return list<array{id: int, name: string, depth: int, ids: list<int>, other: bool}>
-     */
-    public function categoryOptions(string $lang, string $defaultLang, ?array $designs = null): array
-    {
-        $used = $designs === null ? null : array_unique(array_merge([], ...array_column($designs, 'categories')));
-        $others = array_map('intval', $this->db->column(
-            'SELECT t.category_id FROM category_translations t JOIN categories c ON c.id = t.category_id WHERE c.collection = ? AND t.slug = ?',
-            [self::CATEGORIES, self::OTHER_SLUG],
-        ));
-        $options = [];
-        foreach ($this->categories->tree(self::CATEGORIES, $lang) as $row) {
-            $id = (int)$row['id'];
-            $other = in_array($id, $others, true);
-            $ids = $this->categories->withChildren($id);
-            if (!$row['is_active'] || ($used !== null && !$other && array_intersect($ids, $used) === [])) {
-                continue;
-            }
-            $name = $this->categories->name($id, $lang, $defaultLang);
-            if ($name !== '') {
-                $options[] = ['id' => $id, 'name' => $name, 'depth' => $row['depth'], 'ids' => $other ? [] : $ids, 'other' => $other];
-            }
-        }
-        return $options;
     }
 }

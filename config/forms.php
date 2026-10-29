@@ -50,8 +50,8 @@ return [
         ],
     ],
 
-    // საიტის შეკვეთა (order_form ბლოკი) — POST /{lang}/order (Front\OrderController: დიზაინები და კატეგორიები ბაზიდან,
-    // Inbox-ში ინახება მათი სახელები). handler — ზოგადი /forms/{form} ამ ფორმას არ იღებს.
+    // საიტის შეკვეთა (order_form ბლოკი) — POST /{lang}/order (Front\OrderController: პაკეტი, დარგი და დიზაინი ბაზიდან,
+    // Inbox-ში ინახება მათი სახელები; პაკეტს — ფასიც). handler — ზოგადი /forms/{form} ამ ფორმას არ იღებს.
     'order' => [
         'label'   => 'საიტის შეკვეთა',
         'icon'    => 'bx bx-cart',
@@ -61,11 +61,26 @@ return [
             'name'        => ['rules' => 'required|max:100', 'label' => 'order.name'],
             'phone'       => ['rules' => ['required', ...$phone], 'label' => 'order.phone'],
             'email'       => ['rules' => 'required|email|max:190', 'label' => 'order.email'],
-            'category'    => ['rules' => '', 'label' => 'order.category'],
+            'package'     => ['rules' => '', 'label' => 'order.package_name'],
+            'category'    => ['rules' => '', 'label' => 'order.industry'],
             'design'      => ['rules' => '', 'label' => 'order.design_name'],
             'description' => ['rules' => 'required|max:5000', 'label' => 'order.description', 'multiline' => true],
             'has_domain'  => ['rules' => '', 'label' => 'order.has_domain', 'options' => ['yes' => 'order.yes', 'no' => 'order.no']],
             'has_hosting' => ['rules' => '', 'label' => 'order.has_hosting', 'options' => ['yes' => 'order.yes', 'no' => 'order.no']],
+        ],
+    ],
+
+    // ინდივიდუალური შეკვეთა (custom_order_form ბლოკი; დროებითი ფორმა — მოგვიანებით შეიცვლება).
+    // package — პაკეტის სახელი ძირითად ენაზე (ბლოკი ბაზიდან აჩვენებს) ან ცარიელი („ჯერ არ ვიცი“)
+    'custom' => [
+        'label'  => 'ინდივიდუალური შეკვეთა',
+        'icon'   => 'bx bx-bulb',
+        'fields' => [
+            'name'        => ['rules' => 'required|max:100', 'label' => 'order.name'],
+            'phone'       => ['rules' => ['required', ...$phone], 'label' => 'order.phone'],
+            'email'       => ['rules' => 'required|email|max:190', 'label' => 'order.email'],
+            'package'     => ['rules' => 'max:150', 'label' => 'custom.package'],
+            'description' => ['rules' => 'required|max:5000', 'label' => 'custom.description', 'multiline' => true],
         ],
     ],
 

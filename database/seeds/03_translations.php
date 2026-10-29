@@ -15,6 +15,7 @@ return new class extends Seeder {
             'team'     => ['გუნდი', 'Our Team'],
             'contact'  => ['კონტაქტი', 'Contact'],
             'menu'     => ['მენიუ', 'Menu'],
+            'custom_order' => ['ინდივიდუალური', 'Custom'],
         ],
         'common' => [
             'read_more'    => ['ვრცლად', 'Read More'],
@@ -94,6 +95,25 @@ return new class extends Seeder {
             'no'                  => ['არა', 'No'],
             'submit'              => ['შეკვეთის გაგზავნა', 'Send Order'],
             'sent'                => ['შეკვეთა მიღებულია! მალე დაგიკავშირდებით.', 'Your order has been received! We will contact you soon.'],
+            'package'             => ['აირჩიეთ პაკეტი', 'Choose a package'],
+            'package_name'        => ['პაკეტი', 'Package'],
+            'package_required'    => ['აირჩიეთ პაკეტი.', 'Please choose a package.'],
+            'package_first'       => ['აირჩიეთ პაკეტი — გამოჩნდება მისი დარგები და დიზაინები.', 'Choose a package to see its industries and designs.'],
+            'industry'            => ['დარგი', 'Industry'],
+            'all'                 => ['ყველა', 'All'],
+            'order_now'           => ['შეუკვეთეთ', 'Order Now'],
+            'custom_title'        => ['ინდივიდუალური', 'Custom'],
+            'custom_text'         => ['უნიკალური დიზაინი თქვენი იდეით, ფასი — შეთანხმებით.', 'A unique design built around your idea, priced on request.'],
+            'custom_design_title' => ['ვერ იპოვეთ შესაფერისი?', 'Can’t find the right one?'],
+            'custom_design_text'  => ['შევქმნით ინდივიდუალურ დიზაინს', 'We will create a custom design'],
+        ],
+        // ინდივიდუალური შეკვეთა (custom_order_form ბლოკი; დროებითი ფორმა)
+        'custom' => [
+            'package'          => ['პაკეტი', 'Package'],
+            'package_none'     => ['ჯერ არ ვიცი', 'Not sure yet'],
+            'description'      => ['მოგვიყევით პროექტზე', 'Tell us about the project'],
+            'description_hint' => ['მაგ.: რას საქმიანობთ, რა გვერდები და ფუნქციები გჭირდებათ, რა ენებზე, მოგწონთ თუ არა რომელიმე საიტი, სასურველი ვადა და ბიუჯეტი.', 'E.g.: what your business does, which pages and features you need, which languages, any websites you like, your preferred timeline and budget.'],
+            'submit'           => ['მოთხოვნის გაგზავნა', 'Send Request'],
         ],
         // სერვისის გვერდი (front/collections/service)
         'service' => [

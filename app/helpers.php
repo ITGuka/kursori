@@ -7,6 +7,7 @@ use App\Models\Language;
 use App\Models\Media;
 use App\Models\Menu;
 use App\Models\Page;
+use App\Models\PageBlock;
 
 /** მედიის ჩანაწერი id-ით (მაგ. setting('general.logo')) */
 function media(mixed $id): ?array
@@ -49,6 +50,30 @@ function cta_link(): ?array
     $href = $pageId > 0 ? app(Page::class)->url($pageId, locale()) : '';
     $label = (string)setting('general.cta_label');
     return $href !== '' && $label !== '' ? ['href' => $href, 'label' => $label] : null;
+}
+
+/**
+ * შეკვეთის გვერდის URL — გვერდი, სადაც ბლოკია: order_url() → order_form (+ ?package=კოდი#form-order),
+ * order_url('business', 'custom_order_form') → ინდივიდუალური შეკვეთა (?package= — არჩეული პაკეტი). გვერდი არ არის → ''.
+ */
+function order_url(?string $package = null, string $block = 'order_form'): string
+{
+    static $pages = [];
+    $lang = locale();
+    $pages[$block][$lang] ??= (function () use ($block, $lang): string {
+        $pageIds = app(PageBlock::class)->pageIdsOfType($block);
+        foreach ($pageIds as $pageId) {
+            if (($href = app(Page::class)->url($pageId, $lang)) !== '') {
+                return $href;
+            }
+        }
+        return '';
+    })();
+    $href = $pages[$block][$lang];
+    if ($href === '' || $package === null || $package === '') {
+        return $href;
+    }
+    return $href . '?package=' . rawurlencode($package) . ($block === 'order_form' ? '#form-order' : '#form-custom');
 }
 
 /** ტელეფონის tel: ბმული ფორმატირებული ნომრიდან ('+995 32 247 18 90' → 'tel:+995322471890') */

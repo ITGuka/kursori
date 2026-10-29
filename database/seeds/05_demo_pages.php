@@ -63,7 +63,7 @@ return new class extends Seeder {
         [['24/7', '24/7'], ['გუნდი მუშაობს', 'Team at work'], ['შაბათ-კვირასაც და ღამითაც', 'Nights and weekends too']],
     ];
 
-    /** ფასების პაკეტები (სადემონსტრაციო ფასები — გაშვებამდე ჩაანაცვლეთ): ველი => [ka, en] */
+    /** ფასების პაკეტები (სადემონსტრაციო ფასები — გაშვებამდე ჩაანაცვლეთ): ველი => [ka, en]; რიგი = 10_order_page::PACKAGES (start, business, shop) */
     public const PACKAGES = [
         [
             'name'         => ['სტარტი', 'Start'],
@@ -72,7 +72,6 @@ return new class extends Seeder {
             'features'     => ["სავიზიტო საიტი 5 გვერდამდე\nმობილურზე მორგებული დიზაინი\nმართვის პანელი\nსაკონტაქტო ფორმა და რუკა\nსაბაზისო SEO",
                                "Business card site, up to 5 pages\nMobile-ready design\nAdmin panel\nContact form and map\nBasic SEO"],
             'badge'        => ['', ''],
-            'button_label' => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
         ],
         [
             'name'         => ['ბიზნესი', 'Business'],
@@ -81,7 +80,6 @@ return new class extends Seeder {
             'features'     => ["15 გვერდამდე, უნიკალური დიზაინი\nორი ან მეტი ენა\nსიახლეები ან ბლოგი\nპორტფოლიო ან კატალოგი\nტექნიკური SEO და ანალიტიკა\n1 თვე უფასო მხარდაჭერა",
                                "Up to 15 pages, custom design\nTwo or more languages\nNews or blog\nPortfolio or catalogue\nTechnical SEO and analytics\n1 month of free support"],
             'badge'        => ['პოპულარული', 'Most popular'],
-            'button_label' => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
         ],
         [
             'name'         => ['ონლაინ მაღაზია', 'Online Store'],
@@ -90,7 +88,6 @@ return new class extends Seeder {
             'features'     => ["კატალოგი ფილტრებით\nბარათით გადახდა\nმარაგისა და შეკვეთების მართვა\nმიწოდების ღირებულების გამოთვლა\nპროდუქტების SEO\n1 თვე უფასო მხარდაჭერა",
                                "Catalogue with filters\nCard payments\nStock and order management\nDelivery cost calculation\nProduct SEO\n1 month of free support"],
             'badge'        => ['', ''],
-            'button_label' => ['მოითხოვეთ შეთავაზება', 'Request a Proposal'],
         ],
     ];
 
@@ -349,14 +346,13 @@ return new class extends Seeder {
         $this->pages ??= app(Page::class);
         $this->blocks ??= app(PageBlock::class);
         $this->header($pageId);
-        [$packages, $ka, $en] = $this->items(array_map(fn (array $row) => [['button_link' => $this->link($contact)], $row], self::PACKAGES));
-        $this->block($pageId, 'pricing', ['packages' => $packages, 'background' => 'dark'], [
+        // პაკეტები (ფასი, „რა შედის“) — ბაზიდან (10_order_page: PACKAGES-ის ტექსტები პაკეტებში); ბლოკში — სათაური და ინდივიდუალური ბარათი
+        $this->block($pageId, 'pricing', ['custom' => true, 'background' => 'dark'], [
             'subtitle' => ['ფასები', 'Pricing'],
             'title'    => ['პაკეტები', 'Packages'],
-            'text'     => ['ფასები საორიენტაციოა. ზუსტ ღირებულებას ბრიფის შემდეგ, უფასო კონსულტაციაზე დაგისახელებთ.',
-                           'Prices are a guide. We give you an exact quote after the brief, at a free consultation.'],
-            'packages' => [$ka, $en],
-        ]);
+            'text'     => ['ფასები საორიენტაციოა. აირჩიეთ დიზაინი და შეუკვეთეთ ონლაინ — ზუსტ ღირებულებას უფასო კონსულტაციაზე დაგისახელებთ.',
+                           'Prices are a guide. Pick a design and order online — we give you an exact quote at a free consultation.'],
+        ] + (require base_path('database/seeds/10_order_page.php'))::PRICING);
         [$faq, $ka, $en] = $this->items(array_map(fn (array $row) => [[], ['question' => $row[0], 'answer' => $row[1]]], self::FAQ));
         $this->block($pageId, 'faq', ['items' => $faq, 'background' => 'secondary'],
             ['subtitle' => ['კითხვები', 'Questions'], 'title' => ['ხშირად გვეკითხებიან', 'Frequently Asked'], 'items' => [$ka, $en]]);

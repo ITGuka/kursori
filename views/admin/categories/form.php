@@ -48,14 +48,15 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
 
         <div class="row g-4 mb-5">
             <div class="col-sm-8">
-                <label class="form-label" for="parent_id">მშობელი კატეგორია</label>
+                <label class="form-label" for="parent_id"><?= $isDesigns ? 'პაკეტი' : 'მშობელი კატეგორია' ?></label>
                 <select class="form-select<?= $invalid('parent_id') ?>" id="parent_id" name="parent_id"<?= $hasChildren ? ' disabled' : '' ?>>
-                    <option value="">— ზედა დონე —</option>
+                    <option value=""><?= $isDesigns ? '— აირჩიეთ —' : '— ზედა დონე —' ?></option>
                     <?php foreach ($parents as $id => $name): ?>
                         <option value="<?= e($id) ?>"<?= (int)$data['parent_id'] === $id ? ' selected' : '' ?>><?= e($name) ?></option>
                     <?php endforeach ?>
                 </select>
                 <?= $feedback('parent_id') ?>
+                <?php if ($isDesigns): ?><div class="form-text">დარგი ჩანს შეკვეთის ფორმაში, ამ პაკეტის არჩევისას. ახალი პაკეტი — <a href="<?= e($definition['packages']) ?>">პაკეტები</a>.</div><?php endif ?>
                 <?php if ($hasChildren): ?><div class="form-text">კატეგორიას ქვეკატეგორიები აქვს, ამიტომ ზედა დონეზე რჩება.</div><?php endif ?>
             </div>
             <div class="col-sm-4">
