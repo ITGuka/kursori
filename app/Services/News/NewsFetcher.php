@@ -74,7 +74,7 @@ final class NewsFetcher
     {
         return isset($article['id'], $article['title'], $article['url'])
             && ($article['language'] ?? 'en') === 'en'
-            && (int)($article['public_reactions_count'] ?? 0) >= $feed['min_reactions']
+            && (int)($article['public_reactions_count'] ?? 0) >= max(NewsFeed::MIN_REACTIONS, $feed['min_reactions'])
             && (!$feed['require_image'] || !empty($article['cover_image']))
             && array_intersect(self::tags($article), $feed['exclude_list']) === [];
     }

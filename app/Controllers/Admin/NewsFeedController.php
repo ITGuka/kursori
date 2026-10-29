@@ -36,7 +36,7 @@ final class NewsFeedController
     {
         return $this->form(null, [
             'name' => '', 'tags' => '', 'exclude_tags' => 'career,startup,buildinpublic,marketing,business,saas,sponsored',
-            'category_id' => null, 'publish_mode' => 'review', 'per_run' => 3, 'top_days' => 7, 'min_reactions' => 10,
+            'category_id' => null, 'publish_mode' => 'review', 'per_run' => 3, 'top_days' => 7, 'min_reactions' => NewsFeed::MIN_REACTIONS,
             'require_image' => true, 'is_active' => true,
         ], []);
     }
@@ -110,7 +110,7 @@ final class NewsFeedController
             'publish_mode'  => $request->input('publish_mode') === 'auto' ? 'auto' : 'review',
             'per_run'       => $int('per_run', 1, 30, 3),
             'top_days'      => $int('top_days', 1, 30, 7),
-            'min_reactions' => $int('min_reactions', 0, 10000, 10),
+            'min_reactions' => $int('min_reactions', NewsFeed::MIN_REACTIONS, 10000, NewsFeed::MIN_REACTIONS),
             'require_image' => (int)($request->input('require_image') === '1'),
             'is_active'     => (int)($request->input('is_active') === '1'),
         ];

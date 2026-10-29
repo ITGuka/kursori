@@ -71,8 +71,8 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
             </div>
             <div class="col-sm-4">
                 <label class="form-label" for="min_reactions">მინ. რეაქციები</label>
-                <input type="number" class="form-control" id="min_reactions" name="min_reactions" min="0" max="10000" value="<?= e($data['min_reactions']) ?>">
-                <div class="form-text">ხარისხის ფილტრი.</div>
+                <input type="number" class="form-control" id="min_reactions" name="min_reactions" min="<?= App\Models\NewsFeed::MIN_REACTIONS ?>" max="10000" value="<?= e($data['min_reactions']) ?>">
+                <div class="form-text">ხარისხის ფილტრი, მინ. <?= App\Models\NewsFeed::MIN_REACTIONS ?>.</div>
             </div>
             <div class="col-sm-4">
                 <label class="form-label" for="per_run">თითო წამოღებაზე</label>

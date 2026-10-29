@@ -10,6 +10,9 @@ use Core\Database\DB;
  */
 final class NewsFeed
 {
+    /** სიახლის მინიმალური რეაქციები (dev.to) — ნაკლებს არცერთი feed არ წამოიღებს */
+    public const MIN_REACTIONS = 25;
+
     public function __construct(private readonly DB $db)
     {
     }
