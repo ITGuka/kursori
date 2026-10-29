@@ -57,11 +57,12 @@ $showCta = $cta !== null && !$isActive($cta['href']);
     <?php endif ?>
 
     <div class="container footer-main">
-        <?php // ჰორიზონტალური gutter lg-მდე 1.5rem — უფრო განიერი row-ს უარყოფით margin-ს კონტეინერიდან გააცდენს და მობილურზე ჰორიზონტალურ სქროლს იძლევა ?>
-        <div class="row gx-4 gy-5 gx-lg-5">
-            <div class="col-lg-3">
-                <?php // ლოგოს ნიშანი კურსორით, ენის მიხედვით: ka — „კ“, სხვა — „K“ (სრული ლოგო ჰედერშია) ?>
-                <a href="<?= e(url(locale())) ?>" class="d-inline-block<?= $socialLinks !== [] ? ' mb-4' : '' ?>" aria-label="<?= e($siteName) ?>">
+        <?php // ჰორიზონტალური gutter xl-მდე 1.5rem — უფრო განიერი row-ს უარყოფით margin-ს კონტეინერიდან გააცდენს და ჰორიზონტალურ სქროლს იძლევა (lg-ზეც, 992px-თან) ?>
+        <div class="row gx-4 gy-5 gx-xl-5">
+            <?php // სოციალური ბმულების გარეშე მობილურზე სვეტი ცარიელია — მთლიანად იმალება, თორემ gutter-ის ზედმეტ დაშორებას ტოვებს ?>
+            <div class="col-lg-3<?= $socialLinks === [] ? ' d-none d-md-block' : '' ?>">
+                <?php // ლოგოს ნიშანი კურსორით, ენის მიხედვით: ka — „კ“, სხვა — „K“ (სრული ლოგო ჰედერშია); მობილურზე (md-მდე) დამალულია ?>
+                <a href="<?= e(url(locale())) ?>" class="d-none d-md-inline-block<?= $socialLinks !== [] ? ' mb-4' : '' ?>" aria-label="<?= e($siteName) ?>">
                     <img src="<?= asset('front/img/logo/kursori-icon-' . (locale() === 'ka' ? 'ka' : 'en') . '.svg') ?>" alt="<?= e($siteName) ?>" class="footer-logo footer-logo-icon"
                         width="100" height="100" loading="lazy">
                 </a>

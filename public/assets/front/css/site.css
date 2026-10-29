@@ -298,6 +298,13 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
+/* 1200–1299px: ქართული მენიუ 1.2vw დაშორებით ~40px-ით ცდებოდა (scrollbar-იან ეკრანზე ჰორიზონტალური სქროლი) */
+@media (min-width: 1200px) and (max-width: 1299.98px) {
+    html[lang="ka"] .navbar .navbar-nav .nav-link {
+        margin-right: .5vw;
+    }
+}
+
 /*
  * ბლოკებს შორის დაშორება: Kursori-ის ორმაგი py-5 (გარე + შიდა = 96px თითო მხარეს, ბლოკებს შორის 192px) →
  * desktop 64px (ბლოკებს შორის 128px), მობილური 48px (96px). bootstrap-ის py-5 !important-ითაა, ამიტომ აქაც.
