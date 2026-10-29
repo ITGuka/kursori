@@ -2,110 +2,74 @@
 /**
  * ინდივიდუალური შეკვეთა (order_form, პაკეტი „ინდივიდუალური“) — 5 ნაბიჯად: მომსახურება → პროექტი → ბიუჯეტი და ვადა → მასალები → კონტაქტი.
  * JS-ით (assets/front/js/order-form.js) ჩანს ერთი ნაბიჯი, JS-ის გარეშე — ყველა ერთად.
- * ნაბიჯები 2–4 პროექტზეა დამოკიდებული: data-wizard-for="web:shop design" — ჩანს, თუ ემთხვევა ერთ-ერთი ნიშანი:
- * მომსახურება (design) ან მომსახურება:ქვეტიპი (web:shop; ქვეტიპი — მე-2 ნაბიჯის data-wizard-key ველი, არ არის არჩეული → „-“).
- * დანარჩენი დამალული და disabled (არ იგზავნება).
- * ჯერ მხოლოდ მარკაპი: ახალ ველებს (service, site_type... contact_method) ბექენდი ჯერ არ ინახავს; name/phone/email/description — ძველებურად.
+ * ველები, არჩევანი, პროექტზე დამოკიდებულება (for) და ბიუჯეტის/ვადის პროფილები — config/forms.php → custom (App\Services\CustomOrder),
+ * იგივე, რითაც სერვერი ამოწმებს. data-wizard-for="web:shop design" — ჩანს, თუ ემთხვევა ერთ-ერთი ნიშანი: მომსახურება (design)
+ * ან მომსახურება:ქვეტიპი (web:shop; ქვეტიპი — data-wizard-key ველი, არ არის არჩეული → „-“). დანარჩენი დამალული და disabled.
  * @var Core\View\Template $this
  * @var string $form
  * @var string $uid
  * @var bool $disabled true — სხვა პაკეტია არჩეული (fieldset disabled: ველები არ იგზავნება)
  * @var string $buttonLabel
  */
+use App\Services\CustomOrder;
 use Core\Support\Session;
 
+$definition = CustomOrder::definition();
+$fields = $definition['fields'];
 $isThis = Session::get('_form') === $form;
 $old = fn (string $name) => $isThis ? old($name, '') : '';
+$error = fn (string $name) => $isThis ? errors($name) : null;
 $checked = function (string $name, string $value) use ($old): string {
     $current = $old($name);
     return (is_array($current) ? in_array($value, $current, true) : $current === $value) ? ' checked' : '';
 };
 $id = fn (string $name, string $value = '') => "custom-$name-$uid" . ($value !== '' ? '-' . preg_replace('/[^\w-]/', '-', $value) : '');
-$field = fn (string $name, string $type, int $max, bool $required, string $label) => $this->insert('front/partials/form-field',
-    ['form' => $form, 'name' => $name, 'label' => $label, 'type' => $type, 'required' => $required, 'max' => $max, 'uid' => "$uid-custom"]);
+$field = fn (string $name, string $type, int $max, bool $required) => $this->insert('front/partials/form-field',
+    ['form' => $form, 'name' => $name, 'label' => t($fields[$name]['label']), 'type' => $type, 'required' => $required, 'max' => $max, 'uid' => "$uid-custom"]);
+// სერვერის შეცდომა (ვალიდაციის შემდეგ); data-wizard-server-error — JS ხსნის პირველ ნაბიჯს, რომელშიც შეცდომაა
+$errorText = fn (string $name) => ($message = $error($name)) ? '<div class="text-danger small mt-2" id="' . e($id($name)) . '-error" data-wizard-server-error>' . e($message) . '</div>' : '';
 
-// ქვეტიპის ველი თითო მომსახურებისთვის (data-wizard-key) — მასზეა დამოკიდებული ბიუჯეტი, ვადა და მასალები
-$subKeys = ['web' => 'site_type', 'design' => 'design_scope', 'support' => 'support_frequency'];
-$service = (string)$old('service');
-$sub = isset($subKeys[$service]) ? ((string)$old($subKeys[$service]) ?: '-') : '-';
-$tokens = [$service, "$service:$sub"];
-// სერვერზე (ვალიდაციის შეცდომის შემდეგ) — შეუსაბამო ბლოკი დამალული და disabled; მომსახურება არ არის — ყველა ჩანს (JS-ის გარეშე)
+// პროექტის ნიშნები წინა მნიშვნელობებიდან (ვალიდაციის შეცდომის შემდეგ)
+$tokens = CustomOrder::tokens(array_map(fn ($key) => (string)$old($key), ['service' => 'service'] + array_combine($definition['sub_keys'], $definition['sub_keys'])));
+$service = $tokens[0];
+// სერვერზე — შეუსაბამო ბლოკი დამალული და disabled; მომსახურება არ არის — ყველა ჩანს (JS-ის გარეშე)
 $for = function (string $list) use ($service, $tokens): string {
-    $hidden = $service !== '' && array_intersect(explode(' ', $list), $tokens) === [];
+    $hidden = $service !== '' && !CustomOrder::matches($list, $tokens);
     return ' data-wizard-for="' . e($list) . '"' . ($hidden ? ' hidden disabled' : '');
 };
+$forField = fn (string $name) => $for($fields[$name]['for']);
+// ქვეტიპის ველი → data-wizard-key="მომსახურება"
+$subKey = fn (string $name) => ($owner = array_search($name, $definition['sub_keys'], true)) !== false ? ' data-wizard-key="' . e($owner) . '"' : '';
 
-// არჩევანის ბარათები: მნიშვნელობა => [წარწერა, შენიშვნა (ან ''), Font Awesome ხატულა (ან '')] — წარწერა/შენიშვნა უკვე თარგმნილი
-$services = [
-    'web'      => [t('custom.service_web'), 'Web Development', 'fa-code'],
-    'design'   => [t('custom.service_design'), 'Web Design', 'fa-pencil-ruler'],
-    'branding' => [t('custom.service_branding'), 'Branding & Identity', 'fa-signature'],
-    'seo'      => [t('custom.service_seo'), 'Performance & SEO', 'fa-tachometer-alt'],
-    'support'  => [t('custom.service_support'), 'Maintenance', 'fa-tools'],
-    'other'    => [t('custom.service_other'), t('custom.service_other_note'), 'fa-ellipsis-h'],
-];
-$siteTypes = [
-    'landing'   => [t('custom.type_landing'), '', 'fa-file'],
-    'corporate' => [t('custom.type_corporate'), '', 'fa-building'],
-    'shop'      => [t('custom.type_shop'), '', 'fa-shopping-cart'],
-    'app'       => [t('custom.type_app'), '', 'fa-cogs'],
-];
+// ბარათის არჩევანი: config-ის options + შენიშვნა და ხატულა (მხოლოდ ფორმაში) → [წარწერა, შენიშვნა, ხატულა]
+$withIcons = fn (string $name, array $extra) => array_map(
+    fn ($key, $value) => [t($key), $extra[$value][0] ?? '', $extra[$value][1] ?? ''],
+    $fields[$name]['options'], array_keys($fields[$name]['options'])
+);
+$services = array_combine(array_keys($fields['service']['options']), $withIcons('service', [
+    'web'      => ['Web Development', 'fa-code'],
+    'design'   => ['Web Design', 'fa-pencil-ruler'],
+    'branding' => ['Branding & Identity', 'fa-signature'],
+    'seo'      => ['Performance & SEO', 'fa-tachometer-alt'],
+    'support'  => ['Maintenance', 'fa-tools'],
+    'other'    => [t('custom.service_other_note'), 'fa-ellipsis-h'],
+]));
+$siteTypes = array_combine(array_keys($fields['site_type']['options']), $withIcons('site_type', [
+    'landing' => ['', 'fa-file'], 'corporate' => ['', 'fa-building'], 'shop' => ['', 'fa-shopping-cart'], 'app' => ['', 'fa-cogs'],
+]));
+$timelineIcons = ['fast' => 'fa-bolt', 'asap' => 'fa-bolt', 'standard' => 'fa-calendar-alt', 'month' => 'fa-calendar-alt', 'flexible' => 'fa-mug-hot'];
+$steps = array_keys($definition['steps']);
 
-// ბიუჯეტი და ვადა პროექტის მიხედვით: ნიშნები => [ბიუჯეტის დიაპაზონები ₾ (null — „-დან“), ყოველთვიური?, ვადა]
-// ვადა: ['weeks'|'months', დიაპაზონი] სწრაფი და სტანდარტული ვარიანტისთვის; 'start' — „როდის დავიწყოთ“ (მიმდინარე მომსახურებები)
-$profiles = [
-    'web:- web:corporate' => [[[1500, 3000], [3000, 7000], [7000, null]], false, [['weeks', '2–3'], ['months', '1–2']]],
-    'web:landing'         => [[[0, 1500], [1500, 3000], [3000, null]], false, [['weeks', '1–2'], ['weeks', '3–4']]],
-    'web:shop'            => [[[3000, 7000], [7000, 15000], [15000, null]], false, [['weeks', '4–6'], ['months', '2–3']]],
-    'web:app'             => [[[7000, 15000], [15000, 30000], [30000, null]], false, [['months', '1–2'], ['months', '3–6']]],
-    'design'              => [[[0, 2500], [2500, 6000], [6000, null]], false, [['weeks', '1–2'], ['weeks', '3–6']]],
-    'branding'            => [[[0, 1500], [1500, 4000], [4000, null]], false, [['weeks', '1–2'], ['weeks', '3–4']]],
-    'seo'                 => [[[0, 800], [800, 2000], [2000, null]], true, 'start'],
-    'support:- support:monthly' => [[[0, 300], [300, 700], [700, null]], true, 'start'],
-    'support:once'        => [[[0, 500], [500, 1500], [1500, null]], false, 'start'],
-    'other'               => [[[0, 1500], [1500, 5000], [5000, null]], false, [['weeks', '2–3'], ['months', '1–2']]],
-];
-$amount = fn (string $number) => t('custom.currency', ['amount' => $number]);
-$number = fn (int $n) => number_format($n, 0, '', locale() === 'ka' ? "\u{00A0}" : ',');
-$budgetOptions = function (array $ranges, bool $monthly) use ($amount, $number): array {
-    $options = [];
-    foreach ($ranges as [$from, $to]) {
-        $label = match (true) {
-            $from === 0   => t('custom.budget_up_to', ['amount' => $amount($number($to))]),
-            $to === null  => t('custom.budget_from', ['amount' => $amount($number($from))]),
-            default       => $amount($number($from) . ' – ' . $number($to)),
-        };
-        $options[$from . ($to === null ? '+' : "-$to")] = [$label, $monthly ? t('custom.per_month') : '', ''];
-    }
-    $options['unknown'] = [t('custom.budget_unknown'), '', ''];
-    return $options;
-};
-$timelineOptions = fn (array|string $timeline) => $timeline === 'start'
-    ? [
-        'asap'     => [t('custom.start_asap'), '', 'fa-bolt'],
-        'month'    => [t('custom.start_month'), '', 'fa-calendar-alt'],
-        'flexible' => [t('custom.timeline_flexible'), '', 'fa-mug-hot'],
-    ]
-    : [
-        'fast'     => [t('custom.timeline_fast'), t("custom.{$timeline[0][0]}", ['range' => $timeline[0][1]]), 'fa-bolt'],
-        'standard' => [t('custom.timeline_standard'), t("custom.{$timeline[1][0]}", ['range' => $timeline[1][1]]), 'fa-calendar-alt'],
-        'flexible' => [t('custom.timeline_flexible'), '', 'fa-mug-hot'],
-    ];
-
-$platforms = ['wordpress' => 'custom.platform_wordpress', 'shopify' => 'custom.platform_shopify', 'custom' => 'custom.platform_custom', 'unknown' => 'custom.platform_unknown'];
-$yesNo = ['yes' => 'order.yes', 'no' => 'order.no'];
-$yesPartialNo = ['yes' => 'order.yes', 'partial' => 'custom.access_partial', 'no' => 'order.no'];
-$steps = ['service', 'scope', 'budget', 'assets', 'contact'];
-
-// ბარათები (radio / checkbox): $multiple — name[]; $required — „მინიმუმ ერთი“ (JS, data-wizard-group-required);
-// $idKey — id-ის განმასხვავებელი, როცა ერთი name რამდენიმე ჯგუფშია (ბიუჯეტი პროფილების მიხედვით); $attrs — input-ის დამატებითი ატრიბუტები
-$cards = function (string $name, array $options, bool $multiple, bool $required, string $col, string $idKey = '', string $attrs = '') use ($id, $checked): string {
+// ბარათები (radio / checkbox): $required — „მინიმუმ ერთი“ (JS, data-wizard-group-required);
+// $idKey — id-ის განმასხვავებელი, როცა ერთი name რამდენიმე ჯგუფშია (ბიუჯეტი პროფილების მიხედვით)
+$cards = function (string $name, array $options, bool $required, string $col, string $idKey = '', bool $restore = true) use ($id, $checked, $fields, $errorText, $subKey): string {
+    $multiple = !empty($fields[$name]['multiple']);
     $html = '<div' . ($required ? ' data-wizard-group-required' : '') . '><div class="row g-3">';
     foreach ($options as $value => [$label, $note, $icon]) {
         $inputId = $id($name, ($idKey !== '' ? "$idKey-" : '') . $value);
         $html .= '<div class="' . $col . '">'
             . '<input type="' . ($multiple ? 'checkbox' : 'radio') . '" class="btn-check" name="' . e($multiple ? $name . '[]' : $name) . '" id="' . e($inputId) . '" value="' . e($value) . '" autocomplete="off"'
-            . $attrs . $checked($name, (string)$value) . '>'
+            . $subKey($name) . ($restore ? $checked($name, (string)$value) : '') . '>'
             . '<label class="package-option custom-option" for="' . e($inputId) . '">'
             . ($icon !== '' ? '<i class="fa ' . e($icon) . ' custom-option-icon" aria-hidden="true"></i>' : '')
             . '<span class="custom-option-name">' . e($label) . '</span>'
@@ -117,22 +81,21 @@ $cards = function (string $name, array $options, bool $multiple, bool $required,
     if ($required) {
         $html .= '<div class="text-danger small mt-2 d-none" data-wizard-error>' . e(t($multiple ? 'custom.choose_one' : 'custom.choose_option')) . '</div>';
     }
-    return $html . '</div>';
+    return $html . ($restore ? $errorText($name) : '') . '</div>';
 };
-// პატარა არჩევანი ღილაკებად (chip-ები, როგორც დარგები)
-$chips = function (string $name, array $options, bool $multiple, string $attrs = '') use ($id, $checked): string {
-    $html = '<div class="d-flex flex-wrap gap-2">';
-    foreach ($options as $value => $label) {
-        $inputId = $id($name, $value);
-        $html .= '<input type="' . ($multiple ? 'checkbox' : 'radio') . '" class="btn-check" name="' . e($multiple ? $name . '[]' : $name) . '" id="' . e($inputId) . '" value="' . e($value) . '" autocomplete="off"' . $attrs . $checked($name, $value) . '>'
+// კითხვა chip-ებით (legend + config-ის options)
+$question = function (string $name) use ($id, $checked, $fields, $errorText, $subKey): string {
+    $field = $fields[$name];
+    $multiple = !empty($field['multiple']);
+    $html = '<fieldset class="form-choice"><legend class="form-choice-legend">' . e(t($field['label'])) . '</legend><div class="d-flex flex-wrap gap-2">';
+    foreach ($field['options'] as $value => $label) {
+        $inputId = $id($name, (string)$value);
+        $html .= '<input type="' . ($multiple ? 'checkbox' : 'radio') . '" class="btn-check" name="' . e($multiple ? $name . '[]' : $name) . '" id="' . e($inputId) . '" value="' . e($value) . '" autocomplete="off"' . $subKey($name) . $checked($name, (string)$value) . '>'
             . '<label class="btn btn-outline-primary btn-sm border-2 px-3" for="' . e($inputId) . '">'
             . ($multiple ? '<i class="fa fa-check me-1 order-extra-check" aria-hidden="true"></i>' : '') . e(t($label)) . '</label>';
     }
-    return $html . '</div>';
+    return $html . '</div>' . $errorText($name) . '</fieldset>';
 };
-// კითხვა chip-ებით (legend + არჩევანი)
-$question = fn (string $name, string $label, array $options, bool $multiple = false, string $attrs = '') => '<fieldset class="form-choice">'
-    . '<legend class="form-choice-legend">' . e(t($label)) . '</legend>' . $chips($name, $options, $multiple, $attrs) . '</fieldset>';
 // ტექსტი პროექტის მიხედვით: ნიშნები => თარგმანის გასაღები (ჩანს ერთი)
 $variants = function (array $texts) use ($for): string {
     $html = '';
@@ -143,9 +106,10 @@ $variants = function (array $texts) use ($for): string {
 };
 
 // ბმულები: რამდენიმე, http/www-ის გარეშეც (google.com); ცარიელი რიგი მაინც ერთია
+$linkField = $fields['references'];
 $references = array_values(array_filter((array)$old('references'), fn ($url) => is_string($url) && $url !== ''));
-$references = $references === [] ? [''] : array_slice($references, 0, 5);
-// pattern-ს ბრაუზერი v ალმით კითხულობს: კლასში / და - ეკრანირებული უნდა იყოს
+$references = $references === [] ? [''] : array_slice($references, 0, (int)$linkField['max']);
+// pattern-ს ბრაუზერი v ალმით კითხულობს: კლასში / და - ეკრანირებული უნდა იყოს (სერვერზე — CustomOrder::URL_PATTERN)
 $urlPattern = '(https?://)?([\w\-]+\.)+[a-zA-Z]{2,}([\/?#]\S*)?';
 $reference = fn (string $value, int $i) => '<div class="custom-reference" data-wizard-reference>'
     . '<input type="text" class="form-control bg-secondary border-0" name="references[]" value="' . e($value) . '" maxlength="500"'
@@ -153,6 +117,7 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
     . ' pattern="' . e($urlPattern) . '" title="' . e(t('custom.reference_invalid')) . '" aria-label="' . e(t('custom.reference_url')) . ' ' . ($i + 1) . '">'
     . '<button type="button" class="btn btn-outline-primary border-2 custom-reference-remove" data-wizard-reference-remove aria-label="' . e(t('custom.reference_remove')) . '"' . ($i === 0 ? ' hidden' : '') . '>'
     . '<i class="fa fa-times" aria-hidden="true"></i></button></div>';
+$maxMb = round($definition['attachment']['max_size'] / 1048576);
 ?>
 <fieldset class="custom-wizard" data-custom-wizard<?= $disabled ? ' disabled' : '' ?>>
     <legend class="visually-hidden"><?= e(t('order.custom_title')) ?></legend>
@@ -174,7 +139,7 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
     <section class="custom-panel" data-wizard-panel aria-labelledby="<?= e($id('step', '1')) ?>">
         <h3 class="custom-panel-title h5" id="<?= e($id('step', '1')) ?>"><span class="order-step">1</span><?= e(t('custom.services')) ?> *</h3>
         <p class="form-hint mb-3"><?= e(t('custom.services_hint')) ?></p>
-        <?= $cards('service', $services, false, true, 'col-sm-6 col-xl-4') ?>
+        <?= $cards('service', $services, true, 'col-sm-6 col-xl-4') ?>
     </section>
 
     <?php // 2. პროექტის დეტალები — მომსახურების მიხედვით; data-wizard-key — ქვეტიპი, რომელზეც ნაბიჯები 3–4 იცვლება ?>
@@ -185,95 +150,70 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
         <fieldset class="custom-group"<?= $for('web') ?>>
             <legend class="visually-hidden"><?= e(t('custom.service_web')) ?></legend>
             <fieldset class="form-choice">
-                <legend class="form-choice-legend"><?= e(t('custom.site_type')) ?></legend>
-                <?= $cards('site_type', $siteTypes, false, false, 'col-sm-6 col-xl-3', '', ' data-wizard-key="web"') ?>
+                <legend class="form-choice-legend"><?= e(t($fields['site_type']['label'])) ?></legend>
+                <?= $cards('site_type', $siteTypes, false, 'col-sm-6 col-xl-3') ?>
             </fieldset>
-            <?= $question('pages', 'custom.pages', ['1-3' => 'custom.pages_small', '4-10' => 'custom.pages_medium', '10+' => 'custom.pages_large']) ?>
-            <?= $question('features', 'custom.features', [
-                'cms'        => 'custom.feature_cms',
-                'languages'  => 'custom.feature_languages',
-                'payments'   => 'custom.feature_payments',
-                'animations' => 'custom.feature_animations',
-                'api'        => 'custom.feature_api',
-            ], true) ?>
+            <?= $question('pages') ?>
+            <?= $question('features') ?>
         </fieldset>
 
         <fieldset class="custom-group"<?= $for('design') ?>>
             <legend class="visually-hidden"><?= e(t('custom.service_design')) ?></legend>
-            <?= $question('design_scope', 'custom.design_scope', ['new' => 'custom.design_new', 'redesign' => 'custom.design_redesign'], false, ' data-wizard-key="design"') ?>
-            <?= $question('design_platform', 'custom.design_platform', ['website' => 'custom.platform_website', 'webapp' => 'custom.platform_webapp', 'mobile' => 'custom.platform_mobile']) ?>
-            <?= $question('screens', 'custom.screens', ['1-5' => 'custom.screens_small', '6-15' => 'custom.screens_medium', '15+' => 'custom.screens_large']) ?>
-            <?= $question('design_deliverables', 'custom.deliverables', [
-                'wireframes'    => 'custom.deliverable_wireframes',
-                'prototype'     => 'custom.deliverable_prototype',
-                'design_system' => 'custom.deliverable_design_system',
-                'handoff'       => 'custom.deliverable_handoff',
-            ], true) ?>
+            <?= $question('design_scope') ?>
+            <?= $question('design_platform') ?>
+            <?= $question('screens') ?>
+            <?= $question('design_deliverables') ?>
         </fieldset>
 
         <fieldset class="custom-group"<?= $for('branding') ?>>
             <legend class="visually-hidden"><?= e(t('custom.service_branding')) ?></legend>
-            <?= $question('brand_stage', 'custom.brand_stage', ['new' => 'custom.brand_new', 'rebrand' => 'custom.brand_rebrand']) ?>
-            <?= $question('brand_items', 'custom.brand_items', [
-                'logo'       => 'custom.brand_logo',
-                'identity'   => 'custom.brand_identity',
-                'brandbook'  => 'custom.brand_brandbook',
-                'print'      => 'custom.brand_print',
-                'social'     => 'custom.brand_social',
-            ], true) ?>
+            <?= $question('brand_stage') ?>
+            <?= $question('brand_items') ?>
         </fieldset>
 
         <fieldset class="custom-group"<?= $for('seo') ?>>
             <legend class="visually-hidden"><?= e(t('custom.service_seo')) ?></legend>
-            <?= $question('seo_goals', 'custom.seo_goals', [
-                'audit'    => 'custom.seo_audit',
-                'speed'    => 'custom.seo_speed',
-                'keywords' => 'custom.seo_keywords',
-                'local'    => 'custom.seo_local',
-                'links'    => 'custom.seo_links',
-            ], true) ?>
-            <?= $question('seo_platform', 'custom.site_platform', $platforms) ?>
+            <?= $question('seo_goals') ?>
+            <?= $question('seo_platform') ?>
         </fieldset>
 
         <fieldset class="custom-group"<?= $for('support') ?>>
             <legend class="visually-hidden"><?= e(t('custom.service_support')) ?></legend>
-            <?= $question('support_items', 'custom.support_items', [
-                'updates' => 'custom.support_updates',
-                'backups' => 'custom.support_backups',
-                'content' => 'custom.support_content',
-                'hosting' => 'custom.support_hosting',
-                'bugs'    => 'custom.support_bugs',
-            ], true) ?>
-            <?= $question('support_frequency', 'custom.support_frequency', ['once' => 'custom.support_once', 'monthly' => 'custom.support_monthly'], false, ' data-wizard-key="support"') ?>
-            <?= $question('support_platform', 'custom.site_platform', $platforms) ?>
+            <?= $question('support_items') ?>
+            <?= $question('support_frequency') ?>
+            <?= $question('support_platform') ?>
         </fieldset>
 
-        <fieldset class="custom-group"<?= $for('other') ?>>
+        <fieldset class="custom-group"<?= $forField('other_service') ?>>
             <legend class="visually-hidden"><?= e(t('custom.service_other')) ?></legend>
-            <?= $field('other_service', 'text', 200, true, t('custom.other_service')) ?>
+            <?= $field('other_service', 'text', 200, true) ?>
         </fieldset>
     </section>
 
-    <?php // 3. ბიუჯეტი და ვადა — პროექტის მიხედვით ($profiles): ჩანს ერთი ჯგუფი, დანარჩენი disabled ?>
+    <?php // 3. ბიუჯეტი და ვადა — პროექტის მიხედვით (profiles): ჩანს ერთი ჯგუფი, დანარჩენი disabled ?>
     <section class="custom-panel" data-wizard-panel aria-labelledby="<?= e($id('step', '3')) ?>">
         <h3 class="custom-panel-title h5" id="<?= e($id('step', '3')) ?>"><span class="order-step">3</span><?= e(t('custom.step_budget')) ?></h3>
         <p class="form-hint mb-0" data-wizard-project-name></p>
-        <?php foreach ($profiles as $list => [$ranges, $monthly, $timeline]): ?>
+        <?php foreach ($definition['profiles'] as $list => $profile): ?>
             <?php
             $key = str_replace([' ', ':'], '_', $list);
-            // ერთი name რამდენიმე ჯგუფშია: წინა არჩევანი მხოლოდ აქტიურ ჯგუფში აღდგება (თორემ ბოლო ჯგუფი „წაართმევს“)
-            $active = $service !== '' && array_intersect(explode(' ', $list), $tokens) !== [];
-            $keep = fn (string $html) => $active ? $html : str_replace(' checked>', '>', $html);
+            // ერთი name რამდენიმე ჯგუფშია: წინა არჩევანი და შეცდომა — მხოლოდ აქტიურ ჯგუფში (თორემ ბოლო ჯგუფი „წაართმევს“)
+            $active = $service !== '' && CustomOrder::matches($list, $tokens);
+            $budgets = array_map(fn ($option) => [$option[0], $option[1], ''], CustomOrder::budgetOptions($profile));
+            $timelines = [];
+            foreach (CustomOrder::timelineOptions($profile) as $value => [$label, $note]) {
+                $timelines[$value] = [$label, $note, $timelineIcons[$value] ?? ''];
+            }
             ?>
             <fieldset class="custom-group"<?= $for($list) ?>>
                 <legend class="visually-hidden"><?= e(t('custom.step_budget')) ?></legend>
                 <fieldset class="form-choice">
-                    <legend class="form-choice-legend"><?= e(t($monthly ? 'custom.budget_monthly' : 'custom.budget')) ?> *</legend>
-                    <?= $keep($cards('budget', $budgetOptions($ranges, $monthly), false, true, 'col-sm-6 col-xl-3', $key)) ?>
+                    <legend class="form-choice-legend"><?= e(t($profile['monthly'] ? 'custom.budget_monthly' : 'custom.budget')) ?> *</legend>
+                    <?= $cards('budget', $budgets, true, 'col-sm-6 col-xl-3', $key, $active) ?>
                 </fieldset>
                 <fieldset class="form-choice">
-                    <legend class="form-choice-legend"><?= e(t($timeline === 'start' ? 'custom.start' : 'custom.timeline')) ?> *</legend>
-                    <?= $keep($cards('timeline', $timelineOptions($timeline), false, true, 'col-sm-6 col-xl-4', $key)) ?>
+                    <legend class="form-choice-legend"><?= e(t($profile['timeline'] === 'start' ? 'custom.start' : 'custom.timeline')) ?> *</legend>
+                    <?= $cards('timeline', $timelines, true, 'col-sm-6 col-xl-4', $key, $active) ?>
                 </fieldset>
             </fieldset>
         <?php endforeach ?>
@@ -283,37 +223,15 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
     <section class="custom-panel" data-wizard-panel aria-labelledby="<?= e($id('step', '4')) ?>">
         <h3 class="custom-panel-title h5" id="<?= e($id('step', '4')) ?>"><span class="order-step">4</span><?= e(t('custom.step_assets_title')) ?></h3>
         <div class="row g-4 mt-0">
-            <fieldset class="col-md-6 custom-group"<?= $for('web design') ?>><?= $question('has_brandbook', 'custom.has_brandbook', $yesNo) ?></fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('web seo') ?>>
-                <?= $question('content_ready', 'custom.content_ready', ['yes' => 'custom.content_yes', 'progress' => 'custom.content_progress', 'help' => 'custom.content_help']) ?>
-            </fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('web:landing web:corporate') ?>><?= $question('has_photos', 'custom.has_photos', $yesNo) ?></fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('web:shop') ?>><?= $question('has_catalog', 'custom.has_catalog', $yesPartialNo) ?></fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('web:shop') ?>>
-                <?= $question('products', 'custom.products', ['50' => 'custom.products_small', '500' => 'custom.products_medium', '500+' => 'custom.products_large']) ?>
-            </fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('web:app') ?>><?= $question('has_spec', 'custom.has_spec', $yesPartialNo) ?></fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('design') ?>><?= $question('has_wireframes', 'custom.has_wireframes', $yesNo) ?></fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('design:redesign') ?>><?= $question('has_analytics_data', 'custom.has_ux_data', $yesNo) ?></fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('seo') ?>>
-                <?= $question('has_analytics', 'custom.has_analytics', ['yes' => 'order.yes', 'no' => 'order.no', 'unknown' => 'custom.dont_know']) ?>
-            </fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('branding') ?>><?= $question('has_logo', 'custom.has_logo', $yesNo) ?></fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('branding') ?>><?= $question('has_name', 'custom.has_name', $yesNo) ?></fieldset>
-            <fieldset class="col-12 custom-group"<?= $for('branding') ?>>
-                <?= $question('brand_style', 'custom.brand_style', [
-                    'minimal' => 'custom.style_minimal',
-                    'classic' => 'custom.style_classic',
-                    'playful' => 'custom.style_playful',
-                    'premium' => 'custom.style_premium',
-                    'bold'    => 'custom.style_bold',
-                ], true) ?>
-            </fieldset>
-            <fieldset class="col-md-6 custom-group"<?= $for('support') ?>><?= $question('has_access', 'custom.has_access', $yesPartialNo) ?></fieldset>
+            <?php foreach (['has_brandbook', 'content_ready', 'has_photos', 'has_catalog', 'products', 'has_spec', 'has_wireframes', 'has_analytics_data', 'has_analytics', 'has_logo', 'has_name'] as $name): ?>
+                <fieldset class="col-md-6 custom-group"<?= $forField($name) ?>><?= $question($name) ?></fieldset>
+            <?php endforeach ?>
+            <fieldset class="col-12 custom-group"<?= $forField('brand_style') ?>><?= $question('brand_style') ?></fieldset>
+            <fieldset class="col-md-6 custom-group"<?= $forField('has_access') ?>><?= $question('has_access') ?></fieldset>
 
             <div class="col-12">
-                <?php // ბმულები: + ამატებს რიგს (მაქს. data-max), × შლის; data-required-for — პირველი ბმული სავალდებულოა (საიტზე მუშაობა) ?>
-                <fieldset class="form-choice" data-wizard-references data-max="5" data-required-for="seo support design:redesign">
+                <?php // ბმულები: + ამატებს რიგს (მაქს. data-max), × შლის; data-required-for — პირველი ბმული სავალდებულოა ?>
+                <fieldset class="form-choice" data-wizard-references data-max="<?= (int)$linkField['max'] ?>" data-required-for="<?= e($linkField['required_for']) ?>">
                     <legend class="form-choice-legend">
                         <?= $variants([
                             'web other'           => 'custom.reference_url',
@@ -321,7 +239,7 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
                             'design:redesign'     => 'custom.reference_redesign',
                             'branding'            => 'custom.reference_branding',
                             'seo support'         => 'custom.reference_site',
-                        ]) ?><span data-wizard-required-mark hidden> *</span>
+                        ]) ?><span data-wizard-required-mark<?= $service !== '' && CustomOrder::matches($linkField['required_for'], $tokens) ? '' : ' hidden' ?>> *</span>
                     </legend>
                     <div class="d-grid gap-2" data-wizard-reference-list>
                         <?php foreach ($references as $i => $url): ?><?= $reference($url, $i) ?><?php endforeach ?>
@@ -329,10 +247,11 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
                     <template data-wizard-reference-template><?= $reference('', 1) ?></template>
                     <button type="button" class="btn btn-link px-0 mt-2" data-wizard-reference-add><i class="fa fa-plus me-1" aria-hidden="true"></i><?= e(t('custom.reference_add')) ?></button>
                     <p class="form-hint mb-0"><?= e(t('custom.reference_hint')) ?></p>
+                    <?= $errorText('references') ?>
                 </fieldset>
             </div>
             <div class="col-12">
-                <?= $field('description', 'textarea', 5000, true, t('custom.description')) ?>
+                <?= $field('description', 'textarea', 5000, true) ?>
                 <p class="form-hint mt-2 mb-0"><i class="fa fa-lightbulb me-1" aria-hidden="true"></i><?= $variants([
                     'web'      => 'custom.brief_web',
                     'design'   => 'custom.brief_design',
@@ -344,8 +263,10 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
             </div>
             <div class="col-12">
                 <label class="form-choice-legend d-block" for="<?= e($id('attachment')) ?>"><?= e(t('custom.attachment')) ?></label>
-                <input type="file" class="form-control bg-secondary border-0" name="attachment" id="<?= e($id('attachment')) ?>"
-                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp,.zip" aria-describedby="<?= e($id('attachment')) ?>-hint">
+                <input type="file" class="form-control bg-secondary border-0<?= $error('attachment') ? ' is-invalid' : '' ?>" name="attachment" id="<?= e($id('attachment')) ?>"
+                       accept=".<?= e(implode(',.', array_unique([...array_values($definition['attachment']['allowed']), 'jpeg']))) ?>"
+                       data-max-size="<?= (int)$definition['attachment']['max_size'] ?>" data-too-large="<?= e(t('custom.upload_too_large', ['max' => $maxMb])) ?>"
+                       aria-describedby="<?= e($id('attachment')) ?>-hint">
                 <p class="form-hint mt-2 mb-0" id="<?= e($id('attachment')) ?>-hint"><?= $variants([
                     'web'      => 'custom.attachment_web',
                     'design'   => 'custom.attachment_design',
@@ -353,7 +274,10 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
                     'seo'      => 'custom.attachment_seo',
                     'support'  => 'custom.attachment_support',
                     'other'    => 'custom.attachment_other',
-                ]) ?> <?= e(t('custom.attachment_formats')) ?></p>
+                ]) ?> <?= e(t('custom.attachment_formats', ['max' => $maxMb])) ?></p>
+                <?php // ფაილი redirect-ს ვერ გადაურჩება — შეცდომის შემდეგ თავიდან უნდა აირჩიონ ?>
+                <?php if ($isThis && errors() !== [] && !$error('attachment')): ?><p class="form-hint text-warning mt-1 mb-0"><?= e(t('custom.upload_again')) ?></p><?php endif ?>
+                <?= $errorText('attachment') ?>
             </div>
         </div>
     </section>
@@ -362,20 +286,13 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
     <section class="custom-panel" data-wizard-panel aria-labelledby="<?= e($id('step', '5')) ?>">
         <h3 class="custom-panel-title h5" id="<?= e($id('step', '5')) ?>"><span class="order-step">5</span><?= e(t('custom.step_contact_title')) ?></h3>
         <div class="row g-3">
-            <div class="col-12"><?= $field('name', 'text', 100, true, t('custom.name')) ?></div>
-            <div class="col-md-6"><?= $field('email', 'email', 190, true, t('order.email')) ?></div>
+            <div class="col-12"><?= $field('name', 'text', 100, true) ?></div>
+            <div class="col-md-6"><?= $field('email', 'email', 190, true) ?></div>
             <div class="col-md-6" data-wizard-phone>
-                <?= $field('phone', 'tel', 50, false, t('order.phone')) ?>
+                <?= $field('phone', 'tel', 50, in_array((string)$old('contact_method'), $fields['phone']['required_if']['contact_method'], true)) ?>
                 <p class="form-hint mt-2 mb-0"><?= e(t('custom.phone_hint')) ?></p>
             </div>
-            <div class="col-12">
-                <?= $question('contact_method', 'custom.contact_method', [
-                    'any'      => 'custom.method_any',
-                    'email'    => 'custom.method_email',
-                    'phone'    => 'custom.method_phone',
-                    'whatsapp' => 'custom.method_whatsapp',
-                ]) ?>
-            </div>
+            <div class="col-12"><?= $question('contact_method') ?></div>
         </div>
     </section>
 

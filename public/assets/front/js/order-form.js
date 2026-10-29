@@ -298,6 +298,15 @@
                 if (group.querySelector('input:checked')) { group.querySelector('[data-wizard-error]').classList.add('d-none'); }
             });
         });
+        // ფაილი ლიმიტზე დიდია → შეცდომა გაგზავნამდე (სერვერზე post_max_size-ზე დიდი მოთხოვნა საერთოდ ვერ მივა)
+        wizard.querySelectorAll('input[type=file][data-max-size]').forEach(function (input) {
+            input.addEventListener('change', function () {
+                var file = input.files && input.files[0];
+                var tooLarge = !!file && file.size > parseInt(input.getAttribute('data-max-size'), 10);
+                input.setCustomValidity(tooLarge ? input.getAttribute('data-too-large') : '');
+                if (tooLarge) { input.reportValidity(); }
+            });
+        });
         methods.forEach(function (m) { m.addEventListener('change', syncPhone); });
         services.concat(keys).forEach(function (s) { s.addEventListener('change', syncService); });
         // Enter ტექსტურ ველში — შემდეგ ნაბიჯზე და არა გაგზავნა
@@ -322,7 +331,7 @@
 
         syncService();
         syncPhone();
-        var invalid = panels.findIndex(function (panel) { return panel.querySelector('.is-invalid'); });
+        var invalid = panels.findIndex(function (panel) { return panel.querySelector('.is-invalid, [data-wizard-server-error]'); });
         if (invalid > 0) { reached = panels.length - 1; }
         show(Math.max(0, invalid), false);
     }

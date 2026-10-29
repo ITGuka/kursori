@@ -5,6 +5,7 @@
 # გენერირებული ფაილები
 /storage/cache/*
 /storage/logs/*
+/storage/orders/
 !/storage/cache/.gitkeep
 !/storage/logs/.gitkeep
 

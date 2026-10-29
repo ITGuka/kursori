@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\ActivityLog;
 use App\Models\FormSubmission;
+use App\Services\CustomOrder;
 use Core\Http\Request;
 use Core\Http\Response;
 
@@ -51,6 +52,24 @@ final class InboxController
         ]);
     }
 
+    /** მიმაგრებული ფაილი (ინდივიდუალური შეკვეთა, storage/orders) — მხოლოდ ადმინისთვის, ყოველთვის ჩამოსატვირთად */
+    public function attachment(int $id): Response
+    {
+        $submission = $this->submissions->find($id) ?? abort(404);
+        $attachment = $submission['data']['attachment'] ?? null;
+        $path = CustomOrder::attachmentPath($attachment) ?? abort(404);
+        $name = str_replace(['"', '\\'], '', (string)$attachment['name']);
+        $fallback = (string)preg_replace('/[^\x20-\x7E]/', '_', $name);
+
+        return new Response((string)file_get_contents($path), 200, [
+            'Content-Type'           => 'application/octet-stream',
+            'Content-Disposition'    => 'attachment; filename="' . $fallback . '"; filename*=UTF-8\'\'' . rawurlencode($name),
+            'Content-Length'         => (string)filesize($path),
+            'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control'          => 'private, no-store',
+        ]);
+    }
+
     public function markUnread(int $id): Response
     {
         $this->submissions->find($id) ?? abort(404);
@@ -73,6 +92,10 @@ final class InboxController
     {
         $submission = $this->submissions->find($id) ?? abort(404);
         $this->submissions->delete($id);
+        // მიმაგრებული ფაილიც იშლება
+        if (($path = CustomOrder::attachmentPath($submission['data']['attachment'] ?? null)) !== null) {
+            @unlink($path);
+        }
         $this->log->log('inbox.deleted', 'form_submission', $id, ['email' => $submission['data']['email'] ?? '']);
         return redirect(route('admin.inbox.index'))->with('success', 'შეტყობინება წაიშალა.');
     }

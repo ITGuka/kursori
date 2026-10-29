@@ -1,22 +1,17 @@
 <?php
 /**
- * ახალი შეკვეთის შეტყობინება ადმინს (ქართულად — ადმინის ენა).
+ * ახალი შეკვეთის შეტყობინება ადმინს (ქართულად — ადმინის ენა). ბრიფი — ნაბიჯებად, ცარიელი ველების გარეშე (FormSubmission::present).
  * @var Core\View\Template $this @var string $lang @var array $data @var array $definition @var string $orderLang @var string $url
  */
+use App\Models\FormSubmission;
+
 $this->layout('emails/layout');
 ?>
-<p style="margin:0 0 16px;font-size:18px;font-weight:bold;">ახალი შეკვეთა საიტიდან</p>
+<p style="margin:0 0 16px;font-size:18px;font-weight:bold;"><?= e($definition['label'] ?? 'ახალი შეკვეთა საიტიდან') ?></p>
+<?= $this->insert('emails/partials/submission', ['sections' => FormSubmission::present($definition, $data, $lang), 'fileNote' => 'ჩამოტვირთვა — Inbox-იდან']) ?>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:15px;">
-    <?php foreach (array_replace(array_intersect_key($definition['fields'], $data), $data) as $name => $value): ?>
-        <?php $field = $definition['fields'][$name] ?? []; ?>
-        <?php if (isset($field['options'][$value])) { $value = t($field['options'][$value], [], $lang); } ?>
-        <tr>
-            <td style="padding:8px 12px 8px 0;border-bottom:1px solid #eee;color:#888;vertical-align:top;width:35%;"><?= e(isset($field['label']) ? t($field['label'], [], $lang) : $name) ?></td>
-            <td style="padding:8px 0;border-bottom:1px solid #eee;vertical-align:top;"><?= (string)$value === '' ? '—' : nl2br(e((string)$value)) ?></td>
-        </tr>
-    <?php endforeach ?>
     <tr>
-        <td style="padding:8px 12px 8px 0;color:#888;">ენა</td>
+        <td style="padding:8px 12px 8px 0;color:#888;width:35%;">ენა</td>
         <td style="padding:8px 0;text-transform:uppercase;"><?= e($orderLang) ?></td>
     </tr>
 </table>

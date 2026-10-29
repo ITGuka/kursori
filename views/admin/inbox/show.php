@@ -53,15 +53,31 @@ $email = (string)($data['email'] ?? '');
     </div>
 
     <div class="card-body">
-        <dl class="row mb-0 g-3">
-            <?php // ფორმის ველების რიგით (MySQL JSON-ში გასაღებები სიგრძით ლაგდება), შემდეგ — დანარჩენი ?>
-            <?php foreach (array_replace(array_intersect_key($definition['fields'], $data), $data) as $name => $value): ?>
-                <?php $field = $definition['fields'][$name] ?? []; ?>
-                <?php if (isset($field['options'][$value])) { $value = t($field['options'][$value], [], config('app.default_locale')); } ?>
-                <dt class="col-sm-3 fw-medium text-heading"><?= e(isset($field['label']) ? t($field['label'], [], config('app.default_locale')) : $name) ?></dt>
-                <dd class="col-sm-9 text-break mb-0"><?= (string)$value === '' ? '<span class="text-body-secondary">—</span>' : (!empty($field['multiline']) ? nl2br(e((string)$value)) : e((string)$value)) ?></dd>
-            <?php endforeach ?>
-        </dl>
+        <?php // ველები ნაბიჯებად (ბრიფი) ან ერთ სიად — FormSubmission::present ?>
+        <?php foreach (FormSubmission::present($definition, $data, (string)config('app.default_locale')) as $i => $section): ?>
+            <?php if ($section['title'] !== null): ?>
+                <h6 class="text-uppercase text-body-secondary small fw-semibold<?= $i > 0 ? ' mt-5' : '' ?> mb-3"><?= e($section['title']) ?></h6>
+            <?php endif ?>
+            <dl class="row mb-0 g-3">
+                <?php foreach ($section['rows'] as $row): ?>
+                    <dt class="col-sm-3 fw-medium text-heading"><?= e($row['label']) ?></dt>
+                    <dd class="col-sm-9 text-break mb-0">
+                        <?php if ($row['file'] !== null): ?>
+                            <a href="<?= e(route('admin.inbox.attachment', ['id' => $submission['id']])) ?>"><i class="icon-base bx bx-download icon-sm me-1"></i><?= e($row['file']['name']) ?></a>
+                            <span class="text-body-secondary small ms-1"><?= e(FormSubmission::fileSize((int)($row['file']['size'] ?? 0))) ?></span>
+                        <?php elseif ($row['links'] !== []): ?>
+                            <?php foreach ($row['links'] as $link): ?>
+                                <a class="d-block" href="<?= e($link) ?>" target="_blank" rel="noopener noreferrer nofollow"><?= e($link) ?></a>
+                            <?php endforeach ?>
+                        <?php elseif ($row['value'] === ''): ?>
+                            <span class="text-body-secondary">—</span>
+                        <?php else: ?>
+                            <?= $row['multiline'] ? nl2br(e($row['value'])) : e($row['value']) ?>
+                        <?php endif ?>
+                    </dd>
+                <?php endforeach ?>
+            </dl>
+        <?php endforeach ?>
     </div>
 
     <div class="card-footer border-top">

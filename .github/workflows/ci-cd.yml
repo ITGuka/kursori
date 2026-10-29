@@ -96,6 +96,7 @@ jobs:
             --exclude='/docs/' \
             --exclude='/storage/cache/*' \
             --exclude='/storage/logs/*' \
+            --exclude='/storage/orders/' \
             --exclude='/public/uploads/' \
             --exclude='/public/.well-known/' \
             --exclude='/public/cgi-bin/' \

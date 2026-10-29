@@ -153,7 +153,7 @@ KURSORI/
 │                              09_privacy_page (კონფიდენციალურობის პოლიტიკა), 10_order_page (შეკვეთის გვერდი, დიზაინის კატეგორიები)
 ├── resources/               ✅ მხოლოდ ლოკალურად (production-ზე არ იტვირთება, D55): stock/ (seed 04-ის სურათები),
 │                              templates/ — poseify/, dashmin/ საწყისი HTML (reference) + zip (git-ის გარეშე)
-├── storage/                 ✅ cache/, logs/ (git-ის გარეშე)
+├── storage/                 ✅ cache/, logs/, orders/ (ინდივიდუალური შეკვეთის ფაილები; git-ისა და deploy-ის გარეშე)
 ├── bin/console              ✅ CLI
 ├── .env / .env.example      ✅
 ├── .github/workflows/       ✅ ci-cd.yml — lint/build + deploy kursori.dev-ზე (D55)
