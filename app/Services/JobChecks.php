@@ -37,6 +37,10 @@ final class JobChecks
         if ($this->news->approvedIds(1) === []) {
             return 'გამოსაქვეყნებელი (დამტკიცებული) სიახლე არ არის.';
         }
+        if ($this->news->approvedIds(1, (int)setting('news.category_daily_limit')) === []) {
+            $perCategory = (int)setting('news.category_daily_limit');
+            return "დამტკიცებული სიახლეების კატეგორიებში დღიური ლიმიტი ($perCategory) ამოწურულია.";
+        }
         return $this->dailyLimitReached();
     }
 

@@ -31,9 +31,9 @@ final class NewsPublishCommand extends Command
             if (isset($options['limit'])) {
                 $remaining = min($remaining, max(1, (int)$options['limit']));
             }
-            $ids = $news->approvedIds($remaining);
+            $ids = $news->approvedIds($remaining, (int)setting('news.category_daily_limit'));
             if ($ids === []) {
-                $this->output->info($remaining === 0 ? 'Daily limit reached.' : 'Nothing to publish.');
+                $this->output->info($remaining === 0 ? 'Daily limit reached.' : 'Nothing to publish (or every category reached its daily limit).');
                 return 0;
             }
         }

@@ -127,12 +127,50 @@ final class NewsItem
         );
     }
 
-    /** @return list<int> დამტკიცებული (ან ავტომატური) სიახლეები გამოსაქვეყნებლად — ძველი პირველი */
-    public function approvedIds(int $limit): array
+    /**
+     * დამტკიცებული (ან ავტომატური) სიახლეები გამოსაქვეყნებლად — ძველი პირველი; ბლოგის ერთ კატეგორიაში დღეში
+     * არაუმეტეს $perCategory (0 — შეზღუდვის გარეშე; დღევანდელი გამოქვეყნებულიც ითვლება). კატეგორია — feed-იდან.
+     * @return list<int>
+     */
+    public function approvedIds(int $limit, int $perCategory = 0): array
     {
-        return array_map('intval', $this->db->column(
-            "SELECT id FROM news_items WHERE status = 'approved' ORDER BY created_at, id LIMIT " . max(0, $limit),
-        ));
+        if ($limit <= 0) {
+            return [];
+        }
+        $rows = $this->db->select(
+            "SELECT i.id, f.category_id FROM news_items i LEFT JOIN news_feeds f ON f.id = i.feed_id
+             WHERE i.status = 'approved' ORDER BY i.created_at, i.id" . ($perCategory > 0 ? '' : ' LIMIT ' . $limit),
+        );
+        $used = $perCategory > 0 ? $this->publishedTodayByCategory() : [];
+        $ids = [];
+        foreach ($rows as $row) {
+            $category = $row['category_id'] !== null ? (int)$row['category_id'] : null;
+            if ($category !== null && $perCategory > 0 && ($used[$category] ?? 0) >= $perCategory) {
+                continue;
+            }
+            if ($category !== null) {
+                $used[$category] = ($used[$category] ?? 0) + 1;
+            }
+            $ids[] = (int)$row['id'];
+            if (count($ids) >= $limit) {
+                break;
+            }
+        }
+        return $ids;
+    }
+
+    /** @return array<int, int> ბლოგის კატეგორია => დღეს გამოქვეყნებული სიახლეები */
+    public function publishedTodayByCategory(): array
+    {
+        $counts = [];
+        foreach ($this->db->select(
+            'SELECT c.category_id, COUNT(*) AS n FROM news_items i JOIN collection_items c ON c.id = i.collection_item_id
+             WHERE i.published_at >= ? AND c.category_id IS NOT NULL GROUP BY c.category_id',
+            [date('Y-m-d 00:00:00')],
+        ) as $row) {
+            $counts[(int)$row['category_id']] = (int)$row['n'];
+        }
+        return $counts;
     }
 
     public function publishedToday(): int
