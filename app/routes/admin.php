@@ -108,7 +108,7 @@ $router->group(['prefix' => '/admin', 'name' => 'admin.'], function (Router $rou
 
         $router->get('/inbox',[InboxController::class, 'index'])->name('inbox.index');
         $router->get('/inbox/{id}', [InboxController::class, 'show'])->name('inbox.show');
-        $router->get('/inbox/{id}/attachment', [InboxController::class, 'attachment'])->name('inbox.attachment');
+        $router->get('/inbox/{id}/attachments/{index}', [InboxController::class, 'attachment'])->name('inbox.attachment');
         $router->post('/inbox/{id}/unread', [InboxController::class, 'markUnread'])->name('inbox.unread');
         $router->post('/inbox/{id}/status', [InboxController::class, 'status'])->name('inbox.status');
         $router->delete('/inbox/{id}', [InboxController::class, 'destroy'])->name('inbox.destroy');

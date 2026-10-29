@@ -15,8 +15,8 @@ $style = $background !== ''
         . '" data-custom-bg'
     : '';
 ?>
-<div class="page-header pb-5"<?= $style ?>>
-    <div class="container text-center py-5">
+<div class="page-header"<?= $style ?>>
+    <div class="container text-center">
         <h1 class="display-4 text-uppercase mb-3 animated slideInDown"><?= e($heading) ?></h1>
         <?php if ($data['breadcrumb']): ?>
             <nav aria-label="breadcrumb" class="animated slideInDown">

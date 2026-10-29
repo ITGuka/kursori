@@ -7,6 +7,7 @@ use App\Models\Design;
 use App\Models\FormSubmission;
 use App\Models\Language;
 use App\Models\Package;
+use App\Services\Attachments;
 use App\Services\CustomOrder;
 use Core\Http\HttpException;
 use Core\Media\UploadException;
@@ -90,6 +91,7 @@ final class OrderController
                 $input[$name] = 'no';
             }
         }
+        $files = $errors === [] ? $this->attachments($request, $errors) : [];
         if ($errors !== []) {
             return redirect($back)->with('_form', self::FORM)->withErrors($errors)->withInput($input);
         }
@@ -100,7 +102,7 @@ final class OrderController
             'category' => $input['category'] !== '' ? $categories[(int)$input['category']]['name'] : '',
             'design'   => $design['title'] . ' (#' . $design['id'] . ')',
         ] + $input;
-        $data = array_merge(array_fill_keys(array_keys($fields), ''), array_intersect_key($data, $fields));
+        $data = array_merge(array_fill_keys(array_keys($fields), ''), array_intersect_key($data, $fields), ['attachments' => $files]);
         $id = $this->submissions->create(self::FORM, $lang, $data, (string)$request->header('Referer', ''), $request->ip(), (string)$request->header('User-Agent', ''));
         $this->notify($id, $data, $lang, $definition);
 
@@ -108,22 +110,27 @@ final class OrderController
     }
 
     /**
-     * ინდივიდუალური შეკვეთა (ბრიფი): ვალიდაცია პროექტის მიხედვით → ფაილი storage/orders-ში → Inbox → წერილები ადმინსა და კლიენტს.
-     * ფაილი ინახება მხოლოდ ვალიდაციის შემდეგ (შეცდომისას ობოლი ფაილი არ რჩება) — შეცდომის შემდეგ თავიდან უნდა აირჩიონ.
+     * მიმაგრებული ფაილები (attachments[]) storage/orders-ში. იძახება მხოლოდ ვალიდაციის შემდეგ — შეცდომისას ობოლი ფაილი
+     * არ რჩება (შეცდომის შემდეგ ფაილები თავიდან უნდა აირჩიონ). ფაილის შეცდომა → $errors['attachments']
+     * @return list<array{name: string, path: string, mime: string, size: int}>
      */
+    private function attachments(Request $request, array &$errors): array
+    {
+        try {
+            return Attachments::store(Attachments::fromRequest($request->file('attachments')));
+        } catch (UploadException $e) {
+            $errors['attachments'] = $e->getMessage();
+            return [];
+        }
+    }
+
+    /** ინდივიდუალური შეკვეთა (ბრიფი): ვალიდაცია პროექტის მიხედვით → ფაილები → Inbox → წერილები ადმინსა და კლიენტს */
     private function custom(Request $request, string $lang, string $back, array $input, string $key, int $decay): Response
     {
         $definition = CustomOrder::definition();
         ['data' => $data, 'errors' => $errors] = CustomOrder::validate($input, $this->languages->defaultCode());
-        if ($errors === []) {
-            try {
-                $attachment = CustomOrder::storeAttachment($request->file('attachment'));
-                if ($attachment !== null) {
-                    $data['attachment'] = $attachment;
-                }
-            } catch (UploadException $e) {
-                $errors['attachment'] = $e->getMessage();
-            }
+        if ($errors === [] && ($files = $this->attachments($request, $errors)) !== []) {
+            $data['attachments'] = $files;
         }
         if ($errors !== []) {
             return redirect($back)->with('_form', self::FORM)->withErrors($errors)->withInput($input);

@@ -18,8 +18,11 @@ $cell = 'padding:8px 0;border-bottom:1px solid #eee;vertical-align:top;';
             <tr>
                 <td style="<?= $cell ?>padding-right:12px;color:#888;width:35%;"><?= e($row['label']) ?></td>
                 <td style="<?= $cell ?>">
-                    <?php if ($row['file'] !== null): ?>
-                        <?= e($row['file']['name']) ?> <span style="color:#888;">(<?= e(FormSubmission::fileSize((int)($row['file']['size'] ?? 0))) ?><?= $fileNote !== '' ? ' · ' . e($fileNote) : '' ?>)</span>
+                    <?php if ($row['files'] !== []): ?>
+                        <?php foreach ($row['files'] as $file): ?>
+                            <?= e($file['name']) ?> <span style="color:#888;">(<?= e(FormSubmission::fileSize((int)($file['size'] ?? 0))) ?>)</span><br>
+                        <?php endforeach ?>
+                        <?php if ($fileNote !== ''): ?><span style="color:#888;font-size:13px;"><?= e($fileNote) ?></span><?php endif ?>
                     <?php elseif ($row['links'] !== []): ?>
                         <?php foreach ($row['links'] as $link): ?>
                             <a href="<?= e($link) ?>" style="color:#c0185f;word-break:break-all;"><?= e($link) ?></a><br>

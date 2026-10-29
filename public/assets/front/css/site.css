@@ -1357,9 +1357,17 @@ img[width][height] {
  * თემის ფონები (style.css-ის carousel-1.jpg / footer-bg.png-ის ნაცვლად). სურათის შეცვლისას — ახალი ფაილის სახელი:
  * ვერსიის გარეშე URL ბრაუზერში დიდხანს ინახება (public/.htaccess).
  */
+/* შიდა გვერდების ჰედერი: ზემოთ — გამჭვირვალე navbar-ის ადგილი (~120px), ქვემოთ — სათაური და breadcrumb (~300px სულ) */
 .page-header {
+    padding: 150px 0 56px;
     background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url(../img/page-header.jpg);
     background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), image-set(url(../img/page-header.webp) type("image/webp"), url(../img/page-header.jpg) type("image/jpeg"));
+}
+
+@media (max-width: 991.98px) {
+    .page-header {
+        padding: 96px 0 40px;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -2583,6 +2591,129 @@ a.package-option:focus-visible {
 
 .custom-panel-title ~ .custom-group > * + * {
     margin-top: 1.5rem;
+}
+
+/* ფაილების არჩევა (partials/form-files): ველი დამალულია, label — არჩევისა და ჩაგდების არე; ქვემოთ — არჩეულების სია */
+.form-files {
+    position: relative;
+    text-align: left;
+}
+
+.form-files-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.form-files-drop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    margin: 0;
+    padding: 1.25rem 1rem;
+    background: var(--bs-secondary);
+    border: 2px dashed rgba(255, 255, 255, .15);
+    border-radius: 12px;
+    color: var(--bs-white);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background-color .2s;
+}
+
+.bg-secondary .form-files-drop {
+    background: var(--bs-dark);
+}
+
+.form-files-drop:hover,
+.form-files-drop.is-dragover,
+.form-files-input:focus-visible + .form-files-drop {
+    border-color: var(--bs-primary);
+}
+
+.form-files-drop.is-dragover {
+    background: rgba(228, 23, 121, .08);
+}
+
+.form-files-icon {
+    color: var(--bs-primary);
+    font-size: 1.5rem;
+}
+
+.form-files-add {
+    font-weight: 600;
+}
+
+fieldset:disabled .form-files-drop {
+    cursor: default;
+    opacity: .6;
+}
+
+.form-files-list {
+    display: grid;
+    gap: .5rem;
+    margin: .75rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.form-files-list:empty {
+    display: none;
+}
+
+.form-files-item {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .5rem .5rem .5rem .9rem;
+    background: var(--bs-secondary);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 8px;
+}
+
+.form-files-item > .fa {
+    color: var(--site-text-muted);
+}
+
+.form-files-item.is-invalid {
+    border-color: var(--bs-danger);
+}
+
+.form-files-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--bs-white);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.form-files-size {
+    flex: 0 0 auto;
+    color: var(--site-text-muted);
+    font-size: .8rem;
+}
+
+.form-files-remove {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 50%;
+    color: var(--site-text-muted);
+}
+
+.form-files-remove:hover,
+.form-files-remove:focus-visible {
+    background: rgba(255, 255, 255, .08);
+    color: var(--bs-white);
 }
 
 /* ბმულების სია: ველი + წაშლის ღილაკი */

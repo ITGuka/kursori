@@ -205,7 +205,12 @@
             var fields = Array.prototype.slice.call(panel.querySelectorAll('input, textarea, select'));
             for (var i = 0; i < fields.length; i++) {
                 if (!fields[i].checkValidity()) {
-                    fields[i].reportValidity();
+                    // ფაილების ველი დამალულია — შეცდომა მის ქვეშ უკვე ჩანს, ფოკუსი — არჩევის ღილაკზე
+                    if (fields[i].type === 'file') {
+                        fields[i].focus();
+                    } else {
+                        fields[i].reportValidity();
+                    }
                     return false;
                 }
             }
@@ -298,15 +303,6 @@
                 if (group.querySelector('input:checked')) { group.querySelector('[data-wizard-error]').classList.add('d-none'); }
             });
         });
-        // ფაილი ლიმიტზე დიდია → შეცდომა გაგზავნამდე (სერვერზე post_max_size-ზე დიდი მოთხოვნა საერთოდ ვერ მივა)
-        wizard.querySelectorAll('input[type=file][data-max-size]').forEach(function (input) {
-            input.addEventListener('change', function () {
-                var file = input.files && input.files[0];
-                var tooLarge = !!file && file.size > parseInt(input.getAttribute('data-max-size'), 10);
-                input.setCustomValidity(tooLarge ? input.getAttribute('data-too-large') : '');
-                if (tooLarge) { input.reportValidity(); }
-            });
-        });
         methods.forEach(function (m) { m.addEventListener('change', syncPhone); });
         services.concat(keys).forEach(function (s) { s.addEventListener('change', syncService); });
         // Enter ტექსტურ ველში — შემდეგ ნაბიჯზე და არა გაგზავნა
@@ -335,6 +331,91 @@
         if (invalid > 0) { reached = panels.length - 1; }
         show(Math.max(0, invalid), false);
     }
+
+    // ფაილების არჩევა (partials/form-files): ფაილები გროვდება რამდენჯერმე არჩევით ან ჩაგდებით (DataTransfer), სიაში — × წაშლა;
+    // ზომა, ჯამი და რაოდენობა მოწმდება გაგზავნამდე (სერვერზე post_max_size-ზე დიდი მოთხოვნა საერთოდ ვერ მივა)
+    document.querySelectorAll('[data-form-files]').forEach(function (box) {
+        var input = box.querySelector('input[type=file]');
+        var drop = box.querySelector('[data-form-files-drop]');
+        var list = box.querySelector('[data-form-files-list]');
+        var error = box.querySelector('[data-form-files-error]');
+        var maxFiles = parseInt(box.getAttribute('data-max-files'), 10);
+        var maxSize = parseInt(box.getAttribute('data-max-size'), 10);
+        var maxTotal = parseInt(box.getAttribute('data-max-total'), 10);
+        var files = [];
+        if (typeof DataTransfer === 'undefined') { return; }
+
+        function size(bytes) {
+            return bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+        }
+
+        function sync() {
+            var transfer = new DataTransfer();
+            files.forEach(function (file) { transfer.items.add(file); });
+            input.files = transfer.files;
+
+            var message = '';
+            var total = 0;
+            list.innerHTML = '';
+            files.forEach(function (file, i) {
+                total += file.size;
+                var tooLarge = file.size > maxSize;
+                if (tooLarge && !message) { message = file.name + ': ' + box.getAttribute('data-msg-too-large'); }
+                var item = document.createElement('li');
+                item.className = 'form-files-item' + (tooLarge ? ' is-invalid' : '');
+                item.innerHTML = '<i class="fa fa-file-alt" aria-hidden="true"></i><span class="form-files-name"></span>'
+                    + '<span class="form-files-size"></span><button type="button" class="form-files-remove"><i class="fa fa-times" aria-hidden="true"></i></button>';
+                item.querySelector('.form-files-name').textContent = file.name;
+                item.querySelector('.form-files-size').textContent = size(file.size);
+                var remove = item.querySelector('.form-files-remove');
+                remove.setAttribute('aria-label', box.getAttribute('data-msg-remove') + ': ' + file.name);
+                remove.addEventListener('click', function () {
+                    files.splice(i, 1);
+                    sync();
+                    (list.querySelector('.form-files-remove') || input).focus();
+                });
+                list.appendChild(item);
+            });
+            if (!message && total > maxTotal) { message = box.getAttribute('data-msg-total'); }
+            input.setCustomValidity(message);
+            error.textContent = message;
+            error.classList.toggle('d-none', message === '');
+        }
+
+        // დუბლიკატი (სახელი + ზომა) არ ემატება; ლიმიტზე მეტი — შეცდომა, ზედმეტი არ ემატება
+        function add(newFiles) {
+            var skipped = false;
+            Array.prototype.forEach.call(newFiles, function (file) {
+                var duplicate = files.some(function (f) { return f.name === file.name && f.size === file.size; });
+                if (duplicate) { return; }
+                if (files.length < maxFiles) { files.push(file); } else { skipped = true; }
+            });
+            sync();
+            if (skipped && !input.validationMessage) {
+                error.textContent = box.getAttribute('data-msg-too-many');
+                error.classList.remove('d-none');
+            }
+        }
+
+        input.addEventListener('change', function () { add(Array.prototype.slice.call(input.files)); });
+        ['dragenter', 'dragover'].forEach(function (type) {
+            drop.addEventListener(type, function (event) { event.preventDefault(); drop.classList.add('is-dragover'); });
+        });
+        ['dragleave', 'drop'].forEach(function (type) {
+            drop.addEventListener(type, function () { drop.classList.remove('is-dragover'); });
+        });
+        drop.addEventListener('drop', function (event) {
+            event.preventDefault();
+            if (!input.closest('fieldset:disabled')) { add(event.dataTransfer.files); }
+        });
+        // ფორმა ფაილების შეცდომით არ იგზავნება (პაკეტის ფორმა; ბრიფს — ნაბიჯების ვალიდაცია)
+        input.form.addEventListener('submit', function (event) {
+            if (!input.disabled && input.validationMessage) {
+                event.preventDefault();
+                input.focus();
+            }
+        });
+    });
 
     var modalEl = document.querySelector('[data-order-modal]');
     if (!modalEl) { return; }

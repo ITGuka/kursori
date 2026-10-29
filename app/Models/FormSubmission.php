@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Services\Attachments;
 use Core\Database\DB;
 
 /**
@@ -22,23 +23,28 @@ final class FormSubmission
 
     /**
      * შემოსული მონაცემები საჩვენებლად (Inbox, წერილები): ფორმის ველების რიგით, ნაბიჯებად (steps, თუ აქვს), options — წარწერით.
-     * hide_empty — ცარიელი ველები გამოტოვებულია; მასივი — წარწერები მძიმით; type links — ბმულების სია; type file — ფაილის მონაცემები.
-     * @return list<array{title: ?string, rows: list<array{name: string, label: string, value: string, multiline: bool, links: list<string>, file: ?array}>}>
+     * hide_empty — ცარიელი ველები გამოტოვებულია; მასივი — წარწერები მძიმით; type links — ბმულების სია; type files — ფაილების სია.
+     * @return list<array{title: ?string, rows: list<array{name: string, label: string, value: string, multiline: bool, links: list<string>, files: list<array>}>}>
      */
     public static function present(array $definition, array $data, string $lang): array
     {
         $fields = $definition['fields'] ?? [];
         $sections = [];
+        // ძველი ფორმატი: ერთი ფაილი attachment-ში → attachments
+        if (array_key_exists('attachment', $data)) {
+            $data['attachments'] ??= $data['attachment'];
+            unset($data['attachment']);
+        }
         // ფორმის ველების რიგით (MySQL JSON-ში გასაღებები სიგრძით ლაგდება), შემდეგ — დანარჩენი
         foreach (array_replace(array_intersect_key($fields, $data), $data) as $name => $value) {
             $field = $fields[$name] ?? [];
             $type = $field['type'] ?? '';
             $label = fn (mixed $item) => isset($field['options'][$item]) ? t($field['options'][$item], [], $lang) : (string)$item;
             $row = ['name' => $name, 'label' => isset($field['label']) ? t($field['label'], [], $lang) : $name, 'value' => '',
-                    'multiline' => !empty($field['multiline']), 'links' => [], 'file' => null];
-            if ($type === 'file') {
-                $row['file'] = is_array($value) && isset($value['name']) ? $value : null;
-                $row['value'] = (string)($row['file']['name'] ?? '');
+                    'multiline' => !empty($field['multiline']), 'links' => [], 'files' => []];
+            if ($type === 'files') {
+                $row['files'] = Attachments::list($value);
+                $row['value'] = implode(', ', array_column($row['files'], 'name'));
             } elseif ($type === 'links') {
                 $row['links'] = array_values(array_filter((array)$value, 'is_string'));
                 $row['value'] = implode("\n", $row['links']);

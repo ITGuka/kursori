@@ -67,6 +67,7 @@ return [
             'description' => ['rules' => 'required|max:5000', 'label' => 'order.description', 'multiline' => true],
             'has_domain'  => ['rules' => '', 'label' => 'order.has_domain', 'options' => ['yes' => 'order.yes', 'no' => 'order.no']],
             'has_hosting' => ['rules' => '', 'label' => 'order.has_hosting', 'options' => ['yes' => 'order.yes', 'no' => 'order.no']],
+            'attachments' => ['type' => 'files', 'rules' => '', 'label' => 'form.attachments'],
         ],
     ],
 
@@ -104,19 +105,6 @@ return [
             'support:- support:monthly' => ['ranges' => [[0, 300], [300, 700], [700, null]], 'monthly' => true, 'timeline' => 'start'],
             'support:once'        => ['ranges' => [[0, 500], [500, 1500], [1500, null]], 'monthly' => false, 'timeline' => 'start'],
             'other'               => ['ranges' => [[0, 1500], [1500, 5000], [5000, null]], 'monthly' => false, 'timeline' => [['weeks', '2–3'], ['months', '1–2']]],
-        ],
-        // მიმაგრებული ფაილი: storage/orders/YYYY/MM (web root-ის გარეთ), ჩამოტვირთვა — მხოლოდ ადმინიდან
-        'attachment' => [
-            'max_size' => 10 * 1024 * 1024,
-            'allowed'  => [
-                'application/pdf'    => 'pdf',
-                'application/msword' => 'doc',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
-                'image/jpeg'         => 'jpg',
-                'image/png'          => 'png',
-                'image/webp'         => 'webp',
-                'application/zip'    => 'zip',
-            ],
         ],
         'fields'     => [
             'service'             => ['step' => 'service', 'rules' => 'required', 'label' => 'custom.step_service', 'options' => [
@@ -203,7 +191,7 @@ return [
             'references'          => ['step' => 'assets', 'type' => 'links', 'rules' => '', 'label' => 'custom.reference_label', 'max' => 5,
                                       'required_for' => 'seo support design:redesign'],
             'description'         => ['step' => 'assets', 'rules' => 'required|max:5000', 'label' => 'custom.description', 'multiline' => true],
-            'attachment'          => ['step' => 'assets', 'type' => 'file', 'rules' => '', 'label' => 'custom.attachment'],
+            'attachments'         => ['step' => 'assets', 'type' => 'files', 'rules' => '', 'label' => 'form.attachments'],
 
             'name'                => ['step' => 'contact', 'rules' => 'required|max:100', 'label' => 'custom.name'],
             'email'               => ['step' => 'contact', 'rules' => 'required|email|max:190', 'label' => 'order.email'],
@@ -212,6 +200,23 @@ return [
             'contact_method'      => ['step' => 'contact', 'rules' => '', 'label' => 'custom.contact_method', 'options' => [
                 'any' => 'custom.method_any', 'email' => 'custom.method_email', 'phone' => 'custom.method_phone', 'whatsapp' => 'custom.method_whatsapp',
             ]],
+        ],
+    ],
+
+    // შეკვეთის ფორმების მიმაგრებული ფაილები (ველი type => files; App\Services\Attachments): storage/orders/YYYY/MM (web root-ის გარეთ),
+    // ჩამოტვირთვა — მხოლოდ ადმინიდან. max_total — ერთად (სერვერის post_max_size მასზე მეტი უნდა იყოს); ტიპი მოწმდება შიგთავსით.
+    'attachments' => [
+        'max_files' => 5,
+        'max_size'  => 10 * 1024 * 1024,
+        'max_total' => 20 * 1024 * 1024,
+        'allowed'   => [
+            'application/pdf'    => 'pdf',
+            'application/msword' => 'doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+            'image/jpeg'         => 'jpg',
+            'image/png'          => 'png',
+            'image/webp'         => 'webp',
+            'application/zip'    => 'zip',
         ],
     ],
 

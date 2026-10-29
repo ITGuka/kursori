@@ -5,8 +5,6 @@ namespace App\Services;
 
 use App\Controllers\Front\FormController;
 use Core\Http\Request;
-use Core\Media\Uploader;
-use Core\Media\UploadException;
 use Core\Support\Validator;
 
 /**
@@ -19,8 +17,6 @@ final class CustomOrder
     public const FORM = 'custom';
     /** ბმული http/www-ის გარეშეც (google.com) — იგივე, რაც ფორმის pattern-ში */
     public const URL_PATTERN = '~^(https?://)?([\w-]+\.)+[a-z]{2,}([/?#]\S*)?$~iu';
-    /** შენახული ფაილის ბილიკი storage/orders-ში (Uploader: YYYY/MM/{20 hex}.{ext}) */
-    public const FILE_PATTERN = '~^\d{4}/\d{2}/[a-f0-9]{20}\.[a-z0-9]{2,5}$~';
 
     public static function definition(): array
     {
@@ -113,7 +109,7 @@ final class CustomOrder
     }
 
     /**
-     * ფორმის ველები მოთხოვნიდან: multiple/links — სტრიქონების სია, file — გამოტოვებულია, დანარჩენი — სტრიქონი
+     * ფორმის ველები მოთხოვნიდან: multiple/links — სტრიქონების სია, files — გამოტოვებულია (Attachments), დანარჩენი — სტრიქონი
      * @return array<string, string|list<string>>
      */
     public static function input(Request $request): array
@@ -124,7 +120,7 @@ final class CustomOrder
         $input = [];
         foreach (self::fields() as $name => $field) {
             $type = $field['type'] ?? '';
-            if ($type === 'file') {
+            if ($type === 'files') {
                 continue;
             }
             $value = $request->input($name, '');
@@ -149,7 +145,7 @@ final class CustomOrder
         $fields = self::fields();
         $tokens = self::tokens($input);
         $profile = self::profile($tokens);
-        $relevant = array_filter($fields, fn ($field) => self::matches($field['for'] ?? null, $tokens) && ($field['type'] ?? '') !== 'file');
+        $relevant = array_filter($fields, fn ($field) => self::matches($field['for'] ?? null, $tokens) && ($field['type'] ?? '') !== 'files');
 
         // ჩვეულებრივი წესები (required, max, email, regex); options — in:; required_if — სხვა ველის მნიშვნელობით
         $rules = [];
@@ -213,36 +209,6 @@ final class CustomOrder
             };
         }
         return ['data' => $data, 'errors' => []];
-    }
-
-    /**
-     * ფაილი storage/orders-ში (ტიპი — შიგთავსით); არ არის → null
-     * @return array{name: string, path: string, mime: string, size: int}|null
-     * @throws UploadException
-     */
-    public static function storeAttachment(?array $file): ?array
-    {
-        if ($file === null) {
-            return null;
-        }
-        $config = self::definition()['attachment'];
-        $messages = [];
-        foreach (['too_large', 'partial', 'failed', 'empty', 'type', 'invalid_image', 'too_many_pixels'] as $key) {
-            $messages[$key] = t("custom.upload_$key");
-        }
-        $stored = (new Uploader(storage_path('orders'), $config['allowed'], (int)$config['max_size'], (int)config('media.max_pixels'), $messages))->store($file);
-        return ['name' => $stored['original_name'], 'path' => $stored['path'], 'mime' => $stored['mime'], 'size' => $stored['size']];
-    }
-
-    /** შენახული ფაილის სრული ბილიკი (მხოლოდ Uploader-ის ფორმატის ბილიკი storage/orders-ში) */
-    public static function attachmentPath(mixed $attachment): ?string
-    {
-        $path = is_array($attachment) ? (string)($attachment['path'] ?? '') : '';
-        if (preg_match(self::FILE_PATTERN, $path) !== 1) {
-            return null;
-        }
-        $absolute = storage_path('orders/' . $path);
-        return is_file($absolute) ? $absolute : null;
     }
 
     /** @param array{0: string, 1: string} $choice */

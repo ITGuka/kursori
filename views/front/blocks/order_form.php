@@ -178,6 +178,10 @@ $selectedDesign = $old('design');
                             </div>
 
                             <div class="col-12">
+                                <?= $this->insert('front/partials/form-files', ['form' => $form, 'uid' => $uid, 'hint' => e(t('order.attachments_hint'))]) ?>
+                            </div>
+
+                            <div class="col-12">
                                 <fieldset class="form-choice">
                                     <legend class="form-choice-legend"><?= e(t('order.extras')) ?></legend>
                                     <div class="d-flex flex-wrap gap-2">

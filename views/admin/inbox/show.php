@@ -62,9 +62,13 @@ $email = (string)($data['email'] ?? '');
                 <?php foreach ($section['rows'] as $row): ?>
                     <dt class="col-sm-3 fw-medium text-heading"><?= e($row['label']) ?></dt>
                     <dd class="col-sm-9 text-break mb-0">
-                        <?php if ($row['file'] !== null): ?>
-                            <a href="<?= e(route('admin.inbox.attachment', ['id' => $submission['id']])) ?>"><i class="icon-base bx bx-download icon-sm me-1"></i><?= e($row['file']['name']) ?></a>
-                            <span class="text-body-secondary small ms-1"><?= e(FormSubmission::fileSize((int)($row['file']['size'] ?? 0))) ?></span>
+                        <?php if ($row['files'] !== []): ?>
+                            <?php foreach ($row['files'] as $index => $file): ?>
+                                <div>
+                                    <a href="<?= e(route('admin.inbox.attachment', ['id' => $submission['id'], 'index' => $index])) ?>"><i class="icon-base bx bx-download icon-sm me-1"></i><?= e($file['name']) ?></a>
+                                    <span class="text-body-secondary small ms-1"><?= e(FormSubmission::fileSize((int)($file['size'] ?? 0))) ?></span>
+                                </div>
+                            <?php endforeach ?>
                         <?php elseif ($row['links'] !== []): ?>
                             <?php foreach ($row['links'] as $link): ?>
                                 <a class="d-block" href="<?= e($link) ?>" target="_blank" rel="noopener noreferrer nofollow"><?= e($link) ?></a>

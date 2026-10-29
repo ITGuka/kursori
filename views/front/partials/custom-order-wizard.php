@@ -117,7 +117,6 @@ $reference = fn (string $value, int $i) => '<div class="custom-reference" data-w
     . ' pattern="' . e($urlPattern) . '" title="' . e(t('custom.reference_invalid')) . '" aria-label="' . e(t('custom.reference_url')) . ' ' . ($i + 1) . '">'
     . '<button type="button" class="btn btn-outline-primary border-2 custom-reference-remove" data-wizard-reference-remove aria-label="' . e(t('custom.reference_remove')) . '"' . ($i === 0 ? ' hidden' : '') . '>'
     . '<i class="fa fa-times" aria-hidden="true"></i></button></div>';
-$maxMb = round($definition['attachment']['max_size'] / 1048576);
 ?>
 <fieldset class="custom-wizard" data-custom-wizard<?= $disabled ? ' disabled' : '' ?>>
     <legend class="visually-hidden"><?= e(t('order.custom_title')) ?></legend>
@@ -262,22 +261,14 @@ $maxMb = round($definition['attachment']['max_size'] / 1048576);
                 ]) ?></p>
             </div>
             <div class="col-12">
-                <label class="form-choice-legend d-block" for="<?= e($id('attachment')) ?>"><?= e(t('custom.attachment')) ?></label>
-                <input type="file" class="form-control bg-secondary border-0<?= $error('attachment') ? ' is-invalid' : '' ?>" name="attachment" id="<?= e($id('attachment')) ?>"
-                       accept=".<?= e(implode(',.', array_unique([...array_values($definition['attachment']['allowed']), 'jpeg']))) ?>"
-                       data-max-size="<?= (int)$definition['attachment']['max_size'] ?>" data-too-large="<?= e(t('custom.upload_too_large', ['max' => $maxMb])) ?>"
-                       aria-describedby="<?= e($id('attachment')) ?>-hint">
-                <p class="form-hint mt-2 mb-0" id="<?= e($id('attachment')) ?>-hint"><?= $variants([
+                <?= $this->insert('front/partials/form-files', ['form' => $form, 'uid' => "$uid-custom", 'hint' => $variants([
                     'web'      => 'custom.attachment_web',
                     'design'   => 'custom.attachment_design',
                     'branding' => 'custom.attachment_branding',
                     'seo'      => 'custom.attachment_seo',
                     'support'  => 'custom.attachment_support',
                     'other'    => 'custom.attachment_other',
-                ]) ?> <?= e(t('custom.attachment_formats', ['max' => $maxMb])) ?></p>
-                <?php // ფაილი redirect-ს ვერ გადაურჩება — შეცდომის შემდეგ თავიდან უნდა აირჩიონ ?>
-                <?php if ($isThis && errors() !== [] && !$error('attachment')): ?><p class="form-hint text-warning mt-1 mb-0"><?= e(t('custom.upload_again')) ?></p><?php endif ?>
-                <?= $errorText('attachment') ?>
+                ])]) ?>
             </div>
         </div>
     </section>
