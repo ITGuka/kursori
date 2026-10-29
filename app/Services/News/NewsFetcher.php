@@ -49,6 +49,45 @@ final class NewsFetcher
     }
 
     /**
+     * ყველა feed-იდან ერთად არაუმეტეს $limit სიახლე — ყველაზე პოპულარული (თითო feed-იდან მაქს. per_run კანდიდატი;
+     * ერთი სტატია რამდენიმე feed-ს თუ ემთხვევა, იღებს პირველი რიგით).
+     * @param list<array> $feeds
+     * @return array{saved: list<array{feed: string, title: string, reactions: int}>, errors: array<string, string>}
+     */
+    public function fetchTop(array $feeds, int $limit, bool $dryRun = false): array
+    {
+        $pool = [];
+        $errors = [];
+        foreach ($feeds as $feed) {
+            try {
+                foreach (array_slice($this->candidates($feed), 0, $feed['per_run'], true) as $id => $article) {
+                    $pool[$id] ??= ['feed' => $feed, 'article' => $article];
+                }
+                $error = null;
+            } catch (Throwable $e) {
+                $errors[$feed['name']] = $error = $e->getMessage();
+            }
+            if (!$dryRun) {
+                $this->feeds->markFetched($feed['id'], $error);
+            }
+        }
+        uasort($pool, fn ($a, $b) => (int)$b['article']['public_reactions_count'] <=> (int)$a['article']['public_reactions_count']);
+
+        $saved = [];
+        foreach (array_slice($pool, 0, max(0, $limit), true) as $entry) {
+            try {
+                if (!$dryRun) {
+                    $this->items->create($this->row($entry['feed'], $this->client()->article((int)$entry['article']['id'])));
+                }
+                $saved[] = ['feed' => $entry['feed']['name'], 'title' => (string)$entry['article']['title'], 'reactions' => (int)$entry['article']['public_reactions_count']];
+            } catch (Throwable $e) {
+                $errors[$entry['feed']['name']] = $e->getMessage();
+            }
+        }
+        return ['saved' => $saved, 'errors' => $errors];
+    }
+
+    /**
      * feed-ის კანდიდატები ფილტრის შემდეგ, ჯერ არ შენახული, პოპულარობით (პირველი per_run — შემდეგ წამოღებაზე).
      * ადმინის „ტესტი“ ამას აჩვენებს — არაფერს ინახავს.
      * @return array<string, array> external id => dev.to-ს სიის ჩანაწერი

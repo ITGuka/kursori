@@ -14,7 +14,7 @@ final class NewsFetchCommand extends Command
 {
     protected string $name = 'news:fetch';
     protected string $description = 'Fetch new articles from dev.to into the news queue';
-    protected string $usage = '[feed id] [--dry-run]';
+    protected string $usage = '[feed id] [--limit=N] [--dry-run]';
 
     public function handle(array $args, array $options): int
     {
@@ -37,6 +37,19 @@ final class NewsFetchCommand extends Command
         $fetcher = $this->app->make(NewsFetcher::class);
         $dryRun = isset($options['dry-run']);
         $failed = 0;
+
+        // --limit=N — ყველა feed-იდან ერთად N ყველაზე პოპულარული (და არა per_run თითოეულიდან)
+        if (isset($options['limit'])) {
+            $result = $fetcher->fetchTop($list, max(1, (int)$options['limit']), $dryRun);
+            foreach ($result['saved'] as $item) {
+                $this->output->line(sprintf('  %s %s: %s (%d reactions)', $dryRun ? 'would save' : 'saved', $item['feed'], $item['title'], $item['reactions']));
+            }
+            foreach ($result['errors'] as $feed => $error) {
+                $this->output->error("  $feed — $error");
+            }
+            $this->output->info(sprintf('Done: %d %s.', count($result['saved']), $dryRun ? 'would be saved' : 'saved'));
+            return $result['errors'] !== [] ? 1 : 0;
+        }
         foreach ($list as $feed) {
             $stats = $fetcher->fetch($feed, $dryRun);
             $line = sprintf('  #%d %s: %d candidates, %d %s', $feed['id'], $feed['name'], $stats['candidates'], $stats['saved'], $dryRun ? 'would be saved' : 'saved');
