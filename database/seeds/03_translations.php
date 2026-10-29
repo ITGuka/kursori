@@ -129,6 +129,12 @@ return new class extends Seeder {
         'mobile_cta' => [
             'call' => ['დარეკვა', 'Call'],
         ],
+        // საიტის footer (partials/footer)
+        'footer' => [
+            'cta_title' => ['გაქვთ პროექტის იდეა?', 'Have a project in mind?'],
+            'cta_text'  => ['მოგვიყევით — 1 სამუშაო დღეში დაგიკავშირდებით შეთავაზებით.', 'Tell us about it — we will get back to you with a proposal within 1 business day.'],
+            'company'   => ['კომპანია', 'Company'],
+        ],
         'portfolio' => [
             'all'     => ['ყველა', 'All'],
             // პროექტის გვერდის მონაცემების ცხრილი (front/collections/detail)
