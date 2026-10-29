@@ -25,7 +25,11 @@ final class JobChecks
 
     private function newsFetch(): ?string
     {
-        return (int)$this->db->value('SELECT COUNT(*) FROM news_feeds WHERE is_active = 1') === 0 ? 'აქტიური feed არ არის.' : null;
+        if ((int)$this->db->value('SELECT COUNT(*) FROM news_feeds WHERE is_active = 1') === 0) {
+            return 'აქტიური feed არ არის.';
+        }
+        // დღეს მეტი აღარ გამოქვეყნდება — ახალს მეორე დღის წამოღება მოიტანს (უფრო ახალს)
+        return $this->dailyLimitReached();
     }
 
     private function newsPublish(): ?string
@@ -33,6 +37,11 @@ final class JobChecks
         if ($this->news->approvedIds(1) === []) {
             return 'გამოსაქვეყნებელი (დამტკიცებული) სიახლე არ არის.';
         }
+        return $this->dailyLimitReached();
+    }
+
+    private function dailyLimitReached(): ?string
+    {
         $limit = (int)setting('news.daily_limit');
         return $limit > 0 && $this->news->publishedToday() >= $limit ? "დღიური ლიმიტი ($limit) ამოწურულია." : null;
     }
