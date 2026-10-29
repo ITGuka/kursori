@@ -48,7 +48,8 @@ $schema = array_filter([
                 <?php if ($image !== ''): ?>
                     <?= picture($item['image'], 'large', ['class' => 'img-fluid w-100 rounded mb-5', 'alt' => media_alt($item['image']) ?: $item['title'], 'loading' => 'eager'], '(min-width: 992px) 66vw, 100vw') ?>
                 <?php endif ?>
-                <div class="rich-text post-body"><?= $item['body'] ?></div>
+                <?php // ტექსტის სურათები (იმპორტირებულ სიახლეებში — dev.to-ს CDN) ეკრანზე გამოჩენამდე არ იტვირთება ?>
+                <div class="rich-text post-body"><?= preg_replace('/<img(?![^>]*\bloading=)/i', '<img loading="lazy" decoding="async"', (string)$item['body']) ?></div>
                 <?php if ($source !== ''): ?>
                     <p class="post-source">
                         <?= e(t('blog.source')) ?>:

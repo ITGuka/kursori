@@ -5,6 +5,7 @@ namespace App\Controllers\Front;
 
 use App\Models\Collection;
 use App\Models\Language;
+use App\Services\News\NewsPublisher;
 use Core\Database\DB;
 use Core\Http\Response;
 
@@ -54,10 +55,16 @@ final class SeoController
                 }
                 $items = [];
                 foreach ($this->db->select(
-                    'SELECT i.id, i.updated_at, t.lang, t.slug FROM collection_items i
-                     JOIN collection_item_translations t ON t.item_id = i.id WHERE i.collection = ? AND i.is_active = 1 ORDER BY i.sort, i.id',
+                    "SELECT i.id, i.updated_at, t.lang, t.slug,
+                            COALESCE(JSON_UNQUOTE(JSON_EXTRACT(i.settings, '$.source_url')), '') AS source_url
+                     FROM collection_items i
+                     JOIN collection_item_translations t ON t.item_id = i.id WHERE i.collection = ? AND i.is_active = 1 ORDER BY i.sort, i.id",
                     [$type],
                 ) as $row) {
+                    // იმპორტირებული სიახლის ორიგინალის ენის ვერსიას canonical წყაროზე აქვს — sitemap-ში არ შედის (D57)
+                    if ($row['lang'] === NewsPublisher::LANG && str_starts_with((string)$row['source_url'], 'http')) {
+                        continue;
+                    }
                     $items[$row['id']]['updated_at'] = $row['updated_at'];
                     $items[$row['id']]['slugs'][$row['lang']] = $row['slug'];
                 }

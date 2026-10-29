@@ -151,6 +151,7 @@ return [
         // ყოველთვის კოლექციიდან, უახლესი პირველი (collections.php → blog.order)
         'collection' => ['type' => 'blog', 'target' => 'posts', 'always' => true, 'map' => [
             'image' => 'image', 'title' => 'title', 'category' => 'category', 'excerpt' => 'excerpt', 'date' => 'date', 'body' => 'body', 'link' => '@url',
+            'source' => 'source_name',
         ]],
         'fields' => $title + [
             'category'     => ['type' => 'category', 'label' => 'კატეგორია', 'collection' => 'blog', 'help' => 'ცარიელი — ყველა სტატია.'],

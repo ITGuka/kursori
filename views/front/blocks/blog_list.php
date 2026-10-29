@@ -22,6 +22,7 @@ if ($posts === []) {
                                 <?php if ($post['date'] !== ''): ?><time datetime="<?= e($post['date']) ?>"><?= e(date_human($post['date'])) ?></time><?php endif ?>
                                 <?php if ($post['category'] !== ''): ?><span aria-hidden="true"> · </span><?= e($post['category']) ?><?php endif ?>
                                 <span aria-hidden="true"> · </span><?= e(t('blog.min_read', ['min' => reading_minutes((string)$post['body'])])) ?>
+                                <?php if (($post['source'] ?? '') !== ''): ?><span aria-hidden="true"> · </span><span class="post-card-source"><?= e($post['source']) ?></span><?php endif ?>
                             </p>
                             <h3 class="h5 mb-2"><a<?= link_attrs($post['link']) ?> class="post-card-title"><?= e($post['title']) ?></a></h3>
                             <?php if ($post['excerpt'] !== ''): ?><p class="mb-0"><?= e($post['excerpt']) ?></p><?php endif ?>

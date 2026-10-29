@@ -43,11 +43,17 @@ final class CollectionController
             $languageLinks[$code] = $alternates[$code] ?? url($code);
         }
         $description = Str::limit((string)($item['excerpt'] ?? strip_tags((string)($item['body'] ?? ''))), 300);
-        // იმპორტირებული სიახლე: ორიგინალის ენაზე canonical წყაროზე მიუთითებს (თარგმანი — საკუთარი შიგთავსია)
+        // იმპორტირებული სიახლე: ორიგინალის ენაზე canonical წყაროზე მიუთითებს (თარგმანი — საკუთარი შიგთავსია),
+        // ამიტომ ეს ვერსია hreflang-ში არ შედის (ენის გადამრთველში რჩება) — იგივე sitemap-ში
         $source = (string)($item['source_url'] ?? '');
-        $canonical = $source !== '' && $lang === NewsPublisher::LANG && Url::isSafeHref($source) && str_starts_with($source, 'http')
-            ? $source
-            : $item['url'];
+        $external = $source !== '' && Url::isSafeHref($source) && str_starts_with($source, 'http');
+        $canonical = $external && $lang === NewsPublisher::LANG ? $source : $item['url'];
+        if ($external) {
+            unset($alternates[NewsPublisher::LANG]);
+            if (count($alternates) < 2) {
+                $alternates = [];
+            }
+        }
 
         return view($definition['view'] ?? 'front/collections/detail', [
             'item'        => $item,
