@@ -27,6 +27,7 @@ $console->register(
     AppCommands\NewsFetchCommand::class,
     AppCommands\NewsPublishCommand::class,
     AppCommands\NewsTranslateCommand::class,
+    AppCommands\ScheduleRunCommand::class,
 );
 
 exit($console->run($argv));

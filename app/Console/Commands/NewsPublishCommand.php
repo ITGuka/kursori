@@ -17,7 +17,7 @@ final class NewsPublishCommand extends Command
 {
     protected string $name = 'news:publish';
     protected string $description = 'Publish approved news items to the blog (respects the daily limit)';
-    protected string $usage = '[news item id]';
+    protected string $usage = '[news item id] [--limit=N]';
 
     public function handle(array $args, array $options): int
     {
@@ -27,6 +27,10 @@ final class NewsPublishCommand extends Command
         } else {
             $limit = (int)setting('news.daily_limit');
             $remaining = $limit > 0 ? max(0, $limit - $news->publishedToday()) : 1000;
+            // --limit — ერთ გაშვებაზე (თარგმანი ~1–2 წთ სტატიაზე; cron-ის ჯობი მოკლე უნდა იყოს)
+            if (isset($options['limit'])) {
+                $remaining = min($remaining, max(1, (int)$options['limit']));
+            }
             $ids = $news->approvedIds($remaining);
             if ($ids === []) {
                 $this->output->info($remaining === 0 ? 'Daily limit reached.' : 'Nothing to publish.');

@@ -71,6 +71,8 @@
 | D53 | კანონიკური მისამართი | `Core\Http\Middleware\CanonicalUrl`: production-ში 301 `APP_URL`-ის სქემაზე/host-ზე (http → https, www ↔ non-www) + HSTS |
 | D54 | ფერები | ერთი ბლოკი `site.css`-ში: `--bs-primary` #E01677 (ვარდისფერი ფონი, თეთრ ტექსტთან 4.6:1), `--site-accent-text` #F0408F (ვარდისფერი ტექსტი მუქზე, 4.8:1), `--site-text-muted` #8C8C8C — WCAG AA. Bootstrap-ის hard-coded ვარდისფერი წესები ცვლადებზე მიუთითებს |
 | D55 | Deploy (CI/CD) | GitHub (private `ITGuka/kursori`) → `.github/workflows/ci-cd.yml`: ყოველ push-ზე composer validate/install (`--no-dev`) და `php -l` PHP 8.2-ზე; `main`-ზე — build-ის rsync სერვერზე SSH-ით (`--delete`; გამორიცხულია `.env`, `public/uploads/`, `storage/cache`/`logs`, `.well-known`, `cgi-bin`, `docs/`, `.github/`, `resources/`), `resources/`-ის წაშლა სერვერიდან, `migrate`, `cache:clear`, smoke test (`/ka` → 200). ერთადერთი secret — `SSH_KEY`. Deploy = push `main`-ზე; seed-ები ავტომატურად არ ეშვება |
+| D57 | სიახლეების იმპორტი | წყარო — dev.to API (Forem v1, `DevToClient`: 1 წმ პაუზა, 429-ზე ცდა, გასაღები არასავალდებულო). `news_feeds` (ტეგები, გამოსარიცხი ტეგები → ბლოგის კატეგორია, რეჟიმი auto/review, ფილტრები: დღეები, რეაქციები, ყდის სურათი) → `news_items` (unique source + external_id; new → approved → published / rejected / failed). გამოქვეყნება — არსებულ `blog` კოლექციაში: ინგლისური ორიგინალი სრული ტექსტით (`DevToHtml` + HtmlSanitizer, რომელიც ახლა img/pre/code/table-საც ინახავს), ყდა მედიაში (`news`, CDN-იდან JPEG), `source_name`/`source_url` — ატრიბუცია, `isBasedOn`, en ვერსიის canonical ორიგინალზე. ქართული — Claude API-ით (`ClaudeTranslator`, Anthropic PHP SDK + Guzzle, JSON სქემა, stream; მოდელი, გასაღები, სიგრძის ლიმიტი — პარამეტრები → სიახლეები); თარგმანის შეცდომა გამოქვეყნებას არ აუქმებს. დღიური ლიმიტი `news.daily_limit` (0 — შეზღუდვის გარეშე) |
+| D58 | ჯობების გრაფიკი | ერთი cron (`schedule:run` ყოველ 5 წთ-ში) → `scheduled_jobs` (ბრძანება მხოლოდ `config/schedule.php`-ის სიიდან, ოფციები ნიმუშით, ინტერვალი წუთებში, აქტიურობა). თითო ჯობი — ცალკე PHP პროცესი (`proc_open` მასივით, shell-ის გარეშე), lock — `running_since` (ატომური UPDATE; გათიშული პროცესი timeout + 5 წთ-ის შემდეგ თავისუფლდება), timeout 30 წთ, ჟურნალი `job_runs` (გამოსავალი, კოდი, ხანგრძლივობა; 30 დღე). საწყისი ჯობები მიგრაციით: news:fetch (6 სთ), news:publish --limit=3 (30 წთ), news:translate --limit=3 (1 სთ), newsletter:send (10 წთ) |
 | D56 | MariaDB-თან თავსებადობა | production-ის ბაზა MariaDB-ა: MySQL-ის სპეციფიკური სინტაქსი არ გამოიყენება (მაგ. `CAST(? AS JSON)` — `JSON_CONTAINS(col, ?)` ტექსტით მუშაობს ორივეზე). Composer: `php >= 8.2` |
 
 ## 3. დირექტორიების სტრუქტურა
@@ -249,6 +251,10 @@ php bin/console key:generate [--force]     # APP_KEY (საიდუმლო�
 php bin/console newsletter:send [id] [--batch=50]   # „იგზავნება“ კამპანიების გაგრძელება (cron)
 php bin/console content:reset --force      # გვერდები/მენიუ/კოლექციები → საწყისი კონტენტი (D49)
 php bin/console media:regenerate [--missing]   # სურათების ვარიანტები და WebP ხელახლა (D24)
+php bin/console news:fetch [feed id] [--dry-run]      # სიახლეები dev.to-დან რიგში (D57)
+php bin/console news:publish [id] [--limit=N]         # დამტკიცებული სიახლეები ბლოგში + თარგმანი (დღიური ლიმიტით)
+php bin/console news:translate [id] [--limit=5]       # უთარგმნელი სიახლეების ქართული ვერსია (Claude)
+php bin/console schedule:run [--job=ID] [--list]      # cron-ის ბრძანება: ჯობები გრაფიკით (D58)
 ```
 
 PHP PATH-ში არ არის — Laragon Terminal-იდან ან სრული გზით: `C:\laragon\bin\php\php-8.3.36-Win32-vs16-x64\php.exe bin\console ...`.
@@ -413,10 +419,13 @@ PHP PATH-ში არ არის — Laragon Terminal-იდან ან ს
 5. ✅ `storage/` და `public/uploads/` ჩაწერადი.
 6. ⏳ პარამეტრები → ელ-ფოსტა: რეალური SMTP (TLS/SSL), გამგზავნი დომენის SPF/DKIM; `orders.notify_email` ✅ შევსებულია.
 7. ⏳ ადმინის პაროლი ძლიერი (ბაზა ლოკალურის ასლია — თავდაპირველად ლოკალური პაროლით). ✅ production-ის `.env`-ში `ADMIN_PASSWORD` არ არის.
-8. ✅ HTTPS (SSL.com, Namecheap) + CanonicalUrl/HSTS (D53). ⏳ cron: `php bin/console newsletter:send` (სურვილისამებრ).
+8. ✅ HTTPS (SSL.com, Namecheap) + CanonicalUrl/HSTS (D53). ⏳ cron (cPanel → Cron Jobs, ყოველ 5 წთ-ში): `cd ~/kursori.dev && php bin/console schedule:run >/dev/null 2>&1` — სიახლეები და newsletter (D58).
+10. ⏳ სიახლეები (D57): feed-ები და ბლოგის კატეგორიები ადმინიდან (seed 11 production-ზე არ ეშვება), Claude API გასაღები და ბალანსი, `APP_KEY` `.env`-ში.
 9. ⏳ გამოგონილი კონტენტი და stock სურათები ჩანაცვლებული (D49, აუდიტი CNT-01); ანალიტიკისთვის consent (ANL-01); Google Search Console-ში `sitemap.xml`. ✅ „საძიებოსთვის ღია“ ჩართულია.
 
 ## 12. ცვლილებების ისტორია
+
+- **2026-10-29** — სიახლეების მოდული (D57): dev.to-ს 10 feed (seed 11 + ბლოგის კატეგორიები), `news:fetch`, `news:publish` (ყდა მედიაში, ატრიბუცია, canonical ორიგინალზე), ქართული თარგმანი Claude-ით (`news:translate`), პარამეტრები → სიახლეები. ჯობების გრაფიკი (D58): `schedule:run`, `scheduled_jobs`/`job_runs`, `config/schedule.php`. HtmlSanitizer ინახავს სურათებს, კოდს და ცხრილებს; სტატიის სტილები. Composer: anthropic-ai/sdk, guzzlehttp/guzzle. ადმინის ინტერფეისი (feed-ები, მოდერაცია, ჯობები) — შემდეგი ეტაპი.
 
 - **2026-10-28** — WEBDEV → KURSORI (კოდი, seed-ები, cookie-ები, ბაზა `kursori_db`); Poseify-ის ხსენებები კომენტარებსა და დოკუმენტაციაში → Kursori (`resources/templates` უცვლელია). Deploy kursori.dev-ზე: GitHub Actions CI/CD (lint/build, rsync, migrate, cache:clear, smoke test); `resources/` production-ზე აღარ იტვირთება. გასწორდა: `Media::usages()` MariaDB-ზე სინტაქსის შეცდომით ეცემოდა (`CAST(? AS JSON)`) და production-ში მედია ვერ იშლებოდა. ციფრული აუდიტი — `docs/audit/AUDIT-2026-10-27.md`. დაემატა D55–D56; განახლდა D1, D9.
 - **2026-10-27** — შეკვეთის გვერდი დიზაინის არჩევით: დიზაინები ადმინში (ZIP → `TemplateArchive`, კატეგორიები, რიგი), `order_form` ბლოკი sandbox preview-ით, `POST /{lang}/order` → Inbox სტატუსით + წერილი, seed 10. საერთო ბლოკები (pricing, FAQ). კოლექციის ჩანაწერის header-ის ფონი. ფერის ცვლადები და WCAG AA კონტრასტი. Composer: PHP 8.2. `docs/architecture-map.html`. დაემატა D51, D52, D54.
