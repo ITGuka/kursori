@@ -147,6 +147,9 @@
         var submit = wizard.querySelector('[data-wizard-submit]');
         var counter = wizard.querySelector('[data-wizard-counter]');
         var progress = wizard.querySelector('[data-wizard-progress]');
+        var services = Array.prototype.slice.call(wizard.querySelectorAll('input[name=service]'));
+        var dependent = Array.prototype.slice.call(wizard.querySelectorAll('[data-wizard-for]'));
+        var serviceName = wizard.querySelector('[data-wizard-service-name]');
         var methods = Array.prototype.slice.call(wizard.querySelectorAll('input[name=contact_method]'));
         var phone = wizard.querySelector('[data-wizard-phone] input');
         var phoneLabel = wizard.querySelector('[data-wizard-phone] label');
@@ -188,6 +191,7 @@
             var panel = panels[index];
             var ok = true;
             panel.querySelectorAll('[data-wizard-group-required]').forEach(function (group) {
+                if (group.closest('fieldset:disabled')) { return; }
                 var empty = !group.querySelector('input:checked');
                 group.querySelector('[data-wizard-error]').classList.toggle('d-none', !empty);
                 if (empty && ok) {
@@ -206,11 +210,59 @@
             return true;
         }
 
+        // მომსახურება → მისი ველები „პროექტსა“ და „მასალებში“ (data-wizard-for="web design"); დანარჩენი დამალული და disabled
+        function syncService() {
+            var service = services.filter(function (s) { return s.checked; })[0];
+            var code = service ? service.value : '';
+            dependent.forEach(function (el) {
+                var match = el.getAttribute('data-wizard-for').split(' ').indexOf(code) !== -1;
+                el.hidden = !match;
+                el.disabled = !match;
+            });
+            if (serviceName) {
+                var label = service && wizard.querySelector('label[for="' + service.id + '"] .custom-option-name');
+                serviceName.textContent = label ? label.textContent : '';
+            }
+        }
+
+        // ბმულები: + ამატებს რიგს შაბლონიდან (მაქს. data-max), × შლის; პირველი რიგი არ იშლება
+        var references = wizard.querySelector('[data-wizard-references]');
+        if (references) {
+            var list = references.querySelector('[data-wizard-reference-list]');
+            var template = references.querySelector('[data-wizard-reference-template]');
+            var add = references.querySelector('[data-wizard-reference-add]');
+            var max = parseInt(references.getAttribute('data-max'), 10) || 5;
+            var label = list.querySelector('input').getAttribute('aria-label').replace(/\s*\d+$/, '');
+            var syncReferences = function () {
+                var rows = list.querySelectorAll('[data-wizard-reference]');
+                rows.forEach(function (row, i) {
+                    row.querySelector('input').setAttribute('aria-label', label + ' ' + (i + 1));
+                    row.querySelector('[data-wizard-reference-remove]').hidden = rows.length === 1;
+                });
+                add.classList.toggle('d-none', rows.length >= max);
+            };
+            add.addEventListener('click', function () {
+                list.appendChild(template.content.cloneNode(true));
+                syncReferences();
+                list.lastElementChild.querySelector('input').focus();
+            });
+            list.addEventListener('click', function (event) {
+                var remove = event.target.closest('[data-wizard-reference-remove]');
+                if (!remove) { return; }
+                var row = remove.closest('[data-wizard-reference]');
+                var sibling = row.previousElementSibling || row.nextElementSibling;
+                row.remove();
+                syncReferences();
+                if (sibling) { sibling.querySelector('input').focus(); }
+            });
+            syncReferences();
+        }
+
         // ზარით ან WhatsApp-ით დაკავშირება → ტელეფონი სავალდებულოა
         function syncPhone() {
             if (!phone) { return; }
             var method = methods.filter(function (m) { return m.checked; })[0];
-            var required = !!method && method.value !== 'email';
+            var required = !!method && (method.value === 'phone' || method.value === 'whatsapp');
             phone.required = required;
             if (phoneLabel) { phoneLabel.textContent = phoneText + (required ? ' *' : ''); }
         }
@@ -231,6 +283,7 @@
             });
         });
         methods.forEach(function (m) { m.addEventListener('change', syncPhone); });
+        services.forEach(function (s) { s.addEventListener('change', syncService); });
         // Enter ტექსტურ ველში — შემდეგ ნაბიჯზე და არა გაგზავნა
         wizard.addEventListener('keydown', function (event) {
             if (event.key === 'Enter' && event.target.tagName === 'INPUT' && current < panels.length - 1) {
@@ -251,6 +304,7 @@
             }
         });
 
+        syncService();
         syncPhone();
         var invalid = panels.findIndex(function (panel) { return panel.querySelector('.is-invalid'); });
         if (invalid > 0) { reached = panels.length - 1; }

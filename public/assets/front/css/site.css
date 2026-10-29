@@ -2443,6 +2443,37 @@ a.package-option:focus-visible {
     margin-top: 1rem;
 }
 
+/* მომსახურებაზე დამოკიდებული ველები (data-wizard-for) */
+.custom-group {
+    min-width: 0;
+}
+
+.custom-panel-title ~ .custom-group:not(.custom-group-row) {
+    margin-top: 1.5rem;
+}
+
+.custom-group:not(.custom-group-row) > * + * {
+    margin-top: 1.5rem;
+}
+
+/* ბმულების სია: ველი + წაშლის ღილაკი */
+.custom-reference {
+    display: flex;
+    gap: .5rem;
+}
+
+.custom-reference .form-control {
+    min-height: 3.5rem;
+}
+
+.custom-reference .form-control:invalid:not(:placeholder-shown) {
+    box-shadow: inset 0 0 0 1px var(--bs-danger);
+}
+
+.custom-reference-remove {
+    flex: 0 0 3.5rem;
+}
+
 .custom-option {
     padding-top: 1rem;
 }
