@@ -29,10 +29,25 @@ $feedback = fn (string $key) => isset($formErrors[$key]) ? '<div class="invalid-
             <?= $feedback('args') ?>
             <div class="form-text">მაგ. <code>--limit=3</code> — ერთ გაშვებაზე მაქსიმუმ 3 სიახლე (თარგმანი ~1–2 წთ სტატიაზე).</div>
         </div>
+        <div class="mb-5" style="max-width: 420px">
+            <label class="form-label" for="after_job_id">გაშვება</label>
+            <select class="form-select<?= $invalid('after_job_id') ?>" id="after_job_id" name="after_job_id"<?= $parents === [] && $data['after_job_id'] === null ? ' disabled' : '' ?>>
+                <option value="0">ინტერვალით</option>
+                <?php foreach ($parents as $parentId => $parentLabel): ?>
+                    <option value="<?= e($parentId) ?>"<?= (int)$data['after_job_id'] === $parentId ? ' selected' : '' ?>>„<?= e($parentLabel) ?>“-ის შემდეგ</option>
+                <?php endforeach ?>
+            </select>
+            <?= $feedback('after_job_id') ?>
+            <div class="form-text">
+                <?= $parents === [] && $data['after_job_id'] === null
+                    ? 'ამ ჯობის შემდეგ სხვა ჯობები ეშვება — თავად ინტერვალით მუშაობს.'
+                    : 'ჯაჭვში ჯობი ეშვება არჩეულის შემდეგ, იმავე cron-ის ტიკში; ინტერვალი მაშინ არ მოქმედებს.' ?>
+            </div>
+        </div>
         <div class="mb-5" style="max-width: 240px">
             <label class="form-label" for="interval_minutes">ინტერვალი (წუთი)</label>
             <input type="number" class="form-control" id="interval_minutes" name="interval_minutes" min="5" max="10080" step="5" value="<?= e($data['interval_minutes']) ?>">
-            <div class="form-text">მინ. 5 (cron-ის ტიკი), მაქს. 10080 (კვირა).</div>
+            <div class="form-text">მინ. 5 (cron-ის ტიკი), მაქს. 10080 (კვირა). გაშვებამდე მოწმდება, არის თუ არა სამუშაო — თუ არა, ჯობი გამოტოვდება.</div>
         </div>
         <div class="form-check form-switch mb-0">
             <input type="hidden" name="is_active" value="0">

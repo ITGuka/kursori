@@ -159,8 +159,10 @@ final class NewsItem
     public function untranslatedIds(string $lang, int $limit): array
     {
         return array_map('intval', $this->db->column(
+            // სიგრძის ლიმიტით გამოტოვებული ხელახლა არ იცდება (ხარჯი; ცალკე — news:translate <id>)
             "SELECT n.id FROM news_items n
              WHERE n.status = 'published' AND n.collection_item_id IS NOT NULL
+               AND (n.error IS NULL OR n.error NOT LIKE 'Translation skipped%')
                AND NOT EXISTS (SELECT 1 FROM collection_item_translations t WHERE t.item_id = n.collection_item_id AND t.lang = ?)
              ORDER BY n.published_at, n.id LIMIT " . max(0, $limit),
             [$lang],

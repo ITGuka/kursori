@@ -14,7 +14,7 @@ final class Scheduler
 {
     private const MAX_OUTPUT = 65000;
 
-    public function __construct(private readonly ScheduledJob $jobs)
+    public function __construct(private readonly ScheduledJob $jobs, private readonly JobChecks $checks)
     {
     }
 
@@ -30,13 +30,25 @@ final class Scheduler
     }
 
     /**
-     * ერთი ჯობი lock-ით; null — ჯობი სხვა პროცესში უკვე მუშაობს.
-     * @return array{success: bool, exit_code: ?int, output: string, seconds: int}|null
+     * ერთი ჯობი lock-ით; null — ჯობი სხვა პროცესში უკვე მუშაობს. $force = false — ჯერ შემოწმება (JobChecks):
+     * სამუშაო არ არის → skipped (პროცესი არ იწყება, ჟურნალში არ იწერება).
+     * @return array{success: bool, skipped: ?string, exit_code: ?int, output: string, seconds: int}|null
      */
-    public function run(array $job): ?array
+    public function run(array $job, bool $force = false): ?array
     {
         $timeout = max(1, (int)config('schedule.timeout_minutes', 30));
         $now = date('Y-m-d H:i:s');
+        // ჯაჭვის ჯობი შემდეგ ჯერზე მშობელს ელოდება (next_run_at = NULL), ინტერვალიანი — ინტერვალს
+        $chained = $job['after_job_id'] !== null;
+        $next = fn (int $from) => $chained ? null : date('Y-m-d H:i:s', $from + max(1, (int)$job['interval_minutes']) * 60);
+
+        if (!$force && ($reason = $this->checks->reason((string)$job['command'])) !== null) {
+            if ($job['running_since'] !== null && strtotime((string)$job['running_since']) > time() - ($timeout + 5) * 60) {
+                return null; // მუშაობს — მდგომარეობას არ ვეხებით
+            }
+            $this->jobs->markSkipped((int)$job['id'], $reason, $now, $next(time()));
+            return ['success' => true, 'skipped' => $reason, 'exit_code' => null, 'output' => '', 'seconds' => 0];
+        }
         // წინა პროცესი timeout-ს + 5 წუთს გადასცდა და არ დასრულებულა — ჩავთვალოთ გათიშულად
         if (!$this->jobs->acquire((int)$job['id'], $now, date('Y-m-d H:i:s', time() - ($timeout + 5) * 60))) {
             return null;
@@ -52,9 +64,8 @@ final class Scheduler
             [$exitCode, $output, $success] = [null, $e->getMessage(), false];
         }
 
-        $interval = max(1, (int)$job['interval_minutes']);
-        $this->jobs->finishRun((int)$job['id'], $runId, $success, $exitCode, $output, date('Y-m-d H:i:s'), date('Y-m-d H:i:s', $started + $interval * 60));
-        return ['success' => $success, 'exit_code' => $exitCode, 'output' => $output, 'seconds' => time() - $started];
+        $this->jobs->finishRun((int)$job['id'], $runId, $success, $exitCode, $output, date('Y-m-d H:i:s'), $next($started));
+        return ['success' => $success, 'skipped' => null, 'exit_code' => $exitCode, 'output' => $output, 'seconds' => time() - $started];
     }
 
     /** @return array{0: ?int, 1: string} გასვლის კოდი (null — შეწყდა timeout-ით) და გამოსავალი */
