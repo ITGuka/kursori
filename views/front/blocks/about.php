@@ -32,8 +32,13 @@ $image = media_url($data['image'], 'medium');
             </div>
             <?php if ($image !== ''): ?>
                 <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="about-media">
+                    <?php // hover: დიზაინ-რედაქტორის მონიშვნის ჩარჩო სახელურებით + ბრენდის კურსორი; კურსორის მიყოლით მსუბუქი 3D დახრა (main.js, data-tilt) ?>
+                    <div class="about-media" data-tilt>
                         <?= picture($data['image'], 'medium', ['class' => 'about-image', 'alt' => media_alt($data['image']) ?: $data['title']], '(min-width: 992px) 40vw, 100vw') ?>
+                        <span class="about-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                        <span class="about-cursor" aria-hidden="true">
+                            <i class="fa fa-arrow-pointer"></i><span class="about-cursor-tag"><?= e((string)setting('general.site_name')) ?></span>
+                        </span>
                     </div>
                 </div>
             <?php endif ?>

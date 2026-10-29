@@ -102,6 +102,23 @@
     });
 
 
+    // [data-tilt] (about ბლოკის სურათი): კურსორის მიყოლით მსუბუქი 3D დახრა (±6°) — მხოლოდ მაუსით, reduced-motion-ის გარეშე
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        $('[data-tilt]').on('mousemove', function (event) {
+            var rect = this.getBoundingClientRect();
+            var x = (event.clientX - rect.left) / rect.width - .5;
+            var y = (event.clientY - rect.top) / rect.height - .5;
+            this.classList.add('is-tilting');
+            this.style.setProperty('--tilt-x', (x * 12).toFixed(2) + 'deg');
+            this.style.setProperty('--tilt-y', (y * -12).toFixed(2) + 'deg');
+        }).on('mouseleave', function () {
+            this.classList.remove('is-tilting');
+            this.style.removeProperty('--tilt-x');
+            this.style.removeProperty('--tilt-y');
+        });
+    }
+
+
     // Testimonials carousel
     $('.testimonial-carousel').owlCarousel({
         autoplay: true,

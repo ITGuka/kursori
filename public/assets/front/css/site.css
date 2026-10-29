@@ -1465,9 +1465,25 @@ img[width][height] {
     }
 }
 
-/* სურათი: სვეტის მთელ სიგანეზე, მომრგვალებული, ბარათების მსგავსი თხელი ჩარჩოთი (გადაწეული დეკორი სურათს ადგილიდან ამოვარდნილად აჩენდა) */
+/* სურათი: სვეტის მთელ სიგანეზე, მომრგვალებული, ბარათების მსგავსი თხელი ჩარჩოთი (გადაწეული დეკორი სურათს ადგილიდან ამოვარდნილად აჩენდა).
+ * hover (მხოლოდ მაუსით): სურათი მსუბუქად დიდდება და ნათდება, ჩნდება დიზაინ-რედაქტორის მონიშვნის ჩარჩო (4 სახელური)
+ * და ბრენდის კურსორი სახელით (Figma-ს თანამშრომლის კურსორივით); --tilt-x/--tilt-y — main.js (კურსორის მიყოლა) */
+.about-media {
+    position: relative;
+    transform: perspective(1000px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg));
+    transition: transform .4s ease-out;
+}
+
+.about-media.is-tilting {
+    transition-duration: .1s;
+}
+
 .about-media picture {
     display: block;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, .35);
 }
 
 .about-image {
@@ -1475,9 +1491,109 @@ img[width][height] {
     width: 100%;
     aspect-ratio: 16 / 10;
     object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, .08);
-    border-radius: 12px;
-    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, .35);
+    filter: brightness(.9) saturate(.9);
+    transition: transform .8s cubic-bezier(.2, .7, .2, 1), filter .6s;
+}
+
+.about-frame,
+.about-cursor {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .3s, transform .5s cubic-bezier(.2, .7, .2, 1), inset .5s cubic-bezier(.2, .7, .2, 1);
+}
+
+/* მონიშვნის ჩარჩო: სურათს გარედან ეხვევა, hover-ზე „იკუმშება“ ადგილზე */
+.about-frame {
+    inset: -4px;
+    border: 1.5px solid var(--bs-primary);
+    border-radius: 14px;
+}
+
+.about-frame i {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--bs-white);
+    border: 1.5px solid var(--bs-primary);
+    border-radius: 2px;
+}
+
+.about-frame i:nth-child(1) { top: -6px; left: -6px; }
+.about-frame i:nth-child(2) { top: -6px; right: -6px; }
+.about-frame i:nth-child(3) { bottom: -6px; left: -6px; }
+.about-frame i:nth-child(4) { bottom: -6px; right: -6px; }
+
+/* კურსორი სახელის აბით: სურათის ქვედა მარჯვენა ნაწილში შემოსრიალდება */
+.about-cursor {
+    right: 14%;
+    bottom: 16%;
+    display: flex;
+    align-items: flex-start;
+    transform: translate(40px, 40px);
+}
+
+/* თეთრი კონტური — ღია სურათზეც ჩანს (Figma-ს კურსორივით) */
+.about-cursor .fa {
+    color: var(--bs-primary);
+    font-size: 1.75rem;
+    -webkit-text-stroke: 2px var(--bs-white);
+    paint-order: stroke fill;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .55));
+}
+
+.about-cursor-tag {
+    margin: 1.2rem 0 0 -.15rem;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: var(--bs-primary);
+    color: var(--bs-white);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .about-media:hover .about-image {
+        transform: scale(1.05);
+        filter: none;
+    }
+
+    .about-media:hover .about-frame {
+        inset: -10px;
+        opacity: 1;
+    }
+
+    .about-media:hover .about-cursor {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* სენსორულ ეკრანზე hover არ არის — სურათი ჩვეულებრივ ფერებშია */
+@media (hover: none) {
+    .about-image {
+        filter: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-media,
+    .about-image,
+    .about-frame,
+    .about-cursor {
+        transition: opacity .2s;
+    }
+
+    .about-media {
+        transform: none;
+    }
+
+    .about-media:hover .about-image {
+        transform: none;
+    }
 }
 
 @media (min-width: 992px) {
