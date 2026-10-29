@@ -59,7 +59,7 @@ $showCta = $cta !== null && !$isActive($cta['href']);
         <div class="row g-5">
             <div class="col-lg-3">
                 <?php // ლოგოს ნიშანი კურსორით, ენის მიხედვით: ka — „კ“, სხვა — „K“ (სრული ლოგო ჰედერშია) ?>
-                <a href="<?= e(url(locale())) ?>" class="d-inline-block mb-4" aria-label="<?= e($siteName) ?>">
+                <a href="<?= e(url(locale())) ?>" class="d-inline-block<?= $socialLinks !== [] ? ' mb-4' : '' ?>" aria-label="<?= e($siteName) ?>">
                     <img src="<?= asset('front/img/logo/kursori-icon-' . (locale() === 'ka' ? 'ka' : 'en') . '.svg') ?>" alt="<?= e($siteName) ?>" class="footer-logo footer-logo-icon"
                         width="100" height="100" loading="lazy">
                 </a>
