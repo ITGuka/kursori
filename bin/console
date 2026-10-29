@@ -26,6 +26,7 @@ $console->register(
     AppCommands\MediaRegenerateCommand::class,
     AppCommands\NewsFetchCommand::class,
     AppCommands\NewsPublishCommand::class,
+    AppCommands\NewsTranslateCommand::class,
 );
 
 exit($console->run($argv));

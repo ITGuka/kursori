@@ -69,6 +69,23 @@ final class NewsItem
         ], 'id = ?', [$id]);
     }
 
+    public function setError(int $id, ?string $error): void
+    {
+        $this->db->update('news_items', ['error' => $error === null ? null : mb_substr($error, 0, 1000)], 'id = ?', [$id]);
+    }
+
+    /** @return list<int> გამოქვეყნებული სიახლეები, რომელთა ბლოგის ჩანაწერს $lang თარგმანი არ აქვს — ძველი პირველი */
+    public function untranslatedIds(string $lang, int $limit): array
+    {
+        return array_map('intval', $this->db->column(
+            "SELECT n.id FROM news_items n
+             WHERE n.status = 'published' AND n.collection_item_id IS NOT NULL
+               AND NOT EXISTS (SELECT 1 FROM collection_item_translations t WHERE t.item_id = n.collection_item_id AND t.lang = ?)
+             ORDER BY n.published_at, n.id LIMIT " . max(0, $limit),
+            [$lang],
+        ));
+    }
+
     public function markFailed(int $id, string $error): void
     {
         $this->db->update('news_items', ['status' => 'failed', 'error' => mb_substr($error, 0, 1000)], 'id = ?', [$id]);

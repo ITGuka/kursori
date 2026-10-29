@@ -151,6 +151,16 @@ final class Collection
         });
     }
 
+    /** ერთი ენის თარგმანის დამატება/ჩანაცვლება არსებულ ჩანაწერზე (სხვა ენები და ძირითადი ველები უცვლელია) */
+    public function saveTranslation(int $id, string $lang, string $title, string $slug, array $content): void
+    {
+        $this->db->query(
+            'INSERT INTO collection_item_translations (item_id, lang, title, slug, content) VALUES (?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE title = VALUES(title), slug = VALUES(slug), content = VALUES(content)',
+            [$id, $lang, $title, $slug, self::encode($content)],
+        );
+    }
+
     public function setActive(int $id, bool $active): void
     {
         $this->db->update('collection_items', ['is_active' => (int)$active], 'id = ?', [$id]);

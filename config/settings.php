@@ -114,6 +114,17 @@ return [
                                 'help' => 'არასავალდებულო — გასაღებით მოთხოვნების ლიმიტი მაღალია. dev.to → Settings → Extensions → DEV Community API Keys. ინახება დაშიფრულად.'],
             'daily_limit'   => ['label' => 'დღეში მაქსიმუმ გამოქვეყნება', 'type' => 'number', 'default' => '10',
                                 'help' => 'ავტომატური და დამტკიცებული სიახლეები ბლოგში დღეში არაუმეტეს ამდენი. 0 — შეზღუდვის გარეშე.'],
+            'translate'     => ['label' => 'ქართულად თარგმნა (Claude)', 'type' => 'toggle', 'default' => true,
+                                'help' => 'გამოქვეყნებისას სათაური, ამონარიდი და ტექსტი ითარგმნება ქართულად. გამორთული ან გასაღების გარეშე — სტატია მხოლოდ ინგლისურ ბლოგში ჩანს.'],
+            'claude_api_key' => ['label' => 'Claude API გასაღები', 'type' => 'password',
+                                 'help' => 'console.anthropic.com → API Keys. ინახება დაშიფრულად. ხარჯი იწერება ამ გასაღების ანგარიშზე.'],
+            'claude_model'  => ['label' => 'თარგმანის მოდელი', 'type' => 'select', 'default' => 'claude-haiku-5-5', 'options' => [
+                                    'claude-haiku-5-5'  => 'Claude Haiku 5.5 — ყველაზე იაფი ($0.10 / $0.50 1M ტოკენზე)',
+                                    'claude-sonnet-5-5' => 'Claude Sonnet 5.5 — უკეთესი ქართული ($2 / $10)',
+                                    'claude-opus-5-5'   => 'Claude Opus 5.5 — საუკეთესო ხარისხი ($4 / $20)',
+                                ]],
+            'translate_max_chars' => ['label' => 'თარგმანის მაქს. სიგრძე (სიმბოლო)', 'type' => 'number', 'default' => '60000',
+                                      'help' => 'ამაზე გრძელი სტატიის HTML არ ითარგმნება (ხარჯის კონტროლი) — ქვეყნდება მხოლოდ ინგლისურად.'],
         ],
     ],
 
