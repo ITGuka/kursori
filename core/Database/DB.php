@@ -54,10 +54,8 @@ final class DB
             $statement->execute($bindings);
             return $statement;
         } catch (PDOException $e) {
-            // გრძელი გარე მოთხოვნის (მაგ. AI თარგმანი) შემდეგ სერვერი უმოქმედო კავშირს ხურავს (wait_timeout):
-            // 2006 „server has gone away“, 2013 „lost connection“, 4031 (MySQL 8: უმოქმედობით გათიშვა) —
             // ხელახლა დაკავშირება და ერთი ცდა (ტრანზაქციის გარეთ)
-            if (!in_array((int)($e->errorInfo[1] ?? 0), [2006, 2013, 4031], true) || $this->pdo?->inTransaction()) {
+            if (!self::connectionLost($e) || $this->pdo?->inTransaction()) {
                 throw $e;
             }
             $this->pdo = null;
@@ -127,7 +125,16 @@ final class DB
     public function transaction(callable $callback): mixed
     {
         $pdo = $this->pdo();
-        $pdo->beginTransaction();
+        try {
+            $pdo->beginTransaction();
+        } catch (PDOException $e) {
+            if (!self::connectionLost($e)) {
+                throw $e;
+            }
+            $this->pdo = null;
+            $pdo = $this->pdo();
+            $pdo->beginTransaction();
+        }
         try {
             $result = $callback($this);
             $pdo->commit();
@@ -138,6 +145,15 @@ final class DB
             }
             throw $e;
         }
+    }
+
+    /**
+     * გრძელი გარე მოთხოვნის (მაგ. AI თარგმანი, ქვეპროცესის ლოდინი) შემდეგ სერვერი უმოქმედო კავშირს ხურავს (wait_timeout):
+     * 2006 „server has gone away“, 2013 „lost connection“, 4031 (MySQL 8: უმოქმედობით გათიშვა)
+     */
+    private static function connectionLost(PDOException $e): bool
+    {
+        return in_array((int)($e->errorInfo[1] ?? 0), [2006, 2013, 4031], true);
     }
 
     /** ცხრილის/სვეტის სახელი ბრჭყალებში; მხოლოდ ასოები, ციფრები, "_" და "table.column" */
