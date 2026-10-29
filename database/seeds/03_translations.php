@@ -23,6 +23,7 @@ return new class extends Seeder {
             'previous'     => ['წინა', 'Previous'],
             'next'         => ['შემდეგი', 'Next'],
             'language'     => ['ენა', 'Language'],
+            'close'        => ['დახურვა', 'Close'],
         ],
         'contact' => [
             'phone'        => ['ტელეფონი', 'Phone'],
@@ -50,6 +51,7 @@ return new class extends Seeder {
             'consent_link'  => ['კონფიდენციალურობის პოლიტიკის', 'privacy policy'],
             'one_of_hint'   => ['საკმარისია ელ-ფოსტა ან ტელეფონი.', 'An email or a phone number is enough.'],
             'reply_time'    => ['გიპასუხებთ 1 სამუშაო დღეში.', 'We reply within 1 business day.'],
+            'fix_errors'    => ['ფორმა ვერ გაიგზავნა — შეამოწმეთ მონიშნული ველები.', 'The form was not sent — please check the highlighted fields.'],
             'service'          => ['რა გაინტერესებთ?', 'What do you need?'],
             'service_website'  => ['საიტი', 'Website'],
             'service_shop'     => ['ონლაინ მაღაზია', 'Online store'],

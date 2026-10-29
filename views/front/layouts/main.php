@@ -101,6 +101,8 @@ $absolute = fn (string $path) => $path === '' || preg_match('~^https?://~', $pat
 
 <?= $this->insert('front/partials/footer') ?>
 
+<?= $this->insert('front/partials/toasts') ?>
+
 <a href="#" class="btn btn-outline-primary border-2 btn-lg-square back-to-top" aria-label="<?= e(t('common.back_to_top')) ?>"><i class="fa fa-arrow-up"></i></a>
 
 <?php // მობილურზე ქვედა ზოლი: დარეკვა + მთავარი CTA (back-to-top-ის ნაცვლად) ?>

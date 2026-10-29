@@ -130,6 +130,39 @@
         dotsData: true,
     });
 
-    
+
+    // შეტყობინებები (partials/toasts): data-duration მს-ში ქრება; hover/focus — პაუზა; X — დახურვა
+    document.querySelectorAll('[data-site-toast]').forEach(function (toast) {
+        var duration = parseInt(toast.getAttribute('data-duration'), 10) || 7000;
+        var remaining = duration;
+        var started = 0;
+        var timer = null;
+
+        function hide() {
+            clearTimeout(timer);
+            toast.classList.add('is-hiding');
+            setTimeout(function () { toast.remove(); }, 300);
+        }
+        function resume() {
+            started = Date.now();
+            timer = setTimeout(hide, remaining);
+            toast.classList.remove('is-paused');
+        }
+        function pause() {
+            clearTimeout(timer);
+            remaining -= Date.now() - started;
+            toast.classList.add('is-paused');
+        }
+
+        toast.style.setProperty('--toast-duration', duration + 'ms');
+        toast.classList.add('is-timed');
+        toast.querySelector('[data-site-toast-close]').addEventListener('click', hide);
+        toast.addEventListener('mouseenter', pause);
+        toast.addEventListener('mouseleave', resume);
+        toast.addEventListener('focusin', pause);
+        toast.addEventListener('focusout', resume);
+        resume();
+    });
+
 })(jQuery);
 
