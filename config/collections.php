@@ -35,6 +35,7 @@ return [
                 'question' => ['type' => 'text', 'label' => 'კითხვა', 'translatable' => true, 'max' => 190],
                 'answer'   => ['type' => 'textarea', 'label' => 'პასუხი', 'translatable' => true, 'max' => 1500],
             ]],
+            'show_form'    => ['type' => 'toggle', 'label' => 'შეთავაზების ფორმის ჩვენება', 'default' => true, 'help' => 'გამორთვისას გვერდის ბოლოს ფორმა და გვერდითა პანელის ღილაკი არ ჩანს.'],
         ],
     ],
 

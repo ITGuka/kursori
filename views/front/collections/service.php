@@ -37,8 +37,10 @@ $formId = 'service-' . $item['id'];
                         <p class="service-summary-label"><?= e(t('service.duration')) ?></p>
                         <p class="service-summary-value"><?= e($item['duration']) ?></p>
                     <?php endif ?>
-                    <a href="#form-application" class="btn btn-primary border-2 w-100 py-3"><?= e(t('service.cta')) ?></a>
-                    <p class="form-hint text-center mt-2 mb-0"><?= e(t('form.reply_time')) ?></p>
+                    <?php if ($item['show_form']): ?>
+                        <a href="#form-application" class="btn btn-primary border-2 w-100 py-3"><?= e(t('service.cta')) ?></a>
+                        <p class="form-hint text-center mt-2 mb-0"><?= e(t('form.reply_time')) ?></p>
+                    <?php endif ?>
                 </aside>
             </div>
         </div>
@@ -94,8 +96,10 @@ $formId = 'service-' . $item['id'];
     </div>
 <?php endif ?>
 
-<?= $this->insert('front/blocks/application_form', [
-    'data'  => ['subtitle' => t('service.form_subtitle'), 'title' => t('service.form_title'), 'text' => '<p>' . e(t('service.form_text')) . '</p>',
-                'message_label' => t('service.form_message'), 'button_label' => t('service.cta'), 'background' => 'dark'],
-    'block' => ['id' => $formId],
-]) ?>
+<?php if ($item['show_form']): ?>
+    <?= $this->insert('front/blocks/application_form', [
+        'data'  => ['subtitle' => t('service.form_subtitle'), 'title' => t('service.form_title'), 'text' => '<p>' . e(t('service.form_text')) . '</p>',
+                    'message_label' => t('service.form_message'), 'button_label' => t('service.cta'), 'background' => 'dark'],
+        'block' => ['id' => $formId],
+    ]) ?>
+<?php endif ?>
