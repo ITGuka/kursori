@@ -18,6 +18,7 @@ $this->stop();
 $deliverables = array_filter(array_map('trim', explode("\n", (string)$item['deliverables'])));
 $cases = $item['cases'] ? app(Collection::class)->list('portfolio', (int)$item['cases'], 3, locale(), app(Language::class)->defaultCode()) : [];
 $formId = 'service-' . $item['id'];
+$showForm = (bool)($item['show_form'] ?? true);
 ?>
 <div class="container-fluid py-5">
     <div class="container py-5">
@@ -37,7 +38,7 @@ $formId = 'service-' . $item['id'];
                         <p class="service-summary-label"><?= e(t('service.duration')) ?></p>
                         <p class="service-summary-value"><?= e($item['duration']) ?></p>
                     <?php endif ?>
-                    <?php if ($item['show_form']): ?>
+                    <?php if ($showForm): ?>
                         <a href="#form-application" class="btn btn-primary border-2 w-100 py-3"><?= e(t('service.cta')) ?></a>
                         <p class="form-hint text-center mt-2 mb-0"><?= e(t('form.reply_time')) ?></p>
                     <?php endif ?>
@@ -96,7 +97,7 @@ $formId = 'service-' . $item['id'];
     </div>
 <?php endif ?>
 
-<?php if ($item['show_form']): ?>
+<?php if ($showForm): ?>
     <?= $this->insert('front/blocks/application_form', [
         'data'  => ['subtitle' => t('service.form_subtitle'), 'title' => t('service.form_title'), 'text' => '<p>' . e(t('service.form_text')) . '</p>',
                     'message_label' => t('service.form_message'), 'button_label' => t('service.cta'), 'background' => 'dark'],
